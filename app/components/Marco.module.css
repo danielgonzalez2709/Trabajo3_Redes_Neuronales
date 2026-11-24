@@ -1,0 +1,129 @@
+.pagina {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem) 2rem;
+}
+
+/* Fija arriba al desplazarse, con el fondo de la página para tapar lo que pasa por debajo. */
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding: 0.75rem 0;
+  background: var(--ds-pagina);
+}
+
+.marca {
+  color: var(--ds-texto);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.navegacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 2.25rem; /* objetivo táctil >= 36 px */
+  padding: 0.2rem 0.8rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ds-texto);
+  text-decoration: none;
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: 999px;
+  transition: border-color 150ms ease;
+}
+
+.enlace:hover {
+  border-color: var(--ds-acento);
+}
+
+.enlace[aria-current="page"] {
+  color: var(--ds-fondo);
+  background: var(--ds-acento);
+  border-color: var(--ds-acento);
+}
+
+.titulo {
+  margin: 1.25rem 0 0.5rem;
+  color: var(--ds-acento);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+}
+
+.detalle {
+  max-width: 48rem;
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  color: var(--ds-texto-pagina);
+}
+
+.pie {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ds-borde);
+  font-size: 0.75rem;
+  color: var(--ds-texto-pagina);
+}
+
+.pie p {
+  margin: 0;
+}
+
+.carga,
+.error {
+  padding: 1.25rem;
+  border-radius: var(--ds-radio);
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  font-size: 0.9375rem;
+}
+
+.carga {
+  color: var(--ds-texto-suave);
+}
+
+.error {
+  color: #8f1d17;
+  background: #fff5f4;
+  border-color: rgba(143, 29, 23, 0.25);
+}
+
+.juguete {
+  margin: 0 0 1.25rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.875rem;
+  color: var(--ds-juguete);
+  background: var(--ds-juguete-fondo);
+  border: 1px solid rgba(138, 90, 0, 0.35);
+  border-radius: var(--ds-radio-control);
+}
+
+.provisional {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-juguete);
+  background: var(--ds-juguete-fondo);
+  border: 1px solid rgba(138, 90, 0, 0.35);
+  border-radius: 999px;
+  vertical-align: middle;
+}

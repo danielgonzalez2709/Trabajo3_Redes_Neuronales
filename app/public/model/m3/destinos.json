@@ -1,0 +1,311 @@
+{
+ "version": 1,
+ "juguete": true,
+ "aviso": "Destinos ficticios con atributos aleatorios (núcleo §5.8). No describen lugares reales.",
+ "destinos": [
+  {
+   "id": "D01",
+   "nombre": "Bahía Cristal (ficticio)",
+   "atributos": {
+    "playa": 0.65,
+    "montana": 0.56,
+    "historia": 0.36,
+    "gastronomia": 0.19,
+    "aventura": 0.89,
+    "naturaleza": 0.64,
+    "vida_nocturna": 0.46,
+    "descanso": 0.3
+   },
+   "popularidad": 0.67,
+   "embedding_2d": [
+    -0.641,
+    -0.65
+   ]
+  },
+  {
+   "id": "D02",
+   "nombre": "Cerro Alto (ficticio)",
+   "atributos": {
+    "playa": 0.29,
+    "montana": 0.11,
+    "historia": 0.03,
+    "gastronomia": 0.34,
+    "aventura": 0.83,
+    "naturaleza": 0.37,
+    "vida_nocturna": 0.31,
+    "descanso": 0.58
+   },
+   "popularidad": 0.94,
+   "embedding_2d": [
+    -0.686,
+    -1.193
+   ]
+  },
+  {
+   "id": "D03",
+   "nombre": "Villa Antigua (ficticio)",
+   "atributos": {
+    "playa": 0.13,
+    "montana": 0.36,
+    "historia": 0.87,
+    "gastronomia": 0.89,
+    "aventura": 0.03,
+    "naturaleza": 0.06,
+    "vida_nocturna": 0.14,
+    "descanso": 0.15
+   },
+   "popularidad": 0.47,
+   "embedding_2d": [
+    -0.241,
+    0.084
+   ]
+  },
+  {
+   "id": "D04",
+   "nombre": "Puerto Sabor (ficticio)",
+   "atributos": {
+    "playa": 0.3,
+    "montana": 0.03,
+    "historia": 0.61,
+    "gastronomia": 0.86,
+    "aventura": 0.56,
+    "naturaleza": 0.45,
+    "vida_nocturna": 0.24,
+    "descanso": 0.11
+   },
+   "popularidad": 0.47,
+   "embedding_2d": [
+    -2.0,
+    -1.191
+   ]
+  },
+  {
+   "id": "D05",
+   "nombre": "Cañón Bravo (ficticio)",
+   "atributos": {
+    "playa": 0.95,
+    "montana": 0.07,
+    "historia": 0.18,
+    "gastronomia": 0.19,
+    "aventura": 0.61,
+    "naturaleza": 0.66,
+    "vida_nocturna": 0.71,
+    "descanso": 0.18
+   },
+   "popularidad": 0.64,
+   "embedding_2d": [
+    -0.445,
+    -0.01
+   ]
+  },
+  {
+   "id": "D06",
+   "nombre": "Selva Verde (ficticio)",
+   "atributos": {
+    "playa": 0.78,
+    "montana": 0.68,
+    "historia": 0.52,
+    "gastronomia": 0.65,
+    "aventura": 0.12,
+    "naturaleza": 0.36,
+    "vida_nocturna": 0.38,
+    "descanso": 0.1
+   },
+   "popularidad": 0.34,
+   "embedding_2d": [
+    -0.021,
+    1.068
+   ]
+  },
+  {
+   "id": "D07",
+   "nombre": "Ciudad Neón (ficticio)",
+   "atributos": {
+    "playa": 0.12,
+    "montana": 0.61,
+    "historia": 0.9,
+    "gastronomia": 0.3,
+    "aventura": 0.83,
+    "naturaleza": 0.88,
+    "vida_nocturna": 0.2,
+    "descanso": 0.94
+   },
+   "popularidad": 0.13,
+   "embedding_2d": [
+    0.318,
+    -0.142
+   ]
+  },
+  {
+   "id": "D08",
+   "nombre": "Lago Sereno (ficticio)",
+   "atributos": {
+    "playa": 0.06,
+    "montana": 0.08,
+    "historia": 0.76,
+    "gastronomia": 0.36,
+    "aventura": 0.29,
+    "naturaleza": 0.01,
+    "vida_nocturna": 0.2,
+    "descanso": 0.27
+   },
+   "popularidad": 0.4,
+   "embedding_2d": [
+    -0.958,
+    1.059
+   ]
+  },
+  {
+   "id": "D09",
+   "nombre": "Isla Coral (ficticio)",
+   "atributos": {
+    "playa": 0.03,
+    "montana": 0.59,
+    "historia": 0.51,
+    "gastronomia": 0.1,
+    "aventura": 0.11,
+    "naturaleza": 0.05,
+    "vida_nocturna": 0.97,
+    "descanso": 0.95
+   },
+   "popularidad": 0.31,
+   "embedding_2d": [
+    1.115,
+    -0.504
+   ]
+  },
+  {
+   "id": "D10",
+   "nombre": "Valle Niebla (ficticio)",
+   "atributos": {
+    "playa": 0.65,
+    "montana": 0.03,
+    "historia": 0.86,
+    "gastronomia": 0.14,
+    "aventura": 0.86,
+    "naturaleza": 0.42,
+    "vida_nocturna": 0.65,
+    "descanso": 0.02
+   },
+   "popularidad": 0.81,
+   "embedding_2d": [
+    -0.526,
+    -0.225
+   ]
+  },
+  {
+   "id": "D11",
+   "nombre": "Fortaleza Vieja (ficticio)",
+   "atributos": {
+    "playa": 0.31,
+    "montana": 0.46,
+    "historia": 0.47,
+    "gastronomia": 0.63,
+    "aventura": 0.0,
+    "naturaleza": 0.33,
+    "vida_nocturna": 0.41,
+    "descanso": 0.88
+   },
+   "popularidad": 0.74,
+   "embedding_2d": [
+    1.352,
+    -1.041
+   ]
+  },
+  {
+   "id": "D12",
+   "nombre": "Costa Brisa (ficticio)",
+   "atributos": {
+    "playa": 0.37,
+    "montana": 0.93,
+    "historia": 0.06,
+    "gastronomia": 0.5,
+    "aventura": 0.83,
+    "naturaleza": 0.31,
+    "vida_nocturna": 0.28,
+    "descanso": 0.41
+   },
+   "popularidad": 0.27,
+   "embedding_2d": [
+    0.053,
+    1.342
+   ]
+  },
+  {
+   "id": "D13",
+   "nombre": "Páramo Claro (ficticio)",
+   "atributos": {
+    "playa": 0.01,
+    "montana": 0.69,
+    "historia": 0.34,
+    "gastronomia": 0.14,
+    "aventura": 0.02,
+    "naturaleza": 0.06,
+    "vida_nocturna": 0.31,
+    "descanso": 0.92
+   },
+   "popularidad": 0.29,
+   "embedding_2d": [
+    -0.131,
+    2.256
+   ]
+  },
+  {
+   "id": "D14",
+   "nombre": "Mercado Grande (ficticio)",
+   "atributos": {
+    "playa": 0.77,
+    "montana": 0.3,
+    "historia": 0.03,
+    "gastronomia": 0.67,
+    "aventura": 0.99,
+    "naturaleza": 0.27,
+    "vida_nocturna": 0.25,
+    "descanso": 0.46
+   },
+   "popularidad": 0.72,
+   "embedding_2d": [
+    0.059,
+    -0.416
+   ]
+  },
+  {
+   "id": "D15",
+   "nombre": "Río Salto (ficticio)",
+   "atributos": {
+    "playa": 0.74,
+    "montana": 0.02,
+    "historia": 0.81,
+    "gastronomia": 0.81,
+    "aventura": 0.98,
+    "naturaleza": 0.99,
+    "vida_nocturna": 0.37,
+    "descanso": 0.32
+   },
+   "popularidad": 0.7,
+   "embedding_2d": [
+    0.119,
+    -1.376
+   ]
+  },
+  {
+   "id": "D16",
+   "nombre": "Termas Quietas (ficticio)",
+   "atributos": {
+    "playa": 0.48,
+    "montana": 0.66,
+    "historia": 0.95,
+    "gastronomia": 0.13,
+    "aventura": 0.93,
+    "naturaleza": 0.07,
+    "vida_nocturna": 0.03,
+    "descanso": 0.62
+   },
+   "popularidad": 0.71,
+   "embedding_2d": [
+    -1.054,
+    0.296
+   ]
+  }
+ ]
+}

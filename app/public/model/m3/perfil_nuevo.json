@@ -1,0 +1,356 @@
+{
+ "version": 1,
+ "juguete": true,
+ "aviso": "Regla de recomendación de JUGUETE para el perfil nuevo; la real la define Juan José (JJ, núcleo §5.8).",
+ "preferencias": [
+  {
+   "id": "playa",
+   "etiqueta": "Playa y mar",
+   "descripcion": "Sol, arena y agua tibia."
+  },
+  {
+   "id": "montana",
+   "etiqueta": "Montaña y senderismo",
+   "descripcion": "Caminatas y paisajes de altura."
+  },
+  {
+   "id": "historia",
+   "etiqueta": "Historia y museos",
+   "descripcion": "Centros históricos y patrimonio."
+  },
+  {
+   "id": "gastronomia",
+   "etiqueta": "Gastronomía",
+   "descripcion": "Comida local y mercados."
+  },
+  {
+   "id": "aventura",
+   "etiqueta": "Aventura",
+   "descripcion": "Deportes y actividades de adrenalina."
+  },
+  {
+   "id": "naturaleza",
+   "etiqueta": "Naturaleza y fauna",
+   "descripcion": "Parques, selva y observación de aves."
+  },
+  {
+   "id": "vida_nocturna",
+   "etiqueta": "Vida nocturna",
+   "descripcion": "Música, bares y fiesta."
+  },
+  {
+   "id": "descanso",
+   "etiqueta": "Descanso y spa",
+   "descripcion": "Tranquilidad y bienestar."
+  }
+ ],
+ "regla": {
+  "tipo": "afinidad_media_juguete",
+  "peso_popularidad": 0.1,
+  "descripcion": "puntaje = promedio del atributo de cada preferencia elegida + peso_popularidad * popularidad"
+ },
+ "k_defecto": 5,
+ "k_max": 10,
+ "casos_paridad": [
+  {
+   "preferencias": [
+    "playa"
+   ],
+   "k": 10,
+   "top_k": [
+    {
+     "destino_id": "D05",
+     "puntaje": 1.014
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": 0.842
+    },
+    {
+     "destino_id": "D06",
+     "puntaje": 0.8140000000000001
+    },
+    {
+     "destino_id": "D15",
+     "puntaje": 0.8099999999999999
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.7310000000000001
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.7170000000000001
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.5509999999999999
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.397
+    },
+    {
+     "destino_id": "D02",
+     "puntaje": 0.384
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": 0.384
+    }
+   ]
+  },
+  {
+   "preferencias": [
+    "naturaleza"
+   ],
+   "k": 8,
+   "top_k": [
+    {
+     "destino_id": "D15",
+     "puntaje": 1.06
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.893
+    },
+    {
+     "destino_id": "D05",
+     "puntaje": 0.724
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.7070000000000001
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.501
+    },
+    {
+     "destino_id": "D04",
+     "puntaje": 0.497
+    },
+    {
+     "destino_id": "D02",
+     "puntaje": 0.46399999999999997
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": 0.404
+    }
+   ]
+  },
+  {
+   "preferencias": [
+    "naturaleza",
+    "vida_nocturna"
+   ],
+   "k": 6,
+   "top_k": [
+    {
+     "destino_id": "D15",
+     "puntaje": 0.7499999999999999
+    },
+    {
+     "destino_id": "D05",
+     "puntaje": 0.7490000000000001
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.617
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.6160000000000001
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.553
+    },
+    {
+     "destino_id": "D09",
+     "puntaje": 0.541
+    }
+   ]
+  },
+  {
+   "preferencias": [
+    "historia",
+    "gastronomia",
+    "descanso"
+   ],
+   "k": 7,
+   "top_k": [
+    {
+     "destino_id": "D11",
+     "puntaje": 0.734
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.7263333333333333
+    },
+    {
+     "destino_id": "D15",
+     "puntaje": 0.7166666666666667
+    },
+    {
+     "destino_id": "D03",
+     "puntaje": 0.6836666666666666
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.6376666666666667
+    },
+    {
+     "destino_id": "D04",
+     "puntaje": 0.5736666666666668
+    },
+    {
+     "destino_id": "D09",
+     "puntaje": 0.551
+    }
+   ]
+  },
+  {
+   "preferencias": [
+    "historia",
+    "gastronomia",
+    "naturaleza"
+   ],
+   "k": 9,
+   "top_k": [
+    {
+     "destino_id": "D15",
+     "puntaje": 0.9400000000000001
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.7063333333333334
+    },
+    {
+     "destino_id": "D04",
+     "puntaje": 0.687
+    },
+    {
+     "destino_id": "D03",
+     "puntaje": 0.6536666666666667
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.5543333333333333
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": 0.5506666666666667
+    },
+    {
+     "destino_id": "D06",
+     "puntaje": 0.5439999999999999
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.46366666666666667
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.45433333333333337
+    }
+   ]
+  },
+  {
+   "preferencias": [
+    "montana",
+    "historia",
+    "gastronomia",
+    "aventura",
+    "vida_nocturna"
+   ],
+   "k": 7,
+   "top_k": [
+    {
+     "destino_id": "D15",
+     "puntaje": 0.668
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.6109999999999999
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.589
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.5810000000000001
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.5589999999999999
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.5469999999999999
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": 0.52
+    }
+   ]
+  },
+  {
+   "preferencias": [
+    "playa",
+    "montana",
+    "historia",
+    "gastronomia",
+    "aventura",
+    "naturaleza",
+    "vida_nocturna",
+    "descanso"
+   ],
+   "k": 10,
+   "top_k": [
+    {
+     "destino_id": "D15",
+     "puntaje": 0.7
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.6104999999999999
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.57325
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.55475
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": 0.5395
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.5347500000000001
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": 0.51025
+    },
+    {
+     "destino_id": "D05",
+     "puntaje": 0.50775
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.4882500000000001
+    },
+    {
+     "destino_id": "D06",
+     "puntaje": 0.48275
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,257 @@
+{
+ "version": 1,
+ "juguete": true,
+ "aviso": "Función de dimensionamiento PROVISIONAL de juguete; la real es la de Camila (núcleo §5.4), en DA-6.",
+ "funcion": "dimensionar_juguete",
+ "parametros": {
+  "capacidad_pasajeros": 40,
+  "ocupacion_objetivo": 0.8,
+  "cuantil": 0.9,
+  "viajes_por_vehiculo_dia": 2,
+  "conductores_por_vehiculo": 1.5
+ },
+ "controles": [
+  {
+   "clave": "ocupacion_objetivo",
+   "tipo": "numero",
+   "etiqueta": "Ocupación objetivo",
+   "minimo": 0.5,
+   "maximo": 1.0,
+   "paso": 0.05,
+   "defecto": 0.8,
+   "unidad": "fracción de la capacidad",
+   "ayuda": "Fracción de los asientos que se busca ocupar por despacho. Más alta: menos despachos, menos holgura."
+  },
+  {
+   "clave": "cuantil",
+   "tipo": "opciones",
+   "etiqueta": "Cuantil usado",
+   "opciones": [
+    0.5,
+    0.75,
+    0.9,
+    0.95
+   ],
+   "defecto": 0.9,
+   "unidad": "",
+   "ayuda": "Cuantil del pronóstico que se usa como demanda. Más alto: más prudente (más flota)."
+  },
+  {
+   "clave": "capacidad_pasajeros",
+   "tipo": "numero",
+   "etiqueta": "Capacidad por vehículo",
+   "minimo": 20,
+   "maximo": 60,
+   "paso": 1,
+   "defecto": 40,
+   "unidad": "pasajeros",
+   "ayuda": "Pasajeros que caben en un vehículo (supuesto de juguete)."
+  }
+ ],
+ "casos_paridad": [
+  {
+   "entrada": {
+    "demanda": 0,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.8,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 0,
+    "vehiculos": 0,
+    "conductores": 0
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 1,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.5,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 1,
+    "vehiculos": 1,
+    "conductores": 2
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 39,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.8,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 2,
+    "vehiculos": 1,
+    "conductores": 2
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 40,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 1.0,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 1,
+    "vehiculos": 1,
+    "conductores": 2
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 1234.5,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.65,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 48,
+    "vehiculos": 24,
+    "conductores": 36
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 500,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.9,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 14,
+    "vehiculos": 7,
+    "conductores": 11
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 88.8,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.75,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 3,
+    "vehiculos": 2,
+    "conductores": 3
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 1065.1,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.5,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 54,
+    "vehiculos": 27,
+    "conductores": 41
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 928.5,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.5,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 47,
+    "vehiculos": 24,
+    "conductores": 36
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 2057.0,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.6,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 86,
+    "vehiculos": 43,
+    "conductores": 65
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 35.1,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.6,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 2,
+    "vehiculos": 1,
+    "conductores": 2
+   }
+  },
+  {
+   "entrada": {
+    "demanda": 1500.6,
+    "parametros": {
+     "capacidad_pasajeros": 40,
+     "ocupacion_objetivo": 0.8,
+     "cuantil": 0.9,
+     "viajes_por_vehiculo_dia": 2,
+     "conductores_por_vehiculo": 1.5
+    }
+   },
+   "salida": {
+    "despachos": 47,
+    "vehiculos": 24,
+    "conductores": 36
+   }
+  }
+ ]
+}

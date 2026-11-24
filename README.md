@@ -8,7 +8,7 @@ neuronales y algoritmos bioinspirados, UNAL 2026-02.
   [`docs/spec/partes/`](docs/spec/partes/) · tablero: [`docs/spec/PLAN.md`](docs/spec/PLAN.md)
 - Estado actual: [`docs/MEMORIA.md`](docs/MEMORIA.md)
 - Reporte (blog): pendiente
-- Aplicación web: pendiente
+- Aplicación web: esqueleto con datos de juguete (DA-5); sin publicar todavía
 - Video promocional: pendiente
 
 ## Instalación (Python 3.12)
@@ -82,7 +82,30 @@ Las configs (`configs/`) las crea cada dueño en su tarea; hasta entonces estos 
 
 `export` (modelos → `app/public/model/{m1,m2,m3}/` + casos de paridad) y `figures` (regenera las figuras desde `results/`)
 reciben sus módulos de cada dueño; `notebooks` (`.py` → `.ipynb` ejecutado en modo demo) espera los notebooks. La app
-(`npm --prefix app run dev`) y el blog en vivo (`mkdocs serve -f blog/mkdocs.yml`) llegan después.
+(ver «App en local») ya levanta con datos de juguete; el blog en vivo (`mkdocs serve -f blog/mkdocs.yml`) llega después.
+
+## App en local
+La app (`app/`) es un sitio estático de Next.js: los modelos corren en el navegador y no necesita internet ni servidor. Requiere
+Node 22. Un solo comando para levantarla (tras instalar una vez):
+
+```bash
+npm --prefix app ci          # instala las dependencias con las versiones fijas (solo la primera vez)
+npm --prefix app run dev     # http://localhost:3000
+npm --prefix app test        # pruebas (vitest)
+npm --prefix app run build   # sitio estático en app/out
+```
+Los archivos de los modelos viven en `app/public/model/{m1,m2,m3}/` y sus contratos (con un comentario por campo) en
+`app/lib/contratos.ts`. Los `.wasm` de onnxruntime-web se sirven desde la propia app (`app/public/ort/`, copiados de
+`node_modules/onnxruntime-web/dist`; si se cambia la versión de onnxruntime-web hay que volver a copiarlos).
+
+**Datos de juguete (DA-5).** Mientras llegan los modelos reales, `app/public/model/` trae archivos ficticios con
+`"juguete": true` y cada página lo avisa. Se regeneran (semilla fija, mismo resultado) con:
+
+```bash
+.venv\Scripts\python scripts/generar_juguetes_app.py     # reescribe app/public/model/{m1,m2,m3}
+.venv\Scripts\python -m pytest -q tests/test_juguetes_app.py   # incluye la paridad ONNX vs. PyTorch
+```
+Los dueños de cada módulo reemplazan esos archivos con el mismo esquema y `"juguete": false`.
 
 ## Pruebas
 

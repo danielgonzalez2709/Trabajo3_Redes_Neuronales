@@ -16,5 +16,13 @@ jobs:
       - run: pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/cpu
       - run: pip install -r requirements.txt
       - run: python -m pytest -q -m "not lento"
-      # Pasos de la app (npm ci, npm test, npm run build en app/): llegan en DA-5. Irán en este mismo job para que
-      # el check obligatorio `pruebas` también falle si se rompe la app.
+      # App (Next.js estático en app/): mismos pasos que en el Trabajo 2. Van en este mismo job para que el check
+      # obligatorio `pruebas` también falle si se rompe la app.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm --prefix app ci
+      - run: npm --prefix app test
+      - run: npm --prefix app run build

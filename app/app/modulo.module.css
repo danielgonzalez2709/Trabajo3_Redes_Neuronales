@@ -1,0 +1,294 @@
+/* Estilos comunes de las páginas de módulo: panel de controles, bloques, tablas y listas. */
+.rejilla {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.panel {
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio);
+}
+
+.panelTitulo {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.bloque {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.nota {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ds-texto-suave);
+}
+
+.etiquetaCampo {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.tablaMarco {
+  overflow-x: auto;
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabla caption {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.tabla th,
+.tabla td {
+  padding: 0.4rem 0.8rem;
+  text-align: right;
+  border-top: 1px solid var(--ds-borde);
+  white-space: nowrap;
+}
+
+.tabla th:first-child,
+.tabla td:first-child {
+  text-align: left;
+}
+
+.tabla thead th {
+  font-size: 0.8125rem;
+  color: var(--ds-texto-suave);
+}
+
+.lista {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--ds-superficie);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio-control);
+}
+
+.itemNombre {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.itemDato {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-texto-suave);
+}
+
+.puesto {
+  min-width: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-acento);
+}
+
+@media (min-width: 900px) {
+  .conControles {
+    grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.selector {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--ds-texto);
+  background: var(--ds-superficie);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: var(--ds-radio-control);
+}
+
+.grupoCampos {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 0.4rem;
+}
+
+.opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  background: var(--ds-superficie);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio-control);
+}
+
+.opcion:has(input:checked) {
+  background: var(--ds-acento-tinte);
+  border-color: var(--ds-acento);
+}
+
+.opcion input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--ds-acento);
+}
+
+.opcion small {
+  display: block;
+  color: var(--ds-texto-suave);
+}
+
+/* Conducción */
+.miniaturas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.miniatura {
+  padding: 0.25rem;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--ds-texto);
+  cursor: pointer;
+  background: var(--ds-superficie);
+  border: 2px solid var(--ds-borde);
+  border-radius: var(--ds-radio-control);
+}
+
+.miniatura[aria-pressed="true"] {
+  border-color: var(--ds-acento);
+}
+
+.miniatura img {
+  display: block;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-bottom: 0.2rem;
+  object-fit: cover;
+  image-rendering: auto;
+  border-radius: 6px;
+}
+
+.archivo {
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.vista {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+
+.imagen {
+  display: block;
+  width: 100%;
+  max-height: 22rem;
+  object-fit: contain;
+  background: var(--ds-superficie);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio-control);
+}
+
+.reservado {
+  display: grid;
+  place-items: center;
+  min-height: 10rem;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--ds-texto-suave);
+  background: var(--ds-superficie);
+  border: 2px dashed var(--ds-borde);
+  border-radius: var(--ds-radio-control);
+}
+
+.barras {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barraFila {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) 1fr 4.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.barraPista {
+  height: 0.7rem;
+  background: var(--ds-relleno);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barraRelleno {
+  height: 100%;
+  background: var(--ds-m2);
+  border-radius: 999px;
+}
+
+.barraAsignada .barraRelleno {
+  background: var(--ds-acento);
+}
+
+.barraAsignada span:first-child,
+.barraAsignada span:last-child {
+  font-weight: 700;
+}
+
+.barraValor {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.grupoTexto {
+  font-size: 0.75rem;
+  color: var(--ds-texto-suave);
+}
