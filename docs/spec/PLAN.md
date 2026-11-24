@@ -11,8 +11,8 @@
 
 | Día | Daniel | Camila | Andrés | José | Juan José |
 |---|---|---|---|---|---|
-| **Lun 23** | ⬜ DA-0 spec, repo, ruleset, ramas | Lee núcleo + su spec | Lee núcleo + su spec | Lee núcleo + su spec | Lee núcleo + su spec |
-| **Mar 24** | ⬜ **DA-1** infraestructura (12 m.) · ⬜ DA-2 crudo M1 + DIVIPOLA | ⬜ CA-1 calendario · ⬜ CA-2 normativa y `operacion.yaml` | ⬜ AN-1 🧠 partición, origen rodante, métricas (sintéticos) | ⬜ JO-1 descarga, ficha, artículo | ⬜ JJ-1 descarga, ficha, ¿real o sintético? |
+| **Lun 23** | ✅ DA-0 spec, repo, ruleset, ramas | Lee núcleo + su spec | Lee núcleo + su spec | Lee núcleo + su spec | Lee núcleo + su spec |
+| **Mar 24** | 🟨 **DA-1** infraestructura (PR a `main`, revisado por los 3 revisores) · 🟨 DA-2 crudo M1 + DIVIPOLA (investigación lista: `docs/investigacion/DA-2_fuentes_m1.md`) | ⬜ CA-1 calendario · ⬜ CA-2 normativa y `operacion.yaml` | ⬜ AN-1 🧠 partición, origen rodante, métricas (sintéticos) | ⬜ JO-1 descarga, ficha, artículo | ⬜ JJ-1 descarga, ficha, ¿real o sintético? |
 | **Mié 25** | ⬜ **DA-3** 🧠 series reales (2 p. m.) · ⬜ DA-4 ficha y calidad M1 | ⬜ CA-3 🧠 `dimensionar()` · ⬜ CA-4 descriptivo M1 (desde las 2 p. m.) | ⬜ AN-2 🧠 pérdidas · AN-1 entregado a Camila (noche) | ⬜ JO-2 descriptivo · ⬜ JO-3 🧠 partición sin fuga | ⬜ JJ-2 descriptivo · ⬜ JJ-3 🧠 partición · inicia JJ-8 |
 | **Jue 26** | ⬜ DA-5 esqueleto app + Vercel · guion del video · revisión de PR | ⬜ CA-4 cierre · ⬜ CA-5 modelos de referencia | ⬜ AN-3 MLP + secuencial · ⬜ AN-4 búsqueda | ⬜ JO-4 logística · ⬜ JO-5 CNN + ajuste fino | ⬜ JJ-4 popularidad + FC · ⬜ JJ-5 🧠 red |
 | **Vie 27** | Revisión de PR · app con contratos de juguete | Apoyo a AN-5 (referencias en el mismo arnés) · hipótesis | ⬜ AN-5 30 semillas (noche) | ⬜ JO-5 búsqueda · ⬜ JO-6 30 semillas (GPU) | ⬜ JJ-5 30 semillas · lista de activaciones de todos |

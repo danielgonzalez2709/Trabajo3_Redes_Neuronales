@@ -1,0 +1,17 @@
+# Finales de línea: LF en el código y los textos del repositorio (como en el Trabajo 2)
+*.py   text eol=lf
+*.yaml text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.ts   text eol=lf
+*.tsx  text eol=lf
+
+# Datos procesados y evidencias: byte a byte (su SHA-256 se verifica)
+data/processed/** -text
+alucinaciones/evidencias/** -text
+
+# Binarios
+*.parquet binary
+*.pt      binary
+*.joblib  binary
+*.onnx    binary

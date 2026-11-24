@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Curso | Redes neuronales y algoritmos bioinspirados — UNAL, Facultad de Minas, 2026-02 |
-| Versión | **0.1** — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
+| Versión | **0.3** — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
 | Entrega | **mar 1-dic-2026** (hora por confirmar [VERIFICAR]) |
 | Repositorio | https://github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales |
 
@@ -207,11 +207,17 @@ Los nombres de columnas y claves de esta sección son la propuesta inicial; el d
 | `ruta_id` | str | `"<origen_divipola>-<destino_divipola>"` |
 | `origen_divipola`, `destino_divipola` | str(5) | Código DIVIPOLA del municipio, citado del DANE |
 | `fecha` | date | Día de despacho |
-| `pasajeros` | int ≥ 0 | Pasajeros que abordan en la terminal de origen ese día (suma de registros) |
+| `pasajeros` | int ≥ 0 | Pasajeros que abordan la ruta ese día, en la terminal de origen **y** en terminales en tránsito (suma de registros; [DECIDIDO, Daniel, 24-nov]) |
 | `despachos` | int ≥ 0 | Despachos registrados ese día |
 | `sin_registro` | bool | El día no tenía registros en la fuente (cómo se imputó: DA-3) |
 | `anomalo` | bool | Marcado por la regla de anómalos de DA-3 |
 
+`data/processed/m1/demanda_detalle.parquet` [DECIDIDO, Daniel, 24-nov]: misma granularidad más `tipo_despacho` (ORIGEN /
+TRANSITO) y `clase_vehiculo`, con `pasajeros` y `despachos`; la serie de arriba es su suma. Sirve para la capacidad por clase
+(Camila) y para reportar la proporción en tránsito.
+**Fuente y periodo [DECIDIDO, Daniel, 24-nov]:** datos.gov.co `eh75-8ah6` (Supertransporte), **2021-01-01 a 2023-12-31**
+(36 meses continuos). 2024 está casi vacío en la fuente y 2020 casi no tiene filas, así que la caída de la pandemia no está en
+los datos: la hipótesis de pospandemia se analiza como tendencia 2021–2023. Investigación: `docs/investigacion/DA-2_fuentes_m1.md`.
 `data/processed/m1/rutas.yaml`: por ruta `ruta_id`, nombres de municipios, `ruta_regreso_id`, criterios de selección.
 `data/processed/m1/resumen_datos.json`: registros y variables del crudo, periodo, rutas, conteos de anómalos y días sin registro.
 
@@ -284,7 +290,9 @@ compara contra la corrida de referencia guardada. Cero lógica en el notebook. C
 
 ### 5.11 Datos sintéticos (produce: Daniel en DA-1)
 `data/sintetico/m1/demanda_diaria.parquet` con el esquema de §5.1: 4 rutas (2 pares ida/regreso), conteos Poisson con
-estacionalidad semanal y anual, festivos y algunos días anómalos. Solo para desarrollo y pruebas.
+estacionalidad semanal y anual, caída tipo pandemia, picos aleatorios de temporada alta (proxy de festivos: los festivos
+reales vienen del calendario de §5.2) y algunos días anómalos o sin registro. Códigos de municipio ficticios (departamento
+`00`). Generador: `python -m src.m1_demanda.sintetico`. Solo para desarrollo y pruebas.
 
 ### 5.12 Plantilla común de análisis descriptivo [DECIDIDO, Daniel, 23-nov]
 **Los tres módulos siguen la misma estructura**, con los mismos nombres de sección en el notebook, en el blog y en los JSON:
@@ -303,7 +311,8 @@ Contratos de salida, iguales en los tres módulos (`results/data/<m>/eda/`):
 - `ficha.json`: `fuente, cita, url, fecha_descarga, sha256, unidad_de_observacion, n_registros, n_variables, periodo` y los
   conteos propios del módulo bajo `conteos`.
 - `hipotesis.json`: lista de `{id: "H-M1-1", enunciado, justificacion, evidencia_esperada, figura_o_tabla, resultado,
-  veredicto, evidencia}`.
+  veredicto, evidencia}`; `veredicto` ∈ {`pendiente`, `confirmada`, `refutada`, `no concluyente`} (`pendiente` hasta que se
+  modela).
 - Funciones comunes en `src/comun/eda.py` (ficha, tabla de calidad, escritura y validación de `hipotesis.json`) y estilo de
   figuras en `src/viz/estilo.py`. Cada módulo solo agrega lo específico de su sección 4.
 - En el blog, cada módulo abre con la sección «Análisis descriptivo» y estas siete subsecciones, en este orden.
