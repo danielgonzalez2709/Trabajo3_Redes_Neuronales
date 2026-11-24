@@ -75,12 +75,17 @@ CAPACIDAD_DESPACHO = 40  # pasajeros por despacho
 MEDIA_MINIMA = 0.5  # evita medias nulas en el valle de la pandemia
 
 
+def _dias_desde_epoca(fechas: pd.DatetimeIndex) -> np.ndarray:
+    """Días (float) desde 1970-01-01, sin suponer la resolución (ns, us, s...) del índice."""
+    return np.asarray((fechas - pd.Timestamp("1970-01-01")) / pd.Timedelta(days=1), dtype=float)
+
+
 def _factor_pandemia(fechas: pd.DatetimeIndex) -> np.ndarray:
     """Factor multiplicativo: 1 → valle → 1 con rampas lineales (por interpolación en días)."""
     puntos = [PANDEMIA_INICIO, PANDEMIA_VALLE, PANDEMIA_FIN_VALLE, PANDEMIA_RECUPERADO]
-    x = pd.to_datetime(puntos).astype("int64") / 86_400e9
+    x = _dias_desde_epoca(pd.to_datetime(puntos))
     y = [1.0, FACTOR_VALLE, FACTOR_VALLE, 1.0]
-    return np.interp(fechas.astype("int64") / 86_400e9, x, y)
+    return np.interp(_dias_desde_epoca(fechas), x, y)
 
 
 def _factor_picos(rng: np.random.Generator, fechas: pd.DatetimeIndex) -> np.ndarray:

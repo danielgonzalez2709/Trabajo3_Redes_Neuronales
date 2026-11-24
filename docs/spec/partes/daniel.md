@@ -45,7 +45,7 @@
 - Nuevo: `src/comun/eda.py` con la plantilla común de análisis descriptivo (núcleo §5.12): `escribir_ficha()`,
   `tabla_calidad()`, `escribir_hipotesis()` + validación de esquema y su prueba.
 - `run.py` con los subcomandos de §4.1 (los de cada módulo quedan como esqueleto que el dueño completa).
-- Serie sintética de M1 (§5.11) y JSON de juguete para la app (M1, M2 y M3) con el formato de los contratos.
+- Serie sintética de M1 (§5.11). Los JSON de juguete para la app (M1, M2 y M3) se hacen en DA-5, junto con el esqueleto de la app.
 
 ### 3.2 Datos de M1 (DA-2, DA-3) [PROPUESTO]
 - Identificar el conjunto exacto en datos.gov.co (identificador, URL, diccionario) [VERIFICAR con `investigador-fuentes`].
@@ -78,12 +78,12 @@ Next.js estático en Vercel, como el Trabajo 2. Página de inicio con enlaces a 
 ## 4. Tareas
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
-| DA-0 | Spec v0.1 aprobado, push inicial, ruleset de `main`, ramas `dev/*` | lun 23 | — | — | Las 5 ramas existen; `main` protegida | ⬜ |
+| DA-0 | Spec v0.1 aprobado, push inicial, ruleset de `main`, ramas `dev/*` | lun 23 | — | — | Las 5 ramas existen; `main` protegida | ✅ |
 | DA-1 | Infraestructura (§3.1) | mar 24, 12 m. | implementador (Sonnet) + scaffolding | auditor-reproducibilidad (Haiku) | `pytest` y CI en verde; `python run.py --help` lista los subcomandos | ⬜ |
 | DA-2 | Descarga del crudo de M1 y DIVIPOLA | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `data/fuentes.md` completo; conteos medidos; diccionario citado | ⬜ |
 | DA-3 | Construcción de las series (§3.2) | **mié 25, 2 p. m.** | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | Esquema §5.1; sin huecos de fecha; reglas de anómalos con prueba | ⬜ |
 | DA-4 | Plantilla común secciones 1–2 para M1 | mié 25 | curador-datos (Sonnet) | revisor-spec (Sonnet) | `ficha.json` válido; inconsistencias diccionario vs. datos listadas | ⬜ |
-| DA-5 | Esqueleto de la app + Vercel con JSON de juguete | jue 26 | implementador-web (Sonnet) | revisor-calidad (Haiku) | Despliegue en Vercel; `npm test` y `npm run build` en verde | ⬜ |
+| DA-5 | Esqueleto de la app + Vercel con JSON de juguete de M1, M2 y M3 en el formato de §5.4, §5.6 y §5.8 | jue 26 | implementador-web (Sonnet) | revisor-calidad (Haiku) | Despliegue en Vercel; `npm test` y `npm run build` en verde | ⬜ |
 | DA-6 | Página de demanda con `dimensionar()` en TS | sáb 28 | implementador-web (Sonnet) | verificador-matematico (Opus) | Paridad TS vs. Python | ⬜ |
 | DA-7 | Página de conducción (ONNX + CAM + umbral) | sáb 28–dom 29 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | Paridad de probabilidades y mapa con los casos de `meta.json` | ⬜ |
 | DA-8 | Página de recomendación (existente + perfil nuevo) | dom 29 | implementador-web (Sonnet) | revisor-spec (Sonnet) | Paridad del top-K | ⬜ |

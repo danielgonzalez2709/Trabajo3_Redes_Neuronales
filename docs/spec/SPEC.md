@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Curso | Redes neuronales y algoritmos bioinspirados — UNAL, Facultad de Minas, 2026-02 |
-| Versión | **0.1** — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
+| Versión | **0.2** — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
 | Entrega | **mar 1-dic-2026** (hora por confirmar [VERIFICAR]) |
 | Repositorio | https://github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales |
 
@@ -284,7 +284,9 @@ compara contra la corrida de referencia guardada. Cero lógica en el notebook. C
 
 ### 5.11 Datos sintéticos (produce: Daniel en DA-1)
 `data/sintetico/m1/demanda_diaria.parquet` con el esquema de §5.1: 4 rutas (2 pares ida/regreso), conteos Poisson con
-estacionalidad semanal y anual, festivos y algunos días anómalos. Solo para desarrollo y pruebas.
+estacionalidad semanal y anual, caída tipo pandemia, picos aleatorios de temporada alta (proxy de festivos: los festivos
+reales vienen del calendario de §5.2) y algunos días anómalos o sin registro. Códigos de municipio ficticios (departamento
+`00`). Generador: `python -m src.m1_demanda.sintetico`. Solo para desarrollo y pruebas.
 
 ### 5.12 Plantilla común de análisis descriptivo [DECIDIDO, Daniel, 23-nov]
 **Los tres módulos siguen la misma estructura**, con los mismos nombres de sección en el notebook, en el blog y en los JSON:
@@ -303,7 +305,8 @@ Contratos de salida, iguales en los tres módulos (`results/data/<m>/eda/`):
 - `ficha.json`: `fuente, cita, url, fecha_descarga, sha256, unidad_de_observacion, n_registros, n_variables, periodo` y los
   conteos propios del módulo bajo `conteos`.
 - `hipotesis.json`: lista de `{id: "H-M1-1", enunciado, justificacion, evidencia_esperada, figura_o_tabla, resultado,
-  veredicto, evidencia}`.
+  veredicto, evidencia}`; `veredicto` ∈ {`pendiente`, `confirmada`, `refutada`, `no concluyente`} (`pendiente` hasta que se
+  modela).
 - Funciones comunes en `src/comun/eda.py` (ficha, tabla de calidad, escritura y validación de `hipotesis.json`) y estilo de
   figuras en `src/viz/estilo.py`. Cada módulo solo agrega lo específico de su sección 4.
 - En el blog, cada módulo abre con la sección «Análisis descriptivo» y estas siete subsecciones, en este orden.

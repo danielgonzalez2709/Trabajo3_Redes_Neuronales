@@ -24,8 +24,7 @@ TIEMPO_MAX_CELDA_S = 600
 
 def config_notebook(config: str | Path, cambios: dict | None = None, imprimir: bool = True) -> dict:
     """Carga `config` y aplica `cambios` ({"a.b": valor}) como si fueran `--set a.b=valor`."""
-    overrides = [f"{clave}={yaml.safe_dump(valor, default_flow_style=True).strip().removesuffix('...').strip()}"
-                 for clave, valor in (cambios or {}).items()]
+    overrides = [f"{clave}={_valor_set(valor)}" for clave, valor in (cambios or {}).items()]
     cfg = apply_overrides(load_config(config), overrides)
     if imprimir:
         print("Configuración final resuelta:")
@@ -51,15 +50,14 @@ def _argumentos(demo: dict, cambios: dict, salida_temporal: str | None) -> list[
     return args
 
 
-def _texto_comando(demo: dict, cambios: dict) -> str:
-    return "python run.py " + " ".join(_argumentos(demo, cambios, None))
-
-
 def correr_demo(cfg: dict, nombre: str, cambios: dict | None = None, timeout_s: int = 115) -> dict:
     """Corre `python run.py <subcomando> --config ... [--set ...]` en otro proceso, como se haría en la terminal.
 
     Si la demo declara `salida_temporal` (la clave de su carpeta de salida), escribe en una carpeta temporal: correr la
     demo en la sustentación nunca sobrescribe los resultados versionados que usan las demás partes.
+
+    Devuelve siempre un dict con `estado`: `ok`/`error` (con `codigo`, `segundos`, `salida`), `pendiente` (falta la config
+    o un requisito) o `timeout` (superó `timeout_s`; con `mensaje`). Nunca lanza por tiempo agotado.
     """
     import subprocess
     import sys
@@ -72,8 +70,15 @@ def correr_demo(cfg: dict, nombre: str, cambios: dict | None = None, timeout_s: 
     args = _argumentos(demo, cambios or {}, tempfile.mkdtemp(prefix=f"demo_{nombre}_"))
     print("$ python run.py " + " ".join(args))
     inicio = time.perf_counter()
-    proceso = subprocess.run([sys.executable, "run.py", *args], capture_output=True, text=True, encoding="utf-8",
-                             errors="replace", timeout=timeout_s, check=False)
+    try:
+        proceso = subprocess.run([sys.executable, "run.py", *args], capture_output=True, text=True, encoding="utf-8",
+                                 errors="replace", timeout=timeout_s, check=False)
+    except subprocess.TimeoutExpired:
+        segundos = time.perf_counter() - inicio
+        mensaje = (f"Tiempo agotado: la demo «{nombre}» superó el límite de {timeout_s} s y se canceló. "
+                   "Corre el mismo comando en la terminal o sube `timeout_s`.")
+        print(mensaje)
+        return {"estado": "timeout", "segundos": round(segundos, 1), "mensaje": mensaje, "salida": ""}
     segundos = time.perf_counter() - inicio
     print(proceso.stdout[-6000:])
     if proceso.returncode != 0:

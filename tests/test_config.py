@@ -3,30 +3,12 @@
 from __future__ import annotations
 
 import copy
-import subprocess
-import sys
 from pathlib import Path
 
 import pytest
 import yaml
 
-from src.comun import cli
 from src.comun.config import apply_overrides, cargar_yaml, load_config
-
-ROOT = Path(__file__).resolve().parents[1]
-
-
-@pytest.fixture
-def cfg() -> dict:
-    return {
-        "runs": 30,
-        "base_seed": 0,
-        "w": [25],
-        "methods": ["gdfijo", "pso"],
-        "pso": {"w": 0.7298, "vecindario": {"tipo": "gbest", "k": 3}},
-        "gd": {"armijo": False, "eta": 0.002},
-        "costo": {"valor_hora": 25},
-    }
 
 
 def _escribir(ruta: Path, datos: dict | str) -> Path:
@@ -35,29 +17,6 @@ def _escribir(ruta: Path, datos: dict | str) -> Path:
         datos = yaml.safe_dump(datos, sort_keys=False, allow_unicode=True)
     ruta.write_text(datos, encoding="utf-8")
     return ruta
-
-
-@pytest.fixture
-def cfg_file(tmp_path: Path, cfg: dict) -> Path:
-    return _escribir(tmp_path / "cfg.yaml", cfg)
-
-
-@pytest.fixture
-def recibido(monkeypatch) -> dict:
-    """Sustituye los manejadores del registro por uno falso que guarda la config recibida."""
-    llamadas: dict = {}
-    for nombre, sub in list(cli.SUBCOMANDOS.items()):
-
-        def falso(cfg, nombre=nombre):
-            llamadas[nombre] = cfg
-            return 0
-
-        monkeypatch.setitem(cli.SUBCOMANDOS, nombre, sub._replace(manejador=falso))
-    return llamadas
-
-
-def _config_impresa(salida: str) -> dict:
-    return yaml.safe_load(salida.split("---", 1)[1].split("...", 1)[0])
 
 
 # ------------------------------------------------- cargador (YAML 1.2 core)
