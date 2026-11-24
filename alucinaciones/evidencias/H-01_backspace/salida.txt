@@ -1,0 +1,2 @@
+commit ba19487 (DA-1b, en main): bytes=b'\n\x08ibliografia' | contiene 0x08: True
+árbol corregido (DA-9a): bytes=b'\\bibliografia' | contiene 0x08: False

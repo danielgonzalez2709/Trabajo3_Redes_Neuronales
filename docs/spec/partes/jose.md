@@ -32,6 +32,13 @@
 
 ## 3. Especificación
 
+### 3.0 Contrato con la app (aviso de Daniel, 24-nov, DA-5)
+La app ya corre un ONNX de juguete con la forma de tu modelo (`app/public/model/m2/`). Para exportar el real (JO-9) sigue el
+núcleo §5.6 y valida tu `meta.json` con `app/lib/contratos.ts`. **Importante para entrenar:** el preprocesado de la app es
+fijo — redimensionar **estirando** con interpolación **bilineal** (como PIL `Image.BILINEAR`), RGB, escala 0–1 y luego
+media/desviación. Entrena y evalúa con ese mismo preprocesado. Salidas del ONNX: `logits` (5) y `mapas` (última
+convolución); cabeza GAP + lineal (sus pesos van en `pesos_cabeza` y `sesgo_cabeza`). Referencia: `scripts/generar_juguetes_app.py`.
+
 ### 3.1 Datos y descriptivo (JO-1, JO-2)
 Descarga desde Mendeley (DOI 10.17632/mzb4b6dff3.1) [VERIFICAR estructura de carpetas y conteos]; lectura del artículo de Data in
 Brief (DOI 10.1016/j.dib.2025.111529) con `investigador-fuentes`. Imágenes redimensionadas y comprimidas en el repo (§5.5).

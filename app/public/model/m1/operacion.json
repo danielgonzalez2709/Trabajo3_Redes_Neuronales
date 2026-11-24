@@ -1,0 +1,635 @@
+{
+ "version": 2,
+ "juguete": true,
+ "aviso": "Función de dimensionamiento PROVISIONAL de juguete: todos sus supuestos son parámetros visibles. La real es la de Camila (núcleo §5.4), en DA-6.",
+ "funcion": "dimensionar_juguete",
+ "parametros": {
+  "globales": {
+   "ocupacion_objetivo": {
+    "valor": 0.8,
+    "unidad": "fracción de la capacidad",
+    "supuesto": true,
+    "nota": "Supuesto de juguete: no viene de ninguna norma ni dato."
+   },
+   "cuantil": {
+    "valor": 0.9,
+    "unidad": "cuantil del pronóstico",
+    "supuesto": true,
+    "nota": "Supuesto de juguete: no viene de ninguna norma ni dato."
+   },
+   "viajes_por_vehiculo_dia": {
+    "valor": 2,
+    "unidad": "viajes por vehículo y día",
+    "supuesto": true,
+    "nota": "Supuesto de juguete: tope de viajes que hace un vehículo en el día (ida y regreso cuentan como dos)."
+   },
+   "conductores_por_vehiculo": {
+    "valor": 1.5,
+    "unidad": "conductores por vehículo",
+    "supuesto": true,
+    "nota": "Supuesto de juguete: relevos; conductores = ceil(vehículos · este valor)."
+   },
+   "horas_operacion_dia": {
+    "valor": 16,
+    "unidad": "horas",
+    "supuesto": true,
+    "nota": "Supuesto de juguete: horas al día en que opera la ruta."
+   }
+  },
+  "por_ruta": {
+   "00001-00002": {
+    "tiempo_ciclo_h": {
+     "valor": 6.0,
+     "unidad": "horas",
+     "supuesto": true,
+     "nota": "Supuesto de juguete: ida, regreso y esperas."
+    }
+   },
+   "00001-00003": {
+    "tiempo_ciclo_h": {
+     "valor": 6.0,
+     "unidad": "horas",
+     "supuesto": true,
+     "nota": "Supuesto de juguete: ida, regreso y esperas."
+    }
+   },
+   "00002-00001": {
+    "tiempo_ciclo_h": {
+     "valor": 9.0,
+     "unidad": "horas",
+     "supuesto": true,
+     "nota": "Supuesto de juguete: ida, regreso y esperas."
+    }
+   },
+   "00003-00001": {
+    "tiempo_ciclo_h": {
+     "valor": 9.0,
+     "unidad": "horas",
+     "supuesto": true,
+     "nota": "Supuesto de juguete: ida, regreso y esperas."
+    }
+   }
+  },
+  "por_clase": {
+   "bus": {
+    "capacidad_pasajeros": {
+     "valor": 40,
+     "unidad": "pasajeros",
+     "supuesto": true,
+     "nota": "Supuesto de juguete: no viene de ninguna norma ni dato."
+    }
+   },
+   "buseta": {
+    "capacidad_pasajeros": {
+     "valor": 24,
+     "unidad": "pasajeros",
+     "supuesto": true,
+     "nota": "Supuesto de juguete: no viene de ninguna norma ni dato."
+    }
+   }
+  },
+  "composicion_clases": {
+   "00001-00002": {
+    "bus": {
+     "valor": 0.7,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    },
+    "buseta": {
+     "valor": 0.3,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    }
+   },
+   "00001-00003": {
+    "bus": {
+     "valor": 0.7,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    },
+    "buseta": {
+     "valor": 0.3,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    }
+   },
+   "00002-00001": {
+    "bus": {
+     "valor": 0.5,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    },
+    "buseta": {
+     "valor": 0.5,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    }
+   },
+   "00003-00001": {
+    "bus": {
+     "valor": 0.5,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    },
+    "buseta": {
+     "valor": 0.5,
+     "unidad": "fracción de los despachos",
+     "supuesto": true,
+     "nota": "Supuesto de juguete (la real se estima con train)."
+    }
+   }
+  }
+ },
+ "controles": [
+  {
+   "ref": "globales.ocupacion_objetivo",
+   "tipo": "numero",
+   "etiqueta": "Ocupación objetivo",
+   "minimo": 0.5,
+   "maximo": 1.0,
+   "paso": 0.05,
+   "ayuda": "Fracción de los asientos que se busca ocupar por despacho. Más alta: menos despachos, menos holgura."
+  },
+  {
+   "ref": "globales.cuantil",
+   "tipo": "opciones",
+   "etiqueta": "Cuantil usado",
+   "opciones": [
+    0.5,
+    0.75,
+    0.9,
+    0.95
+   ],
+   "ayuda": "Cuantil del pronóstico que se usa como demanda. Más alto: más prudente (más flota)."
+  },
+  {
+   "ref": "globales.viajes_por_vehiculo_dia",
+   "tipo": "numero",
+   "etiqueta": "Viajes por vehículo al día",
+   "minimo": 1,
+   "maximo": 4,
+   "paso": 1,
+   "ayuda": "Tope de viajes que hace un vehículo en el día. Más viajes: menos vehículos para los mismos despachos."
+  },
+  {
+   "ref": "globales.conductores_por_vehiculo",
+   "tipo": "numero",
+   "etiqueta": "Conductores por vehículo",
+   "minimo": 1,
+   "maximo": 3,
+   "paso": 0.1,
+   "ayuda": "Cuántos conductores hacen falta por vehículo para cubrir relevos."
+  },
+  {
+   "ref": "globales.horas_operacion_dia",
+   "tipo": "numero",
+   "etiqueta": "Horas de operación al día",
+   "minimo": 8,
+   "maximo": 24,
+   "paso": 1,
+   "ayuda": "Horas al día en que opera la ruta; limita cuántos viajes completos caben."
+  },
+  {
+   "ref": "por_ruta.tiempo_ciclo_h",
+   "tipo": "numero",
+   "etiqueta": "Tiempo de ciclo de la ruta",
+   "minimo": 2,
+   "maximo": 14,
+   "paso": 0.5,
+   "ayuda": "Horas que tarda un viaje completo (ida, regreso y esperas) en la ruta elegida."
+  },
+  {
+   "ref": "por_clase.bus.capacidad_pasajeros",
+   "tipo": "numero",
+   "etiqueta": "Capacidad del bus",
+   "minimo": 20,
+   "maximo": 60,
+   "paso": 1,
+   "ayuda": "Pasajeros que caben en un bus."
+  },
+  {
+   "ref": "por_clase.buseta.capacidad_pasajeros",
+   "tipo": "numero",
+   "etiqueta": "Capacidad de la buseta",
+   "minimo": 10,
+   "maximo": 40,
+   "paso": 1,
+   "ayuda": "Pasajeros que caben en una buseta."
+  }
+ ],
+ "casos_paridad": [
+  {
+   "entrada": {
+    "ruta_id": "00001-00002",
+    "fecha": "2025-01-01",
+    "demanda": 0.0,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.8,
+     "globales.cuantil": 0.9,
+     "globales.viajes_por_vehiculo_dia": 2,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 6.0,
+     "por_clase.bus.capacidad_pasajeros": 40,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 0,
+    "vehiculos": 0,
+    "conductores": 0,
+    "pasos": {
+     "capacidad_media": 35.2,
+     "asientos_utiles": 28.160000000000004,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00002",
+    "fecha": "2025-01-02",
+    "demanda": 1.0,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.8,
+     "globales.cuantil": 0.9,
+     "globales.viajes_por_vehiculo_dia": 2,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 6.0,
+     "por_clase.bus.capacidad_pasajeros": 40,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 1,
+    "vehiculos": 1,
+    "conductores": 2,
+    "pasos": {
+     "capacidad_media": 35.2,
+     "asientos_utiles": 28.160000000000004,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00003",
+    "fecha": "2025-01-03",
+    "demanda": 41.6,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.8,
+     "globales.cuantil": 0.9,
+     "globales.viajes_por_vehiculo_dia": 2,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 6.0,
+     "por_clase.bus.capacidad_pasajeros": 40,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 2,
+    "vehiculos": 1,
+    "conductores": 2,
+    "pasos": {
+     "capacidad_media": 35.2,
+     "asientos_utiles": 28.160000000000004,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00002-00001",
+    "fecha": "2025-01-04",
+    "demanda": 32.0,
+    "parametros": {
+     "globales.ocupacion_objetivo": 1.0,
+     "globales.cuantil": 0.95,
+     "globales.viajes_por_vehiculo_dia": 2,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 9.0,
+     "por_clase.bus.capacidad_pasajeros": 40,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.5,
+     "composicion_clases.buseta": 0.5
+    }
+   },
+   "salida": {
+    "despachos": 1,
+    "vehiculos": 1,
+    "conductores": 2,
+    "pasos": {
+     "capacidad_media": 32.0,
+     "asientos_utiles": 32.0,
+     "viajes_efectivos": 1
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00003",
+    "fecha": "2025-01-11",
+    "demanda": 518.2,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.5,
+     "globales.cuantil": 0.5,
+     "globales.viajes_por_vehiculo_dia": 4.0,
+     "globales.conductores_por_vehiculo": 1.2,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 8.0,
+     "por_clase.bus.capacidad_pasajeros": 33.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 35,
+    "vehiculos": 18,
+    "conductores": 22,
+    "pasos": {
+     "capacidad_media": 30.299999999999997,
+     "asientos_utiles": 15.149999999999999,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00002",
+    "fecha": "2025-01-07",
+    "demanda": 741.5,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.5,
+     "globales.cuantil": 0.5,
+     "globales.viajes_por_vehiculo_dia": 2.0,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 8.0,
+     "por_clase.bus.capacidad_pasajeros": 41.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 42,
+    "vehiculos": 21,
+    "conductores": 32,
+    "pasos": {
+     "capacidad_media": 35.9,
+     "asientos_utiles": 17.95,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00003",
+    "fecha": "2025-01-24",
+    "demanda": 716.8,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.6,
+     "globales.cuantil": 0.9,
+     "globales.viajes_por_vehiculo_dia": 2.0,
+     "globales.conductores_por_vehiculo": 1.0,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 8.0,
+     "por_clase.bus.capacidad_pasajeros": 40.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 34,
+    "vehiculos": 17,
+    "conductores": 17,
+    "pasos": {
+     "capacidad_media": 35.2,
+     "asientos_utiles": 21.12,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00002",
+    "fecha": "2025-01-24",
+    "demanda": 1464.6,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.5,
+     "globales.cuantil": 0.95,
+     "globales.viajes_por_vehiculo_dia": 2.0,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 4.0,
+     "por_clase.bus.capacidad_pasajeros": 33.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 97,
+    "vehiculos": 49,
+    "conductores": 74,
+    "pasos": {
+     "capacidad_media": 30.299999999999997,
+     "asientos_utiles": 15.149999999999999,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00003",
+    "fecha": "2025-01-23",
+    "demanda": 468.1,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.5,
+     "globales.cuantil": 0.75,
+     "globales.viajes_por_vehiculo_dia": 1.0,
+     "globales.conductores_por_vehiculo": 1.0,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 5.5,
+     "por_clase.bus.capacidad_pasajeros": 50.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 23,
+    "vehiculos": 23,
+    "conductores": 23,
+    "pasos": {
+     "capacidad_media": 42.2,
+     "asientos_utiles": 21.1,
+     "viajes_efectivos": 1
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00002",
+    "fecha": "2025-01-30",
+    "demanda": 794.0,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.9,
+     "globales.cuantil": 0.5,
+     "globales.viajes_por_vehiculo_dia": 4.0,
+     "globales.conductores_por_vehiculo": 1.2,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 6.0,
+     "por_clase.bus.capacidad_pasajeros": 44.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 24,
+    "vehiculos": 12,
+    "conductores": 15,
+    "pasos": {
+     "capacidad_media": 38.0,
+     "asientos_utiles": 34.2,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00001-00003",
+    "fecha": "2025-01-12",
+    "demanda": 783.9,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.8,
+     "globales.cuantil": 0.95,
+     "globales.viajes_por_vehiculo_dia": 3.0,
+     "globales.conductores_por_vehiculo": 1.2,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 12.0,
+     "por_clase.bus.capacidad_pasajeros": 45.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.7,
+     "composicion_clases.buseta": 0.3
+    }
+   },
+   "salida": {
+    "despachos": 26,
+    "vehiculos": 26,
+    "conductores": 32,
+    "pasos": {
+     "capacidad_media": 38.699999999999996,
+     "asientos_utiles": 30.959999999999997,
+     "viajes_efectivos": 1
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00002-00001",
+    "fecha": "2025-01-09",
+    "demanda": 754.2,
+    "parametros": {
+     "globales.ocupacion_objetivo": 1.0,
+     "globales.cuantil": 0.75,
+     "globales.viajes_por_vehiculo_dia": 4.0,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 4.0,
+     "por_clase.bus.capacidad_pasajeros": 40.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.5,
+     "composicion_clases.buseta": 0.5
+    }
+   },
+   "salida": {
+    "despachos": 24,
+    "vehiculos": 6,
+    "conductores": 9,
+    "pasos": {
+     "capacidad_media": 32.0,
+     "asientos_utiles": 32.0,
+     "viajes_efectivos": 4
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00003-00001",
+    "fecha": "2025-01-21",
+    "demanda": 374.2,
+    "parametros": {
+     "globales.ocupacion_objetivo": 0.6,
+     "globales.cuantil": 0.75,
+     "globales.viajes_por_vehiculo_dia": 3.0,
+     "globales.conductores_por_vehiculo": 1.2,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 6.0,
+     "por_clase.bus.capacidad_pasajeros": 52.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.5,
+     "composicion_clases.buseta": 0.5
+    }
+   },
+   "salida": {
+    "despachos": 17,
+    "vehiculos": 9,
+    "conductores": 11,
+    "pasos": {
+     "capacidad_media": 38.0,
+     "asientos_utiles": 22.8,
+     "viajes_efectivos": 2
+    }
+   }
+  },
+  {
+   "entrada": {
+    "ruta_id": "00002-00001",
+    "fecha": "2025-01-18",
+    "demanda": 841.5,
+    "parametros": {
+     "globales.ocupacion_objetivo": 1.0,
+     "globales.cuantil": 0.5,
+     "globales.viajes_por_vehiculo_dia": 1.0,
+     "globales.conductores_por_vehiculo": 1.5,
+     "globales.horas_operacion_dia": 16,
+     "por_ruta.tiempo_ciclo_h": 12.0,
+     "por_clase.bus.capacidad_pasajeros": 38.0,
+     "por_clase.buseta.capacidad_pasajeros": 24,
+     "composicion_clases.bus": 0.5,
+     "composicion_clases.buseta": 0.5
+    }
+   },
+   "salida": {
+    "despachos": 28,
+    "vehiculos": 28,
+    "conductores": 42,
+    "pasos": {
+     "capacidad_media": 31.0,
+     "asientos_utiles": 31.0,
+     "viajes_efectivos": 1
+    }
+   }
+  }
+ ]
+}

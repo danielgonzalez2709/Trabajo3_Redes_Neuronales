@@ -1,0 +1,52 @@
+.fila {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+
+.tarjeta {
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio);
+  box-shadow: var(--ds-sombra);
+}
+
+.neutro {
+  background: var(--ds-acento-tinte);
+}
+
+.alerta {
+  border-color: var(--ds-baja);
+  border-width: 2px;
+}
+
+.ok {
+  border-color: var(--ds-sube);
+  border-width: 2px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ds-texto-suave);
+}
+
+.valor {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.detalle {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  color: var(--ds-texto-suave);
+}
