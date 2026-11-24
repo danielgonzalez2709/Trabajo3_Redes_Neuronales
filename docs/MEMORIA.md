@@ -1,16 +1,17 @@
 # MEMORIA — estado del Trabajo 3 (≤ 150 líneas)
 
 ## Estado
-- Spec v0.5. `main` protegida (ruleset `proteger-main`: PR + Code Owners + check `pruebas`; Daniel fusiona). Ramas `dev/*`.
+- Spec v0.6. `main` protegida (ruleset `proteger-main`: PR + Code Owners + check `pruebas`; Daniel fusiona). Ramas `dev/*`.
 - Blog publicado en GitHub Pages: https://danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales/ (esqueleto).
 - DA-1 (infraestructura) en `main` (PR #1): `src/comun/`, `run.py` con 17 subcomandos, blog, serie sintética, CI.
 - DA-2/DA-3/DA-4 terminados el mar 24 (PR #2): series reales de M1 en `data/processed/m1/` (6 series, 2021-01-01..2023-12-31),
   detalle por tipo de despacho y clase de vehículo, marcas de anómalos, ficha/calidad/diccionario en `results/data/m1/eda/`.
   Revisados por revisor-spec (APROBADO), auditor-fugas (sin fuga activa) y revisor-calidad (correcciones aplicadas).
   `run.py m1-datos` regenera todo desde `data/raw/m1/` (no versionado; se reconstruye con `scripts/descargar_m1.py`).
-- DA-5 (app) lista en `dev/daniel` (PR #3): Next.js 16.4.6 estático, 4 páginas con datos de juguete, ONNX de juguete con
-  onnxruntime-web servido desde la app, contratos en `app/lib/contratos.ts` (núcleo §5.4, §5.6, §5.8, v0.6). Falta crear el
-  proyecto en Vercel (cuenta danielgonzalez2709, Root Directory = `app`) después de fusionar.
+- DA-5 (app) en `main` (PR #3) y publicada en https://trabajo3-redes-neuronales.vercel.app/ (Vercel, cuenta
+  danielgonzalez2709, Root Directory = `app`; producción desde `main`, vistas previas por rama): Next.js 16.4.6 estático,
+  4 páginas con datos de juguete, ONNX de juguete con onnxruntime-web servido desde la app, contratos en
+  `app/lib/contratos.ts` (núcleo §5.4, §5.6, §5.8, v0.6).
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -35,7 +36,7 @@
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
 2. GPU para las 30 semillas de M2.
-3. Daniel: DA-5 (esqueleto de la app en Vercel con JSON de juguete), guion del video.
+3. Daniel: DA-11 (notebook 00), DA-6/DA-7/DA-8 cuando lleguen las exportaciones reales (sáb 28), grabación del video.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
@@ -44,6 +45,7 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-24 · Daniel · PR #3 fusionado; app publicada en Vercel (DA-5 ✅); URL en README, blog y guion.
 - 2026-11-24 · Daniel · DA-5 app con contratos (Spec v0.6) y PR #3; blog 01/03/11/13 y guion del video adelantados; H-01.
 - 2026-11-24 · Daniel · DA-2/DA-3/DA-4 terminados (series reales de M1) y en PR #2; Spec v0.3–v0.5 (periodo, tránsito,
   mayo-2021, reglas contra fuga); Pages activo; check `pruebas` obligatorio en `main`.

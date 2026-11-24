@@ -7,8 +7,8 @@ neuronales y algoritmos bioinspirados, UNAL 2026-02.
 - Spec (fuente de verdad, con el enunciado en el Anexo): [`docs/spec/SPEC.md`](docs/spec/SPEC.md) · specs personales en
   [`docs/spec/partes/`](docs/spec/partes/) · tablero: [`docs/spec/PLAN.md`](docs/spec/PLAN.md)
 - Estado actual: [`docs/MEMORIA.md`](docs/MEMORIA.md)
-- Reporte (blog): pendiente
-- Aplicación web: esqueleto con datos de juguete (DA-5); sin publicar todavía
+- Reporte (blog): [danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales](https://danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales/) (en construcción)
+- Aplicación web: [trabajo3-redes-neuronales.vercel.app](https://trabajo3-redes-neuronales.vercel.app/) (por ahora con datos de juguete; se actualiza con los modelos reales)
 - Video promocional: pendiente
 
 ## Instalación (Python 3.12)

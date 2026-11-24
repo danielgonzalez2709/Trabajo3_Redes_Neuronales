@@ -12,7 +12,7 @@ y Juan José González Morales
 **Enlaces**
 
 - Repositorio: [github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales](https://github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales)
-- Aplicación web: pendiente
+- Aplicación web: [trabajo3-redes-neuronales.vercel.app](https://trabajo3-redes-neuronales.vercel.app/)
 - Video promocional: pendiente
 
 --8<-- "secciones/00-resumen.md"
