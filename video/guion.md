@@ -67,6 +67,6 @@ Formato: celular horizontal en 4K/30 si se puede; micrófono de solapa o el del 
 
 ## Pendiente
 - Cifras `[CIFRA: …]` con los resultados reales de los tres módulos.
-- URL de la app publicada y del reporte, para el QR y la tarjeta final.
+- QR y tarjeta final: app https://trabajo3-redes-neuronales.vercel.app/ · reporte https://danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales/
 - Música con licencia verificada.
 - Revisión del guion por el equipo (jue 26).
