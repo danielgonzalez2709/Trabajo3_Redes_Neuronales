@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Curso | Redes neuronales y algoritmos bioinspirados — UNAL, Facultad de Minas, 2026-02 |
-| Versión | **0.5** — 2026-11-24 (§5.3 reglas contra fuga del arnés de M1: lista blanca de columnas, test sin excluir anómalos, ventanas desde el 2021-06-01, rejilla de orígenes anclada al 2023-12-01; §5.4 composición por clase solo con train; §5.1 marcas solo descriptivas y `marcas_anomalos.parquet`; afecta a Andrés y Camila; Daniel, a partir de auditor-fugas) · 0.4 — 2026-11-24 (§5.1: mayo de 2021 se conserva con marcas y los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`); la flota usa despachos de ORIGEN; afecta a Camila y Andrés; Daniel) · 0.3 — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
+| Versión | **0.6** — 2026-11-24 (§5.4, §5.6 y §5.8: contratos de exportación a la app fijados en `app/lib/contratos.ts` (DA-5); afecta a Camila y Andrés (M1), José (M2: preprocesado obligatorio) y Juan José (M3: formato de dos torres); Daniel) · 0.5 — 2026-11-24 (§5.3 reglas contra fuga del arnés de M1: lista blanca de columnas, test sin excluir anómalos, ventanas desde el 2021-06-01, rejilla de orígenes anclada al 2023-12-01; §5.4 composición por clase solo con train; §5.1 marcas solo descriptivas y `marcas_anomalos.parquet`; afecta a Andrés y Camila; Daniel, a partir de auditor-fugas) · 0.4 — 2026-11-24 (§5.1: mayo de 2021 se conserva con marcas y los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`); la flota usa despachos de ORIGEN; afecta a Camila y Andrés; Daniel) · 0.3 — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
 | Entrega | **mar 1-dic-2026** (hora por confirmar [VERIFICAR]) |
 | Repositorio | https://github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales |
 
@@ -274,6 +274,16 @@ def dimensionar(demanda: pd.DataFrame, params: dict) -> pd.DataFrame
 # entrada: ruta_id, fecha, demanda (punto o cuantil); salida: + despachos, vehiculos, conductores
 ```
 La app reimplementa `dimensionar` en TypeScript; `run.py export` genera casos de paridad.
+**Exportación a la app [DECIDIDO, Daniel, 24-nov, DA-5]** — `app/public/model/m1/operacion.json`. El esquema ejecutable
+(tipos y validador) es `app/lib/contratos.ts` (`OperacionJson`, `validarOperacion`, `validarCoherenciaM1`); un JSON que no
+pase el validador no entra. Resumen: cada parámetro es `{valor, unidad, fuente | supuesto: true, nota?}` (una de las dos, no
+ambas), agrupados en `globales`, `por_ruta[ruta_id]`, `por_clase[clase]` y `composicion_clases[ruta_id][clase]` (suma 1).
+`controles` = `{ref, tipo, etiqueta, ayuda, …}` con `ref` como `globales.x`, `por_ruta.x` (de la ruta elegida),
+`por_clase.c.x` o `composicion_clases.c`. **Obligatorios:** `globales.ocupacion_objetivo` y `globales.cuantil`, como
+parámetro y como control. `casos_paridad[]` = `{entrada: {ruta_id, fecha, demanda, parametros (planos {ref: valor})},
+salida: {despachos, vehiculos, conductores, pasos?}}`. `m1/pronosticos.json`: `fecha_origen`, `horizonte` = 30,
+`cuantiles` y por ruta `ruta_id`, origen y destino, `ruta_regreso_id` (debe existir), `historia` y `pronostico`
+(`{fecha, h, punto, q[]}` alineado con `cuantiles`).
 La composición por clase de vehículo y la razón de despachos de ORIGEN que use `dimensionar` se estiman **solo con train**
 (no con `resumen_datos.json`, que resume 2021–2023 completo) [DECIDIDO, Daniel, 24-nov].
 
@@ -286,15 +296,28 @@ trae [VERIFICAR]) + imágenes redimensionadas y comprimidas en `data/processed/m
 `app/public/model/m2/modelo.onnx` con dos salidas: `logits` (5) y `mapas` (activaciones de la última capa convolucional);
 `app/public/model/m2/meta.json`: `clases`, `grupo_alerta` (clase → sin alerta / con alerta), `umbral_por_defecto`,
 `tamano_entrada`, `media`, `desviacion`, `pesos_cabeza` (para CAM) y `casos_paridad` (imagen pequeña → probabilidades y mapa).
+**[DECIDIDO, Daniel, 24-nov, DA-5]** Esquema ejecutable: `app/lib/contratos.ts` (`MetaM2`, `validarMetaM2`). Además:
+`preprocesado = {redimensionado: "estirar", interpolacion: "bilineal", canales: "RGB", escala: "0-1", normalizacion:
+"media_desviacion"}` — **el entrenamiento y la exportación de José deben usar exactamente ese preprocesado** (en la app, el
+redimensionado bilineal tipo PIL está en `app/lib/imagen.ts`); máximo 3 `casos_paridad`, cada uno con `entrada_rgb` en línea o
+`entrada_archivo` (`m2/casos/<id>.json`) y, si sale de una imagen, `imagen` (archivo de `ejemplos/`). El mapa del contrato es
+**CAM** (Σ w_c·mapa, sin sesgo); DA-7 demuestra su equivalencia con Grad-CAM de PyTorch para la cabeza GAP + lineal.
 
 ### 5.7 M3 — datos (produce y consume: Juan José)
 `data/processed/m3/interacciones.parquet` (`usuario_id, destino_id, calificacion, [fecha], split`), `usuarios.parquet`,
 `destinos.parquet` con las variables de contenido. Ninguna interacción de prueba se usa para entrenar.
 
 ### 5.8 M3 — recomendador para la app (produce: Juan José · consume: Daniel)
-`app/public/model/m3/`: `destinos.json` (id, nombre, atributos, embedding 2D para la figura), `usuarios.json` (historial y
-top-K precomputado de usuarios existentes), `perfil_nuevo.json` (lista de preferencias seleccionables y los pesos o la regla con
-que se recomienda a un perfil nuevo) y `casos_paridad.json`.
+`app/public/model/m3/`: `destinos.json`, `usuarios.json`, `perfil_nuevo.json` y `casos_paridad.json`.
+**[DECIDIDO, Daniel, 24-nov, DA-5]** Esquema ejecutable: `app/lib/contratos.ts` (validadores de M3 y `validarCasosM3`).
+Formato de **dos torres lineal/MLP**: `perfil_nuevo.json` trae `modelo`, `preferencias [{id, etiqueta, opciones [{id,
+etiqueta}]}]`, `codificacion` (one-hot por opción, orden fijo, `dimension`), `torre_usuario` = capas `{W (salida × entrada,
+como torch.nn.Linear.weight), b, activacion: "relu" | "ninguna"}`, `puntaje` (producto punto + sesgo, `excluir_vistos`),
+`k_defecto` y `k_max`. `destinos.json`: `id`, `nombre`, `embedding`, `sesgo?`, `embedding_2d` (para la figura; `atributos`
+es opcional). `usuarios.json`: `modelo`, y por usuario `historial` y `top_k` precomputado (puede no tener historial).
+`casos_paridad.json`: `{seleccion, vistos, k, vector_usuario, top_k}`. Si el recomendador final de Juan José no es de dos
+torres, el perfil nuevo se exporta igual en este formato (p. ej. una torre lineal ajustada sobre las preferencias) o se
+propone un cambio por PR.
 
 ### 5.9 Resultados (producen: dueños de módulo · consumen: figuras, blog, app)
 Por módulo, en `results/data/<m>/`:

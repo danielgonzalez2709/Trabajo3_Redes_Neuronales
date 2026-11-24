@@ -6,17 +6,20 @@ export type EstadoCarga<T> = { estado: "cargando" } | { estado: "error"; mensaje
 
 export function useCarga<T>(cargador: () => Promise<T>): EstadoCarga<T> {
   const [resultado, setResultado] = useState<EstadoCarga<T>>({ estado: "cargando" });
+  // `cargador` es estable por diseño (se define fuera del componente): se carga una sola vez, al montar.
   useEffect(() => {
     let vigente = true;
     cargador().then(
-      (datos) => vigente && setResultado({ estado: "listo", datos }),
-      (e: unknown) => vigente && setResultado({ estado: "error", mensaje: e instanceof Error ? e.message : String(e) }),
+      (datos) => {
+        if (vigente) setResultado({ estado: "listo", datos });
+      },
+      (e: unknown) => {
+        if (vigente) setResultado({ estado: "error", mensaje: e instanceof Error ? e.message : String(e) });
+      },
     );
     return () => {
       vigente = false;
     };
-    // `cargador` es estable por diseño (se define fuera del componente): se carga una sola vez.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return resultado;
 }

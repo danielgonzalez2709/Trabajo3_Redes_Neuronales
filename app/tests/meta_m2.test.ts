@@ -2,7 +2,7 @@
 // La inferencia con el ONNX en el navegador se prueba contra estos mismos casos en DA-7.
 import { describe, expect, it } from "vitest";
 import { calcularCam, decidirAlerta, indiceMaximo, preprocesar, probabilidadConAlerta, softmax } from "../lib/clasificar";
-import { validarMetaM2 } from "../lib/contratos";
+import { MAX_CASOS_M2, validarEntradaCaso, validarMetaM2 } from "../lib/contratos";
 import { existe, leerModelo } from "./ayuda";
 
 const meta = validarMetaM2(leerModelo("m2/meta.json"));
@@ -31,6 +31,23 @@ describe("meta.json de M2", () => {
     for (const e of meta.ejemplos) expect(existe(`model/m2/ejemplos/${e.archivo}`), e.archivo).toBe(true);
     expect(existe("ort/ort-wasm-simd-threaded.wasm")).toBe(true);
     expect(existe("ort/ort-wasm-simd-threaded.mjs")).toBe(true);
+  });
+
+  it("declara el preprocesado y trae a lo sumo 3 casos, con uno desde un archivo de imagen y uno con la entrada en archivo aparte", () => {
+    expect(meta.preprocesado).toEqual({
+      redimensionado: "estirar", interpolacion: "bilineal", canales: "RGB", escala: "0-1", normalizacion: "media_desviacion",
+    });
+    expect(meta.casos_paridad.length).toBeLessThanOrEqual(MAX_CASOS_M2);
+    const conImagen = meta.casos_paridad.filter((c) => c.imagen !== undefined);
+    expect(conImagen.length).toBeGreaterThan(0);
+    expect(meta.casos_paridad.some((c) => c.entrada_archivo !== undefined)).toBe(true);
+    for (const c of meta.casos_paridad) {
+      if (c.entrada_archivo) {
+        const rgb = validarEntradaCaso(leerModelo(`m2/${c.entrada_archivo}`), meta.tamano_entrada, c.entrada_archivo);
+        expect(rgb).toHaveLength(meta.tamano_entrada.alto * meta.tamano_entrada.ancho * 3);
+      }
+      if (c.imagen) expect(existe(`model/m2/ejemplos/${c.imagen}`), c.imagen).toBe(true);
+    }
   });
 });
 

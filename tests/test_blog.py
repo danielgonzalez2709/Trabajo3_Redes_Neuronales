@@ -158,6 +158,20 @@ def test_existen_las_14_secciones_y_el_indice_las_incluye():
     assert indice.index(SECCIONES[0]) < indice.index(SECCIONES[-1])
 
 
+def test_fuentes_del_blog_sin_caracteres_de_control():
+    """H-01: un agente guardó `\\bibliografia` como `\\x08ibliografia` (backspace) y el build pasaba porque no había citas."""
+    control = re.compile(rb"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+    archivos = [p for p in BLOG.rglob("*") if p.suffix in {".md", ".bib", ".yml", ".py", ".css", ".js"} and "site" not in p.parts]
+    assert archivos
+    malos = [str(p.relative_to(RAIZ)) for p in archivos if control.search(p.read_bytes())]
+    assert malos == []
+
+
+def test_la_marca_de_bibliografia_esta_bien_escrita():
+    indice = (BLOG / "docs" / "index.md").read_bytes()
+    assert b"\\bibliografia" in indice
+
+
 @pytest.mark.parametrize("nombre", ["03-m1-datos-descriptivo", "06-m2-conduccion", "07-m3-recomendacion"])
 def test_descriptivo_tiene_las_siete_subsecciones_en_orden(nombre):
     texto = (BLOG / "secciones" / f"{nombre}.md").read_text(encoding="utf-8")

@@ -7,21 +7,21 @@ import estilos from "./page.module.css";
 const MODULOS = [
   {
     ruta: "/demanda",
-    color: "var(--ds-m1)",
+    modulo: "m1",
     nombre: "Demanda y operación",
     pregunta: "¿Cuántos pasajeros habrá y cuánta flota necesito?",
     texto: "Elige una ruta y mira el pronóstico a 30 días con su banda de incertidumbre, y cuántos despachos, vehículos y conductores hacen falta según tus supuestos.",
   },
   {
     ruta: "/conduccion",
-    color: "var(--ds-m2)",
+    modulo: "m2",
     nombre: "Conducción distractiva",
     pregunta: "¿El conductor está distraído?",
     texto: "Sube una foto de la cabina: un modelo de visión corre en tu navegador y decide si se dispara una alerta, con el umbral que tú elijas.",
   },
   {
     ruta: "/recomendacion",
-    color: "var(--ds-m3)",
+    modulo: "m3",
     nombre: "Recomendación de destinos",
     pregunta: "¿A dónde le sugiero viajar?",
     texto: "Mira lo que recomendamos a un usuario existente o arma un perfil nuevo con tus preferencias de viaje.",
@@ -50,7 +50,7 @@ export default function Inicio() {
       <ul className={estilos.modulos}>
         {MODULOS.map((m) => (
           <li key={m.ruta}>
-            <Link href={m.ruta} className={estilos.tarjeta} style={{ borderTopColor: m.color }}>
+            <Link href={m.ruta} className={`${estilos.tarjeta} ${estilos[m.modulo]}`}>
               <h2 className={estilos.nombre}>{m.nombre}</h2>
               <p className={estilos.pregunta}>{m.pregunta}</p>
               <p className={estilos.texto}>{m.texto}</p>

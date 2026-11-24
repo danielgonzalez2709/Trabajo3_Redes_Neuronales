@@ -40,10 +40,19 @@ function Contenido({ meta }: { meta: MetaM2 }) {
   const [elegido, setElegido] = useState<string | null>(null); // id del ejemplo elegido
   const [estado, setEstado] = useState<Estado>({ fase: "inicio" });
   const ultimo = useRef(0);
+  const urlSubida = useRef<string | null>(null); // URL de objeto de la imagen subida: hay que revocarla al reemplazarla
+
+  /** Guarda la URL de objeto vigente (o ninguna) y revoca la anterior, que ya no se muestra. */
+  const retener = useCallback((url: string | null) => {
+    if (urlSubida.current && urlSubida.current !== url) URL.revokeObjectURL(urlSubida.current);
+    urlSubida.current = url;
+  }, []);
+  useEffect(() => () => retener(null), [retener]);
 
   const clasificar = useCallback(
     async (origen: File | string, urlVista: string) => {
       const turno = ++ultimo.current;
+      retener(typeof origen === "string" ? null : urlVista);
       setVista(urlVista);
       setEstado({ fase: "procesando" });
       try {
@@ -55,7 +64,7 @@ function Contenido({ meta }: { meta: MetaM2 }) {
         if (turno === ultimo.current) setEstado({ fase: "error", mensaje: e instanceof Error ? e.message : String(e) });
       }
     },
-    [meta],
+    [meta, retener],
   );
 
   const elegirEjemplo = useCallback(
@@ -83,6 +92,12 @@ function Contenido({ meta }: { meta: MetaM2 }) {
   const salida = estado.fase === "listo" ? estado.salida : null;
   const decision = salida ? decidirAlerta(salida.probabilidades, meta, umbral) : null;
   const clase = salida ? meta.clases[salida.claseIndice] : null;
+  const textoEstado =
+    estado.fase === "procesando"
+      ? "Analizando la imagen…"
+      : decision && clase
+        ? `Listo: ${clase.nombre}, ${decision.grupo === "con_alerta" ? "con alerta" : "sin alerta"}.`
+        : "";
 
   return (
     <>
@@ -95,7 +110,6 @@ function Contenido({ meta }: { meta: MetaM2 }) {
           <div className={estilos.miniaturas} role="group" aria-label="Imágenes de ejemplo">
             {meta.ejemplos.map((e) => (
               <button key={e.id} type="button" className={estilos.miniatura} aria-pressed={elegido === e.id} onClick={() => elegirEjemplo(e.id)}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={urlModelo(`m2/ejemplos/${e.archivo}`)} alt="" />
                 {e.descripcion}
               </button>
@@ -109,17 +123,16 @@ function Contenido({ meta }: { meta: MetaM2 }) {
           </p>
         </section>
 
-        <section aria-labelledby="titulo-resultado" aria-live="polite" className={estilos.bloque}>
+        <section aria-labelledby="titulo-resultado" className={estilos.bloque}>
           <h2 id="titulo-resultado" className={estilos.subtitulo}>
             2. Resultado
           </h2>
-          {estado.fase === "procesando" && <Aviso tipo="carga">Analizando la imagen…</Aviso>}
+          <p className={estilos.nota} aria-live="polite">
+            {textoEstado}
+          </p>
           {estado.fase === "error" && <Aviso tipo="error">{estado.mensaje}</Aviso>}
           <div className={estilos.vista}>
-            {vista && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className={estilos.imagen} src={vista} alt="Imagen analizada" />
-            )}
+            {vista && <img className={estilos.imagen} src={vista} alt="Imagen analizada" />}
             <div className={estilos.reservado} role="img" aria-label="Espacio reservado para el mapa de interpretabilidad">
               <p>
                 <strong>Mapa de interpretabilidad (CAM)</strong>
@@ -154,7 +167,7 @@ function Contenido({ meta }: { meta: MetaM2 }) {
                         <span className={estilos.grupoTexto}>{meta.grupo_alerta[c.id] === "con_alerta" ? "con alerta" : "sin alerta"}</span>
                       </span>
                       <span className={estilos.barraPista} aria-hidden="true">
-                        <span className={estilos.barraRelleno} style={{ display: "block", width: `${(salida.probabilidades[i] * 100).toFixed(1)}%` }} />
+                        <span className={estilos.barraRelleno} style={{ width: `${(salida.probabilidades[i] * 100).toFixed(1)}%` }} />
                       </span>
                       <span className={estilos.barraValor}>{formatearPorcentaje(salida.probabilidades[i])}</span>
                     </li>

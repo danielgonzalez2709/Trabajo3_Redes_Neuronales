@@ -8,6 +8,10 @@
   detalle por tipo de despacho y clase de vehículo, marcas de anómalos, ficha/calidad/diccionario en `results/data/m1/eda/`.
   Revisados por revisor-spec (APROBADO), auditor-fugas (sin fuga activa) y revisor-calidad (correcciones aplicadas).
   `run.py m1-datos` regenera todo desde `data/raw/m1/` (no versionado; se reconstruye con `scripts/descargar_m1.py`).
+- DA-5 (app) lista en `dev/daniel` (PR #3): Next.js 16.4.6 estático, 4 páginas con datos de juguete, ONNX de juguete con
+  onnxruntime-web servido desde la app, contratos en `app/lib/contratos.ts` (núcleo §5.4, §5.6, §5.8, v0.6). Falta crear el
+  proyecto en Vercel (cuenta danielgonzalez2709, Root Directory = `app`) después de fusionar.
+- Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
 ## Decisiones vigentes
@@ -34,11 +38,13 @@
 3. Daniel: DA-5 (esqueleto de la app en Vercel con JSON de juguete), guion del video.
 
 ## Cacería
-- Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo).
+- Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
+  `\bibliografia` del blog guardada con un backspace por el agente de DA-1b; evidencia y pruebas listas).
 - Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-24 · Daniel · DA-5 app con contratos (Spec v0.6) y PR #3; blog 01/03/11/13 y guion del video adelantados; H-01.
 - 2026-11-24 · Daniel · DA-2/DA-3/DA-4 terminados (series reales de M1) y en PR #2; Spec v0.3–v0.5 (periodo, tránsito,
   mayo-2021, reglas contra fuga); Pages activo; check `pruebas` obligatorio en `main`.
 - 2026-11-24 · Daniel · DA-1 fusionado en `main` (PR #1); Spec v0.2.

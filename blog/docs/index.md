@@ -45,4 +45,4 @@ y Juan José González Morales
 
 ## Referencias
 
-ibliografia
+\bibliografia

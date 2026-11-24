@@ -1,7 +1,8 @@
 {
- "version": 1,
+ "version": 2,
  "juguete": true,
- "aviso": "Usuarios ficticios; el top-K está precomputado con una regla de juguete (núcleo §5.8).",
+ "aviso": "Usuarios ficticios; el top-K está precomputado con un modelo de juguete (núcleo §5.8).",
+ "modelo": "Juguete: el vector del usuario es el promedio de los embeddings de los destinos de su historial, ponderado por la calificación (cero si no hay historial); puntaje = <u, v_d> + sesgo_d; el top-K excluye los destinos ya vistos.",
  "k_max": 10,
  "usuarios": [
   {
@@ -9,70 +10,66 @@
    "nombre": "Usuario ficticio 01",
    "historial": [
     {
-     "destino_id": "D05",
-     "calificacion": 3
+     "destino_id": "D01",
+     "calificacion": 2
+    },
+    {
+     "destino_id": "D02",
+     "calificacion": 4
+    },
+    {
+     "destino_id": "D04",
+     "calificacion": 4
     },
     {
      "destino_id": "D06",
+     "calificacion": 4
+    },
+    {
+     "destino_id": "D07",
      "calificacion": 3
-    },
-    {
-     "destino_id": "D09",
-     "calificacion": 2
-    },
-    {
-     "destino_id": "D11",
-     "calificacion": 2
-    },
-    {
-     "destino_id": "D12",
-     "calificacion": 2
-    },
-    {
-     "destino_id": "D15",
-     "calificacion": 1
     }
    ],
    "top_k": [
     {
-     "destino_id": "D07",
-     "puntaje": 0.255517
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.23102
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.214976
-    },
-    {
      "destino_id": "D16",
-     "puntaje": 0.210723
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.205065
-    },
-    {
-     "destino_id": "D04",
-     "puntaje": 0.172861
-    },
-    {
-     "destino_id": "D02",
-     "puntaje": 0.159274
-    },
-    {
-     "destino_id": "D03",
-     "puntaje": 0.144138
-    },
-    {
-     "destino_id": "D13",
-     "puntaje": 0.14089
+     "puntaje": 1.375594
     },
     {
      "destino_id": "D08",
-     "puntaje": 0.108171
+     "puntaje": 0.700799
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": 0.629949
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": 0.041014
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": 0.014142
+    },
+    {
+     "destino_id": "D13",
+     "puntaje": -0.007391
+    },
+    {
+     "destino_id": "D05",
+     "puntaje": -0.071036
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": -0.307407
+    },
+    {
+     "destino_id": "D15",
+     "puntaje": -0.366398
+    },
+    {
+     "destino_id": "D09",
+     "puntaje": -0.397642
     }
    ]
   },
@@ -81,66 +78,70 @@
    "nombre": "Usuario ficticio 02",
    "historial": [
     {
-     "destino_id": "D03",
+     "destino_id": "D01",
      "calificacion": 1
     },
     {
-     "destino_id": "D07",
-     "calificacion": 5
+     "destino_id": "D03",
+     "calificacion": 2
     },
     {
-     "destino_id": "D10",
+     "destino_id": "D06",
      "calificacion": 3
     },
     {
-     "destino_id": "D12",
-     "calificacion": 5
+     "destino_id": "D09",
+     "calificacion": 2
     },
     {
-     "destino_id": "D16",
-     "calificacion": 2
+     "destino_id": "D12",
+     "calificacion": 3
+    },
+    {
+     "destino_id": "D15",
+     "calificacion": 5
     }
    ],
    "top_k": [
     {
-     "destino_id": "D15",
-     "puntaje": 0.321431
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.267537
+     "destino_id": "D11",
+     "puntaje": 0.587802
     },
     {
      "destino_id": "D14",
-     "puntaje": 0.239509
+     "puntaje": 0.342721
     },
     {
-     "destino_id": "D06",
-     "puntaje": 0.20601
+     "destino_id": "D16",
+     "puntaje": 0.031237
     },
     {
-     "destino_id": "D05",
-     "puntaje": 0.204301
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.202066
-    },
-    {
-     "destino_id": "D09",
-     "puntaje": 0.198939
+     "destino_id": "D07",
+     "puntaje": 0.026022
     },
     {
      "destino_id": "D04",
-     "puntaje": 0.198379
-    },
-    {
-     "destino_id": "D02",
-     "puntaje": 0.190152
+     "puntaje": -0.155042
     },
     {
      "destino_id": "D13",
-     "puntaje": 0.159957
+     "puntaje": -0.310629
+    },
+    {
+     "destino_id": "D05",
+     "puntaje": -0.362699
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": -0.467608
+    },
+    {
+     "destino_id": "D02",
+     "puntaje": -0.526306
+    },
+    {
+     "destino_id": "D08",
+     "puntaje": -0.717527
     }
    ]
   },
@@ -149,62 +150,62 @@
    "nombre": "Usuario ficticio 03",
    "historial": [
     {
-     "destino_id": "D01",
+     "destino_id": "D03",
      "calificacion": 2
     },
     {
-     "destino_id": "D11",
-     "calificacion": 5
+     "destino_id": "D08",
+     "calificacion": 2
     },
     {
-     "destino_id": "D13",
-     "calificacion": 3
+     "destino_id": "D10",
+     "calificacion": 4
     },
     {
      "destino_id": "D15",
-     "calificacion": 2
+     "calificacion": 3
     }
    ],
    "top_k": [
     {
-     "destino_id": "D07",
-     "puntaje": 0.282955
+     "destino_id": "D06",
+     "puntaje": 0.389618
+    },
+    {
+     "destino_id": "D13",
+     "puntaje": 0.2908
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.159782
     },
     {
      "destino_id": "D16",
-     "puntaje": 0.220091
-    },
-    {
-     "destino_id": "D09",
-     "puntaje": 0.208499
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.201654
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.198747
-    },
-    {
-     "destino_id": "D06",
-     "puntaje": 0.194193
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.180001
-    },
-    {
-     "destino_id": "D05",
-     "puntaje": 0.178115
-    },
-    {
-     "destino_id": "D04",
-     "puntaje": 0.168784
+     "puntaje": 0.117711
     },
     {
      "destino_id": "D02",
-     "puntaje": 0.159224
+     "puntaje": 0.10836
+    },
+    {
+     "destino_id": "D04",
+     "puntaje": 0.062475
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.015805
+    },
+    {
+     "destino_id": "D05",
+     "puntaje": -0.245288
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": -0.546707
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": -0.685026
     }
    ]
   },
@@ -213,62 +214,58 @@
    "nombre": "Usuario ficticio 04",
    "historial": [
     {
-     "destino_id": "D01",
+     "destino_id": "D03",
      "calificacion": 3
     },
     {
-     "destino_id": "D02",
+     "destino_id": "D06",
      "calificacion": 2
     },
     {
-     "destino_id": "D05",
-     "calificacion": 4
-    },
-    {
-     "destino_id": "D07",
+     "destino_id": "D09",
      "calificacion": 2
     }
    ],
    "top_k": [
     {
-     "destino_id": "D15",
-     "puntaje": 0.326015
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.245942
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.245451
-    },
-    {
-     "destino_id": "D16",
-     "puntaje": 0.234027
+     "destino_id": "D11",
+     "puntaje": 0.588333
     },
     {
      "destino_id": "D12",
-     "puntaje": 0.223645
+     "puntaje": 0.567887
     },
     {
-     "destino_id": "D06",
-     "puntaje": 0.193713
+     "destino_id": "D14",
+     "puntaje": 0.424786
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": 0.363492
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.011063
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": -0.187203
     },
     {
      "destino_id": "D04",
-     "puntaje": 0.184298
+     "puntaje": -0.281364
     },
     {
-     "destino_id": "D11",
-     "puntaje": 0.176639
+     "destino_id": "D05",
+     "puntaje": -0.422522
     },
     {
-     "destino_id": "D09",
-     "puntaje": 0.171827
+     "destino_id": "D15",
+     "puntaje": -0.637413
     },
     {
-     "destino_id": "D13",
-     "puntaje": 0.119606
+     "destino_id": "D02",
+     "puntaje": -0.835562
     }
    ]
   },
@@ -277,66 +274,70 @@
    "nombre": "Usuario ficticio 05",
    "historial": [
     {
-     "destino_id": "D03",
-     "calificacion": 1
-    },
-    {
-     "destino_id": "D08",
+     "destino_id": "D01",
      "calificacion": 3
     },
     {
-     "destino_id": "D09",
-     "calificacion": 3
+     "destino_id": "D05",
+     "calificacion": 5
     },
     {
-     "destino_id": "D10",
+     "destino_id": "D06",
      "calificacion": 2
     },
     {
-     "destino_id": "D16",
+     "destino_id": "D08",
      "calificacion": 4
+    },
+    {
+     "destino_id": "D09",
+     "calificacion": 4
+    },
+    {
+     "destino_id": "D10",
+     "calificacion": 1
     }
    ],
    "top_k": [
     {
-     "destino_id": "D07",
-     "puntaje": 0.262742
-    },
-    {
-     "destino_id": "D15",
-     "puntaje": 0.243398
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.196975
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.175773
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.174751
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.171357
-    },
-    {
-     "destino_id": "D06",
-     "puntaje": 0.167503
+     "destino_id": "D16",
+     "puntaje": 0.740203
     },
     {
      "destino_id": "D04",
-     "puntaje": 0.157313
+     "puntaje": 0.405635
     },
     {
-     "destino_id": "D05",
-     "puntaje": 0.153063
+     "destino_id": "D02",
+     "puntaje": 0.138211
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.0284
     },
     {
      "destino_id": "D13",
-     "puntaje": 0.14464
+     "puntaje": -0.082744
+    },
+    {
+     "destino_id": "D03",
+     "puntaje": -0.140895
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": -0.228532
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": -0.317374
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": -0.359328
+    },
+    {
+     "destino_id": "D15",
+     "puntaje": -0.547142
     }
    ]
   },
@@ -346,57 +347,65 @@
    "historial": [
     {
      "destino_id": "D01",
-     "calificacion": 3
+     "calificacion": 4
+    },
+    {
+     "destino_id": "D02",
+     "calificacion": 2
+    },
+    {
+     "destino_id": "D04",
+     "calificacion": 2
     },
     {
      "destino_id": "D05",
      "calificacion": 2
     },
     {
-     "destino_id": "D14",
-     "calificacion": 2
+     "destino_id": "D11",
+     "calificacion": 3
     }
    ],
    "top_k": [
     {
-     "destino_id": "D15",
-     "puntaje": 0.33072
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.269066
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.250198
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.238243
-    },
-    {
      "destino_id": "D16",
-     "puntaje": 0.233596
+     "puntaje": 1.244746
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": 0.688315
     },
     {
      "destino_id": "D06",
-     "puntaje": 0.208134
+     "puntaje": 0.401014
     },
     {
-     "destino_id": "D02",
-     "puntaje": 0.200196
+     "destino_id": "D08",
+     "puntaje": 0.281316
     },
     {
-     "destino_id": "D04",
-     "puntaje": 0.189179
+     "destino_id": "D12",
+     "puntaje": 0.074462
     },
     {
-     "destino_id": "D11",
-     "puntaje": 0.168761
+     "destino_id": "D13",
+     "puntaje": -0.019573
     },
     {
-     "destino_id": "D09",
-     "puntaje": 0.155182
+     "destino_id": "D07",
+     "puntaje": -0.072481
+    },
+    {
+     "destino_id": "D15",
+     "puntaje": -0.123448
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": -0.153679
+    },
+    {
+     "destino_id": "D03",
+     "puntaje": -0.333202
     }
    ]
   },
@@ -406,61 +415,61 @@
    "historial": [
     {
      "destino_id": "D02",
-     "calificacion": 4
+     "calificacion": 3
     },
     {
      "destino_id": "D04",
-     "calificacion": 4
+     "calificacion": 5
     },
     {
      "destino_id": "D09",
-     "calificacion": 1
+     "calificacion": 4
     },
     {
-     "destino_id": "D16",
-     "calificacion": 2
+     "destino_id": "D15",
+     "calificacion": 4
     }
    ],
    "top_k": [
     {
-     "destino_id": "D15",
-     "puntaje": 0.276449
+     "destino_id": "D14",
+     "puntaje": 0.722183
+    },
+    {
+     "destino_id": "D16",
+     "puntaje": 0.399938
     },
     {
      "destino_id": "D07",
-     "puntaje": 0.256048
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.209124
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.207086
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.197499
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.189481
-    },
-    {
-     "destino_id": "D05",
-     "puntaje": 0.173843
+     "puntaje": 0.256129
     },
     {
      "destino_id": "D11",
-     "puntaje": 0.165759
+     "puntaje": 0.077739
     },
     {
-     "destino_id": "D06",
-     "puntaje": 0.160298
+     "destino_id": "D05",
+     "puntaje": 0.056188
+    },
+    {
+     "destino_id": "D01",
+     "puntaje": 0.00128
     },
     {
      "destino_id": "D03",
-     "puntaje": 0.134884
+     "puntaje": -0.026707
+    },
+    {
+     "destino_id": "D06",
+     "puntaje": -0.114487
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": -0.142421
+    },
+    {
+     "destino_id": "D13",
+     "puntaje": -0.170325
     }
    ]
   },
@@ -469,66 +478,117 @@
    "nombre": "Usuario ficticio 08",
    "historial": [
     {
-     "destino_id": "D02",
-     "calificacion": 2
-    },
-    {
-     "destino_id": "D03",
-     "calificacion": 2
+     "destino_id": "D01",
+     "calificacion": 4
     },
     {
      "destino_id": "D05",
-     "calificacion": 1
+     "calificacion": 4
     },
     {
      "destino_id": "D07",
-     "calificacion": 2
+     "calificacion": 3
+    },
+    {
+     "destino_id": "D08",
+     "calificacion": 3
     },
     {
      "destino_id": "D09",
-     "calificacion": 1
+     "calificacion": 5
+    },
+    {
+     "destino_id": "D14",
+     "calificacion": 3
     }
    ],
    "top_k": [
     {
-     "destino_id": "D15",
-     "puntaje": 0.275264
-    },
-    {
      "destino_id": "D16",
-     "puntaje": 0.222936
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.212361
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.196323
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.195828
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.194056
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.192452
-    },
-    {
-     "destino_id": "D06",
-     "puntaje": 0.175045
+     "puntaje": 0.763736
     },
     {
      "destino_id": "D04",
-     "puntaje": 0.17503
+     "puntaje": 0.311264
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": 0.230248
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.139606
+    },
+    {
+     "destino_id": "D06",
+     "puntaje": 0.128203
+    },
+    {
+     "destino_id": "D03",
+     "puntaje": 0.088262
+    },
+    {
+     "destino_id": "D02",
+     "puntaje": -0.048626
     },
     {
      "destino_id": "D13",
-     "puntaje": 0.143937
+     "puntaje": -0.095502
+    },
+    {
+     "destino_id": "D10",
+     "puntaje": -0.340689
+    },
+    {
+     "destino_id": "D15",
+     "puntaje": -0.420882
+    }
+   ]
+  },
+  {
+   "id": "U09",
+   "nombre": "Usuario ficticio 09",
+   "historial": [],
+   "top_k": [
+    {
+     "destino_id": "D16",
+     "puntaje": 0.0821
+    },
+    {
+     "destino_id": "D12",
+     "puntaje": 0.0435
+    },
+    {
+     "destino_id": "D02",
+     "puntaje": 0.0151
+    },
+    {
+     "destino_id": "D13",
+     "puntaje": 0.011
+    },
+    {
+     "destino_id": "D14",
+     "puntaje": 0.0098
+    },
+    {
+     "destino_id": "D07",
+     "puntaje": -0.0138
+    },
+    {
+     "destino_id": "D09",
+     "puntaje": -0.0186
+    },
+    {
+     "destino_id": "D03",
+     "puntaje": -0.0326
+    },
+    {
+     "destino_id": "D11",
+     "puntaje": -0.0479
+    },
+    {
+     "destino_id": "D08",
+     "puntaje": -0.0548
     }
    ]
   }

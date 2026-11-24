@@ -18,6 +18,8 @@
 
 .pista {
   display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 2px;
   padding: 2px;
   border-radius: var(--ds-radio-control);
@@ -63,11 +65,4 @@
 .radio:focus-visible + .cara {
   outline: 2px solid var(--ds-foco);
   outline-offset: 1px;
-}
-
-.punto {
-  flex: none;
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
 }

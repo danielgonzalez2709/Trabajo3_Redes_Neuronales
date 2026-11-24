@@ -269,6 +269,7 @@
 }
 
 .barraRelleno {
+  display: block;
   height: 100%;
   background: var(--ds-m2);
   border-radius: 999px;
@@ -291,4 +292,59 @@
 .grupoTexto {
   font-size: 0.75rem;
   color: var(--ds-texto-suave);
+}
+
+/* Separaciones que antes eran estilos en línea */
+.tituloSeparado {
+  margin-top: 1rem;
+}
+
+.campoSeparado {
+  padding-top: 0.9rem;
+}
+
+.grupoSeparado {
+  margin-top: 1rem;
+}
+
+
+/* Detalles desplegables (parámetros y pasos intermedios) */
+.detalles {
+  padding: 0.6rem 0.9rem;
+  background: var(--ds-fondo);
+  border: 1px solid var(--ds-borde);
+  border-radius: var(--ds-radio);
+}
+
+.detalles summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.detalles[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+.pasos {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tablaTexto td:last-child,
+.tablaTexto th:last-child {
+  text-align: left;
+  white-space: normal;
+}
+
+.opcionesGrupo {
+  margin-bottom: 0.9rem;
+}
+
+.opcionesGrupo:last-child {
+  margin-bottom: 0;
 }

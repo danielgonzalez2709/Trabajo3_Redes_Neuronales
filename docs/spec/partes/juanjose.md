@@ -39,6 +39,14 @@
 
 ## 3. Especificación
 
+### 3.0 Contrato con la app (aviso de Daniel, 24-nov, DA-5)
+La app recomienda a un **perfil nuevo** con un formato de **dos torres lineal/MLP** (núcleo §5.8): selección de preferencias
+→ one-hot por opción → capas de la `torre_usuario` (`W` con forma salida × entrada, como `torch.nn.Linear.weight`) → puntaje
+⟨u, embedding del destino⟩ + sesgo. Diseña la red de JJ-5 de modo que su torre de usuario se pueda exportar así (o ajusta una
+torre lineal sobre las preferencias para el perfil nuevo). Valida tus JSON con `app/lib/contratos.ts`; ejemplo completo en
+`app/public/model/m3/` y `scripts/generar_juguetes_app.py`. La «lista de preferencias para elegir» del enunciado sale de
+`preferencias` en `perfil_nuevo.json`: defínela con las variables reales del conjunto de Kaggle.
+
 ### 3.1 Datos, descriptivo y partición (JJ-1 a JJ-3) [PROPUESTO]
 Descarga manual desde Kaggle (no se versiona la clave) [VERIFICAR archivos y columnas]. Real o sintético: citar lo que diga la
 página del conjunto; si no lo dice, declararlo «no documentado» y analizar señales (distribuciones demasiado uniformes, etc.).

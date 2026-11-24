@@ -48,6 +48,10 @@ entrenan desde el 2021-06-01** (`datos.inicio_entrenamiento`). Para la flota usa
 tránsito cuentan el mismo vehículo en cada terminal) y la composición por clase de vehículo. Hallazgos a analizar: el tránsito
 pesa tanto como el origen; salto del tránsito en Bogotá→Sogamoso desde nov-2022; MICROBUS desaparece en Bogotá→Cali en 2023;
 asimetría de clases en Pasto–Ipiales.
+**Contrato con la app (DA-5):** tus parámetros operativos se exportan a `app/public/model/m1/operacion.json` con el formato
+del núcleo §5.4 (cada parámetro `{valor, unidad, fuente | supuesto: true}`; `globales`, `por_ruta`, `por_clase`,
+`composicion_clases`; controles obligatorios `globales.ocupacion_objetivo` y `globales.cuantil`). Diseña `dimensionar()` y
+`configs/m1/operacion.yaml` pensando en ese formato; valida con `app/lib/contratos.ts`.
 
 ### 3.1 Calendario exógeno (CA-1) [PROPUESTO]
 Festivos de Colombia, puentes (festivo trasladado a lunes), Semana Santa, vacaciones escolares, temporada de fin de año. Cada

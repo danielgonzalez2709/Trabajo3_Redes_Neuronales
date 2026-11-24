@@ -17,21 +17,46 @@
   text-decoration: none;
   background: var(--ds-fondo);
   border: 1px solid var(--ds-borde);
-  border-top: 6px solid var(--ds-acento);
   border-radius: var(--ds-radio);
   box-shadow: var(--ds-sombra);
   transition: transform 150ms ease, border-color 150ms ease;
 }
 
+/* Color de cada módulo: un punto junto al nombre (no un borde grueso sobre la esquina redondeada). */
+.m1 {
+  --color-modulo: var(--ds-m1);
+}
+
+.m2 {
+  --color-modulo: var(--ds-m2);
+}
+
+.m3 {
+  --color-modulo: var(--ds-m3);
+}
+
 .tarjeta:hover {
   transform: translateY(-2px);
+  border-color: var(--color-modulo, var(--ds-acento));
 }
 
 .nombre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.01em;
+}
+
+.nombre::before {
+  content: "";
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--color-modulo, var(--ds-acento));
 }
 
 .pregunta {

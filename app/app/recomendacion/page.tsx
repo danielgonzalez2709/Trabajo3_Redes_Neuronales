@@ -1,18 +1,18 @@
 "use client";
-// Recomendación (M3): usuario existente (historial + top-K precomputado) o perfil nuevo armado con una lista de preferencias.
-// En DA-5 la regla del perfil nuevo es de JUGUETE (lib/recomendar.ts); la real llega en DA-8.
+// Recomendación (M3): usuario existente (historial + top-K precomputado) o perfil nuevo armado con una lista de preferencias
+// que pasa por la torre de usuario del recomendador (lib/recomendar.ts). En DA-5 los pesos son de JUGUETE; los reales llegan en DA-8.
 import { useMemo, useState } from "react";
 import { ControlNumerico } from "../../components/ControlNumerico";
 import { Aviso, AvisoJuguete, Encabezado, Pagina, Pie, Provisional } from "../../components/Marco";
 import { Segmentado } from "../../components/Segmentado";
 import { useCarga } from "../../hooks/useCarga";
 import {
-  validarCoherenciaM3, validarDestinos, validarPerfilNuevo, validarUsuarios, type DestinosJson, type PerfilNuevoJson,
-  type RecomendacionM3, type UsuariosJson,
+  validarCasosM3, validarCoherenciaM3, validarDestinos, validarPerfilNuevo, validarUsuarios, type DestinosJson, type PerfilNuevoJson,
+  type RecomendacionM3, type SeleccionM3, type UsuariosJson,
 } from "../../lib/contratos";
 import { cargarJson } from "../../lib/datos";
 import { formatearNumero } from "../../lib/formato";
-import { recomendarPerfilJuguete } from "../../lib/recomendar";
+import { recomendarPerfil } from "../../lib/recomendar";
 import estilos from "../modulo.module.css";
 
 interface DatosM3 {
@@ -27,7 +27,8 @@ const cargar = async (): Promise<DatosM3> => {
     cargarJson("m3/usuarios.json", validarUsuarios),
     cargarJson("m3/perfil_nuevo.json", validarPerfilNuevo),
   ]);
-  validarCoherenciaM3(destinos, usuarios, perfil);
+  const casos = await cargarJson("m3/casos_paridad.json", (raiz, archivo) => validarCasosM3(raiz, perfil, archivo));
+  validarCoherenciaM3(destinos, usuarios, perfil, casos);
   return { destinos, usuarios, perfil };
 };
 
@@ -50,24 +51,29 @@ export default function Recomendacion() {
 function Contenido({ destinos, usuarios, perfil }: DatosM3) {
   const [modo, setModo] = useState<"existente" | "nuevo">("existente");
   const [usuarioId, setUsuarioId] = useState(usuarios.usuarios[0].id);
-  const [elegidas, setElegidas] = useState<string[]>([]);
+  const [seleccion, setSeleccion] = useState<SeleccionM3>({});
   const [k, setK] = useState(perfil.k_defecto);
   const nombre = useMemo(() => new Map(destinos.destinos.map((d) => [d.id, d.nombre])), [destinos]);
   const usuario = usuarios.usuarios.find((u) => u.id === usuarioId) ?? usuarios.usuarios[0];
-  const kMax = Math.min(perfil.k_max, usuarios.k_max);
+  const kMax = Math.min(perfil.k_max, usuarios.k_max, destinos.destinos.length);
+  const kUso = Math.min(k, kMax); // el K que se usa en todo: nunca más que el máximo
 
   const recomendaciones: RecomendacionM3[] | null = useMemo(() => {
-    if (modo === "existente") return usuario.top_k.slice(0, k);
-    if (elegidas.length === 0) return null;
-    return recomendarPerfilJuguete(elegidas, destinos.destinos, perfil.preferencias.map((p) => p.id), k, perfil.regla.peso_popularidad);
-  }, [modo, usuario, elegidas, k, destinos, perfil]);
+    if (modo === "existente") return usuario.top_k.slice(0, kUso);
+    if (Object.values(seleccion).every((v) => v.length === 0)) return null;
+    return recomendarPerfil(seleccion, perfil.preferencias, perfil.torre_usuario, destinos.destinos, kUso).top_k;
+  }, [modo, usuario, seleccion, kUso, destinos, perfil]);
 
-  const alternar = (id: string) => setElegidas((e) => (e.includes(id) ? e.filter((x) => x !== id) : [...e, id]));
+  const alternar = (prefId: string, opId: string) =>
+    setSeleccion((s) => {
+      const actual = Object.hasOwn(s, prefId) ? s[prefId] : [];
+      return { ...s, [prefId]: actual.includes(opId) ? actual.filter((x) => x !== opId) : [...actual, opId] };
+    });
   const juguete = destinos.juguete || usuarios.juguete || perfil.juguete;
 
   return (
     <>
-      {juguete && <AvisoJuguete detalle="Los destinos y los usuarios son ficticios y las recomendaciones salen de reglas de prueba; no son resultados del recomendador real." />}
+      {juguete && <AvisoJuguete detalle="Los destinos y los usuarios son ficticios y el recomendador tiene pesos aleatorios; no son resultados del recomendador real." />}
       <div className={`${estilos.rejilla} ${estilos.conControles}`}>
         <aside className={estilos.panel} aria-label="Quién recibe la recomendación">
           <Segmentado
@@ -81,7 +87,7 @@ function Contenido({ destinos, usuarios, perfil }: DatosM3) {
             onCambio={(v) => setModo(v as "existente" | "nuevo")}
           />
           {modo === "existente" ? (
-            <div style={{ marginTop: "1rem" }}>
+            <div className={estilos.grupoSeparado}>
               <label className={estilos.etiquetaCampo} htmlFor="usuario">
                 Usuario
               </label>
@@ -94,22 +100,31 @@ function Contenido({ destinos, usuarios, perfil }: DatosM3) {
               </select>
             </div>
           ) : (
-            <fieldset className={estilos.grupoCampos} style={{ marginTop: "1rem" }}>
-              <legend className={estilos.etiquetaCampo}>
-                ¿Qué te gusta? <Provisional>regla de juguete</Provisional>
-              </legend>
-              <div className={estilos.opciones}>
-                {perfil.preferencias.map((p) => (
-                  <label key={p.id} className={estilos.opcion}>
-                    <input type="checkbox" checked={elegidas.includes(p.id)} onChange={() => alternar(p.id)} />
-                    <span>
-                      {p.etiqueta}
-                      <small>{p.descripcion}</small>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            <div className={estilos.grupoSeparado}>
+              <p className={estilos.etiquetaCampo}>
+                ¿Qué te gusta? {juguete && <Provisional>modelo de juguete</Provisional>}
+              </p>
+              {perfil.preferencias.map((pref) => (
+                <fieldset key={pref.id} className={`${estilos.grupoCampos} ${estilos.opcionesGrupo}`}>
+                  <legend className={estilos.nota}>{pref.etiqueta}</legend>
+                  <div className={estilos.opciones}>
+                    {pref.opciones.map((o) => (
+                      <label key={o.id} className={estilos.opcion}>
+                        <input
+                          type="checkbox"
+                          checked={Object.hasOwn(seleccion, pref.id) && seleccion[pref.id].includes(o.id)}
+                          onChange={() => alternar(pref.id, o.id)}
+                        />
+                        <span>
+                          {o.etiqueta}
+                          {o.descripcion && <small>{o.descripcion}</small>}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
+            </div>
           )}
           <ControlNumerico
             etiqueta="Destinos a recomendar (K)"
@@ -117,7 +132,7 @@ function Contenido({ destinos, usuarios, perfil }: DatosM3) {
             minimo={1}
             maximo={kMax}
             paso={1}
-            valor={Math.min(k, kMax)}
+            valor={kUso}
             onCambio={setK}
           />
         </aside>
@@ -128,14 +143,18 @@ function Contenido({ destinos, usuarios, perfil }: DatosM3) {
               <h2 id="historial" className={estilos.subtitulo}>
                 Historial de {usuario.nombre}
               </h2>
-              <ul className={estilos.lista}>
-                {usuario.historial.map((h) => (
-                  <li key={h.destino_id} className={estilos.item}>
-                    <span className={estilos.itemNombre}>{nombre.get(h.destino_id)}</span>
-                    <span className={estilos.itemDato}>Calificación: {h.calificacion} de 5</span>
-                  </li>
-                ))}
-              </ul>
+              {usuario.historial.length === 0 ? (
+                <p className={estilos.nota}>Este usuario todavía no tiene historial: las recomendaciones se calculan sin él.</p>
+              ) : (
+                <ul className={estilos.lista}>
+                  {usuario.historial.map((h) => (
+                    <li key={h.destino_id} className={estilos.item}>
+                      <span className={estilos.itemNombre}>{nombre.get(h.destino_id)}</span>
+                      <span className={estilos.itemDato}>Calificación: {h.calificacion} de 5</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
           <section aria-labelledby="recomendados" className={estilos.bloque}>
@@ -155,6 +174,7 @@ function Contenido({ destinos, usuarios, perfil }: DatosM3) {
                 ))}
               </ol>
             )}
+            <p className={estilos.nota}>{modo === "existente" ? usuarios.modelo : perfil.modelo}</p>
           </section>
         </div>
       </div>

@@ -1,356 +1,562 @@
 {
- "version": 1,
+ "version": 2,
  "juguete": true,
- "aviso": "Regla de recomendación de JUGUETE para el perfil nuevo; la real la define Juan José (JJ, núcleo §5.8).",
+ "aviso": "Recomendador de dos torres con pesos ALEATORIOS (juguete); el real lo entrena Juan José (núcleo §5.8).",
+ "modelo": "Dos torres (juguete): torre de usuario MLP 15-16-8 con pesos aleatorios y embedding aleatorio por destino.",
  "preferencias": [
   {
-   "id": "playa",
-   "etiqueta": "Playa y mar",
-   "descripcion": "Sol, arena y agua tibia."
+   "id": "actividad",
+   "etiqueta": "¿Qué tipo de plan te atrae?",
+   "opciones": [
+    {
+     "id": "playa",
+     "etiqueta": "Playa y mar",
+     "descripcion": "Sol, arena y agua tibia."
+    },
+    {
+     "id": "montana",
+     "etiqueta": "Montaña y senderismo",
+     "descripcion": "Caminatas y paisajes de altura."
+    },
+    {
+     "id": "historia",
+     "etiqueta": "Historia y museos",
+     "descripcion": "Centros históricos y patrimonio."
+    },
+    {
+     "id": "gastronomia",
+     "etiqueta": "Gastronomía",
+     "descripcion": "Comida local y mercados."
+    },
+    {
+     "id": "aventura",
+     "etiqueta": "Aventura",
+     "descripcion": "Deportes y actividades de adrenalina."
+    },
+    {
+     "id": "naturaleza",
+     "etiqueta": "Naturaleza y fauna",
+     "descripcion": "Parques, selva y observación de aves."
+    },
+    {
+     "id": "vida_nocturna",
+     "etiqueta": "Vida nocturna",
+     "descripcion": "Música, bares y fiesta."
+    },
+    {
+     "id": "descanso",
+     "etiqueta": "Descanso y spa",
+     "descripcion": "Tranquilidad y bienestar."
+    }
+   ]
   },
   {
-   "id": "montana",
-   "etiqueta": "Montaña y senderismo",
-   "descripcion": "Caminatas y paisajes de altura."
+   "id": "ritmo",
+   "etiqueta": "Ritmo del viaje",
+   "opciones": [
+    {
+     "id": "tranquilo",
+     "etiqueta": "Tranquilo"
+    },
+    {
+     "id": "moderado",
+     "etiqueta": "Moderado"
+    },
+    {
+     "id": "intenso",
+     "etiqueta": "Intenso"
+    }
+   ]
   },
   {
-   "id": "historia",
-   "etiqueta": "Historia y museos",
-   "descripcion": "Centros históricos y patrimonio."
-  },
-  {
-   "id": "gastronomia",
-   "etiqueta": "Gastronomía",
-   "descripcion": "Comida local y mercados."
-  },
-  {
-   "id": "aventura",
-   "etiqueta": "Aventura",
-   "descripcion": "Deportes y actividades de adrenalina."
-  },
-  {
-   "id": "naturaleza",
-   "etiqueta": "Naturaleza y fauna",
-   "descripcion": "Parques, selva y observación de aves."
-  },
-  {
-   "id": "vida_nocturna",
-   "etiqueta": "Vida nocturna",
-   "descripcion": "Música, bares y fiesta."
-  },
-  {
-   "id": "descanso",
-   "etiqueta": "Descanso y spa",
-   "descripcion": "Tranquilidad y bienestar."
+   "id": "compania",
+   "etiqueta": "¿Con quién viajas?",
+   "opciones": [
+    {
+     "id": "solo",
+     "etiqueta": "Solo"
+    },
+    {
+     "id": "pareja",
+     "etiqueta": "En pareja"
+    },
+    {
+     "id": "familia",
+     "etiqueta": "En familia"
+    },
+    {
+     "id": "amigos",
+     "etiqueta": "Con amigos"
+    }
+   ]
   }
  ],
- "regla": {
-  "tipo": "afinidad_media_juguete",
-  "peso_popularidad": 0.1,
-  "descripcion": "puntaje = promedio del atributo de cada preferencia elegida + peso_popularidad * popularidad"
+ "codificacion": {
+  "tipo": "one_hot_por_opcion",
+  "dimension": 15,
+  "descripcion": "Un 1 por cada opción elegida y un 0 por las demás; las preferencias van en el orden de la lista y, dentro de cada una, las opciones en el orden de la lista. Se pueden elegir varias opciones por preferencia."
+ },
+ "torre_usuario": [
+  {
+   "W": [
+    [
+     -0.6423,
+     0.2402,
+     -0.2513,
+     0.6481,
+     -0.4342,
+     0.8398,
+     -0.1164,
+     -0.0334,
+     -0.2298,
+     -0.0777,
+     -0.1423,
+     0.5157,
+     0.133,
+     -0.0319,
+     0.0017
+    ],
+    [
+     -0.3424,
+     0.9493,
+     0.0365,
+     0.6664,
+     0.106,
+     0.7108,
+     0.0838,
+     0.029,
+     0.7047,
+     0.1118,
+     -0.3204,
+     -0.3251,
+     -0.601,
+     -0.3627,
+     0.0928
+    ],
+    [
+     0.6789,
+     0.4555,
+     -0.4356,
+     -0.34,
+     0.858,
+     0.0512,
+     0.4253,
+     0.2129,
+     0.6432,
+     -0.7699,
+     0.8917,
+     1.0111,
+     -1.6266,
+     -0.4683,
+     -0.918
+    ],
+    [
+     0.2753,
+     0.2681,
+     -0.2256,
+     0.1999,
+     -0.0389,
+     0.5187,
+     0.2675,
+     -0.1239,
+     -0.5131,
+     -0.3431,
+     -0.5963,
+     -0.2491,
+     0.331,
+     0.1425,
+     -0.6098
+    ],
+    [
+     -0.6786,
+     -1.4667,
+     -0.4649,
+     0.2499,
+     -0.0795,
+     0.2657,
+     0.159,
+     0.7504,
+     -1.1407,
+     0.225,
+     0.6121,
+     -0.4298,
+     0.659,
+     0.0949,
+     0.5472
+    ],
+    [
+     0.4149,
+     -0.1023,
+     1.0415,
+     0.1378,
+     -0.229,
+     -0.3635,
+     0.5028,
+     -0.2272,
+     -0.1204,
+     0.0421,
+     0.1788,
+     -0.2106,
+     0.6434,
+     -0.9178,
+     0.5029
+    ],
+    [
+     0.1587,
+     0.6602,
+     -0.0117,
+     0.3686,
+     -0.3582,
+     0.79,
+     -1.2199,
+     -0.0344,
+     -0.1399,
+     0.2409,
+     -0.8012,
+     -0.4205,
+     0.2034,
+     -0.2192,
+     0.2614
+    ],
+    [
+     -0.484,
+     0.5914,
+     -0.4005,
+     -0.8086,
+     0.7463,
+     0.2425,
+     0.4075,
+     0.3865,
+     -0.1607,
+     -0.9998,
+     -0.5954,
+     -1.5684,
+     0.5082,
+     0.0051,
+     -0.2146
+    ],
+    [
+     -0.3494,
+     0.4218,
+     0.9669,
+     -0.2537,
+     1.188,
+     -0.3089,
+     -0.6109,
+     0.2875,
+     -0.2352,
+     -0.2647,
+     -0.1785,
+     0.5884,
+     0.1946,
+     0.1926,
+     0.0404
+    ],
+    [
+     -0.2945,
+     0.7168,
+     0.7211,
+     0.6189,
+     -0.2226,
+     -0.0051,
+     -0.1755,
+     -0.3934,
+     -0.1245,
+     0.6973,
+     0.1085,
+     0.4092,
+     0.2439,
+     0.5434,
+     0.3187
+    ],
+    [
+     -0.1053,
+     0.2667,
+     0.1013,
+     -0.1693,
+     -1.0576,
+     -0.1755,
+     -0.4373,
+     -0.042,
+     0.2428,
+     0.3677,
+     -0.046,
+     -0.9656,
+     0.427,
+     0.1988,
+     -0.0011
+    ],
+    [
+     -0.1723,
+     -0.1076,
+     0.41,
+     -0.1298,
+     -0.7853,
+     -0.4738,
+     0.0686,
+     0.5382,
+     -1.0135,
+     -0.2775,
+     -0.0783,
+     -0.0106,
+     0.5338,
+     0.5702,
+     0.1679
+    ],
+    [
+     0.6885,
+     -0.2499,
+     -0.0247,
+     0.3353,
+     0.0027,
+     -0.2318,
+     -0.305,
+     0.6574,
+     0.2252,
+     0.0413,
+     -0.1436,
+     -0.2214,
+     -0.4708,
+     -0.2028,
+     -0.1398
+    ],
+    [
+     -0.11,
+     -0.4964,
+     1.413,
+     -0.4202,
+     0.2879,
+     -0.7926,
+     0.5277,
+     0.6615,
+     0.7067,
+     0.1818,
+     0.7189,
+     0.3402,
+     -0.3382,
+     0.2297,
+     0.159
+    ],
+    [
+     -0.0709,
+     0.4752,
+     -0.0413,
+     -0.2507,
+     0.0727,
+     0.1613,
+     -0.1123,
+     -0.6374,
+     -0.4403,
+     0.0527,
+     -1.1083,
+     0.3908,
+     -0.5934,
+     -0.2118,
+     -0.4444
+    ],
+    [
+     -0.1126,
+     -0.4478,
+     0.4053,
+     -0.0202,
+     0.2895,
+     -0.1331,
+     -0.6888,
+     -0.4791,
+     0.5297,
+     -0.0549,
+     0.0627,
+     0.0542,
+     -0.6587,
+     -0.2346,
+     -0.1985
+    ]
+   ],
+   "b": [
+    0.1116,
+    0.059,
+    -0.0679,
+    -0.0186,
+    -0.0725,
+    0.1216,
+    0.0418,
+    -0.0226,
+    0.0556,
+    -0.0562,
+    -0.0633,
+    0.066,
+    -0.0438,
+    -0.0122,
+    -0.0816,
+    0.2542
+   ],
+   "activacion": "relu"
+  },
+  {
+   "W": [
+    [
+     -0.6547,
+     -0.3585,
+     -0.5817,
+     -0.008,
+     -0.2717,
+     0.1074,
+     -0.6825,
+     0.5539,
+     -0.179,
+     -0.1859,
+     -0.9479,
+     0.5577,
+     -0.252,
+     0.7288,
+     0.127,
+     0.1203
+    ],
+    [
+     0.5216,
+     -0.2407,
+     -0.4498,
+     -0.4757,
+     -0.3035,
+     0.2776,
+     -0.3119,
+     0.1118,
+     0.5645,
+     0.1217,
+     0.0137,
+     0.6123,
+     -0.2288,
+     -0.4364,
+     0.5542,
+     0.0004
+    ],
+    [
+     1.0666,
+     -0.077,
+     0.551,
+     -0.9959,
+     -0.3512,
+     0.4594,
+     -0.6768,
+     0.1285,
+     -0.551,
+     0.2659,
+     -0.2632,
+     -0.1125,
+     -0.2982,
+     -0.2951,
+     0.388,
+     0.6926
+    ],
+    [
+     0.0118,
+     -0.1664,
+     -0.453,
+     0.1747,
+     -0.6004,
+     -0.554,
+     -0.7315,
+     0.2413,
+     0.112,
+     -0.0794,
+     -0.2087,
+     -0.3652,
+     -1.0879,
+     -0.3924,
+     0.2385,
+     -0.2173
+    ],
+    [
+     -0.1787,
+     0.6762,
+     -0.5204,
+     -0.289,
+     0.4482,
+     0.76,
+     -0.3339,
+     0.5711,
+     -0.2018,
+     0.4262,
+     0.1416,
+     0.3105,
+     -0.1027,
+     0.8618,
+     0.2196,
+     1.1756
+    ],
+    [
+     0.046,
+     0.3535,
+     0.5956,
+     0.4029,
+     -0.6032,
+     -0.1359,
+     1.0276,
+     -0.5905,
+     -0.4186,
+     0.2241,
+     -0.0876,
+     0.3499,
+     -0.2289,
+     0.4285,
+     0.2633,
+     0.5052
+    ],
+    [
+     -1.2737,
+     -0.2575,
+     -0.107,
+     -0.6231,
+     0.0266,
+     0.6712,
+     -0.1217,
+     0.2227,
+     0.8283,
+     0.7515,
+     0.8528,
+     0.0948,
+     0.0172,
+     0.1332,
+     -0.3784,
+     0.2907
+    ],
+    [
+     0.3839,
+     -0.3483,
+     -0.0033,
+     0.0345,
+     -1.2237,
+     0.3537,
+     0.2905,
+     0.6534,
+     0.7884,
+     -0.0655,
+     1.1278,
+     -0.3992,
+     0.6063,
+     0.0295,
+     -0.2085,
+     0.0566
+    ]
+   ],
+   "b": [
+    -0.1489,
+    -0.2127,
+    -0.0739,
+    -0.0675,
+    -0.0087,
+    -0.1876,
+    -0.0266,
+    -0.0211
+   ],
+   "activacion": "ninguna"
+  }
+ ],
+ "puntaje": {
+  "tipo": "producto_punto_mas_sesgo",
+  "excluir_vistos": true,
+  "descripcion": "puntaje = <u, v_d> + sesgo_d, con u la salida de la torre de usuario y v_d el embedding del destino; el top-K excluye los destinos ya vistos (un perfil nuevo no tiene ninguno)."
  },
  "k_defecto": 5,
- "k_max": 10,
- "casos_paridad": [
-  {
-   "preferencias": [
-    "playa"
-   ],
-   "k": 10,
-   "top_k": [
-    {
-     "destino_id": "D05",
-     "puntaje": 1.014
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.842
-    },
-    {
-     "destino_id": "D06",
-     "puntaje": 0.8140000000000001
-    },
-    {
-     "destino_id": "D15",
-     "puntaje": 0.8099999999999999
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.7310000000000001
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.7170000000000001
-    },
-    {
-     "destino_id": "D16",
-     "puntaje": 0.5509999999999999
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.397
-    },
-    {
-     "destino_id": "D02",
-     "puntaje": 0.384
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.384
-    }
-   ]
-  },
-  {
-   "preferencias": [
-    "naturaleza"
-   ],
-   "k": 8,
-   "top_k": [
-    {
-     "destino_id": "D15",
-     "puntaje": 1.06
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.893
-    },
-    {
-     "destino_id": "D05",
-     "puntaje": 0.724
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.7070000000000001
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.501
-    },
-    {
-     "destino_id": "D04",
-     "puntaje": 0.497
-    },
-    {
-     "destino_id": "D02",
-     "puntaje": 0.46399999999999997
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.404
-    }
-   ]
-  },
-  {
-   "preferencias": [
-    "naturaleza",
-    "vida_nocturna"
-   ],
-   "k": 6,
-   "top_k": [
-    {
-     "destino_id": "D15",
-     "puntaje": 0.7499999999999999
-    },
-    {
-     "destino_id": "D05",
-     "puntaje": 0.7490000000000001
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.617
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.6160000000000001
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.553
-    },
-    {
-     "destino_id": "D09",
-     "puntaje": 0.541
-    }
-   ]
-  },
-  {
-   "preferencias": [
-    "historia",
-    "gastronomia",
-    "descanso"
-   ],
-   "k": 7,
-   "top_k": [
-    {
-     "destino_id": "D11",
-     "puntaje": 0.734
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.7263333333333333
-    },
-    {
-     "destino_id": "D15",
-     "puntaje": 0.7166666666666667
-    },
-    {
-     "destino_id": "D03",
-     "puntaje": 0.6836666666666666
-    },
-    {
-     "destino_id": "D16",
-     "puntaje": 0.6376666666666667
-    },
-    {
-     "destino_id": "D04",
-     "puntaje": 0.5736666666666668
-    },
-    {
-     "destino_id": "D09",
-     "puntaje": 0.551
-    }
-   ]
-  },
-  {
-   "preferencias": [
-    "historia",
-    "gastronomia",
-    "naturaleza"
-   ],
-   "k": 9,
-   "top_k": [
-    {
-     "destino_id": "D15",
-     "puntaje": 0.9400000000000001
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.7063333333333334
-    },
-    {
-     "destino_id": "D04",
-     "puntaje": 0.687
-    },
-    {
-     "destino_id": "D03",
-     "puntaje": 0.6536666666666667
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.5543333333333333
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.5506666666666667
-    },
-    {
-     "destino_id": "D06",
-     "puntaje": 0.5439999999999999
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.46366666666666667
-    },
-    {
-     "destino_id": "D16",
-     "puntaje": 0.45433333333333337
-    }
-   ]
-  },
-  {
-   "preferencias": [
-    "montana",
-    "historia",
-    "gastronomia",
-    "aventura",
-    "vida_nocturna"
-   ],
-   "k": 7,
-   "top_k": [
-    {
-     "destino_id": "D15",
-     "puntaje": 0.668
-    },
-    {
-     "destino_id": "D16",
-     "puntaje": 0.6109999999999999
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.589
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.5810000000000001
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.5589999999999999
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.5469999999999999
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.52
-    }
-   ]
-  },
-  {
-   "preferencias": [
-    "playa",
-    "montana",
-    "historia",
-    "gastronomia",
-    "aventura",
-    "naturaleza",
-    "vida_nocturna",
-    "descanso"
-   ],
-   "k": 10,
-   "top_k": [
-    {
-     "destino_id": "D15",
-     "puntaje": 0.7
-    },
-    {
-     "destino_id": "D07",
-     "puntaje": 0.6104999999999999
-    },
-    {
-     "destino_id": "D01",
-     "puntaje": 0.57325
-    },
-    {
-     "destino_id": "D16",
-     "puntaje": 0.55475
-    },
-    {
-     "destino_id": "D14",
-     "puntaje": 0.5395
-    },
-    {
-     "destino_id": "D10",
-     "puntaje": 0.5347500000000001
-    },
-    {
-     "destino_id": "D11",
-     "puntaje": 0.51025
-    },
-    {
-     "destino_id": "D05",
-     "puntaje": 0.50775
-    },
-    {
-     "destino_id": "D12",
-     "puntaje": 0.4882500000000001
-    },
-    {
-     "destino_id": "D06",
-     "puntaje": 0.48275
-    }
-   ]
-  }
- ]
+ "k_max": 10
 }

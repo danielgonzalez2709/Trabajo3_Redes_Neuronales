@@ -1,310 +1,310 @@
 {
- "version": 1,
+ "version": 2,
  "juguete": true,
- "aviso": "Destinos ficticios con atributos aleatorios (núcleo §5.8). No describen lugares reales.",
+ "aviso": "Destinos ficticios con embeddings aleatorios (núcleo §5.8). No describen lugares reales.",
  "destinos": [
   {
    "id": "D01",
    "nombre": "Bahía Cristal (ficticio)",
-   "atributos": {
-    "playa": 0.65,
-    "montana": 0.56,
-    "historia": 0.36,
-    "gastronomia": 0.19,
-    "aventura": 0.89,
-    "naturaleza": 0.64,
-    "vida_nocturna": 0.46,
-    "descanso": 0.3
-   },
-   "popularidad": 0.67,
+   "embedding": [
+    -1.0111,
+    -0.1539,
+    0.0494,
+    0.5353,
+    0.4633,
+    0.5724,
+    0.2676,
+    0.0999
+   ],
+   "sesgo": -0.0823,
    "embedding_2d": [
-    -0.641,
-    -0.65
+    -0.909,
+    -0.871
    ]
   },
   {
    "id": "D02",
    "nombre": "Cerro Alto (ficticio)",
-   "atributos": {
-    "playa": 0.29,
-    "montana": 0.11,
-    "historia": 0.03,
-    "gastronomia": 0.34,
-    "aventura": 0.83,
-    "naturaleza": 0.37,
-    "vida_nocturna": 0.31,
-    "descanso": 0.58
-   },
-   "popularidad": 0.94,
+   "embedding": [
+    0.0356,
+    -0.2493,
+    0.381,
+    0.2775,
+    0.4178,
+    -1.2961,
+    0.0803,
+    0.3436
+   ],
+   "sesgo": 0.0151,
    "embedding_2d": [
-    -0.686,
-    -1.193
+    0.368,
+    -0.441
    ]
   },
   {
    "id": "D03",
    "nombre": "Villa Antigua (ficticio)",
-   "atributos": {
-    "playa": 0.13,
-    "montana": 0.36,
-    "historia": 0.87,
-    "gastronomia": 0.89,
-    "aventura": 0.03,
-    "naturaleza": 0.06,
-    "vida_nocturna": 0.14,
-    "descanso": 0.15
-   },
-   "popularidad": 0.47,
+   "embedding": [
+    1.021,
+    -0.2818,
+    0.2418,
+    0.5129,
+    0.1167,
+    0.9276,
+    -0.8994,
+    -0.4823
+   ],
+   "sesgo": -0.0326,
    "embedding_2d": [
-    -0.241,
-    0.084
+    0.533,
+    0.119
    ]
   },
   {
    "id": "D04",
    "nombre": "Puerto Sabor (ficticio)",
-   "atributos": {
-    "playa": 0.3,
-    "montana": 0.03,
-    "historia": 0.61,
-    "gastronomia": 0.86,
-    "aventura": 0.56,
-    "naturaleza": 0.45,
-    "vida_nocturna": 0.24,
-    "descanso": 0.11
-   },
-   "popularidad": 0.47,
+   "embedding": [
+    -0.8258,
+    0.1662,
+    0.1298,
+    0.8559,
+    0.0966,
+    0.0083,
+    0.2443,
+    0.1524
+   ],
+   "sesgo": -0.0951,
    "embedding_2d": [
-    -2.0,
-    -1.191
+    1.745,
+    -0.034
    ]
   },
   {
    "id": "D05",
    "nombre": "Cañón Bravo (ficticio)",
-   "atributos": {
-    "playa": 0.95,
-    "montana": 0.07,
-    "historia": 0.18,
-    "gastronomia": 0.19,
-    "aventura": 0.61,
-    "naturaleza": 0.66,
-    "vida_nocturna": 0.71,
-    "descanso": 0.18
-   },
-   "popularidad": 0.64,
+   "embedding": [
+    0.0684,
+    -0.3444,
+    -0.0473,
+    0.2306,
+    0.0033,
+    -0.57,
+    -0.2986,
+    0.3036
+   ],
+   "sesgo": -0.1299,
    "embedding_2d": [
-    -0.445,
-    -0.01
+    -0.654,
+    -0.087
    ]
   },
   {
    "id": "D06",
    "nombre": "Selva Verde (ficticio)",
-   "atributos": {
-    "playa": 0.78,
-    "montana": 0.68,
-    "historia": 0.52,
-    "gastronomia": 0.65,
-    "aventura": 0.12,
-    "naturaleza": 0.36,
-    "vida_nocturna": 0.38,
-    "descanso": 0.1
-   },
-   "popularidad": 0.34,
+   "embedding": [
+    -0.0065,
+    0.4856,
+    0.2691,
+    0.9529,
+    0.0671,
+    0.4799,
+    0.8572,
+    -0.3267
+   ],
+   "sesgo": -0.1054,
    "embedding_2d": [
-    -0.021,
-    1.068
+    0.296,
+    0.1
    ]
   },
   {
    "id": "D07",
    "nombre": "Ciudad Neón (ficticio)",
-   "atributos": {
-    "playa": 0.12,
-    "montana": 0.61,
-    "historia": 0.9,
-    "gastronomia": 0.3,
-    "aventura": 0.83,
-    "naturaleza": 0.88,
-    "vida_nocturna": 0.2,
-    "descanso": 0.94
-   },
-   "popularidad": 0.13,
+   "embedding": [
+    -0.235,
+    0.3797,
+    0.3322,
+    -0.2266,
+    -0.2831,
+    -0.2721,
+    -0.6548,
+    -0.5636
+   ],
+   "sesgo": -0.0138,
    "embedding_2d": [
-    0.318,
-    -0.142
+    -0.424,
+    0.207
    ]
   },
   {
    "id": "D08",
    "nombre": "Lago Sereno (ficticio)",
-   "atributos": {
-    "playa": 0.06,
-    "montana": 0.08,
-    "historia": 0.76,
-    "gastronomia": 0.36,
-    "aventura": 0.29,
-    "naturaleza": 0.01,
-    "vida_nocturna": 0.2,
-    "descanso": 0.27
-   },
-   "popularidad": 0.4,
+   "embedding": [
+    0.0264,
+    0.5199,
+    -0.7791,
+    0.7939,
+    1.2388,
+    -0.0312,
+    1.7324,
+    0.8611
+   ],
+   "sesgo": -0.0548,
    "embedding_2d": [
-    -0.958,
-    1.059
+    -1.527,
+    -0.661
    ]
   },
   {
    "id": "D09",
    "nombre": "Isla Coral (ficticio)",
-   "atributos": {
-    "playa": 0.03,
-    "montana": 0.59,
-    "historia": 0.51,
-    "gastronomia": 0.1,
-    "aventura": 0.11,
-    "naturaleza": 0.05,
-    "vida_nocturna": 0.97,
-    "descanso": 0.95
-   },
-   "popularidad": 0.31,
+   "embedding": [
+    0.2796,
+    0.4309,
+    0.5648,
+    -0.2153,
+    -0.2972,
+    0.4999,
+    -1.3982,
+    -0.5344
+   ],
+   "sesgo": -0.0186,
    "embedding_2d": [
-    1.115,
-    -0.504
+    -0.34,
+    -0.228
    ]
   },
   {
    "id": "D10",
    "nombre": "Valle Niebla (ficticio)",
-   "atributos": {
-    "playa": 0.65,
-    "montana": 0.03,
-    "historia": 0.86,
-    "gastronomia": 0.14,
-    "aventura": 0.86,
-    "naturaleza": 0.42,
-    "vida_nocturna": 0.65,
-    "descanso": 0.02
-   },
-   "popularidad": 0.81,
+   "embedding": [
+    -0.2241,
+    0.5241,
+    0.0563,
+    -0.3922,
+    0.0947,
+    0.1379,
+    1.2116,
+    1.379
+   ],
+   "sesgo": -0.0835,
    "embedding_2d": [
-    -0.526,
-    -0.225
+    -0.084,
+    -1.295
    ]
   },
   {
    "id": "D11",
    "nombre": "Fortaleza Vieja (ficticio)",
-   "atributos": {
-    "playa": 0.31,
-    "montana": 0.46,
-    "historia": 0.47,
-    "gastronomia": 0.63,
-    "aventura": 0.0,
-    "naturaleza": 0.33,
-    "vida_nocturna": 0.41,
-    "descanso": 0.88
-   },
-   "popularidad": 0.74,
+   "embedding": [
+    -0.6122,
+    -0.1802,
+    -0.1376,
+    0.2064,
+    -0.9468,
+    0.7982,
+    0.1314,
+    -0.9957
+   ],
+   "sesgo": -0.0479,
    "embedding_2d": [
-    1.352,
-    -1.041
+    1.6,
+    0.881
    ]
   },
   {
    "id": "D12",
    "nombre": "Costa Brisa (ficticio)",
-   "atributos": {
-    "playa": 0.37,
-    "montana": 0.93,
-    "historia": 0.06,
-    "gastronomia": 0.5,
-    "aventura": 0.83,
-    "naturaleza": 0.31,
-    "vida_nocturna": 0.28,
-    "descanso": 0.41
-   },
-   "popularidad": 0.27,
+   "embedding": [
+    -0.3645,
+    -0.0996,
+    0.1933,
+    -0.5729,
+    0.3467,
+    1.1574,
+    -0.326,
+    0.1055
+   ],
+   "sesgo": 0.0435,
    "embedding_2d": [
-    0.053,
-    1.342
+    -0.074,
+    -0.123
    ]
   },
   {
    "id": "D13",
    "nombre": "Páramo Claro (ficticio)",
-   "atributos": {
-    "playa": 0.01,
-    "montana": 0.69,
-    "historia": 0.34,
-    "gastronomia": 0.14,
-    "aventura": 0.02,
-    "naturaleza": 0.06,
-    "vida_nocturna": 0.31,
-    "descanso": 0.92
-   },
-   "popularidad": 0.29,
+   "embedding": [
+    -0.8118,
+    0.4829,
+    0.0378,
+    -1.1146,
+    0.2132,
+    -0.2569,
+    0.6048,
+    -0.0399
+   ],
+   "sesgo": 0.011,
    "embedding_2d": [
-    -0.131,
-    2.256
+    0.231,
+    -0.977
    ]
   },
   {
    "id": "D14",
    "nombre": "Mercado Grande (ficticio)",
-   "atributos": {
-    "playa": 0.77,
-    "montana": 0.3,
-    "historia": 0.03,
-    "gastronomia": 0.67,
-    "aventura": 0.99,
-    "naturaleza": 0.27,
-    "vida_nocturna": 0.25,
-    "descanso": 0.46
-   },
-   "popularidad": 0.72,
+   "embedding": [
+    -0.9002,
+    0.4699,
+    0.8803,
+    0.4972,
+    -1.477,
+    -0.0605,
+    -0.2754,
+    -0.3685
+   ],
+   "sesgo": 0.0098,
    "embedding_2d": [
-    0.059,
-    -0.416
+    -0.367,
+    0.304
    ]
   },
   {
    "id": "D15",
    "nombre": "Río Salto (ficticio)",
-   "atributos": {
-    "playa": 0.74,
-    "montana": 0.02,
-    "historia": 0.81,
-    "gastronomia": 0.81,
-    "aventura": 0.98,
-    "naturaleza": 0.99,
-    "vida_nocturna": 0.37,
-    "descanso": 0.32
-   },
-   "popularidad": 0.7,
+   "embedding": [
+    0.0698,
+    -0.8715,
+    0.1624,
+    -0.3373,
+    -0.6617,
+    -0.2589,
+    0.4171,
+    -0.1111
+   ],
+   "sesgo": -0.1208,
    "embedding_2d": [
-    0.119,
-    -1.376
+    -0.004,
+    -0.271
    ]
   },
   {
    "id": "D16",
    "nombre": "Termas Quietas (ficticio)",
-   "atributos": {
-    "playa": 0.48,
-    "montana": 0.66,
-    "historia": 0.95,
-    "gastronomia": 0.13,
-    "aventura": 0.93,
-    "naturaleza": 0.07,
-    "vida_nocturna": 0.03,
-    "descanso": 0.62
-   },
-   "popularidad": 0.71,
+   "embedding": [
+    -1.2279,
+    0.7693,
+    0.2074,
+    1.1452,
+    -0.0203,
+    0.0366,
+    0.5551,
+    -0.3627
+   ],
+   "sesgo": 0.0821,
    "embedding_2d": [
-    -1.054,
-    0.296
+    -0.087,
+    0.756
    ]
   }
  ]
