@@ -96,10 +96,39 @@ INFORME = """# Informe
 """
 
 
-def escribir_entorno(tmp_path, crudo=None, divipola=None, pares=None):
-    """Crea la carpeta cruda, el DIVIPOLA, los metadatos y el informe de juguete, y devuelve la config."""
+FECHA_DESCARGA = "2026-11-24"
+FECHA_CONSULTA_CONTEO = "2026-11-25"
+
+
+def conteo_juguete(rutas=(f"{A}-{B}", f"{B}-{A}"), meses=("2021-01", "2021-02", "2021-03")):
+    """conteo_registros.csv de juguete: 500 + 10·(número de mes) + índice de ruta registros por (mes, ruta)."""
+    filas = [(m, r, 500 + 10 * i + j, FECHA_CONSULTA_CONTEO)
+             for i, m in enumerate(meses, 1) for j, r in enumerate(rutas)]
+    return pd.DataFrame(filas, columns=["mes", "ruta_id", "registros", "fecha_consulta"])
+
+
+def log_juguete(id_socrata="xxxx-yyyy"):
+    """Log de consultas: un ranking (sin clase_vehiculo), descargas mensuales (con clase_vehiculo), un conteo, un intento
+    fallido posterior y una consulta de otro conjunto. Solo las descargas exitosas dan la fecha de descarga."""
+    base = f"https://www.datos.gov.co/resource/{id_socrata}.json?%24select="
+    otro = "https://www.datos.gov.co/resource/otro-0000.json?%24select=clase_vehiculo"
+    return [
+        {"momento": "2026-11-20T10:00:00+00:00", "intento": 1, "url": base + "a%2C+count%28%2A%29", "http": 200, "filas": 5},
+        {"momento": "2026-11-23T08:00:00+00:00", "intento": 1, "url": base + "clase_vehiculo", "http": 200, "filas": 5},
+        {"momento": "2026-11-24T16:49:51+00:00", "intento": 1, "url": base + "x%2C+clase_vehiculo", "http": 200, "filas": 7},
+        {"momento": "2026-11-25T09:00:00+00:00", "intento": 1, "url": base + "count%28%2A%29+as+registros", "http": 200, "filas": 2},
+        {"momento": "2026-11-26T09:00:00+00:00", "intento": 1, "url": base + "clase_vehiculo", "error": "ConnectionError"},
+        {"momento": "2026-11-27T09:00:00+00:00", "intento": 1, "url": otro, "http": 200, "filas": 1},
+    ]
+
+
+def escribir_entorno(tmp_path, crudo=None, divipola=None, pares=None, conteo=None):
+    """Crea la carpeta cruda, el DIVIPOLA, los metadatos, el informe, el log y el conteo de juguete; devuelve la config."""
     carpeta = tmp_path / "raw" / "rutas"
     carpeta.mkdir(parents=True)
+    (tmp_path / "raw" / "consultas_log.jsonl").write_text(
+        "\n".join(json.dumps(r) for r in log_juguete()) + "\n", encoding="utf-8")
+    (conteo_juguete() if conteo is None else conteo).to_csv(tmp_path / "conteo_registros.csv", index=False)
     crudo = crudo_base() if crudo is None else crudo
     meses = crudo["fecha_despacho"].dt.strftime("%Y-%m")
     for mes, parte in crudo.groupby(meses):
@@ -112,7 +141,9 @@ def escribir_entorno(tmp_path, crudo=None, divipola=None, pares=None):
         "criterio_seleccion": "Criterio de juguete.",
         "pares": pares or [{"a": A, "b": B, "descripcion": "par de juguete"}],
         "entrada": {"crudo_rutas": str(carpeta), "divipola": str(tmp_path / "divipola.csv"),
-                    "metadatos_fuente": str(tmp_path / "views.json"), "informe_fuentes": str(tmp_path / "informe.md")},
+                    "metadatos_fuente": str(tmp_path / "views.json"), "informe_fuentes": str(tmp_path / "informe.md"),
+                    "log_descarga": str(tmp_path / "raw" / "consultas_log.jsonl"),
+                    "conteo_registros": str(tmp_path / "conteo_registros.csv")},
         "salida": {"carpeta": str(tmp_path / "proc"), "detalle": "detalle.parquet", "diaria": "diaria.parquet",
                    "marcas": "marcas.parquet", "rutas": "rutas.yaml", "resumen": "resumen.json",
                    "eda": str(tmp_path / "eda")},
@@ -124,6 +155,11 @@ def escribir_entorno(tmp_path, crudo=None, divipola=None, pares=None):
         "anomalos": PARAMS,
         "calidad": {"cambio_composicion_pp": 10.0},
     }
+
+
+def fuente_n_registros(cfg):
+    """El número de registros del conjunto completo se copia de la config tal cual (no se recalcula)."""
+    return cfg["fuente"]["n_registros_medido"]
 
 
 def crudo_salida():
@@ -374,7 +410,7 @@ def test_pares_repetidos_o_codigos_malos_son_error(tmp_path):
 def test_resumen_por_ruta(salida):
     res = salida["resumen"]
     assert res["periodo"] == {"inicio": INICIO, "fin": FIN, "dias": len(DIAS)}
-    assert res["conjunto_crudo"]["n_registros"] == 123  # cifra medida citada, no recalculada
+    assert res["conjunto_crudo"]["n_registros"] == fuente_n_registros(salida["cfg"])  # cifra medida citada, no recalculada
     assert res["conjunto_crudo"]["fecha_consulta"] == "2026-11-24"
     r = res["por_ruta"][f"{A}-{B}"]
     assert r["dias"] == len(DIAS) and r["dias_sin_registro"] == 2
@@ -396,7 +432,7 @@ def test_ficha_calidad_y_diccionario(salida):
     ficha = json.loads((eda / "ficha.json").read_text(encoding="utf-8"))
     from src.comun.eda import CLAVES_FICHA, COLUMNAS_CALIDAD
     assert set(CLAVES_FICHA) <= set(ficha)
-    assert ficha["n_registros"] == 123 and ficha["n_variables"] == 10
+    assert ficha["n_registros"] == fuente_n_registros(salida["cfg"]) and ficha["n_variables"] == 10
     assert set(ficha["sha256"]) == {"2020-12.parquet", "2021-01.parquet", "2021-02.parquet", "2021-03.parquet"}
     assert all(len(v) == 64 for v in ficha["sha256"].values())
     assert ficha["conteos"]["rutas"] == 2
@@ -455,3 +491,167 @@ def test_inconsistencias_nuevas_incluyen_el_dia_de_ceros(salida):
     assert all(i["tipo"] in ("diccionario vs. datos", "calidad") for i in nuevas)
     assert any("2021-01-20" in i["datos_muestran"] and i["tipo"] == "diccionario vs. datos" for i in nuevas)
     assert any("sin ningún registro" in i["datos_muestran"] and "2021-02" in i["datos_muestran"] for i in nuevas)
+
+
+# --------------------------------------------------------------------------- DA-3c: conteos, fecha de descarga, bordes
+def _frases_de_ceros(crudo):
+    base = crudo_base()
+    ids = [f"{A}-{B}", f"{B}-{A}"]
+    detalle = dm.construir_detalle(base, ids, INICIO, FIN)
+    rutas = dm.rutas_de_config([{"a": A, "b": B, "descripcion": ""}])
+    diaria = dm.construir_diaria(detalle, rutas, INICIO, FIN)
+    marcas, _ = dm.marcar_anomalos(diaria, PARAMS)
+    nuevas = dm.inconsistencias_nuevas(crudo, detalle, diaria, marcas, [], 10.0)
+    return [i["datos_muestran"] for i in nuevas if "filas descargadas" in i["datos_muestran"]]
+
+
+def test_conteo_de_ceros_exige_despachos_al_menos_uno():
+    """Filas (pasajeros, despachos): (0, 0) NO cuenta; (0, 2) sí; (5, 1) no. El número y la frase dicen lo mismo."""
+    crudo = pd.DataFrame([fila(A, B, "2021-01-05", pas=0, desp=0), fila(A, B, "2021-01-06", pas=0, desp=2),
+                          fila(A, B, "2021-01-07", pas=5, desp=1)])
+    (texto,) = _frases_de_ceros(crudo)
+    assert texto.startswith("1 de 3 filas descargadas") and "pasajeros = 0 con despachos ≥ 1" in texto
+    solo_cero_cero = pd.DataFrame([fila(A, B, "2021-01-05", pas=0, desp=0), fila(A, B, "2021-01-07", pas=5, desp=1)])
+    assert _frases_de_ceros(solo_cero_cero) == []  # (0, 0) no es «pasajeros = 0 con despachos ≥ 1»
+
+
+def test_fecha_de_descarga_sale_del_log_y_no_del_mtime(tmp_path):
+    import os
+    cfg = escribir_entorno(tmp_path)
+    for f in (tmp_path / "raw" / "rutas").glob("*.parquet"):
+        os.utime(f, (946684800, 946684800))  # 2000-01-01: el mtime no debe influir
+    assert dm.main(cfg) == 0
+    ficha = json.loads((tmp_path / "eda" / "ficha.json").read_text(encoding="utf-8"))
+    assert ficha["fecha_descarga"] == FECHA_DESCARGA  # última descarga mensual exitosa del log (2026-11-24T16:49:51)
+
+
+def test_fecha_de_descarga_sin_log_es_error_claro(tmp_path):
+    cfg = escribir_entorno(tmp_path)
+    (tmp_path / "raw" / "consultas_log.jsonl").unlink()
+    with pytest.raises(FileNotFoundError, match="consultas_log"):
+        dm.main(cfg)
+
+
+def test_fecha_de_descarga_log_sin_descargas_es_error(tmp_path):
+    cfg = escribir_entorno(tmp_path)
+    (tmp_path / "raw" / "consultas_log.jsonl").write_text(json.dumps(log_juguete()[0]) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="descarga"):
+        dm.main(cfg)
+
+
+def test_registros_crudos_en_resumen_y_ficha(salida):
+    conteo = conteo_juguete()
+    esperado = int(conteo["registros"].sum())
+    res = salida["resumen"]
+    c = res["conteos_de_registros"]
+    assert c["registros_crudos_rutas"]["valor"] == esperado
+    assert c["registros_conjunto_completo"]["valor"] == fuente_n_registros(salida["cfg"])
+    assert c["filas_agregadas_descargadas"]["valor"] == res["filas_descargadas"]
+    assert c["filas_serie"]["valor"] == res["filas_serie"] == len(salida["diaria"])
+    assert len({v["valor"] for v in c.values()}) == len(c) == 4  # los cuatro números son distintos
+    assert res["registros_crudos_rutas"]["por_ruta"] == {
+        r: int(g["registros"].sum()) for r, g in conteo.groupby("ruta_id")}
+    assert res["registros_crudos_rutas"]["fechas_consulta"] == [FECHA_CONSULTA_CONTEO]
+    ficha = json.loads((salida["tmp"] / "eda" / "ficha.json").read_text(encoding="utf-8"))
+    assert ficha["conteos"]["registros_crudos_rutas"] == esperado
+    assert ficha["conteos"]["registros_crudos_por_ruta"] == res["registros_crudos_rutas"]["por_ruta"]
+
+
+def test_conteo_ausente_incompleto_o_menor_que_las_filas_es_error(tmp_path):
+    cfg = escribir_entorno(tmp_path)
+    (tmp_path / "conteo_registros.csv").unlink()
+    with pytest.raises(FileNotFoundError, match="contar"):
+        dm.main(cfg)
+    incompleto = conteo_juguete()
+    incompleto = incompleto[~((incompleto["mes"] == "2021-02") & (incompleto["ruta_id"] == f"{B}-{A}"))]
+    incompleto.to_csv(tmp_path / "conteo_registros.csv", index=False)
+    with pytest.raises(ValueError, match="2021-02"):
+        dm.main(cfg)
+    conteo_juguete().assign(registros=1).to_csv(tmp_path / "conteo_registros.csv", index=False)
+    with pytest.raises(ValueError, match="menos registros"):  # menos registros que filas agregadas: imposible
+        dm.main(cfg)
+
+
+def test_filtro_unico_de_ruta_y_periodo():
+    c = crudo_base()
+    f = dm.filtrar_rutas_periodo(c, [f"{A}-{B}"], INICIO, FIN)
+    assert set(f["ruta_id"]) == {f"{A}-{B}"}
+    assert f["fecha"].min() == dt.date(2021, 1, 1) and f["fecha"].max() == dt.date(2021, 3, 31)
+    esperado = ((c["municipio_origen_ruta"] == A) & (c["municipio_destino_ruta"] == B)
+                & (c["fecha_despacho"] >= INICIO))
+    assert len(f) == int(esperado.sum())
+
+
+def _diaria_constante(valor=100, anomalo=None, n=40, sin_registro=False):
+    fechas = [d.date() for d in pd.date_range("2021-01-01", periods=n, freq="D")]
+    p = [valor] * n
+    if anomalo is not None:
+        p[anomalo] = 5000
+    return pd.DataFrame({"ruta_id": "R", "origen_divipola": "00001", "destino_divipola": "00002", "fecha": fechas,
+                         "pasajeros": [0 if sin_registro else x for x in p],
+                         "despachos": [0 if sin_registro else 2] * n,
+                         "sin_registro": sin_registro, "anomalo": False})
+
+
+def test_mad_cero_desactiva_la_regla_para_esa_ruta():
+    """Serie constante con un solo pico: los residuos son 0 salvo uno, MAD = 0 → la regla no marca (ni el pico)."""
+    marcas, det = dm.marcar_anomalos(_diaria_constante(anomalo=20), PARAMS)
+    assert not marcas["pico_robusto"].any()
+    info = det["R"]["pico_robusto"]
+    assert info["sigma_mad"] == 0 and info["umbral_log"] is None and "MAD = 0" in info["nota"]
+
+
+def test_mad_sin_datos_ruta_con_todos_los_dias_sin_registro():
+    marcas, det = dm.marcar_anomalos(_diaria_constante(sin_registro=True), PARAMS)
+    assert not marcas[dm.REGLAS].any().any()
+    info = det["R"]["caida_robusta"]
+    assert info["sigma_mad"] is None and info["umbral_log"] is None  # NaN no es JSON: se guarda null
+    assert np.isnan(dm.mad_escalado(pd.Series([np.nan, np.nan]), 1.4826))
+
+
+def test_marcas_son_booleanas():
+    marcas, _ = dm.marcar_anomalos(_diaria_constante(anomalo=20), PARAMS)
+    assert all(marcas[r].dtype == bool for r in dm.REGLAS)
+
+
+def test_aplicar_marcas_une_por_clave_y_no_por_posicion():
+    d = _diaria_constante(anomalo=20)
+    d.loc[3, "sin_registro"] = True
+    marcas = pd.DataFrame({"ruta_id": d["ruta_id"], "fecha": d["fecha"]})
+    for r in dm.REGLAS:
+        marcas[r] = False
+    marcas.loc[[3, 20], "caida_robusta"] = True  # 3 es un día sin registro: nunca queda anómalo
+    esperado = dm.aplicar_marcas(d, marcas)
+    assert esperado["anomalo"].tolist() == [i == 20 for i in range(len(d))]
+    barajadas = marcas.sample(frac=1.0, random_state=0)  # mismo contenido, otro orden de filas
+    assert dm.aplicar_marcas(d, barajadas)["anomalo"].tolist() == esperado["anomalo"].tolist()
+    with pytest.raises(ValueError, match="clave"):
+        dm.aplicar_marcas(d, marcas.iloc[:-1])  # falta una (ruta, fecha)
+    with pytest.raises(ValueError, match="clave"):
+        dm.aplicar_marcas(d, pd.concat([marcas, marcas.iloc[[0]]]))  # clave repetida
+
+
+def test_ruta_con_pasajeros_totales_cero(tmp_path):
+    """A→B con pasajeros = 0 todos los días (2 despachos); B→A normal: porcentajes None, sin dividir entre cero."""
+    filas = [fila(A, B, d, pas=0, desp=2) for d in DIAS] + [fila(B, A, d, pas=50, desp=1) for d in DIAS]
+    cfg = escribir_entorno(tmp_path, pd.DataFrame(filas))
+    assert dm.main(cfg) == 0
+    res = json.loads((tmp_path / "proc" / "resumen.json").read_text(encoding="utf-8"))
+    r = res["por_ruta"][f"{A}-{B}"]
+    assert r["pasajeros_totales"] == 0 and r["pct_pasajeros_transito"] is None and r["pct_pasajeros_por_clase"] == {}
+    assert r["dias_anomalos_por_regla"]["despachos_sin_pasajeros"] == len(DIAS)
+    assert res["por_ruta"][f"{B}-{A}"]["pct_pasajeros_transito"] == 0.0
+
+
+def test_ruta_con_todos_los_dias_sin_registro(tmp_path):
+    filas = [fila(B, A, d, pas=50 + d.day_of_week % 3, desp=1) for d in DIAS]  # solo el regreso tiene datos
+    cfg = escribir_entorno(tmp_path, pd.DataFrame(filas))
+    assert dm.main(cfg) == 0
+    res = json.loads((tmp_path / "proc" / "resumen.json").read_text(encoding="utf-8"))
+    r = res["por_ruta"][f"{A}-{B}"]
+    assert r["dias_con_registro"] == 0 and r["dias_sin_registro"] == len(DIAS) == r["dias"]
+    assert r["pasajeros_dia_mediana"] is None and r["pasajeros_dia_min"] is None and r["dias_anomalos"] == 0
+    assert r["pasajeros_totales"] == 0 and r["pct_pasajeros_transito"] is None
+    diaria = pd.read_parquet(tmp_path / "proc" / "diaria.parquet")
+    assert diaria.groupby("ruta_id").size().nunique() == 1  # todas las rutas con la misma rejilla
+    assert not diaria.loc[diaria["ruta_id"] == f"{A}-{B}", "anomalo"].any()

@@ -19,6 +19,8 @@ pares:
 entrada:
   crudo_rutas: data/raw/m1/rutas          # un parquet por mes (AAAA-MM.parquet)
   divipola: data/processed/m1/divipola.csv
+  log_descarga: data/raw/m1/consultas_log.jsonl         # fecha_descarga = última descarga mensual exitosa del log (no el mtime)
+  conteo_registros: data/processed/m1/conteo_registros.csv  # scripts/descargar_m1.py contar: count(*) por mes y ruta
   metadatos_fuente: data/raw/m1/views_eh75-8ah6.json   # copia de /api/views/eh75-8ah6.json (diccionario literal)
   informe_fuentes: docs/investigacion/DA-2_fuentes_m1.md  # §1.7: inconsistencias diccionario vs. datos
 

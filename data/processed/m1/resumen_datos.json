@@ -24,6 +24,39 @@
     "52356-52001"
   ],
   "filas_descargadas": 25248,
+  "registros_crudos_rutas": {
+    "total": 1372746,
+    "por_ruta": {
+      "11001-15759": 362258,
+      "11001-76001": 297559,
+      "15759-11001": 258171,
+      "52001-52356": 119609,
+      "52356-52001": 133348,
+      "76001-11001": 201801
+    },
+    "fechas_consulta": [
+      "2026-11-24"
+    ],
+    "origen": "data/processed/m1/conteo_registros.csv (scripts/descargar_m1.py contar: count(*) por mes y ruta)"
+  },
+  "conteos_de_registros": {
+    "registros_conjunto_completo": {
+      "valor": 49202812,
+      "definicion": "Registros del conjunto completo en la fuente (todas las rutas y fechas), medidos con SoQL."
+    },
+    "registros_crudos_rutas": {
+      "valor": 1372746,
+      "definicion": "Registros crudos (count(*) en la fuente, sin agrupar) de las rutas configuradas en el periodo, medidos con `scripts/descargar_m1.py contar`."
+    },
+    "filas_agregadas_descargadas": {
+      "valor": 25248,
+      "definicion": "Filas que devolvió el servidor al agrupar los registros crudos por ruta, fecha, tipo_despacho y clase_vehiculo (los parquets de data/raw/m1/rutas)."
+    },
+    "filas_serie": {
+      "valor": 6570,
+      "definicion": "Filas de demanda_diaria.parquet: una por ruta dirigida y día del periodo (rejilla completa)."
+    }
+  },
   "archivos_crudos": {
     "2021-01.parquet": "90f6e3393c728c4eee1267cf05996bf1d70fd39458bd0308074e3007f65b829b",
     "2021-02.parquet": "b928a724fcc8ea19463ea9465b3eec9f8d665a207408debafdbb38a4cbae7f56",

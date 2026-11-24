@@ -58,6 +58,7 @@ REGLAS_ROBUSTAS = {  # regla: (transformación, signo del lado que se marca)
 TIPOS_DESPACHO = ("ORIGEN", "TRANSITO")
 PATRON_CODIGO = re.compile(r"^\d{5}$")
 TODO_DIVIPOLA = "TODO(dato-faltante): código no está en DIVIPOLA"
+CLAVES_CONTEO = ["mes", "ruta_id", "registros", "fecha_consulta"]
 N_EJEMPLOS = 5
 PORCENTAJE = 100.0
 
@@ -137,13 +138,19 @@ def leer_crudo(carpeta: Path) -> tuple[pd.DataFrame, dict[str, str]]:
     return crudo, {f.name: sha256(f) for f in archivos}
 
 
-def construir_detalle(crudo: pd.DataFrame, rutas_ids: list[str], inicio, fin) -> pd.DataFrame:
-    """P[r,t,k] y D[r,t,k]: suma por (ruta, fecha, tipo_despacho, clase_vehiculo) de las rutas configuradas y dentro
-    del periodo. Las demás filas se descartan (se cuentan en el resumen)."""
+def filtrar_rutas_periodo(crudo: pd.DataFrame, rutas_ids: list[str], inicio, fin) -> pd.DataFrame:
+    """Filas del crudo cuya ruta dirigida está en ``rutas_ids`` y cuya fecha está en [inicio, fin]; agrega ``ruta_id`` y
+    ``fecha`` (date). Único origen del filtro: lo usan ``construir_detalle`` y el conteo de filas descartadas."""
     c = crudo.copy()
     c["ruta_id"] = c["municipio_origen_ruta"].astype(str) + "-" + c["municipio_destino_ruta"].astype(str)
     c["fecha"] = pd.to_datetime(c["fecha_despacho"]).dt.date
-    c = c[c["ruta_id"].isin(rutas_ids) & (c["fecha"] >= _fecha(inicio)) & (c["fecha"] <= _fecha(fin))]
+    return c[c["ruta_id"].isin(rutas_ids) & (c["fecha"] >= _fecha(inicio)) & (c["fecha"] <= _fecha(fin))]
+
+
+def construir_detalle(crudo: pd.DataFrame, rutas_ids: list[str], inicio, fin) -> pd.DataFrame:
+    """P[r,t,k] y D[r,t,k]: suma por (ruta, fecha, tipo_despacho, clase_vehiculo) de las rutas configuradas y dentro
+    del periodo. Las demás filas se descartan (se cuentan en el resumen)."""
+    c = filtrar_rutas_periodo(crudo, rutas_ids, inicio, fin)
     tipos = set(c["tipo_despacho"].unique())
     if not tipos <= set(TIPOS_DESPACHO):
         raise ValueError(f"tipo_despacho inesperado: {sorted(tipos - set(TIPOS_DESPACHO))}")
@@ -230,10 +237,15 @@ def marcar_anomalos(diaria: pd.DataFrame, params: dict) -> tuple[pd.DataFrame, d
             sigma = mad_escalado(e, float(p["escala_mad"]))
             umbral = float(p["umbral_mad"]) * sigma
             if not np.isfinite(sigma) or sigma == 0:
-                detalles.setdefault(ruta, {})[regla] = {"sigma_mad": sigma, "umbral_log": None,
+                # MAD = 0 (más de la mitad de los residuos coincide con su mediana, p. ej. serie constante) o sin datos
+                # (ruta sin días con registro): el umbral sería 0 o indefinido. La regla queda DESACTIVADA para esta
+                # ruta (no marca nada) y se deja constancia en el resumen; sigma NaN se guarda como null (JSON).
+                detalles.setdefault(ruta, {})[regla] = {"sigma_mad": sigma if np.isfinite(sigma) else None,
+                                                        "umbral_log": None,
                                                         "nota": "MAD = 0 o sin datos: la regla no marca"}
                 continue
-            marca = (signo * e > umbral).fillna(False) & ~g["sin_registro"]
+            # Un residuo NaN (día sin registro o ventana corta) da False en la comparación: no hace falta fillna.
+            marca = (signo * e > umbral) & ~g["sin_registro"]
             marcas.loc[g.index, regla] = marca.to_numpy()
             detalles.setdefault(ruta, {})[regla] = {"sigma_mad": round(sigma, 6), "umbral_log": round(umbral, 6)}
     for r in REGLAS:
@@ -242,8 +254,17 @@ def marcar_anomalos(diaria: pd.DataFrame, params: dict) -> tuple[pd.DataFrame, d
 
 
 def aplicar_marcas(diaria: pd.DataFrame, marcas: pd.DataFrame) -> pd.DataFrame:
+    """``anomalo`` = O de las reglas, unido por la clave (``ruta_id``, ``fecha``) y no por posición. Error si ``marcas``
+    repite una clave o no tiene alguna de las claves de ``diaria``."""
+    claves = ["ruta_id", "fecha"]
+    if marcas.duplicated(claves).any():
+        raise ValueError("marcas tiene claves (ruta_id, fecha) repetidas: no se alinea con la serie")
+    alguna = marcas.set_index(claves)[REGLAS].any(axis=1)
+    en_serie = pd.MultiIndex.from_frame(diaria[claves])
+    if not en_serie.isin(alguna.index).all():
+        raise ValueError("marcas no tiene todas las claves (ruta_id, fecha) de la serie: no se alinea")
     d = diaria.copy()
-    d["anomalo"] = marcas[REGLAS].any(axis=1).to_numpy() & ~d["sin_registro"].to_numpy()
+    d["anomalo"] = alguna.reindex(en_serie).to_numpy(dtype=bool) & ~d["sin_registro"].to_numpy()
     return d
 
 
@@ -347,7 +368,7 @@ def inconsistencias_nuevas(crudo: pd.DataFrame, detalle: pd.DataFrame, diaria: p
                                          "transporte»; despachos: «Número vehículos ... que salen desde la terminal»"),
                     "datos_muestran": (f"Ruta {f['ruta_id']}, {f['fecha'].isoformat()}: {_miles(f['despachos'])} "
                                        "despachos y 0 pasajeros en todo el día.")})
-    n_ceros = int((crudo["pasajeros"] == 0).sum())
+    n_ceros = int(((crudo["pasajeros"] == 0) & (crudo["despachos"] >= 1)).sum())
     if n_ceros:
         out.append({"tipo": "calidad",
                     "diccionario_dice": "pasajeros / despachos descritos como «Número», sin restricciones",
@@ -450,6 +471,10 @@ def main(cfg: dict) -> int:
 
     crudo, hashes = leer_crudo(Path(ent["crudo_rutas"]))
     divipola = leer_divipola(Path(ent["divipola"]))
+    filtrado = filtrar_rutas_periodo(crudo, ids, inicio, fin)
+    conteo = leer_conteo_registros(Path(ent["conteo_registros"]), ids, inicio, fin)
+    reg_crudos = resumen_registros_crudos(conteo, filtrado, Path(ent["conteo_registros"]))
+    descarga = fecha_descarga(Path(ent["log_descarga"]), fte["id_socrata"])
     detalle = construir_detalle(crudo, ids, inicio, fin)
     diaria = construir_diaria(detalle, rutas, inicio, fin)
     marcas, detalles = marcar_anomalos(diaria, cfg["anomalos"])
@@ -479,8 +504,25 @@ def main(cfg: dict) -> int:
         "periodo": {"inicio": inicio.isoformat(), "fin": fin.isoformat(), "dias": n_dias},
         "rutas": ids,
         "filas_descargadas": int(len(crudo)),
+        "registros_crudos_rutas": reg_crudos,
+        "conteos_de_registros": {
+            "registros_conjunto_completo": {
+                "valor": fte["n_registros_medido"],
+                "definicion": "Registros del conjunto completo en la fuente (todas las rutas y fechas), medidos con SoQL."},
+            "registros_crudos_rutas": {
+                "valor": reg_crudos["total"],
+                "definicion": ("Registros crudos (count(*) en la fuente, sin agrupar) de las rutas configuradas en el "
+                               "periodo, medidos con `scripts/descargar_m1.py contar`.")},
+            "filas_agregadas_descargadas": {
+                "valor": int(len(crudo)),
+                "definicion": ("Filas que devolvió el servidor al agrupar los registros crudos por ruta, fecha, "
+                               "tipo_despacho y clase_vehiculo (los parquets de data/raw/m1/rutas).")},
+            "filas_serie": {
+                "valor": int(len(diaria)),
+                "definicion": "Filas de demanda_diaria.parquet: una por ruta dirigida y día del periodo (rejilla completa)."},
+        },
         "archivos_crudos": hashes,
-        "filas_fuera_de_rutas_o_periodo": int(len(crudo) - _filas_dentro(crudo, ids, inicio, fin)),
+        "filas_fuera_de_rutas_o_periodo": int(len(crudo) - len(filtrado)),
         "filas_detalle": int(len(detalle)),
         "filas_serie": int(len(diaria)),
         "pasajeros": "origen + tránsito (núcleo §5.1 v0.3)",
@@ -496,18 +538,12 @@ def main(cfg: dict) -> int:
     }
     save_json(carpeta / sal["resumen"], resumen)
 
-    escribir_eda(cfg, crudo, detalle, diaria, marcas, hashes, fuera, por_ruta)
+    escribir_eda(cfg, crudo, detalle, diaria, marcas, hashes, fuera, por_ruta, reg_crudos, descarga)
     _imprimir(resumen, carpeta, sal)
     return 0
 
 
-def _filas_dentro(crudo: pd.DataFrame, ids: list[str], inicio: dt.date, fin: dt.date) -> int:
-    rid = crudo["municipio_origen_ruta"].astype(str) + "-" + crudo["municipio_destino_ruta"].astype(str)
-    f = pd.to_datetime(crudo["fecha_despacho"]).dt.date
-    return int((rid.isin(ids) & (f >= inicio) & (f <= fin)).sum())
-
-
-def escribir_eda(cfg: dict, crudo, detalle, diaria, marcas, hashes, fuera, por_ruta) -> None:
+def escribir_eda(cfg: dict, crudo, detalle, diaria, marcas, hashes, fuera, por_ruta, reg_crudos, descarga) -> None:
     """Secciones 1 (ficha) y 2 (diccionario y calidad) de la plantilla común (núcleo §5.12) para M1."""
     fte, ent, per = cfg["fuente"], cfg["entrada"], cfg["periodo"]
     destino = Path(cfg["salida"]["eda"])
@@ -515,7 +551,7 @@ def escribir_eda(cfg: dict, crudo, detalle, diaria, marcas, hashes, fuera, por_r
         "fuente": f"{fte['nombre']} ({fte['entidad']}, datos.gov.co {fte['id_socrata']})",
         "cita": fte["cita"],
         "url": fte["url"],
-        "fecha_descarga": _fecha_descarga(ent),
+        "fecha_descarga": descarga,
         "sha256": hashes,
         "unidad_de_observacion": ("Crudo: fila agregada por terminal, clase, nivel de servicio, ruta, fecha, hora y tipo de "
                                   "despacho. Serie: pasajeros por ruta dirigida y día (origen + tránsito)."),
@@ -527,10 +563,13 @@ def escribir_eda(cfg: dict, crudo, detalle, diaria, marcas, hashes, fuera, por_r
             "fecha_consulta_cifras_conjunto": str(fte["fecha_consulta_informe"]),
             "rutas": len(por_ruta),
             "pares_ida_regreso": len(cfg["pares"]),
+            "registros_crudos_rutas": reg_crudos["total"],
+            "registros_crudos_por_ruta": reg_crudos["por_ruta"],
             "filas_descargadas": int(len(crudo)),
             "filas_detalle": int(len(detalle)),
             "filas_serie": int(len(diaria)),
-            "dias_por_ruta": int(diaria.groupby("ruta_id").size().iloc[0]) if len(diaria) else 0,
+            # construir_diaria da a todas las rutas la misma rejilla [inicio, fin]: los días por ruta son los del periodo.
+            "dias_por_ruta": (_fecha(per["fin"]) - _fecha(per["inicio"])).days + 1,
             "dias_sin_registro": int(diaria["sin_registro"].sum()),
             "dias_anomalos": int(diaria["anomalo"].sum()),
             "pasajeros_totales": int(detalle["pasajeros"].sum()),
@@ -545,8 +584,8 @@ def escribir_eda(cfg: dict, crudo, detalle, diaria, marcas, hashes, fuera, por_r
                      tabla_calidad(diaria).assign(tabla="serie", filas=len(diaria),
                                                   duplicados_clave=int(diaria.duplicated(["ruta_id", "fecha"]).sum()))],
                     ignore_index=True)
-    cal = cal[["tabla", "filas", "duplicados_clave", *[c for c in cal.columns if c not in ("tabla", "filas",
-                                                                                          "duplicados_clave")]]]
+    primeras = ["tabla", "filas", "duplicados_clave"]
+    cal = cal.reindex(columns=[*primeras, *[c for c in cal.columns if c not in primeras]])
     destino.mkdir(parents=True, exist_ok=True)
     cal.to_csv(destino / "calidad.csv", index=False, encoding="utf-8", lineterminator="\n")
     save_json(destino / "diccionario.json", {
@@ -561,11 +600,63 @@ def escribir_eda(cfg: dict, crudo, detalle, diaria, marcas, hashes, fuera, por_r
     })
 
 
-def _fecha_descarga(ent: dict) -> str:
-    """Fecha (UTC) de modificación más reciente de los parquets crudos: cuándo se descargaron."""
-    archivos = sorted(Path(ent["crudo_rutas"]).glob("*.parquet"))
-    ultimo = max(f.stat().st_mtime for f in archivos)
-    return dt.datetime.fromtimestamp(ultimo, tz=dt.timezone.utc).date().isoformat()
+def fecha_descarga(log: Path, id_socrata: str) -> str:
+    """Fecha (UTC, AAAA-MM-DD) de la última descarga mensual exitosa de las series, leída de ``consultas_log.jsonl``.
+
+    Una «descarga mensual» es una entrada del log con ``http`` = 200 cuya URL consulta el conjunto ``id_socrata`` y pide
+    ``clase_vehiculo`` (solo ``scripts/descargar_m1.py descargar`` la pide: el ranking y el conteo no). El campo es
+    ``momento`` (UTC, ISO 8601). No se usa el mtime de los parquets (cambia al copiar o clonar el repositorio).
+    Error claro si no hay log o si no tiene ninguna descarga."""
+    log = Path(log)
+    if not log.is_file():
+        raise FileNotFoundError(f"No existe el log de descarga {log}: corre scripts/descargar_m1.py descargar "
+                                "(la fecha de descarga se toma de consultas_log.jsonl, no del mtime de los parquets)")
+    momentos = []
+    for linea in log.read_text(encoding="utf-8").splitlines():
+        if not linea.strip():
+            continue
+        r = json.loads(linea)
+        url = r.get("url", "")
+        if r.get("http") == 200 and f"/{id_socrata}.json" in url and "clase_vehiculo" in url:
+            momentos.append(dt.datetime.fromisoformat(r["momento"]))
+    if not momentos:
+        raise ValueError(f"{log}: ninguna entrada de descarga mensual (http 200, {id_socrata}, clase_vehiculo)")
+    return max(momentos).astimezone(dt.timezone.utc).date().isoformat()
+
+
+def leer_conteo_registros(ruta: Path, ids: list[str], inicio, fin) -> pd.DataFrame:
+    """``conteo_registros.csv`` (``scripts/descargar_m1.py contar``): registros crudos (``count(*)``, sin agrupar) por
+    (mes, ruta). Error si falta el archivo o algún (mes del periodo, ruta configurada)."""
+    ruta = Path(ruta)
+    if not ruta.is_file():
+        raise FileNotFoundError(f"No existe {ruta}: corre scripts/descargar_m1.py contar (conteo de registros crudos)")
+    c = pd.read_csv(ruta, dtype={"mes": str, "ruta_id": str})
+    faltan_col = [k for k in CLAVES_CONTEO if k not in c.columns]
+    if faltan_col:
+        raise ValueError(f"{ruta}: faltan columnas {faltan_col}")
+    meses = [f"{d:%Y-%m}" for d in pd.date_range(_fecha(inicio).replace(day=1), _fecha(fin), freq="MS")]
+    c = c[c["mes"].isin(meses) & c["ruta_id"].isin(ids)]
+    if c.duplicated(["mes", "ruta_id"]).any():
+        raise ValueError(f"{ruta}: hay (mes, ruta_id) repetidos")
+    esperados = {(m, r) for m in meses for r in ids}
+    ausentes = sorted(esperados - set(zip(c["mes"], c["ruta_id"])))
+    if ausentes:
+        raise ValueError(f"{ruta}: faltan {len(ausentes)} (mes, ruta) del periodo, p. ej. {ausentes[:3]}; "
+                         "corre scripts/descargar_m1.py contar")
+    return c.reset_index(drop=True)
+
+
+def resumen_registros_crudos(conteo: pd.DataFrame, filas_agregadas: pd.DataFrame, ruta_csv: Path) -> dict:
+    """Total y por ruta de registros crudos de las rutas en el periodo. Cada ruta debe tener al menos tantos registros como
+    filas agregadas descargadas (el servidor agrupa: filas agregadas ≤ registros)."""
+    por_ruta = {str(r): int(g["registros"].sum()) for r, g in conteo.groupby("ruta_id", sort=True)}
+    for r, n in filas_agregadas.groupby("ruta_id").size().items():
+        if por_ruta.get(r, 0) < n:
+            raise ValueError(f"{r}: menos registros crudos contados ({por_ruta.get(r, 0)}) que filas agregadas "
+                             f"descargadas ({int(n)}): el conteo no corresponde a la descarga")
+    return {"total": int(sum(por_ruta.values())), "por_ruta": por_ruta,
+            "fechas_consulta": sorted(conteo["fecha_consulta"].astype(str).unique()),
+            "origen": f"{Path(ruta_csv).as_posix()} (scripts/descargar_m1.py contar: count(*) por mes y ruta)"}
 
 
 def _imprimir(resumen: dict, carpeta: Path, sal: dict) -> None:

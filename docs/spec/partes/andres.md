@@ -40,6 +40,13 @@
 
 ## 3. Especificación
 
+### 3.0 Datos reales (DA-3, aviso de Daniel, 24-nov)
+Series de 2021-01-01 a 2023-12-31 (6 series: 11001↔76001, 11001↔15759, 52001↔52356). **Entrenar desde el 2021-06-01**
+(`datos.inicio_entrenamiento`): mayo de 2021 está casi vacío. Los días `sin_registro` valen 0 pero no son demanda: enmascararlos
+en la pérdida y en la escala de MASE, y no interpolarlos con valores futuros. Las marcas `anomalo` miran la serie completa:
+nunca como variable de entrada. Ojo con el salto de nivel del tránsito en 11001-15759 desde nov-2022. Detalle en
+`data/processed/m1/resumen_datos.json`.
+
 ### 3.1 Partición y origen rodante (AN-1) 🧠 [PROPUESTO]
 Train / val / test por fecha; el test incluye al menos una temporada alta (p. ej. fin de año o Semana Santa) [VERIFICAR con el
 periodo real]. Orígenes rodantes cada 7 días dentro de val (búsqueda) y de test (reporte), horizonte 30. Toda variable usada en

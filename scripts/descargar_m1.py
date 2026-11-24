@@ -3,6 +3,7 @@
 Subcomandos:
   ranking   muestra de un día por mes (2021-01 a 2023-12) -> data/raw/m1/ranking_rutas.csv y resumen
   descargar rutas elegidas, por mes -> data/raw/m1/rutas/AAAA-MM.parquet (reanudable)
+  contar    registros crudos (count(*), sin agrupar) por mes y ruta -> data/processed/m1/conteo_registros.csv (reanudable)
   divipola  DIVIPOLA (gdxc-w37w) -> data/processed/m1/divipola.csv
 
 Uso: .venv\\Scripts\\python scripts/descargar_m1.py <subcomando> [opciones]
@@ -10,7 +11,6 @@ Uso: .venv\\Scripts\\python scripts/descargar_m1.py <subcomando> [opciones]
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 import time
@@ -22,6 +22,10 @@ import pandas as pd
 import requests
 
 RAIZ = Path(__file__).resolve().parents[1]
+if str(RAIZ) not in sys.path:  # el script se corre como `python scripts/descargar_m1.py`: la raíz no está en sys.path
+    sys.path.insert(0, str(RAIZ))
+from src.m1_demanda.datos import leer_divipola, sha256  # noqa: E402  (un solo origen; también lo usa m1-datos)
+
 BASE = "https://www.datos.gov.co/resource"
 ID_M1 = "eh75-8ah6"
 ID_DIVIPOLA = "gdxc-w37w"
@@ -29,6 +33,9 @@ URL_M1 = f"{BASE}/{ID_M1}.json"
 URL_DIVIPOLA = f"{BASE}/{ID_DIVIPOLA}.json"
 RAW = RAIZ / "data" / "raw" / "m1"
 LOG = RAW / "consultas_log.jsonl"
+DIVIPOLA_CSV = RAIZ / "data" / "processed" / "m1" / "divipola.csv"
+CONTEO_CSV = RAIZ / "data" / "processed" / "m1" / "conteo_registros.csv"
+COLUMNAS_CONTEO = ["mes", "ruta_id", "registros", "fecha_consulta"]
 FECHA_MAX_VALIDA = "2100-01-01"  # excluye las fechas imposibles (2202, 2222, 6202)
 PAGINA = 50000
 
@@ -43,8 +50,8 @@ def _registrar(registro: dict, log: Path | None = None) -> None:
 
 def consultar(params: dict, timeout: float = 300, reintentos: int = 3, url: str = URL_M1,
               espera: float = 5.0, sesion=None, log: Path | None = None) -> list[dict]:
-    """GET con reintentos y espera creciente ante timeout, error de conexión o 5xx. Registra cada intento
-    (URL completa, duración, filas, error). Lanza la última excepción si se agotan los reintentos.
+    """GET con reintentos y espera creciente ante timeout, error de conexión, 5xx o respuesta que no es JSON. Registra cada
+    intento (URL completa, duración, filas, error). Lanza la última excepción si se agotan los reintentos.
     Un 4xx no se reintenta (la consulta está mal)."""
     get = (sesion or requests).get
     ultimo: Exception | None = None
@@ -69,7 +76,7 @@ def consultar(params: dict, timeout: float = 300, reintentos: int = 3, url: str 
             ultimo = e
             if e.response is not None and e.response.status_code < 500:
                 raise
-        except (requests.Timeout, requests.ConnectionError) as e:
+        except (requests.Timeout, requests.ConnectionError, requests.exceptions.JSONDecodeError) as e:
             registro.setdefault("url", url + "?" + "&".join(f"{k}={v}" for k, v in params.items()))
             registro["segundos"] = round(time.time() - t0, 2)
             registro["error"] = f"{type(e).__name__}: {str(e)[:150]}"
@@ -118,15 +125,25 @@ def where_mes(anio: int, mes: int, rutas: list[tuple[str, str]] | None = None) -
     return w + (" AND " + where_rutas(rutas) if rutas else "")
 
 
-def params_descarga_mes(anio: int, mes: int, rutas: list[tuple[str, str]], pagina: int = PAGINA, offset: int = 0) -> dict:
+def params_descarga_mes(anio: int, mes: int, rutas: list[tuple[str, str]]) -> dict:
+    """Filas agregadas en el servidor por clave; `paginar` agrega $limit y $offset."""
     claves = "municipio_origen_ruta, municipio_destino_ruta, fecha_despacho, tipo_despacho, clase_vehiculo"
     return {
         "$select": claves + ", sum(pasajeros) as pasajeros, sum(despachos) as despachos",
         "$where": where_mes(anio, mes, rutas),
         "$group": claves,
         "$order": claves,
-        "$limit": pagina,
-        "$offset": offset,
+    }
+
+
+def params_conteo_mes(anio: int, mes: int, rutas: list[tuple[str, str]]) -> dict:
+    """Registros crudos (count(*), sin agrupar por fecha, tipo ni clase) por ruta en el mes; mismo filtro que la descarga."""
+    claves = "municipio_origen_ruta, municipio_destino_ruta"
+    return {
+        "$select": claves + ", count(*) as registros",
+        "$where": where_mes(anio, mes, rutas),
+        "$group": claves,
+        "$order": claves,
     }
 
 
@@ -209,10 +226,6 @@ def codigos_fuera_de_divipola(ranking: pd.DataFrame, divipola: pd.DataFrame) -> 
     return sorted((set(ranking["origen"]) | set(ranking["destino"])) - conocidos)
 
 
-def leer_divipola(ruta: Path | None = None) -> pd.DataFrame:
-    return pd.read_csv(ruta or RAIZ / "data" / "processed" / "m1" / "divipola.csv", dtype=str)
-
-
 def cmd_ranking(args) -> int:
     dias = dias_muestra()
     muestras: dict[str, list[dict]] = {}
@@ -223,7 +236,7 @@ def cmd_ranking(args) -> int:
         try:
             filas = paginar(params_ranking_dia(dia), timeout=args.timeout, reintentos=args.reintentos)
             return dia, filas, None, time.time() - t0
-        except Exception as e:  # se registra y se sigue
+        except requests.RequestException as e:  # red, HTTP o JSON inválido tras los reintentos: se registra y se sigue
             return dia, None, f"{type(e).__name__}: {str(e)[:150]}", time.time() - t0
 
     with ThreadPoolExecutor(max_workers=min(args.paralelo, 4)) as ex:
@@ -242,13 +255,14 @@ def cmd_ranking(args) -> int:
     print(f"\nDias con datos: {len(muestras)}/{len(dias)}; faltantes: {sorted(fallidos) or 'ninguno'}")
     print(f"Guardado {RAW / 'ranking_rutas.csv'} ({len(rk)} pares dirigidos)")
     try:
-        dv = leer_divipola()
+        dv = leer_divipola(DIVIPOLA_CSV)
     except FileNotFoundError:
-        print("Falta divipola.csv: corre antes el subcomando divipola")
-        return 0
+        print(f"Falta {DIVIPOLA_CSV}: corre antes el subcomando divipola (no se pudo armar el top de pares)",
+              file=sys.stderr)
+        return 1
     top = pares_ida_regreso(rk, dv, 15)
-    pd.set_option("display.width", 250, "display.max_columns", 30)
-    print(top.to_string())
+    with pd.option_context("display.width", 250, "display.max_columns", 30):
+        print(top.to_string())
     top.to_csv(RAW / "ranking_top15_pares.csv", index=False)
     print("Codigos fuera de DIVIPOLA:", codigos_fuera_de_divipola(rk, dv) or "ninguno")
     return 0
@@ -290,30 +304,95 @@ def descargar_rutas(rutas: list[tuple[str, str]], ini: date, fin: date, destino:
 
 
 def leer_rutas(texto: str) -> list[tuple[str, str]]:
-    """'05001-11001,11001-05001' -> [('05001', '11001'), ('11001', '05001')]"""
+    """'05001-11001,11001-05001' -> [('05001', '11001'), ('11001', '05001')]. ValueError con mensaje propio si una ruta
+    no es ORIGEN-DESTINO con códigos de 5 dígitos, o si la lista queda vacía."""
     out = []
     for p in texto.split(","):
-        if p.strip():
-            o, d = p.strip().split("-")
-            out.append((o, d))
+        p = p.strip()
+        if not p:
+            continue
+        partes = p.split("-")
+        if len(partes) != 2 or not all(len(c) == 5 and c.isdigit() for c in partes):
+            raise ValueError(f"ruta no válida {p!r}: se espera ORIGEN-DESTINO con códigos de 5 dígitos (p. ej. 05001-11001)")
+        out.append((partes[0], partes[1]))
+    if not out:
+        raise ValueError("lista de rutas vacía: se espera 'ORIGEN-DESTINO,ORIGEN-DESTINO,...'")
     return out
 
 
+def _leer_argumentos_de_rango(args) -> tuple[list[tuple[str, str]], date, date] | None:
+    """(rutas, desde, hasta) de los argumentos, o None (con el motivo en stderr) si no son válidos."""
+    try:
+        rutas = leer_rutas(args.rutas)
+        desde, hasta = date.fromisoformat(args.desde), date.fromisoformat(args.hasta)
+    except ValueError as e:
+        print(f"Argumento no válido: {e}", file=sys.stderr)
+        return None
+    if desde > hasta:
+        print(f"--desde ({desde}) es posterior a --hasta ({hasta})", file=sys.stderr)
+        return None
+    return rutas, desde, hasta
+
+
 def cmd_descargar(args) -> int:
-    descargar_rutas(leer_rutas(args.rutas), date.fromisoformat(args.desde), date.fromisoformat(args.hasta),
-                    timeout=args.timeout, reintentos=args.reintentos)
+    parsed = _leer_argumentos_de_rango(args)
+    if parsed is None:
+        return 2
+    rutas, desde, hasta = parsed
+    descargar_rutas(rutas, desde, hasta, timeout=args.timeout, reintentos=args.reintentos)
+    return 0
+
+
+# --------------------------------------------------------------------------- conteo de registros crudos
+def contar_registros(rutas: list[tuple[str, str]], ini: date, fin: date, destino: Path | None = None,
+                     consulta=consultar, fecha: str | None = None, **kw) -> pd.DataFrame:
+    """Registros crudos (count(*)) por (mes, ruta) en `destino` (CSV: mes, ruta_id, registros, fecha_consulta).
+    Reanudable: un mes que ya tiene todas las rutas pedidas no se vuelve a consultar; el CSV se reescribe tras cada mes.
+    Las rutas sin filas en un mes quedan con 0 (es el conteo real, no un dato faltante). Devuelve todo el CSV."""
+    destino = destino or CONTEO_CSV
+    fecha = fecha or datetime.now(timezone.utc).date().isoformat()
+    ids = sorted(f"{o}-{d}" for o, d in rutas)
+    previo = (pd.read_csv(destino, dtype={"mes": str, "ruta_id": str}) if destino.exists()
+              else pd.DataFrame(columns=COLUMNAS_CONTEO))
+    tabla = previo[COLUMNAS_CONTEO].copy()
+    for anio, mes in meses_entre(ini, fin):
+        etiqueta = f"{anio}-{mes:02d}"
+        hechas = set(tabla.loc[tabla["mes"] == etiqueta, "ruta_id"])
+        if set(ids) <= hechas:
+            print(f"{etiqueta} ya está en {destino.name}: se salta")
+            continue
+        filas = paginar(params_conteo_mes(anio, mes, rutas), consulta=consulta, **kw)
+        cuenta = {f"{f['municipio_origen_ruta']}-{f['municipio_destino_ruta']}": int(f["registros"]) for f in filas}
+        nuevas = pd.DataFrame({"mes": etiqueta, "ruta_id": ids, "registros": [cuenta.get(r, 0) for r in ids],
+                               "fecha_consulta": fecha})
+        tabla = pd.concat([tabla[tabla["mes"] != etiqueta], nuevas], ignore_index=True)
+        tabla["registros"] = tabla["registros"].astype("int64")
+        tabla = tabla.sort_values(["mes", "ruta_id"], kind="stable").reset_index(drop=True)
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        tmp = destino.with_suffix(".csv.tmp")
+        tabla.to_csv(tmp, index=False, encoding="utf-8", lineterminator="\n")
+        tmp.replace(destino)
+        print(f"{etiqueta}: {int(nuevas['registros'].sum())} registros en {len(ids)} rutas")
+    tabla["registros"] = tabla["registros"].astype("int64")
+    return tabla
+
+
+def cmd_contar(args) -> int:
+    parsed = _leer_argumentos_de_rango(args)
+    if parsed is None:
+        return 2
+    rutas, desde, hasta = parsed
+    t = contar_registros(rutas, desde, hasta, timeout=args.timeout, reintentos=args.reintentos)
+    ids = {f"{o}-{d}" for o, d in rutas}
+    meses = {f"{a}-{m:02d}" for a, m in meses_entre(desde, hasta)}
+    sel = t[t["ruta_id"].isin(ids) & t["mes"].isin(meses)]
+    print("\nRegistros crudos por ruta (rango pedido):")
+    print(sel.groupby("ruta_id")["registros"].sum().to_string())
+    print(f"Total: {int(sel['registros'].sum())}  ->  {CONTEO_CSV}")
     return 0
 
 
 # --------------------------------------------------------------------------- DIVIPOLA
-def sha256(ruta: Path) -> str:
-    h = hashlib.sha256()
-    with open(ruta, "rb") as f:
-        for b in iter(lambda: f.read(1 << 20), b""):
-            h.update(b)
-    return h.hexdigest()
-
-
 def cmd_divipola(args) -> int:
     filas = paginar({"$order": "cod_mpio"}, pagina=2000, url=URL_DIVIPOLA, timeout=args.timeout, reintentos=args.reintentos)
     df = pd.DataFrame(filas)
@@ -328,13 +407,14 @@ def cmd_divipola(args) -> int:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for nombre, fn in (("ranking", cmd_ranking), ("descargar", cmd_descargar), ("divipola", cmd_divipola)):
+    for nombre, fn in (("ranking", cmd_ranking), ("descargar", cmd_descargar), ("contar", cmd_contar),
+                       ("divipola", cmd_divipola)):
         s = sub.add_parser(nombre)
         s.add_argument("--timeout", type=float, default=300)
         s.add_argument("--reintentos", type=int, default=3)
         if nombre == "ranking":
             s.add_argument("--paralelo", type=int, default=4)
-        if nombre == "descargar":
+        if nombre in ("descargar", "contar"):
             s.add_argument("--rutas", required=True, help="'05001-11001,11001-05001' (origen-destino, separados por coma)")
             s.add_argument("--desde", required=True, help="AAAA-MM-DD")
             s.add_argument("--hasta", required=True, help="AAAA-MM-DD")

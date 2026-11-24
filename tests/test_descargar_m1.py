@@ -1,5 +1,7 @@
 """Pruebas sin red de scripts/descargar_m1.py (construcción de consultas SoQL, paginación, ranking, reintentos)."""
+import argparse
 import importlib.util
+import json
 import sys
 from datetime import date
 from pathlib import Path
@@ -43,11 +45,11 @@ def test_where_rutas_rechaza_codigos_malos_y_vacio():
 
 
 def test_params_descarga_group_order_paginacion():
-    p = dm.params_descarga_mes(2022, 1, RUTAS, pagina=1000, offset=2000)
+    p = dm.params_descarga_mes(2022, 1, RUTAS)
     claves = "municipio_origen_ruta, municipio_destino_ruta, fecha_despacho, tipo_despacho, clase_vehiculo"
     assert p["$group"] == claves and p["$order"] == claves
     assert "sum(pasajeros) as pasajeros" in p["$select"] and "sum(despachos) as despachos" in p["$select"]
-    assert p["$limit"] == 1000 and p["$offset"] == 2000
+    assert "$limit" not in p and "$offset" not in p  # los pone `paginar`
 
 
 def test_params_ranking_dia():
@@ -169,3 +171,148 @@ def test_consultar_agota_reintentos_y_no_reintenta_4xx(tmp_path):
     with pytest.raises(requests.HTTPError):
         dm.consultar({}, reintentos=3, espera=0, sesion=s, log=tmp_path / "l.jsonl")
     assert s.n == 1
+
+
+# --------------------------------------------------------------------------- DA-3c
+def test_un_solo_origen_de_sha256_y_leer_divipola():
+    from src.m1_demanda import datos
+    assert dm.sha256 is datos.sha256 and dm.leer_divipola is datos.leer_divipola
+
+
+def test_consultar_json_invalido_se_reintenta_y_se_registra(tmp_path):
+    class _Rota(_Resp):
+        def json(self):
+            raise requests.exceptions.JSONDecodeError("no es json", "<html>", 0)
+
+    s = _Sesion(_Rota(200), _Resp(200, [{"a": 1}]))
+    log = tmp_path / "log.jsonl"
+    assert dm.consultar({}, reintentos=2, espera=0, sesion=s, log=log) == [{"a": 1}]
+    assert s.n == 2 and "error" in log.read_text().splitlines()[0]
+    s = _Sesion(_Rota(200), _Rota(200))
+    with pytest.raises(ValueError):
+        dm.consultar({}, reintentos=2, espera=0, sesion=s, log=tmp_path / "l2.jsonl")
+
+
+def test_leer_rutas_valida_el_formato():
+    assert dm.leer_rutas("05001-11001, 11001-05001") == RUTAS
+    for malo in ("05001", "05001-11001-76001", "5001-11001", "05001-abcde", ""):
+        with pytest.raises(ValueError, match="ORIGEN-DESTINO|vacía"):
+            dm.leer_rutas(malo)
+
+
+def test_params_conteo_mes_cuenta_registros_sin_agrupar_por_clase():
+    p = dm.params_conteo_mes(2022, 1, RUTAS)
+    assert "count(*) as registros" in p["$select"]
+    assert p["$group"] == "municipio_origen_ruta, municipio_destino_ruta" and "$order" in p
+    assert "clase_vehiculo" not in p["$select"] + p["$group"]  # no se confunde con la descarga en el log
+    assert 'fecha_despacho >= "2022-01-01T00:00:00"' in p["$where"] and "(municipio_origen_ruta='05001'" in p["$where"]
+
+
+def _conteo_falso(cuenta):
+    def falsa(p, **kw):
+        cuenta.append(p["$where"])
+        mes = p["$where"].split('"')[1][:7]
+        n = {"2022-01": 10, "2022-02": 20}.get(mes, 0)
+        return [{"municipio_origen_ruta": "05001", "municipio_destino_ruta": "11001", "registros": str(n)}] if n else []
+
+    return falsa
+
+
+def test_contar_registros_por_mes_y_ruta_con_ceros_y_reanudable(tmp_path):
+    cuenta: list[str] = []
+    csv = tmp_path / "conteo.csv"
+    t = dm.contar_registros(RUTAS, date(2022, 1, 1), date(2022, 3, 31), csv, consulta=_conteo_falso(cuenta),
+                            fecha="2026-11-25")
+    assert len(cuenta) == 3 and len(t) == 6  # 3 meses × 2 rutas; las que no devuelven filas quedan en 0
+    assert list(t.columns) == ["mes", "ruta_id", "registros", "fecha_consulta"]
+    fila = t[(t["mes"] == "2022-02") & (t["ruta_id"] == "05001-11001")].iloc[0]
+    assert fila["registros"] == 20 and fila["fecha_consulta"] == "2026-11-25"
+    assert t[(t["mes"] == "2022-03")]["registros"].tolist() == [0, 0]
+    assert t["registros"].dtype == "int64" and pd.read_csv(csv, dtype={"mes": str}).shape == (6, 4)
+    # reanudable: no vuelve a consultar los meses que ya están
+    dm.contar_registros(RUTAS, date(2022, 1, 1), date(2022, 3, 31), csv, consulta=_conteo_falso(cuenta))
+    assert len(cuenta) == 3
+    # un mes nuevo solo consulta ese mes
+    dm.contar_registros(RUTAS, date(2022, 1, 1), date(2022, 4, 30), csv, consulta=_conteo_falso(cuenta),
+                        fecha="2026-11-26")
+    assert len(cuenta) == 4
+    t2 = pd.read_csv(csv, dtype={"mes": str})
+    assert t2["mes"].nunique() == 4 and set(t2["fecha_consulta"]) == {"2026-11-25", "2026-11-26"}
+
+
+def test_ranking_con_fallos_registra_y_sigue(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(dm, "RAW", tmp_path / "raw")
+    monkeypatch.setattr(dm, "DIVIPOLA_CSV", tmp_path / "divipola.csv")
+    pd.DataFrame({"cod_mpio": ["05001", "11001"], "nom_mpio": ["A", "B"], "dpto": ["X", "Y"]}).to_csv(
+        tmp_path / "divipola.csv", index=False)
+    dias = dm.dias_muestra()
+    malo = dias[1]
+
+    def falsa(params, **kw):
+        if f'"{malo:%Y-%m-%d}T' in params["$where"]:
+            raise requests.Timeout("lento")
+        return [{"municipio_origen_ruta": "05001", "municipio_destino_ruta": "11001", "pasajeros": "9",
+                 "despachos": "1", "filas": "1"},
+                {"municipio_origen_ruta": "11001", "municipio_destino_ruta": "05001", "pasajeros": "8",
+                 "despachos": "1", "filas": "1"}]
+
+    monkeypatch.setattr(dm, "paginar", lambda params, **kw: falsa(params))
+    args = argparse.Namespace(timeout=1, reintentos=1, paralelo=2)
+    assert dm.cmd_ranking(args) == 0
+    guardado = json.loads((tmp_path / "raw" / "ranking_dias.json").read_text(encoding="utf-8"))
+    assert list(guardado["fallidos"]) == [malo.isoformat()] and "Timeout" in guardado["fallidos"][malo.isoformat()]
+    assert len(guardado["muestras"]) == len(dias) - 1
+    rk = pd.read_csv(tmp_path / "raw" / "ranking_rutas.csv", dtype=str)
+    assert rk["n_dias_muestra"].iloc[0] == str(len(dias))  # el denominador cuenta los días que fallaron
+    assert "FALLO" in capsys.readouterr().out
+
+
+def test_ranking_error_que_no_es_de_red_no_se_traga(tmp_path, monkeypatch):
+    monkeypatch.setattr(dm, "RAW", tmp_path / "raw")
+
+    def con_bug(params, **kw):
+        raise KeyError("bug de programación")
+
+    monkeypatch.setattr(dm, "paginar", con_bug)
+    with pytest.raises(KeyError):
+        dm.cmd_ranking(argparse.Namespace(timeout=1, reintentos=1, paralelo=1))
+
+
+def test_ranking_sin_divipola_sale_con_codigo_distinto_de_cero(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(dm, "RAW", tmp_path / "raw")
+    monkeypatch.setattr(dm, "DIVIPOLA_CSV", tmp_path / "no_existe.csv")
+    monkeypatch.setattr(dm, "paginar", lambda params, **kw: [])
+    assert dm.cmd_ranking(argparse.Namespace(timeout=1, reintentos=1, paralelo=1)) != 0
+    assert "divipola" in capsys.readouterr().err.lower()
+
+
+def test_descargar_con_desde_mayor_que_hasta_o_rutas_malas_sale_con_codigo_distinto_de_cero(capsys):
+    assert dm.main(["descargar", "--rutas", "05001-11001", "--desde", "2022-03-01", "--hasta", "2022-01-01"]) != 0
+    assert dm.main(["descargar", "--rutas", "05001", "--desde", "2022-01-01", "--hasta", "2022-02-01"]) != 0
+    assert dm.main(["contar", "--rutas", "05001-11001", "--desde", "2022-03-01", "--hasta", "2022-01-01"]) != 0
+    err = capsys.readouterr().err
+    assert "--desde" in err and "ORIGEN-DESTINO" in err
+
+
+def test_armar_ranking_con_muestras_vacias():
+    rk = dm.armar_ranking({"2021-01-13": [], "2021-02-10": []})
+    assert rk.empty and list(rk.columns)[:2] == ["origen", "destino"] and "min_ida_regreso" in rk.columns
+    assert dm.armar_ranking({}).empty
+    assert dm.pares_ida_regreso(rk).empty  # no revienta aguas abajo
+    dv = pd.DataFrame({"cod_mpio": ["05001"], "nom_mpio": ["A"], "dpto": ["X"]})
+    assert dm.codigos_fuera_de_divipola(rk, dv) == []
+
+
+def test_cmd_ranking_no_modifica_las_opciones_globales_de_pandas(tmp_path, monkeypatch):
+    monkeypatch.setattr(dm, "RAW", tmp_path / "raw")
+    monkeypatch.setattr(dm, "DIVIPOLA_CSV", tmp_path / "divipola.csv")
+    pd.DataFrame({"cod_mpio": ["05001", "11001"], "nom_mpio": ["A", "B"], "dpto": ["X", "Y"]}).to_csv(
+        tmp_path / "divipola.csv", index=False)
+    monkeypatch.setattr(dm, "paginar", lambda params, **kw: [
+        {"municipio_origen_ruta": "05001", "municipio_destino_ruta": "11001", "pasajeros": "9", "despachos": "1",
+         "filas": "1"},
+        {"municipio_origen_ruta": "11001", "municipio_destino_ruta": "05001", "pasajeros": "8", "despachos": "1",
+         "filas": "1"}])
+    antes = pd.get_option("display.width")
+    assert dm.cmd_ranking(argparse.Namespace(timeout=1, reintentos=1, paralelo=1)) == 0
+    assert pd.get_option("display.width") == antes

@@ -61,6 +61,27 @@ Regenerar (reanudable: salta los meses ya descargados):
 Después, sin red: `.venv\Scripts\python run.py m1-datos --config configs/m1/datos.yaml` (los SHA-256 también quedan en
 `data/processed/m1/resumen_datos.json` y en `results/data/m1/eda/ficha.json`).
 
+### Conteo de registros crudos de las 6 rutas (DA-3c)
+| Dato | Valor |
+|---|---|
+| Fecha de consulta | 2026-11-24 (log en `data/raw/m1/consultas_log.jsonl`, no versionado) |
+| Hecho con | `scripts/descargar_m1.py contar` (reanudable; 36 consultas, una por mes) |
+| Qué mide | `count(*)` en la fuente, sin agrupar, por mes y ruta dirigida, con el mismo filtro de la descarga (rutas, mes, `fecha_despacho < 2100-01-01`) |
+| Resultado | **1 372 746 registros crudos** en 2021-2023; por ruta: `11001-15759` 362 258, `11001-76001` 297 559, `15759-11001` 258 171, `52356-52001` 133 348, `52001-52356` 119 609, `76001-11001` 201 801 |
+| Archivo | `data/processed/m1/conteo_registros.csv` (se versiona; columnas `mes, ruta_id, registros, fecha_consulta`; 216 filas) |
+
+Consulta (una por mes):
+```
+GET https://www.datos.gov.co/resource/eh75-8ah6.json
+  $select = municipio_origen_ruta, municipio_destino_ruta, count(*) as registros
+  $where  = (el mismo de la descarga mensual)
+  $group  = $order = municipio_origen_ruta, municipio_destino_ruta
+```
+Regenerar: `.venv\Scripts\python scripts/descargar_m1.py contar --rutas 11001-76001,76001-11001,11001-15759,15759-11001,52001-52356,52356-52001 --desde 2021-01-01 --hasta 2023-12-31`.
+Los cuatro números del resumen no son comparables entre sí: 49 202 812 (registros del conjunto completo), 1 372 746 (registros
+crudos de las 6 rutas), 25 248 (filas agregadas por el servidor que se descargaron) y 6 570 (filas de la serie diaria).
+`fecha_descarga` de `ficha.json` sale de la última descarga mensual exitosa del log (`momento`), no del mtime de los parquets.
+
 Parquets crudos (`data/raw/m1/rutas/`, no versionados):
 
 | Archivo | Filas | Tamaño (B) | SHA-256 |

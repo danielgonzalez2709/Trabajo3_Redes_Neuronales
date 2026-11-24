@@ -58,6 +58,15 @@
     "fecha_consulta_cifras_conjunto": "2026-11-24",
     "rutas": 6,
     "pares_ida_regreso": 3,
+    "registros_crudos_rutas": 1372746,
+    "registros_crudos_por_ruta": {
+      "11001-15759": 362258,
+      "11001-76001": 297559,
+      "15759-11001": 258171,
+      "52001-52356": 119609,
+      "52356-52001": 133348,
+      "76001-11001": 201801
+    },
     "filas_descargadas": 25248,
     "filas_detalle": 25248,
     "filas_serie": 6570,

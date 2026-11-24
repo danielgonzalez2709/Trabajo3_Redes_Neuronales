@@ -1,0 +1,256 @@
+
+====================================================================================================
+0. Las marcas publicadas se reproducen con datos.marcar_anomalos sobre la serie publicada
+====================================================================================================
+marcas reproducidas == marcas_anomalos.parquet: True
+anomalo == OR(reglas): True
+
+====================================================================================================
+1a. Dependencia de las marcas de datos de test: recalcular SOLO con fechas < 2023-07-01 y comparar en train
+====================================================================================================
+  despachos_sin_pasajeros        marcas train (serie completa)=  2  (solo train)=  2  días que cambian=0
+  caida_robusta                  marcas train (serie completa)= 29  (solo train)= 29  días que cambian=0
+  pico_robusto                   marcas train (serie completa)=  0  (solo train)=  0  días que cambian=0
+  pasajeros_por_despacho_bajo    marcas train (serie completa)=  7  (solo train)=  7  días que cambian=0
+  sigma_MAD por ruta y regla: serie completa vs solo train
+    11001-15759 caida_robusta                    0.198391   0.200193
+    11001-15759 pico_robusto                     0.198391   0.200193
+    11001-15759 pasajeros_por_despacho_bajo      0.157236   0.152895
+    11001-76001 caida_robusta                     0.14243    0.14592
+    11001-76001 pico_robusto                      0.14243    0.14592
+    11001-76001 pasajeros_por_despacho_bajo       0.11274   0.107231
+    15759-11001 caida_robusta                    0.171747   0.172686
+    15759-11001 pico_robusto                     0.171747   0.172686
+    15759-11001 pasajeros_por_despacho_bajo      0.120575   0.115496
+    52001-52356 caida_robusta                    0.136796    0.13556
+    52001-52356 pico_robusto                     0.136796    0.13556
+    52001-52356 pasajeros_por_despacho_bajo       0.08877   0.088048
+    52356-52001 caida_robusta                    0.139592   0.140812
+    52356-52001 pico_robusto                     0.139592   0.140812
+    52356-52001 pasajeros_por_despacho_bajo      0.079957   0.085032
+    76001-11001 caida_robusta                     0.15149   0.150153
+    76001-11001 pico_robusto                      0.15149   0.150153
+    76001-11001 pasajeros_por_despacho_bajo      0.119281   0.114791
+
+====================================================================================================
+1b. Fuga por la ventana centrada: marca en t calculada con datos hasta t (causal) vs centrada; frontera de origen
+====================================================================================================
+  orígenes de test (cada 7 días, horizonte 30): 22; primero 2023-07-01, último 2023-11-25
+  días ≤ origen cuya marca `anomalo` cambia al recalcular con datos ≤ origen: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+====================================================================================================
+1c. ¿Dónde caen los anómalos? (train < 2023-07-01 ≤ test)
+====================================================================================================
+particion    train+val
+ruta_id               
+11001-15759          1
+11001-76001          5
+15759-11001          3
+52001-52356         10
+52356-52001          5
+76001-11001          5
+Empty DataFrame
+Columns: [ruta_id, fecha, despachos_sin_pasajeros, caida_robusta, pico_robusto, pasajeros_por_despacho_bajo, pasajeros, despachos]
+Index: []
+
+====================================================================================================
+1d. Efecto de excluir días `anomalo` del TEST sobre el error de un ingenuo estacional (h = 1..30)
+====================================================================================================
+             MAE_todo  MAE_sin_sinreg  MAE_sin_sinreg_ni_anom  n_pred  n_sinreg  n_anom
+ruta_id                                                                                
+11001-15759     757.8           757.8                   757.8   660.0       0.0     0.0
+11001-76001     649.1           649.1                   649.1   660.0       0.0     0.0
+15759-11001     655.4           655.4                   655.4   660.0       0.0     0.0
+52001-52356     175.3           175.3                   175.3   660.0       0.0     0.0
+52356-52001     191.0           191.0                   191.0   660.0       0.0     0.0
+76001-11001     575.8           575.8                   575.8   660.0       0.0     0.0
+
+====================================================================================================
+2a. Días sin_registro: fechas y partición
+====================================================================================================
+  11001-15759: 3 días; test=0; 2021-05-04..2021-05-06; meses=['2021-05']
+  11001-76001: 26 días; test=0; 2021-05-04..2021-05-30; meses=['2021-05']
+  15759-11001: 4 días; test=0; 2021-05-04..2021-05-07; meses=['2021-05']
+  52001-52356: 9 días; test=0; 2021-05-05..2021-05-28; meses=['2021-05']
+  52356-52001: 14 días; test=0; 2021-05-04..2021-05-28; meses=['2021-05']
+  76001-11001: 26 días; test=0; 2021-05-02..2021-05-31; meses=['2021-05']
+
+====================================================================================================
+2b. Escala de MASE (ingenuo estacional 7 días, solo train < 2023-07-01): ceros imputados vs pares sin imputación
+====================================================================================================
+  11001-15759: escala con 0 imputados=   495.9  sin pares con sin_registro=   494.9  (+ sin anómalos)=   494.2  razón=1.002  pares afectados=6
+  11001-76001: escala con 0 imputados=   657.7  sin pares con sin_registro=   668.3  (+ sin anómalos)=   664.5  razón=0.984  pares afectados=33
+  15759-11001: escala con 0 imputados=   481.5  sin pares con sin_registro=   476.8  (+ sin anómalos)=   462.3  razón=1.010  pares afectados=8
+  52001-52356: escala con 0 imputados=   164.6  sin pares con sin_registro=   162.3  (+ sin anómalos)=   158.2  razón=1.014  pares afectados=16
+  52356-52001: escala con 0 imputados=   184.3  sin pares con sin_registro=   180.7  (+ sin anómalos)=   177.7  razón=1.020  pares afectados=22
+  76001-11001: escala con 0 imputados=   440.4  sin pares con sin_registro=   446.4  (+ sin anómalos)=   443.1  razón=0.987  pares afectados=36
+
+====================================================================================================
+2c. Rezagos contaminados: pronósticos desde orígenes de test cuyo rezago estacional cae en un día sin_registro
+====================================================================================================
+ruta_id
+11001-15759    0
+11001-76001    0
+15759-11001    0
+52001-52356    0
+52356-52001    0
+76001-11001    0
+  11001-15759: orígenes (cada 7 días, todo el periodo) con ≥1 cero imputado en los 28 rezagos: 4/149
+  11001-76001: orígenes (cada 7 días, todo el periodo) con ≥1 cero imputado en los 28 rezagos: 8/149
+  15759-11001: orígenes (cada 7 días, todo el periodo) con ≥1 cero imputado en los 28 rezagos: 4/149
+  52001-52356: orígenes (cada 7 días, todo el periodo) con ≥1 cero imputado en los 28 rezagos: 7/149
+  52356-52001: orígenes (cada 7 días, todo el periodo) con ≥1 cero imputado en los 28 rezagos: 7/149
+  76001-11001: orígenes (cada 7 días, todo el periodo) con ≥1 cero imputado en los 28 rezagos: 8/149
+
+====================================================================================================
+2d. ¿Los 0 imputados son plausibles como demanda? Pasajeros mínimos en días con registro (para contraste)
+====================================================================================================
+  11001-15759: min con registro=16, p1=438, mediana=2424
+  11001-76001: min con registro=0, p1=1057, mediana=3525
+  15759-11001: min con registro=0, p1=640, mediana=3314
+  52001-52356: min con registro=6, p1=251, mediana=1450
+  52356-52001: min con registro=8, p1=338, mediana=1507
+  76001-11001: min con registro=10, p1=658, mediana=2672
+
+====================================================================================================
+3a. Columnas de demanda_diaria / detalle: ¿conocibles 30 días antes del día pronosticado?
+====================================================================================================
+  demanda_diaria: ['ruta_id', 'origen_divipola', 'destino_divipola', 'fecha', 'pasajeros', 'despachos', 'sin_registro', 'anomalo']
+  demanda_detalle: ['ruta_id', 'origen_divipola', 'destino_divipola', 'fecha', 'tipo_despacho', 'clase_vehiculo', 'pasajeros', 'despachos']
+  Correlación (Spearman) pasajeros vs despachos del MISMO día, por ruta (solo días con registro):
+    11001-15759: rho(P_t, D_t)=0.745   rho(P_t, D_t-30)=0.413
+    11001-76001: rho(P_t, D_t)=0.614   rho(P_t, D_t-30)=0.295
+    15759-11001: rho(P_t, D_t)=0.704   rho(P_t, D_t-30)=0.438
+    52001-52356: rho(P_t, D_t)=0.939   rho(P_t, D_t-30)=0.586
+    52356-52001: rho(P_t, D_t)=0.943   rho(P_t, D_t-30)=0.636
+    76001-11001: rho(P_t, D_t)=0.673   rho(P_t, D_t-30)=0.304
+  Ganancia de usar D_t (no conocible) en una regresión log-log vs solo rezago estacional (train):
+    11001-15759: MAE test con lag35=  1078.1   con lag35 + despachos_t=   944.5
+    11001-76001: MAE test con lag35=   631.9   con lag35 + despachos_t=   667.1
+    15759-11001: MAE test con lag35=   856.1   con lag35 + despachos_t=   531.3
+    52001-52356: MAE test con lag35=   281.0   con lag35 + despachos_t=   108.6
+    52356-52001: MAE test con lag35=   270.7   con lag35 + despachos_t=   119.8
+    76001-11001: MAE test con lag35=   560.7   con lag35 + despachos_t=   434.1
+
+====================================================================================================
+3b. Parámetros elegidos mirando la serie completa (incluye test)
+====================================================================================================
+  configs/m1/datos.yaml: 'Umbrales elegidos mirando los residuos reales (2021–2023, DA-3)'
+  criterio de rutas: Ranking de pares por el mínimo de los dos sentidos en una muestra de 36 miércoles (uno por mes, 2021–2023), con 35–36 de 36 días con registros en ambos sentidos ...
+
+====================================================================================================
+4a. % de pasajeros en TRANSITO por mes, rutas 11001-15759 y 15759-11001 (y comparación con el resto)
+====================================================================================================
+
+  11001-15759
+tipo_despacho  ORIGEN  TRANSITO   total  pct_tr
+mes                                            
+2021-01         13573     12863   26436    48.7
+2021-02         10979     13818   24797    55.7
+2021-03         17534     22628   40162    56.3
+2021-04         12581     17087   29668    57.6
+2021-05          7621      9820   17441    56.3
+2021-06         15407     16858   32265    52.2
+2021-07         19663     23392   43055    54.3
+2021-08         21365     26490   47855    55.4
+2021-09         19535     20833   40368    51.6
+2021-10         26104     26858   52962    50.7
+2021-11         28481     35304   63785    55.3
+2021-12         47964     44721   92685    48.3
+2022-01         33579     36069   69648    51.8
+2022-02         19401     38628   58029    66.6
+2022-03         23447     51334   74781    68.6
+2022-04         32609     38327   70936    54.0
+2022-05         27965     45056   73021    61.7
+2022-06         32259     46241   78500    58.9
+2022-07         38118     43547   81665    53.3
+2022-08         29806     35693   65499    54.5
+2022-09         26688     38736   65424    59.2
+2022-10         32915     39376   72291    54.5
+2022-11         29327     70655   99982    70.7
+2022-12         47751     95653  143404    66.7
+2023-01         35920     83735  119655    70.0
+2023-02         21406     69612   91018    76.5
+2023-03         27207     84740  111947    75.7
+2023-04         33600     83934  117534    71.4
+2023-05         25538     80861  106399    76.0
+2023-06         33166     87594  120760    72.5
+2023-07         34335     86517  120852    71.6
+2023-08         32167     93368  125535    74.4
+2023-09         28431     94027  122458    76.8
+2023-10         37870    101398  139268    72.8
+2023-11         34901     97512  132413    73.6
+2023-12         55903    102197  158100    64.6
+
+  15759-11001
+tipo_despacho  ORIGEN  TRANSITO   total  pct_tr
+mes                                            
+2021-01         20353     27025   47378    57.0
+2021-02         14347     26043   40390    64.5
+2021-03         20815     40463   61278    66.0
+2021-04         17230     29284   46514    63.0
+2021-05         11096     19423   30519    63.6
+2021-06         21451     39490   60941    64.8
+2021-07         26573     47785   74358    64.3
+2021-08         31460     54504   85964    63.4
+2021-09         29568     49240   78808    62.5
+2021-10         37618     59474   97092    61.3
+2021-11         40920     67529  108449    62.3
+2021-12         46236     73585  119821    61.4
+2022-01         47849     69534  117383    59.2
+2022-02         33333     57535   90868    63.3
+2022-03         39995     57890   97885    59.1
+2022-04         43557     55311   98868    55.9
+2022-05         46908     65611  112519    58.3
+2022-06         46913     65896  112809    58.4
+2022-07         53065     68794  121859    56.5
+2022-08         43063     61690  104753    58.9
+2022-09         42420     58801  101221    58.1
+2022-10         49074     60063  109137    55.0
+2022-11         45665     64500  110165    58.5
+2022-12         51081     66437  117518    56.5
+2023-01         52553     57528  110081    52.3
+2023-02         36598     56448   93046    60.7
+2023-03         42501     66467  108968    61.0
+2023-04         44660     62739  107399    58.4
+2023-05         37466     58711   96177    61.0
+2023-06         43829     64571  108400    59.6
+2023-07         51570     67267  118837    56.6
+2023-08         48793     69285  118078    58.7
+2023-09         45369     73202  118571    61.7
+2023-10         55492     76474  131966    57.9
+2023-11         49361     77926  127287    61.2
+2023-12         54349     93209  147558    63.2
+
+  % tránsito por semestre (todas las rutas):
+sem          2021S1  2021S2  2022S1  2022S2  2023S1  2023S2
+ruta_id                                                    
+11001-15759    54.5    52.1    60.2    61.3    73.5    72.0
+11001-76001    67.4    66.5    72.0    63.5    61.6    61.0
+15759-11001    63.3    62.4    59.0    57.2    58.7    60.0
+52001-52356     0.0     0.0     5.3     0.0     0.0     0.0
+52356-52001     0.8     0.8    11.3     1.0     0.9     1.0
+76001-11001    56.5    53.9    58.1    54.8    57.1    59.5
+
+====================================================================================================
+4b. Cambio de nivel de la serie total vs solo ORIGEN en 11001-15759 alrededor de nov-2022 (mediana diaria)
+====================================================================================================
+  11001-15759 2022-05-01..2022-10-31: mediana total=   2242  ORIGEN=    943  TRANSITO=   1282
+  11001-15759 2022-11-01..2023-06-30: mediana total=   3562  ORIGEN=    876  TRANSITO=   2628
+  11001-15759 2023-07-01..2023-12-31: mediana total=   4003  ORIGEN=   1023  TRANSITO=   2976
+  15759-11001 2022-05-01..2022-10-31: mediana total=   3578  ORIGEN=   1445  TRANSITO=   2022
+  15759-11001 2022-11-01..2023-06-30: mediana total=   3538  ORIGEN=   1424  TRANSITO=   2054
+  15759-11001 2023-07-01..2023-12-31: mediana total=   4133  ORIGEN=   1590  TRANSITO=   2464
+
+====================================================================================================
+4c. Fracción del train (< 2023-07-01) que ya está después del cambio (≥ 2022-11-01)
+====================================================================================================
+  días de train=911; posteriores al cambio=242 (26.6 %)
+  11001-15759 escala MASE (|y_t - y_t-7| medio): pre-cambio=392.2  post-cambio (train)=779.6  train completo=495.9
+
+====================================================================================================
+4d. Temporadas altas dentro del test 2023-07-01..2023-12-31 (fechas conocidas del calendario civil)
+====================================================================================================
+  Ventanas de origen rodante que cubren 2023-12-15..2023-12-31 (fin de año): ['2023-11-25']
+  Último origen con horizonte completo: 2023-11-25 → último día pronosticado 2023-12-25
+  Calendario §5.2 debe cubrir hasta: 2024-01-30 (fin del periodo + 30 días)
