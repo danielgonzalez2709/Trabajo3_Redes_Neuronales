@@ -40,6 +40,15 @@
 
 ## 3. Especificación
 
+### 3.0 Datos reales (DA-3, aviso de Daniel, 24-nov)
+Series de 2021-01-01 a 2023-12-31 (6 series: Bogotá↔Cali, Bogotá↔Sogamoso, Pasto↔Ipiales) y detalle por tipo de despacho y
+clase de vehículo en `data/processed/m1/`. Ficha, calidad y diccionario (secciones 1–2) en `results/data/m1/eda/`. Para el
+descriptivo, mayo de 2021 se queda con sus marcas (útil para la hipótesis de recuperación); **los modelos de referencia
+entrenan desde el 2021-06-01** (`datos.inicio_entrenamiento`). Para la flota usa los **despachos de ORIGEN** del detalle (los de
+tránsito cuentan el mismo vehículo en cada terminal) y la composición por clase de vehículo. Hallazgos a analizar: el tránsito
+pesa tanto como el origen; salto del tránsito en Bogotá→Sogamoso desde nov-2022; MICROBUS desaparece en Bogotá→Cali en 2023;
+asimetría de clases en Pasto–Ipiales.
+
 ### 3.1 Calendario exógeno (CA-1) [PROPUESTO]
 Festivos de Colombia, puentes (festivo trasladado a lunes), Semana Santa, vacaciones escolares, temporada de fin de año. Cada
 columna con fuente primaria en `data/fuentes.md` (ley o decreto para festivos; calendario oficial para temporadas escolares)

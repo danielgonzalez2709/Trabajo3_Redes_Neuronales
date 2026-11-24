@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Curso | Redes neuronales y algoritmos bioinspirados — UNAL, Facultad de Minas, 2026-02 |
-| Versión | **0.3** — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
+| Versión | **0.5** — 2026-11-24 (§5.3 reglas contra fuga del arnés de M1: lista blanca de columnas, test sin excluir anómalos, ventanas desde el 2021-06-01, rejilla de orígenes anclada al 2023-12-01; §5.4 composición por clase solo con train; §5.1 marcas solo descriptivas y `marcas_anomalos.parquet`; afecta a Andrés y Camila; Daniel, a partir de auditor-fugas) · 0.4 — 2026-11-24 (§5.1: mayo de 2021 se conserva con marcas y los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`); la flota usa despachos de ORIGEN; afecta a Camila y Andrés; Daniel) · 0.3 — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
 | Entrega | **mar 1-dic-2026** (hora por confirmar [VERIFICAR]) |
 | Repositorio | https://github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales |
 
@@ -210,7 +210,11 @@ Los nombres de columnas y claves de esta sección son la propuesta inicial; el d
 | `pasajeros` | int ≥ 0 | Pasajeros que abordan la ruta ese día, en la terminal de origen **y** en terminales en tránsito (suma de registros; [DECIDIDO, Daniel, 24-nov]) |
 | `despachos` | int ≥ 0 | Despachos registrados ese día |
 | `sin_registro` | bool | El día no tenía registros en la fuente (cómo se imputó: DA-3) |
-| `anomalo` | bool | Marcado por la regla de anómalos de DA-3 |
+| `anomalo` | bool | Marcado por alguna regla de anómalos de DA-3 (OR de las reglas) |
+
+`sin_registro` y `anomalo` son **solo descriptivas**: las reglas de anómalos usan una ventana centrada y la escala de toda la
+serie (miran el futuro), así que **nunca** son variable de entrada de un modelo. `data/processed/m1/marcas_anomalos.parquet`
+(`ruta_id, fecha` + una columna por regla) permite auditar qué regla marcó cada día.
 
 `data/processed/m1/demanda_detalle.parquet` [DECIDIDO, Daniel, 24-nov]: misma granularidad más `tipo_despacho` (ORIGEN /
 TRANSITO) y `clase_vehiculo`, con `pasajeros` y `despachos`; la serie de arriba es su suma. Sirve para la capacidad por clase
@@ -218,6 +222,12 @@ TRANSITO) y `clase_vehiculo`, con `pasajeros` y `despachos`; la serie de arriba 
 **Fuente y periodo [DECIDIDO, Daniel, 24-nov]:** datos.gov.co `eh75-8ah6` (Supertransporte), **2021-01-01 a 2023-12-31**
 (36 meses continuos). 2024 está casi vacío en la fuente y 2020 casi no tiene filas, así que la caída de la pandemia no está en
 los datos: la hipótesis de pospandemia se analiza como tendencia 2021–2023. Investigación: `docs/investigacion/DA-2_fuentes_m1.md`.
+**Mayo de 2021 [DECIDIDO, Daniel, 24-nov]:** casi vacío en la fuente (p. ej. Bogotá→Cali 261 pasajeros y 26 días sin registro;
+es el único hueco del periodo). La serie se mantiene completa con las marcas (`sin_registro`, `anomalo`) para el análisis
+descriptivo; **los modelos (referencias y redes) entrenan desde el 2021-06-01** por defecto, con la clave
+`datos.inicio_entrenamiento` en sus configs. Las marcas `anomalo` miran la serie completa: nunca son variable de entrada.
+**Flota:** para despachos y vehículos se usan los despachos de **ORIGEN** del detalle (los de tránsito cuentan el mismo vehículo
+en cada terminal).
 `data/processed/m1/rutas.yaml`: por ruta `ruta_id`, nombres de municipios, `ruta_regreso_id`, criterios de selección.
 `data/processed/m1/resumen_datos.json`: registros y variables del crudo, periodo, rutas, conteos de anómalos y días sin registro.
 
@@ -241,6 +251,20 @@ Salida: `results/data/m1/pred_test_<modelo>.parquet` con `origen, ruta_id, fecha
 Métricas (Andrés, AN-1): MAE, RMSE, MASE (escala: ingenuo estacional de 7 días en train), cobertura y pérdida cuantílica;
 por ruta, agregadas y por horizonte (1–7, 8–14, 15–30 y día a día).
 
+**Reglas contra fuga del arnés [DECIDIDO, Daniel, 24-nov, a partir de la auditoría de DA-3]:**
+1. `ajustar()` recibe una **lista blanca** de columnas: `ruta_id, fecha, pasajeros` + calendario (§5.2). Nunca `anomalo`,
+   `sin_registro`, `despachos` del día objetivo ni el detalle por tipo/clase de ese día. `despachos` o el detalle solo como
+   rezagos ≥ 30 días. `tests/test_fuga_m1.py` lo prueba.
+2. El test se evalúa sobre **todos** los días con registro: no se excluyen días `anomalo` (una versión sin anómalos solo como
+   adicional). Si se excluyen días de la pérdida de entrenamiento, las marcas se recalculan con datos ≤ origen.
+3. `inicio_entrenamiento` (2021-06-01) aplica también a las ventanas de entrada: el primer origen usable es
+   2021-06-01 + longitud de ventana. Media, desviación y escala de MASE con train y sin días `sin_registro`.
+4. La rejilla de orígenes de test se **ancla al final**: último origen = 2023-12-01 (fin − 30 días) y los demás cada 7 días
+   hacia atrás, para que el fin de año de 2023 (temporada alta) quede pronosticado.
+5. [PROPUESTO, Andrés decide] Reportar además una MASE con la escala de los últimos 12 meses de train: 11001-15759 cambia de
+   régimen en nov-2022 (el tránsito pasa de ~1.000 a ~2.700 pasajeros/día) y la escala de todo el train infla su MASE.
+Auditoría completa: `docs/investigacion/DA-3_auditoria_fugas.md`.
+
 ### 5.4 M1 — operación (produce: Camila · consumen: Andrés, Daniel)
 `configs/m1/operacion.yaml`: capacidad por clase de vehículo, ocupación objetivo, tiempo de ciclo por ruta, horas de
 operación, jornada máxima y descansos de conductores, ausentismo, costos (quedarse corto vs. sobrar), cuantil usado.
@@ -250,6 +274,8 @@ def dimensionar(demanda: pd.DataFrame, params: dict) -> pd.DataFrame
 # entrada: ruta_id, fecha, demanda (punto o cuantil); salida: + despachos, vehiculos, conductores
 ```
 La app reimplementa `dimensionar` en TypeScript; `run.py export` genera casos de paridad.
+La composición por clase de vehículo y la razón de despachos de ORIGEN que use `dimensionar` se estiman **solo con train**
+(no con `resumen_datos.json`, que resume 2021–2023 completo) [DECIDIDO, Daniel, 24-nov].
 
 ### 5.5 M2 — imágenes procesadas (produce y consume: José)
 `data/processed/m2/indice.csv`: `id, archivo, clase, grupo_duplicado, split, ancho, alto, tipo_vehiculo` (si la fuente lo

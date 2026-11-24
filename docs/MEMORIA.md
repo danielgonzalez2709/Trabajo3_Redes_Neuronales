@@ -1,38 +1,45 @@
 # MEMORIA — estado del Trabajo 3 (≤ 150 líneas)
 
 ## Estado
-- Spec v0.2. `main` protegida (ruleset `proteger-main`: PR + Code Owners; Daniel fusiona). Ramas `dev/*` creadas.
-- DA-1 (infraestructura) terminado en `dev/daniel` y en PR hacia `main`: `src/comun/` (config, cli, seeds, results,
-  torch_utils, notebooks, eda), `run.py` con los 17 subcomandos (los pendientes salen con código 2), blog MkDocs con el
-  esqueleto de 14 secciones, serie sintética de M1 en `data/sintetico/m1/`, CI (job `pruebas`), `.gitattributes`.
-  233 pruebas en verde. Revisado por revisor-spec (APROBADO), revisor-calidad y auditor-reproducibilidad (correcciones aplicadas).
-- DA-2: investigación de fuentes lista en `docs/investigacion/DA-2_fuentes_m1.md`; falta decidir periodo y filtro y descargar.
+- Spec v0.5. `main` protegida (ruleset `proteger-main`: PR + Code Owners + check `pruebas`; Daniel fusiona). Ramas `dev/*`.
+- Blog publicado en GitHub Pages: https://danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales/ (esqueleto).
+- DA-1 (infraestructura) en `main` (PR #1): `src/comun/`, `run.py` con 17 subcomandos, blog, serie sintética, CI.
+- DA-2/DA-3/DA-4 terminados el mar 24 (PR #2): series reales de M1 en `data/processed/m1/` (6 series, 2021-01-01..2023-12-31),
+  detalle por tipo de despacho y clase de vehículo, marcas de anómalos, ficha/calidad/diccionario en `results/data/m1/eda/`.
+  Revisados por revisor-spec (APROBADO), auditor-fugas (sin fuga activa) y revisor-calidad (correcciones aplicadas).
+  `run.py m1-datos` regenera todo desde `data/raw/m1/` (no versionado; se reconstruye con `scripts/descargar_m1.py`).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
 ## Decisiones vigentes
 - Git: solo Daniel fusiona a `main` por PR; cada quien en `dev/<nombre>`; push permitido a otras ramas, nunca a `main`.
 - App en Vercel (Next.js estático). Blog en MkDocs Material + hook del Trabajo 2.
 - Plantilla común de análisis descriptivo para los 3 módulos (núcleo §5.12); veredicto `pendiente` hasta modelar.
-- Daniel hace las primeras tareas de M1 (DA-2/DA-3); Camila continúa desde el descriptivo.
-- Serie sintética: códigos ficticios del departamento `00`; picos de temporada como proxy de festivos.
-- JSON de juguete de la app: en DA-5.
-- Conjunto de M1: datos.gov.co `eh75-8ah6` (Supertransporte). DIVIPOLA: DANE en datos.gov.co `gdxc-w37w` (corte 30-dic-2024).
+- M1: conjunto `eh75-8ah6` (Supertransporte); DIVIPOLA DANE `gdxc-w37w` (corte 30-dic-2024).
+- M1: rutas 11001↔76001 (Bogotá–Cali), 11001↔15759 (Bogotá–Sogamoso), 52001↔52356 (Pasto–Ipiales); periodo 2021–2023
+  (2024 casi vacío y 2020 sin datos en la fuente); `pasajeros` = origen + tránsito; flota con despachos de ORIGEN.
+- M1: mayo de 2021 casi vacío → serie completa con marcas; los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`).
+- M1: reglas contra fuga del arnés (núcleo §5.3): lista blanca de columnas; test sin excluir anómalos; ventanas desde
+  2021-06-01; rejilla de orígenes anclada al 2023-12-01 para cubrir el fin de año; composición por clase solo con train.
+- Serie sintética: códigos ficticios del departamento `00`. JSON de juguete de la app: en DA-5.
 
 ## Avisos para el equipo
 - Windows: clonar en una ruta corta (p. ej. `C:\proy\`); en rutas profundas `pip install` falla por el límite de 260 caracteres.
 - Usar siempre `.venv\Scripts\python` (el `python` del PATH puede ser 3.13).
-- Si `configs/<m>/` aún no existe, cada dueño crea las suyas en su tarea.
+- M1 (Camila, Andrés): `sin_registro` vale 0 pero no es demanda (enmascarar); `anomalo` nunca como entrada; salto del tránsito
+  en 11001-15759 desde nov-2022; 2021 muy por debajo de 2022–2023. Ver `docs/investigacion/DA-3_auditoria_fugas.md`.
 
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
-2. M1: periodo útil (hueco casi total en 2024 y dic-2025), filtro `tipo_despacho` y rutas (Daniel + Camila, DA-3).
-3. GPU para las 30 semillas de M2.
+2. GPU para las 30 semillas de M2.
+3. Daniel: DA-5 (esqueleto de la app en Vercel con JSON de juguete), guion del video.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo).
-- Ojo: las inconsistencias del diccionario de M1 (DA-2) son hallazgos de datos para el blog, no alucinaciones, salvo que una
-  IA haya afirmado lo contrario con prompt literal guardado.
+- Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
+  afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
-- 2026-11-24 · Daniel · DA-1 terminado y en PR; investigación de fuentes de M1 (DA-2) lista; Spec v0.2.
+- 2026-11-24 · Daniel · DA-2/DA-3/DA-4 terminados (series reales de M1) y en PR #2; Spec v0.3–v0.5 (periodo, tránsito,
+  mayo-2021, reglas contra fuga); Pages activo; check `pruebas` obligatorio en `main`.
+- 2026-11-24 · Daniel · DA-1 fusionado en `main` (PR #1); Spec v0.2.
 - 2026-11-23 · Daniel · Spec v0.1, PLAN, agentes y plantillas del Trabajo 3.

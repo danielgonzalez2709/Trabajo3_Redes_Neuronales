@@ -1,0 +1,87 @@
+{
+  "fuente": "Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera (Superintendencia de Transporte - SUPERTRANSPORTE, datos.gov.co eh75-8ah6)",
+  "cita": "Superintendencia de Transporte. (2026). Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera [Conjunto de datos]. Datos Abiertos Colombia. https://www.datos.gov.co/d/eh75-8ah6 (consultado el 24 de noviembre de 2026; filas actualizadas el 3 de mayo de 2026).",
+  "url": "https://www.datos.gov.co/d/eh75-8ah6",
+  "fecha_descarga": "2026-11-24",
+  "sha256": {
+    "2021-01.parquet": "90f6e3393c728c4eee1267cf05996bf1d70fd39458bd0308074e3007f65b829b",
+    "2021-02.parquet": "b928a724fcc8ea19463ea9465b3eec9f8d665a207408debafdbb38a4cbae7f56",
+    "2021-03.parquet": "c96dd7f083402a80ac7abfaaa83b7c70e73dfd45df078bb400772217c59b3c5b",
+    "2021-04.parquet": "f1469d20dd128d2776868f1fcb82292da988c84df6dcefff3d05d5b1d5d7ae8d",
+    "2021-05.parquet": "ca480435d55b96c4099c2730f39098c233181891b3fa421a2b2abae7ce5aba2a",
+    "2021-06.parquet": "955bbb75a481993738e07646831db80adf7affbfd68b69fefe9e6a615c8ba53c",
+    "2021-07.parquet": "1b805931491b0650da44219363cdb68e23f7a9fbd606ea503b5032fab751cb88",
+    "2021-08.parquet": "85a7c1c826e16f3c9485639704f80ac23f18e0851c10ed9eb67f74889a28c86a",
+    "2021-09.parquet": "7d1cb92818643290e941fb6f76ab350ec2d5e9c3a5f2d2227dd6016f9487edd1",
+    "2021-10.parquet": "d7f373ffe27ad6e74675f074470a91ffbe25eb10d19d46c1e15b78417113aa95",
+    "2021-11.parquet": "8676294c2fd0b29d0906a320c6d158b30ac81d12f9f787c8707a6891f74c2f1b",
+    "2021-12.parquet": "4fe8d8412e3134b12ee5d868e2977aa109bc6ebdccc29140bd4d2b41c2c7a5bc",
+    "2022-01.parquet": "4918f03b72ad49843696a5ff36f3307443c0b8cb1ffb2dbf1917eb691a06db4b",
+    "2022-02.parquet": "416d64de904e9b19219543e8d1174fbdad0df0058c7607de7a078984765632d7",
+    "2022-03.parquet": "bbb5f5412a62aa82663c189ffe3f2fd132cfc322ad51fbe0750d8d608ed100bf",
+    "2022-04.parquet": "09835a3669b26cf20d696e289db2240ef561fa89b99ecca3189c3ea78db49de0",
+    "2022-05.parquet": "b745e326fd7fdb8183bd1bc2f73533b821459fb53fad8c7572656bd403eac815",
+    "2022-06.parquet": "f8ca0bd3d368140e07c4f9a27ef4007516fe7f63f35ec58358a759e34c5329c7",
+    "2022-07.parquet": "9c1418fbd7ebf6a55e1b39c7f9a1df87778471cbbe19a38a1871614052b9c20e",
+    "2022-08.parquet": "7612664bb6fa42c09269d5eb0598043743951efefd9a1f229340b506fe6f403b",
+    "2022-09.parquet": "dd3c658ab1b38e58ed589e982687120623649fa1fdbf5c8b59dabce87c23354f",
+    "2022-10.parquet": "cc7f9c48a6a5682462ed9bd9956ca9ebb8b8c92a5250ca8d2b45f786988cd4c5",
+    "2022-11.parquet": "6b25eeecee94c3e6ad1e98891229eb81bd0a82a0a6cc9e365eee97db5637d3b9",
+    "2022-12.parquet": "15fbd13e8417d4f1f4134aa5c915e567dc71a1403f73ecb06350c68b42534619",
+    "2023-01.parquet": "ab17bf4aa61e034c41211293c8ec2caa03bafcddf1db214af4a2878b926fe27e",
+    "2023-02.parquet": "6d577704600375714fab4ab73922ab6aa0737c82c5675c0195ce939bcde32b51",
+    "2023-03.parquet": "d5eacb84258d26fc53b21d0fd0861333cdac4290d701711618c5e7a1e4f5fd02",
+    "2023-04.parquet": "01d27ab3d1e4d8e2eaa906d4ac1a8cc25a9f5c50f1dfa4198df13a368d8bfae4",
+    "2023-05.parquet": "c436a1cff11ed400ea0724960b7e9005ef454b3fedc0932874582faf3ad07117",
+    "2023-06.parquet": "5295f60f6648bb4c80f503af773655432714b18dad6f6bdc6f67e1b151a4c921",
+    "2023-07.parquet": "577316b9cb59e3fcb238781055eb354e90bf26b18ea5ac331d51f79f786aa77e",
+    "2023-08.parquet": "2d5528eb8f05e2db4136d397a8f36975b29ff174d185672421fb565f5fbac4cd",
+    "2023-09.parquet": "142553d501a4b7554be69ce783322f092ee60d671b34945c2546239cb04d560c",
+    "2023-10.parquet": "62502441d126af44af3fdcd1d7e8ddd995b7abf66c3d0dd4211d5a14a17d2bc8",
+    "2023-11.parquet": "5fda846d4b320b7a53cef8a14a28870cb4d6b6e989c3e0e02c789c4aab4a75df",
+    "2023-12.parquet": "916ea7ab64a511983dd0ccac59dfa809a219e98b2f4b27bc0f49b0b847b70e28"
+  },
+  "unidad_de_observacion": "Crudo: fila agregada por terminal, clase, nivel de servicio, ruta, fecha, hora y tipo de despacho. Serie: pasajeros por ruta dirigida y día (origen + tránsito).",
+  "n_registros": 49202812,
+  "n_variables": 10,
+  "periodo": {
+    "conjunto_crudo": [
+      "2019-08-04",
+      "2026-04-07"
+    ],
+    "usado": [
+      "2021-01-01",
+      "2023-12-31"
+    ]
+  },
+  "conteos": {
+    "fecha_consulta_cifras_conjunto": "2026-11-24",
+    "rutas": 6,
+    "pares_ida_regreso": 3,
+    "registros_crudos_rutas": 1372746,
+    "registros_crudos_por_ruta": {
+      "11001-15759": 362258,
+      "11001-76001": 297559,
+      "15759-11001": 258171,
+      "52001-52356": 119609,
+      "52356-52001": 133348,
+      "76001-11001": 201801
+    },
+    "filas_descargadas": 25248,
+    "filas_detalle": 25248,
+    "filas_serie": 6570,
+    "dias_por_ruta": 1095,
+    "dias_sin_registro": 82,
+    "dias_anomalos": 29,
+    "pasajeros_totales": 16218405,
+    "clases_vehiculo": [
+      "AUTOMOVIL",
+      "BUS",
+      "BUSETA",
+      "CAMIONETA",
+      "CAMPERO",
+      "MICROBUS"
+    ],
+    "codigos_fuera_de_divipola": []
+  }
+}

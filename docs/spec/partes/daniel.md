@@ -53,8 +53,12 @@
   para documentar variables; registrar URL de la consulta, fecha, SHA-256 y tamaño en `data/fuentes.md`.
 - DIVIPOLA: tabla oficial del DANE guardada en `data/processed/m1/divipola.csv` con su cita; validar que todo código de
   origen/destino exista en ella (los que no, se documentan como inconsistencia).
-- **Selección de rutas [PENDIENTE, con Camila]:** propuesta de 5 a 8 rutas de alto volumen, con historial completo que cubra
-  pandemia y pospandemia, **con su sentido de regreso**, y con al menos una temporada alta en el periodo de prueba.
+- **Selección de rutas [DECIDIDO, Daniel, 24-nov]:** 3 pares ida/regreso = 6 series: **Bogotá D.C. (11001) ↔ Santiago de
+  Cali (76001)** (corredor largo, el de mayor volumen), **Bogotá D.C. (11001) ↔ Sogamoso (15759)** (corredor medio) y **Pasto
+  (52001) ↔ Ipiales (52356)** (regional y de frontera, fuera de Bogotá). Criterio: ranking de pares por el mínimo de los dos
+  sentidos en una muestra de 36 miércoles (uno por mes, 2021–2023), con 35–36 de 36 días con registros en ambos sentidos
+  (`scripts/descargar_m1.py ranking`, `data/fuentes.md`). Periodo 2021–2023 (núcleo §5.1, v0.3); la temporada alta de prueba
+  es el fin de año de 2023. Camila puede proponer cambios por PR.
 - Agregación: suma de pasajeros y despachos por `(ruta_id, fecha)`; días sin registro → fila con `sin_registro = true` (regla
   de imputación documentada); anómalos → regla explícita (p. ej. despachos > 0 con pasajeros = 0, valores fuera de rango) y
   `anomalo = true`; nada se borra en silencio.
@@ -79,10 +83,10 @@ Next.js estático en Vercel, como el Trabajo 2. Página de inicio con enlaces a 
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
 | DA-0 | Spec v0.1 aprobado, push inicial, ruleset de `main`, ramas `dev/*` | lun 23 | — | — | Las 5 ramas existen; `main` protegida | ✅ |
-| DA-1 | Infraestructura (§3.1) | mar 24, 12 m. | implementador (Sonnet) + scaffolding | auditor-reproducibilidad (Haiku) | `pytest` y CI en verde; `python run.py --help` lista los subcomandos | ⬜ |
-| DA-2 | Descarga del crudo de M1 y DIVIPOLA | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `data/fuentes.md` completo; conteos medidos; diccionario citado | ⬜ |
-| DA-3 | Construcción de las series (§3.2) | **mié 25, 2 p. m.** | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | Esquema §5.1; sin huecos de fecha; reglas de anómalos con prueba | ⬜ |
-| DA-4 | Plantilla común secciones 1–2 para M1 | mié 25 | curador-datos (Sonnet) | revisor-spec (Sonnet) | `ficha.json` válido; inconsistencias diccionario vs. datos listadas | ⬜ |
+| DA-1 | Infraestructura (§3.1) | mar 24, 12 m. | implementador (Sonnet) + scaffolding | auditor-reproducibilidad (Haiku) | `pytest` y CI en verde; `python run.py --help` lista los subcomandos | ✅ |
+| DA-2 | Descarga del crudo de M1 y DIVIPOLA | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `data/fuentes.md` completo; conteos medidos; diccionario citado | ✅ |
+| DA-3 | Construcción de las series (§3.2) | **mié 25, 2 p. m.** | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | Esquema §5.1; sin huecos de fecha; reglas de anómalos con prueba | ✅ |
+| DA-4 | Plantilla común secciones 1–2 para M1 | mié 25 | curador-datos (Sonnet) | revisor-spec (Sonnet) | `ficha.json` válido; inconsistencias diccionario vs. datos listadas | ✅ |
 | DA-5 | Esqueleto de la app + Vercel con JSON de juguete de M1, M2 y M3 en el formato de §5.4, §5.6 y §5.8 | jue 26 | implementador-web (Sonnet) | revisor-calidad (Haiku) | Despliegue en Vercel; `npm test` y `npm run build` en verde | ⬜ |
 | DA-6 | Página de demanda con `dimensionar()` en TS | sáb 28 | implementador-web (Sonnet) | verificador-matematico (Opus) | Paridad TS vs. Python | ⬜ |
 | DA-7 | Página de conducción (ONNX + CAM + umbral) | sáb 28–dom 29 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | Paridad de probabilidades y mapa con los casos de `meta.json` | ⬜ |

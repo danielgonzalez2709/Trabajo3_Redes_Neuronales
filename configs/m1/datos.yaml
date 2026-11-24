@@ -1,0 +1,93 @@
+# M1 — construcción de las series diarias (DA-3) y secciones 1–2 de la plantilla común (DA-4).
+# Uso: .venv\Scripts\python run.py m1-datos --config configs/m1/datos.yaml
+# Nada aleatorio: no hay base_seed. Sin red: lee data/raw/m1/rutas/*.parquet (scripts/descargar_m1.py descargar).
+
+periodo:
+  inicio: "2021-01-01"   # núcleo §5.1 v0.3 [DECIDIDO, Daniel, 24-nov]
+  fin: "2023-12-31"
+
+# 3 pares ida/regreso = 6 series (docs/spec/partes/daniel.md §3.2 [DECIDIDO, Daniel, 24-nov]).
+# El criterio se copia literal de daniel.md §3.2; `descripcion` es la etiqueta corta de cada par en ese mismo párrafo.
+criterio_seleccion: >-
+  Ranking de pares por el mínimo de los dos sentidos en una muestra de 36 miércoles (uno por mes, 2021–2023),
+  con 35–36 de 36 días con registros en ambos sentidos (`scripts/descargar_m1.py ranking`, `data/fuentes.md`).
+pares:
+  - {a: "11001", b: "76001", descripcion: "corredor largo, el de mayor volumen"}
+  - {a: "11001", b: "15759", descripcion: "corredor medio"}
+  - {a: "52001", b: "52356", descripcion: "regional y de frontera, fuera de Bogotá"}
+
+entrada:
+  crudo_rutas: data/raw/m1/rutas          # un parquet por mes (AAAA-MM.parquet)
+  divipola: data/processed/m1/divipola.csv
+  log_descarga: data/raw/m1/consultas_log.jsonl         # fecha_descarga = última descarga mensual exitosa del log (no el mtime)
+  conteo_registros: data/processed/m1/conteo_registros.csv  # scripts/descargar_m1.py contar: count(*) por mes y ruta
+  metadatos_fuente: data/raw/m1/views_eh75-8ah6.json   # copia de /api/views/eh75-8ah6.json (diccionario literal)
+  informe_fuentes: docs/investigacion/DA-2_fuentes_m1.md  # §1.7: inconsistencias diccionario vs. datos
+
+salida:
+  carpeta: data/processed/m1
+  detalle: demanda_detalle.parquet
+  diaria: demanda_diaria.parquet
+  marcas: marcas_anomalos.parquet
+  rutas: rutas.yaml
+  resumen: resumen_datos.json
+  eda: results/data/m1/eda
+
+# Cifras MEDIDAS del conjunto completo (informe DA-2 §1.4, consultas SoQL del 2026-11-24). No se recalculan aquí:
+# las series solo descargan las 6 rutas.
+fuente:
+  nombre: >-
+    Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera
+  entidad: Superintendencia de Transporte - SUPERTRANSPORTE
+  id_socrata: eh75-8ah6
+  url: https://www.datos.gov.co/d/eh75-8ah6
+  url_api: https://www.datos.gov.co/resource/eh75-8ah6.json
+  licencia: CC BY-SA 4.0
+  cita: >-
+    Superintendencia de Transporte. (2026). Operación de pasajeros y despacho de vehículos en la modalidad de transporte
+    de pasajeros por carretera [Conjunto de datos]. Datos Abiertos Colombia. https://www.datos.gov.co/d/eh75-8ah6
+    (consultado el 24 de noviembre de 2026; filas actualizadas el 3 de mayo de 2026).
+  fecha_consulta_informe: "2026-11-24"
+  n_registros_medido: 49202812
+  n_variables_medido: 10
+  fecha_min_medida: "2019-08-04"
+  fecha_max_medida_valida: "2026-04-07"
+  divipola_cita: >-
+    Departamento Administrativo Nacional de Estadística. (2024). DIVIPOLA- Códigos municipios [Conjunto de datos;
+    actualización a corte 30 de diciembre de 2024]. Datos Abiertos Colombia. https://www.datos.gov.co/d/gdxc-w37w
+    (consultado el 24 de noviembre de 2026).
+
+# Reglas de anómalos (descriptivas; NO son variables de entrada de los modelos; miran la serie completa de cada ruta).
+# Fórmulas en src/m1_demanda/datos.py. Umbrales elegidos mirando los residuos reales (2021–2023, DA-3):
+# - caida_robusta / pico_robusto, u = 10: con u = 5 la caída marca 82 días, muchos de ellos festivos de demanda baja real
+#   (1-ene, 24/25/31-dic, Semana Santa, domingos de ene-2021); con u = 10 quedan 29: el bloque 28-abr..1-jun-2021 (6 a 442
+#   pasajeros/día), los 1-ene de Pasto–Ipiales y 21–22-may-2023 de Sogamoso→Bogotá. Ningún pico supera 5 MAD.
+# - pasajeros_por_despacho_bajo, u = 8: los residuos reales < −8 MAD son 7 días (0 o 251 pasajeros con 214 y 278
+#   despachos; 1 a 27 despachos con 4–6 pasajeros por despacho en abr–may-2021); por encima de −8 queda la variación de
+#   festivos (24-dic con 7 a 11 pasajeros por despacho).
+anomalos:
+  despachos_sin_pasajeros:
+    activa: true          # día con despachos > 0 y pasajeros = 0 (lo pide el enunciado, M1 tarea 2)
+  caida_robusta:
+    activa: true
+    ventana_dias: 29      # mediana móvil centrada de log(1 + pasajeros), misma ruta (impar)
+    min_periodos: 15      # días con registro exigidos en la ventana para calcular la mediana
+    umbral_mad: 10.0      # marca si el residuo < −umbral × MAD escalado de los residuos de la ruta
+    escala_mad: 1.4826    # MAD → desviación estándar bajo normalidad (constante estándar del MAD)
+  pico_robusto:
+    activa: true
+    ventana_dias: 29
+    min_periodos: 15
+    umbral_mad: 10.0      # marca si el residuo > +umbral × MAD escalado
+    escala_mad: 1.4826
+  pasajeros_por_despacho_bajo:
+    activa: true
+    ventana_dias: 29      # mediana móvil centrada de log((1 + pasajeros) / (1 + despachos)), misma ruta
+    min_periodos: 15
+    umbral_mad: 8.0
+    escala_mad: 1.4826
+
+# Calidad (DA-4): se reporta como posible cambio de reporte toda categoría de tipo_despacho o clase_vehiculo cuya
+# participación en los pasajeros de una ruta cambie más de estos puntos porcentuales entre dos años del periodo.
+calidad:
+  cambio_composicion_pp: 10.0
