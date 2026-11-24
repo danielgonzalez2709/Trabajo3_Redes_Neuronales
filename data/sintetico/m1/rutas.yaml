@@ -1,0 +1,32 @@
+sintetico: true
+aviso: Códigos ficticios del departamento 00, que no existe en DIVIPOLA. Solo para
+  desarrollo y pruebas (§5.11).
+semilla: 0
+periodo:
+- '2019-01-01'
+- '2024-12-31'
+rutas:
+- ruta_id: 00001-00002
+  origen_municipio: Municipio ficticio A
+  destino_municipio: Municipio ficticio B
+  ruta_regreso_id: 00002-00001
+  criterios_seleccion: Ruta ficticia generada para desarrollo; no hay selección real
+    (DA-3 elige las reales).
+- ruta_id: 00002-00001
+  origen_municipio: Municipio ficticio B
+  destino_municipio: Municipio ficticio A
+  ruta_regreso_id: 00001-00002
+  criterios_seleccion: Ruta ficticia generada para desarrollo; no hay selección real
+    (DA-3 elige las reales).
+- ruta_id: 00001-00003
+  origen_municipio: Municipio ficticio A
+  destino_municipio: Municipio ficticio C
+  ruta_regreso_id: 00003-00001
+  criterios_seleccion: Ruta ficticia generada para desarrollo; no hay selección real
+    (DA-3 elige las reales).
+- ruta_id: 00003-00001
+  origen_municipio: Municipio ficticio C
+  destino_municipio: Municipio ficticio A
+  ruta_regreso_id: 00001-00003
+  criterios_seleccion: Ruta ficticia generada para desarrollo; no hay selección real
+    (DA-3 elige las reales).
