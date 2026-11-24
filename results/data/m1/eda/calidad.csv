@@ -1,0 +1,17 @@
+tabla,filas,duplicados_clave,columna,tipo,faltantes,pct_faltantes,unicos,ejemplo
+detalle,25248,0,ruta_id,str,0,0.0,6,11001-15759
+detalle,25248,0,origen_divipola,str,0,0.0,5,11001
+detalle,25248,0,destino_divipola,str,0,0.0,5,15759
+detalle,25248,0,fecha,object,0,0.0,1093,2021-01-01
+detalle,25248,0,tipo_despacho,str,0,0.0,2,ORIGEN
+detalle,25248,0,clase_vehiculo,str,0,0.0,6,BUS
+detalle,25248,0,pasajeros,int64,0,0.0,2923,301
+detalle,25248,0,despachos,int64,0,0.0,268,21
+serie,6570,0,ruta_id,str,0,0.0,6,11001-76001
+serie,6570,0,origen_divipola,str,0,0.0,5,11001
+serie,6570,0,destino_divipola,str,0,0.0,5,76001
+serie,6570,0,fecha,object,0,0.0,1095,2021-01-01
+serie,6570,0,pasajeros,int64,0,0.0,3460,943
+serie,6570,0,despachos,int64,0,0.0,460,95
+serie,6570,0,sin_registro,bool,0,0.0,2,False
+serie,6570,0,anomalo,bool,0,0.0,2,False

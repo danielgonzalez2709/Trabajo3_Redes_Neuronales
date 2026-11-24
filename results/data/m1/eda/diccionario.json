@@ -1,0 +1,181 @@
+{
+  "fuente_del_diccionario": "columns[] de https://www.datos.gov.co/api/views/eh75-8ah6.json (copia en data/raw/m1/views_eh75-8ah6.json)",
+  "variables": [
+    {
+      "campo": "terminal",
+      "nombre_portal": "TERMINAL",
+      "tipo_socrata": "text",
+      "descripcion_literal": "Corresponde a la sede de la terminal desde donde se realizan y reportan los despachos"
+    },
+    {
+      "campo": "clase_vehiculo",
+      "nombre_portal": "CLASE_VEHICULO",
+      "tipo_socrata": "text",
+      "descripcion_literal": "Identificador numérico dado por el RUNT"
+    },
+    {
+      "campo": "nivel_servicio",
+      "nombre_portal": "NIVEL_SERVICIO",
+      "tipo_socrata": "text",
+      "descripcion_literal": "1 BASICO - CORRIENTE 2 LUJO 3 CORRIENTE DIRECTO"
+    },
+    {
+      "campo": "municipio_origen_ruta",
+      "nombre_portal": "MUNICIPIO_ORIGEN_RUTA",
+      "tipo_socrata": "text",
+      "descripcion_literal": "Código Divipola del municipio de origen de la ruta"
+    },
+    {
+      "campo": "municipio_destino_ruta",
+      "nombre_portal": "MUNICIPIO_DESTINO_RUTA",
+      "tipo_socrata": "text",
+      "descripcion_literal": "Código Divipola del departamento de destino de la ruta"
+    },
+    {
+      "campo": "fecha_despacho",
+      "nombre_portal": "FECHA_DESPACHO",
+      "tipo_socrata": "calendar_date",
+      "descripcion_literal": "Fecha de realización del despacho. date (DD/MM/YYYY)"
+    },
+    {
+      "campo": "hora_despacho",
+      "nombre_portal": "HORA_DESPACHO",
+      "tipo_socrata": "text",
+      "descripcion_literal": "Hora 24H (hh)"
+    },
+    {
+      "campo": "tipo_despacho",
+      "nombre_portal": "TIPO_DESPACHO",
+      "tipo_socrata": "text",
+      "descripcion_literal": "1 = Si el despacho de la ruta es en origen, y 2 = Si el despacho de la ruta es en transito"
+    },
+    {
+      "campo": "despachos",
+      "nombre_portal": "DESPACHOS",
+      "tipo_socrata": "number",
+      "descripcion_literal": "Número vehículos de transporte de pasajeros por carretera que salen desde la terminal"
+    },
+    {
+      "campo": "pasajeros",
+      "nombre_portal": "PASAJEROS",
+      "tipo_socrata": "number",
+      "descripcion_literal": "Número de pasajeros que abordaron viaje desde la terminal de transporte. Las terminales en tránsito sólo deben reportar los pasajeros que abordaron el vehículo en dicha terminal."
+    }
+  ],
+  "inconsistencias_informe": [
+    {
+      "n": "1",
+      "diccionario_dice": "`clase_vehiculo`: «Identificador numérico dado por el RUNT»",
+      "datos_muestran": "Texto: BUS, BUSETA, MICROBUS, CAMIONETA, AUTOMOVIL, CAMPERO"
+    },
+    {
+      "n": "2",
+      "diccionario_dice": "`nivel_servicio`: «1 BASICO - CORRIENTE 2 LUJO 3 CORRIENTE DIRECTO»",
+      "datos_muestran": "Texto: BASICO, LUJO, PREFERENCIAL DE LUJO (5 478 filas, valor que el diccionario no lista); no aparece CORRIENTE DIRECTO como categoría"
+    },
+    {
+      "n": "3",
+      "diccionario_dice": "`tipo_despacho`: «1 = ... origen, y 2 = ... en transito»",
+      "datos_muestran": "Texto: ORIGEN, TRANSITO"
+    },
+    {
+      "n": "4",
+      "diccionario_dice": "`municipio_destino_ruta`: «Código Divipola del departamento de destino de la ruta»",
+      "datos_muestran": "Códigos de **municipio** de 5 dígitos (p. ej. `76306`, Ginebra), no de departamento (2 dígitos)"
+    },
+    {
+      "n": "5",
+      "diccionario_dice": "`fecha_despacho`: «date (DD/MM/YYYY)»",
+      "datos_muestran": "Marca ISO `2022-06-14T00:00:00.000`"
+    },
+    {
+      "n": "6",
+      "diccionario_dice": "Descripción: «Datos disponibles desde 1 de enero de 2021»",
+      "datos_muestran": "Hay 77 filas de 2019 y 14 265 de 2020, desde 2019-08-04"
+    },
+    {
+      "n": "7",
+      "diccionario_dice": "Frecuencia de actualización «Mensual»",
+      "datos_muestran": "Última fecha de despacho real: 2026-04-07, y la última actualización de filas fue 2026-05-03: a 2026-11-24 el conjunto lleva ~7 meses sin cargar datos (no se verificó si hay un nuevo corte que aún no esté publicado)"
+    },
+    {
+      "n": "8",
+      "diccionario_dice": "Sin mención de fechas inválidas",
+      "datos_muestran": "3 filas con fecha 2202-02, 2222-09 y 6202-04 (años imposibles)"
+    },
+    {
+      "n": "9",
+      "diccionario_dice": "Sin mención de huecos",
+      "datos_muestran": "2024 casi vacío (ver §1.4): ene-2024 sin filas; feb–oct-2024 con 0,3 % del volumen normal; dic-2025 con ~1 % del volumen normal"
+    },
+    {
+      "n": "10",
+      "diccionario_dice": "`pasajeros`/`despachos` descritos como «Número»",
+      "datos_muestran": "13,4 % de filas con `pasajeros = 0` pese a `despachos ≥ 1` (candidato a regla de anómalos de DA-3)"
+    }
+  ],
+  "origen_inconsistencias_informe": "docs/investigacion/DA-2_fuentes_m1.md §1.7 (consulta del 2026-11-24)",
+  "inconsistencias_nuevas": [
+    {
+      "tipo": "diccionario vs. datos",
+      "diccionario_dice": "pasajeros: «Número de pasajeros que abordaron viaje desde la terminal de transporte»; despachos: «Número vehículos ... que salen desde la terminal»",
+      "datos_muestran": "Ruta 11001-76001, 2021-05-03: 1 despachos y 0 pasajeros en todo el día."
+    },
+    {
+      "tipo": "diccionario vs. datos",
+      "diccionario_dice": "pasajeros: «Número de pasajeros que abordaron viaje desde la terminal de transporte»; despachos: «Número vehículos ... que salen desde la terminal»",
+      "datos_muestran": "Ruta 15759-11001, 2023-05-21: 214 despachos y 0 pasajeros en todo el día."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "pasajeros / despachos descritos como «Número», sin restricciones",
+      "datos_muestran": "531 de 25 248 filas descargadas (agregadas por ruta, fecha, tipo de despacho y clase) tienen pasajeros = 0 con despachos ≥ 1."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "tipo_despacho: «2 = Si el despacho de la ruta es en transito»; pasajeros: «Las terminales en tránsito sólo deben reportar los pasajeros que abordaron el vehículo en dicha terminal»",
+      "datos_muestran": "Ruta 11001-15759: pasajeros en terminales de tránsito 1 915 482 frente a 1 015 116 en la terminal de origen; despachos en tránsito 232 537 frente a 137 921 en origen. La mayoría de los pasajeros reportados aborda en terminales de tránsito, no en la de origen, y la fuente no permite saber si un mismo vehículo se cuenta como despacho en el origen y en cada terminal de tránsito (no hay identificador de vehículo)."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "tipo_despacho: «2 = Si el despacho de la ruta es en transito»; pasajeros: «Las terminales en tránsito sólo deben reportar los pasajeros que abordaron el vehículo en dicha terminal»",
+      "datos_muestran": "Ruta 11001-76001: pasajeros en terminales de tránsito 2 517 599 frente a 1 333 474 en la terminal de origen; despachos en tránsito 239 763 frente a 63 019 en origen. La mayoría de los pasajeros reportados aborda en terminales de tránsito, no en la de origen, y la fuente no permite saber si un mismo vehículo se cuenta como despacho en el origen y en cada terminal de tránsito (no hay identificador de vehículo)."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "tipo_despacho: «2 = Si el despacho de la ruta es en transito»; pasajeros: «Las terminales en tránsito sólo deben reportar los pasajeros que abordaron el vehículo en dicha terminal»",
+      "datos_muestran": "Ruta 15759-11001: pasajeros en terminales de tránsito 2 109 734 frente a 1 423 131 en la terminal de origen; despachos en tránsito 144 434 frente a 123 206 en origen. La mayoría de los pasajeros reportados aborda en terminales de tránsito, no en la de origen, y la fuente no permite saber si un mismo vehículo se cuenta como despacho en el origen y en cada terminal de tránsito (no hay identificador de vehículo)."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "tipo_despacho: «2 = Si el despacho de la ruta es en transito»; pasajeros: «Las terminales en tránsito sólo deben reportar los pasajeros que abordaron el vehículo en dicha terminal»",
+      "datos_muestran": "Ruta 76001-11001: pasajeros en terminales de tránsito 1 586 748 frente a 1 210 446 en la terminal de origen; despachos en tránsito 144 502 frente a 59 476 en origen. La mayoría de los pasajeros reportados aborda en terminales de tránsito, no en la de origen, y la fuente no permite saber si un mismo vehículo se cuenta como despacho en el origen y en cada terminal de tránsito (no hay identificador de vehículo)."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "tipo_despacho: sin mención de cambios de categoría o de reporte entre años",
+      "datos_muestran": "Ruta 11001-15759: la participación de ORIGEN en los pasajeros cambia más de 10 puntos entre años (2021: 47.1 %, 2022: 39.2 %, 2023: 27.3 %); puede ser un cambio de reporte (terminales que reportan, clasificación) o de la operación: no verificado."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "tipo_despacho: sin mención de cambios de categoría o de reporte entre años",
+      "datos_muestran": "Ruta 11001-15759: la participación de TRANSITO en los pasajeros cambia más de 10 puntos entre años (2021: 52.9 %, 2022: 60.8 %, 2023: 72.7 %); puede ser un cambio de reporte (terminales que reportan, clasificación) o de la operación: no verificado."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "clase_vehiculo: sin mención de cambios de categoría o de reporte entre años",
+      "datos_muestran": "Ruta 11001-76001: la participación de BUS en los pasajeros cambia más de 10 puntos entre años (2021: 85.6 %, 2022: 89.8 %, 2023: 100.0 %); puede ser un cambio de reporte (terminales que reportan, clasificación) o de la operación: no verificado."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "clase_vehiculo: sin mención de cambios de categoría o de reporte entre años",
+      "datos_muestran": "Ruta 11001-76001: la participación de MICROBUS en los pasajeros cambia más de 10 puntos entre años (2021: 11.9 %, 2022: 8.7 %, 2023: 0.0 %); puede ser un cambio de reporte (terminales que reportan, clasificación) o de la operación: no verificado."
+    },
+    {
+      "tipo": "calidad",
+      "diccionario_dice": "Frecuencia de actualización «Mensual», sin mención de huecos",
+      "datos_muestran": "Días sin ningún registro en el periodo, por ruta: 11001-15759: 3; 11001-76001: 26; 15759-11001: 4; 52001-52356: 9; 52356-52001: 14; 76001-11001: 26 (meses: 2021-05)."
+    }
+  ],
+  "origen_inconsistencias_nuevas": "DA-3, medidas sobre las rutas descargadas (data/raw/m1/rutas/*.parquet)"
+}

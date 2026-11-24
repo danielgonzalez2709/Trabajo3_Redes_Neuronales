@@ -53,8 +53,12 @@
   para documentar variables; registrar URL de la consulta, fecha, SHA-256 y tamaño en `data/fuentes.md`.
 - DIVIPOLA: tabla oficial del DANE guardada en `data/processed/m1/divipola.csv` con su cita; validar que todo código de
   origen/destino exista en ella (los que no, se documentan como inconsistencia).
-- **Selección de rutas [PENDIENTE, con Camila]:** propuesta de 5 a 8 rutas de alto volumen, con historial completo que cubra
-  pandemia y pospandemia, **con su sentido de regreso**, y con al menos una temporada alta en el periodo de prueba.
+- **Selección de rutas [DECIDIDO, Daniel, 24-nov]:** 3 pares ida/regreso = 6 series: **Bogotá D.C. (11001) ↔ Santiago de
+  Cali (76001)** (corredor largo, el de mayor volumen), **Bogotá D.C. (11001) ↔ Sogamoso (15759)** (corredor medio) y **Pasto
+  (52001) ↔ Ipiales (52356)** (regional y de frontera, fuera de Bogotá). Criterio: ranking de pares por el mínimo de los dos
+  sentidos en una muestra de 36 miércoles (uno por mes, 2021–2023), con 35–36 de 36 días con registros en ambos sentidos
+  (`scripts/descargar_m1.py ranking`, `data/fuentes.md`). Periodo 2021–2023 (núcleo §5.1, v0.3); la temporada alta de prueba
+  es el fin de año de 2023. Camila puede proponer cambios por PR.
 - Agregación: suma de pasajeros y despachos por `(ruta_id, fecha)`; días sin registro → fila con `sin_registro = true` (regla
   de imputación documentada); anómalos → regla explícita (p. ej. despachos > 0 con pasajeros = 0, valores fuera de rango) y
   `anomalo = true`; nada se borra en silencio.
