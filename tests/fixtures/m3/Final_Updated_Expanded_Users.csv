@@ -1,0 +1,6 @@
+UserID,Name,Email,Preferences,Gender,NumberOfAdults,NumberOfChildren
+1,UsuarioPruebaA,usuariopruebaa@prueba.invalid,"Beaches, Historical",Female,2,1
+2,UsuarioPruebaB,usuariopruebab@prueba.invalid,"Nature, Adventure",Male,1,0
+3,UsuarioPruebaA,usuariopruebaa@prueba.invalid,"Historical, Beaches",Female,2,2
+4,UsuarioPruebaB,usuariopruebab@prueba.invalid,"Beaches, Historical",Male,1,0
+5,UsuarioPruebaA,otro@prueba.invalid,"Nature, Adventure",Female,2,0

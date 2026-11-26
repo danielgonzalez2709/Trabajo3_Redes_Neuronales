@@ -47,11 +47,44 @@ torre lineal sobre las preferencias para el perfil nuevo). Valida tus JSON con `
 `app/public/model/m3/` y `scripts/generar_juguetes_app.py`. La «lista de preferencias para elegir» del enunciado sale de
 `preferencias` en `perfil_nuevo.json`: defínela con las variables reales del conjunto de Kaggle.
 
-### 3.1 Datos, descriptivo y partición (JJ-1 a JJ-3) [PROPUESTO]
-Descarga manual desde Kaggle (no se versiona la clave) [VERIFICAR archivos y columnas]. Real o sintético: citar lo que diga la
-página del conjunto; si no lo dice, declararlo «no documentado» y analizar señales (distribuciones demasiado uniformes, etc.).
-Partición: por tiempo si hay fechas; si no, *leave-k-out* por usuario con semilla fija (usuarios con < k interacciones solo en
-train y reportados aparte). `test_fuga_m3.py`: ninguna interacción de test en train ni en el cálculo de popularidad.
+### 3.1 Datos, descriptivo y partición (JJ-1 a JJ-3)
+Descarga manual desde Kaggle el 2026-11-25 (`archive.zip` + 4 CSV en `data/raw/m3/`; no se versiona la clave). Inventario,
+fuente y verificación: `docs/investigacion/JJ-1_fuentes_m3.md` (fase A) y `JJ-1_verificacion_A3.md`. `test_fuga_m3.py`:
+ninguna interacción de test en train ni en el cálculo de popularidad.
+
+Decisiones [DECIDIDO, Juan José, 25-nov], con la justificación medida en la fase A (cifras de `JJ-1_fuentes_m3.md`):
+- **D1. Interacción = unión de Reviews y UserHistory, como retroalimentación implícita (sí/no).** Los dos archivos no comparten
+  ningún par (usuario, destino); la intersección está vacía. La unión da 1 998 interacciones de 858 usuarios (mediana 2 por
+  usuario, frente a 1 en cada archivo por separado) y deja 606 usuarios con ≥ 2 interacciones (269 con solo Reviews, 258 con
+  solo UserHistory). `Rating` y `ExperienceRating` (las dos de 1 a 5, compatibles con la uniforme y sin escala documentada) se
+  conservan como atributo `calificacion` con su `origen`; el objetivo de los modelos es la interacción, no la calificación.
+- **D2. Destino = los 1 000 `DestinationID`** (catálogo de la fuente). `Name`, `State`, `Type`, `BestTimeToVisit` y `Popularity`
+  son variables de contenido del destino. Problema de calidad documentado: los 1 000 ids son 5 lugares (nombre, estado, tipo y
+  temporada idénticos) repetidos 200 veces cada uno, en ciclo `DestinationID mod 5`. Se agrega `lugar` (los 5 lugares) para un
+  análisis complementario de «acierto por lugar» en la evaluación.
+- **D3. Partición por usuario, no por tiempo (la implementa JJ-3).** `VisitDate` solo existe en UserHistory, tiene 3 valores
+  que dependen de `HistoryID mod 3` y 666 de 999 son posteriores a la publicación del conjunto (2024-01-23): no es una fecha
+  real y queda solo descriptiva. Prueba = 1 interacción al azar de cada usuario con ≥ 2; validación = 1 más de cada usuario con
+  ≥ 3; el resto, entrenamiento; los usuarios con 1 interacción quedan solo en entrenamiento; semilla fija. Con la unión hay 606
+  usuarios en prueba y 326 en validación, y el grupo «pocas interacciones» existe en prueba.
+- **D4. Real o sintético.** Se cita literal la fuente («generated for educational and research purposes», «enriched with
+  gender diversity»), se aclara que no usa la palabra «synthetic» y se listan las señales medidas (5 lugares en 1 000 ids, 3
+  textos de reseña sin relación con el destino, 3 valores de `VisitDate` de los que 2 —666 de 999 filas— son posteriores a
+  la publicación, 20 nombres para 999 usuarios, preferencias periódicas en el id). Conclusión: datos generados; las conclusiones valen para el método, no para el
+  comportamiento real de turistas.
+- **D5. Licencia.** Se cita la MIT del campo formal de Kaggle (`licenses`) y se documenta la contradicción con la descripción
+  («CC0: Public Domain» y «free to use for non-commercial purposes») para la sección de ética.
+- **D6. Privacidad.** `Name` y `Email` de los usuarios no pasan a `data/processed/` ni a `results/`. `ReviewText` tampoco pasa a
+  lo procesado (3 textos sin relación con el destino); se describe en el diccionario.
+- **D7.** El candidato débil de A1 («las variables son independientes») no se registra en la cacería.
+
+Salidas de JJ-1 (`run.py m3-datos`) [DECIDIDO, Juan José, 25-nov]:
+- `interacciones.parquet` trae `usuario_id, destino_id, origen, id_origen, calificacion, fecha_visita`. Frente al núcleo §5.7
+  (`usuario_id, destino_id, calificacion, [fecha], split`): `origen` lo pide D1; `id_origen` (ReviewID o HistoryID) da
+  trazabilidad a la fila cruda; la fecha se llama `fecha_visita` porque no es una fecha real (D3); `split` lo agrega JJ-3.
+  Pendiente: Daniel decide si actualiza §5.7 del núcleo (avisado por Juan José).
+- `ficha.json` trae, además de las 10 claves de §5.12, dos claves de primer nivel que no son conteos: `real_o_sintetico`
+  (D4) y `licencia` (D5). `validar_ficha` las admite.
 
 ### 3.2 Modelos (JJ-4, JJ-5) [PROPUESTO]
 - Popularidad (calculada solo con train) y factorización de matrices (o KNN por ítems).
@@ -72,7 +105,7 @@ Lista cerrada el vie 27 a partir de las configs finales de todos. Cada ecuación
 ## 4. Tareas
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
-| JJ-1 | Descarga y ficha; real o sintético | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json` con densidad y escala medidas | ⬜ |
+| JJ-1 | Descarga y ficha; real o sintético | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json` con densidad y escala medidas | ✅ 25-nov |
 | JJ-2 | Descriptivo M3 (plantilla §5.12) + caso de uso | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json`; figura de cola larga | ⬜ |
 | JJ-3 | Partición sin fuga | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m3.py` en verde | ⬜ |
 | JJ-4 | Popularidad + FC clásico + métricas @K | jue 26 | implementador (Sonnet) | verificador-matematico (Opus) | Métricas contra cálculo a mano | ⬜ |

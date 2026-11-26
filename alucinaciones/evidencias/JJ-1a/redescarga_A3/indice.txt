@@ -1,0 +1,4 @@
+0|https://www.kaggle.com/api/v1/datasets/metadata/amanmehra23/travel-recommendation-dataset|200|2026-11-25T23:26:26Z
+1|https://www.kaggle.com/api/v1/datasets/list/amanmehra23/travel-recommendation-dataset|200|2026-11-25T23:26:27Z
+2|https://www.kaggle.com/api/v1/datasets/view/amanmehra23/travel-recommendation-dataset|200|2026-11-25T23:26:27Z
+3|https://www.kaggle.com/api/v1/datasets/list?search=travel-recommendation-dataset&user=amanmehra23|200|2026-11-25T23:26:27Z

@@ -1,0 +1,83 @@
+# M3 — datos procesados (JJ-1, fase B) y secciones 1–2 de la plantilla común (núcleo §5.12).
+# Uso: .venv\Scripts\python run.py m3-datos --config configs/m3/datos.yaml
+# Nada aleatorio: no hay base_seed. Sin red: lee data/raw/m3/ (descarga manual desde Kaggle; ver data/fuentes.md).
+# Decisiones D1–D6 [DECIDIDO, Juan José, 25-nov] (D7 es de proceso): docs/spec/partes/juanjose.md §3.1. Cifras de
+# referencia de la fase A: docs/investigacion/JJ-1_fuentes_m3.md. Toda cifra de las salidas la calcula src/m3_recomendacion/datos.py.
+
+entrada:
+  carpeta: data/raw/m3                      # no se versiona (data/fuentes.md dice cómo regenerarlo)
+  destinos: Expanded_Destinations.csv
+  resenas: Final_Updated_Expanded_Reviews.csv
+  historial: Final_Updated_Expanded_UserHistory.csv
+  usuarios: Final_Updated_Expanded_Users.csv
+  zip: archive.zip
+  metadatos_fuente: docs/investigacion/JJ-1_kaggle_metadata.json   # respuestas crudas de la API de Kaggle (2026-11-25, 23:16 UTC)
+
+# SHA-256 de los bytes en disco (docs/investigacion/JJ-1_fuentes_m3.md §1). Si un archivo no coincide, no se escribe nada.
+sha256_esperado:
+  archive.zip: 117e3135b2fb8ff1ecb1e3a2d4b57315273f7954520567bbb5663af2912d004d
+  Expanded_Destinations.csv: 5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766
+  Final_Updated_Expanded_Reviews.csv: bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48
+  Final_Updated_Expanded_UserHistory.csv: df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b
+  Final_Updated_Expanded_Users.csv: a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac
+
+fuente:
+  nombre: Travel Recommendation Dataset      # la descripción lo titula «India Travel Recommender System Dataset»
+  autor: Aman Mehra
+  usuario_kaggle: amanmehra23
+  ref: amanmehra23/travel-recommendation-dataset
+  url: https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset
+  version: 1
+  fecha_creacion_version: "2024-01-23T17:07:26.487Z"   # debe coincidir con versions[0].creationDate del JSON
+  fecha_descarga: "2026-11-25"
+  descargo: Juan José, a mano desde la página de Kaggle con su cuenta (botón Download → archive.zip)
+  cita: >-
+    Mehra, A. (2024). Travel recommendation dataset (Versión 1) [Conjunto de datos]. Kaggle.
+    https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset
+
+# Fragmentos de info.description que usan la ficha y el diccionario, copiados de docs/investigacion/JJ-1_kaggle_metadata.json.
+# El código comprueba que cada uno es subcadena EXACTA de la descripción leída del JSON y falla si no lo es.
+# Las claves generado, diversidad_de_genero, uso y licencia son obligatorias (las lee el código).
+citas_literales:
+  generado: generated for educational and research purposes          # sección «Acknowledgements» (D4)
+  diversidad_de_genero: enriched with gender diversity               # componente «Users» (D4)
+  uso: >-
+    This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider.
+    Remember to cite the source when using this dataset in your projects.
+  licencia: "CC0: Public Domain - The dataset is in the public domain and can be used without restrictions."
+
+# Archivo → fragmento de la descripción del componente. La correspondencia archivo ↔ componente es INFERENCIA nuestra:
+# la fuente no nombra los archivos ni las columnas.
+componentes:
+  Expanded_Destinations.csv: >-
+    Information about various travel destinations in India, including details like type of destination (beach, mountain,
+    historical site, etc.), popularity, and best time to visit.
+  Final_Updated_Expanded_Reviews.csv: >-
+    User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and
+    satisfaction.
+  Final_Updated_Expanded_UserHistory.csv: >-
+    Records of users' past travel experiences, including destinations visited and ratings provided.
+  Final_Updated_Expanded_Users.csv: >-
+    Profiles of users including their preferences and demographic information. This dataset has been enriched with gender
+    diversity and includes details on the number of adults and children for travel.
+
+# D4: sin cifras dentro del texto (las mide el código y quedan en real_o_sintetico.senales_medidas).
+conclusion_real_o_sintetico: >-
+  Datos generados, no observados: la fuente dice que el conjunto fue «generated» con fines educativos y de investigación
+  (no usa la palabra «synthetic» ni dice con qué método) y las señales medidas en los datos (catálogo de lugares repetidos,
+  textos de reseña plantilla, fechas periódicas y posteriores a la publicación, nombres repetidos, preferencias periódicas en
+  el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el
+  comportamiento real de turistas.
+
+ficha:
+  tope_usuarios_por_interacciones: 5      # usuarios por número de interacciones: 0, 1, …, tope-1 y «tope+» (5+)
+  k_max_periodicidad: 10                  # se busca el menor k ≤ este valor tal que la columna es función exacta de id mod k
+  palabra_sintetico: synthetic            # se busca (sin distinguir mayúsculas) en la descripción y los nombres de archivo
+  tipo_mencionado_sin_datos: mountain     # tipo de destino citado en la descripción («beach, mountain, historical site, etc.»)
+
+salida:
+  carpeta: data/processed/m3
+  destinos: destinos.parquet
+  usuarios: usuarios.parquet
+  interacciones: interacciones.parquet
+  eda: results/data/m3/eda

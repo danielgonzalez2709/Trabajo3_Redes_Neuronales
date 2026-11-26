@@ -1,0 +1,345 @@
+{
+  "fuente_del_diccionario": "Se revisaron datasetFiles[].columns (columns) e info.description de docs/investigacion/JJ-1_kaggle_metadata.json: la fuente documenta 0 columnas (4 archivos listados); solo describe cada componente en la descripción narrativa.",
+  "columnas_documentadas_por_la_fuente": 0,
+  "variables": [
+    {
+      "archivo": "Expanded_Destinations.csv",
+      "columna_original": "DestinationID",
+      "nombre_procesado": "destinos.destino_id",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Information about various travel destinations in India, including details like type of destination (beach, mountain, historical site, etc.), popularity, and best time to visit.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Expanded_Destinations.csv",
+      "columna_original": "Name",
+      "nombre_procesado": "destinos.nombre",
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Information about various travel destinations in India, including details like type of destination (beach, mountain, historical site, etc.), popularity, and best time to visit.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas.",
+      "columnas_derivadas": [
+        "destinos.lugar"
+      ]
+    },
+    {
+      "archivo": "Expanded_Destinations.csv",
+      "columna_original": "State",
+      "nombre_procesado": "destinos.estado",
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Information about various travel destinations in India, including details like type of destination (beach, mountain, historical site, etc.), popularity, and best time to visit.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Expanded_Destinations.csv",
+      "columna_original": "Type",
+      "nombre_procesado": "destinos.tipo",
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Information about various travel destinations in India, including details like type of destination (beach, mountain, historical site, etc.), popularity, and best time to visit.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Expanded_Destinations.csv",
+      "columna_original": "Popularity",
+      "nombre_procesado": "destinos.popularidad",
+      "tipo": "decimal",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Information about various travel destinations in India, including details like type of destination (beach, mountain, historical site, etc.), popularity, and best time to visit.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Expanded_Destinations.csv",
+      "columna_original": "BestTimeToVisit",
+      "nombre_procesado": "destinos.mejor_epoca",
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Information about various travel destinations in India, including details like type of destination (beach, mountain, historical site, etc.), popularity, and best time to visit.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Reviews.csv",
+      "columna_original": "ReviewID",
+      "nombre_procesado": "interacciones.id_origen",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and satisfaction.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Reviews.csv",
+      "columna_original": "DestinationID",
+      "nombre_procesado": "interacciones.destino_id",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and satisfaction.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Reviews.csv",
+      "columna_original": "UserID",
+      "nombre_procesado": "interacciones.usuario_id",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and satisfaction.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Reviews.csv",
+      "columna_original": "Rating",
+      "nombre_procesado": "interacciones.calificacion",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and satisfaction.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Reviews.csv",
+      "columna_original": "ReviewText",
+      "nombre_procesado": null,
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and satisfaction.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas.",
+      "excluida_motivo": "No pasa a lo procesado (D6): 3 textos distintos en 999 reseñas (conteos por texto [333, 333, 333]); asociación con el lugar del destino reseñado: V de Cramér = 0.043, χ² p = 0.884."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_UserHistory.csv",
+      "columna_original": "HistoryID",
+      "nombre_procesado": "interacciones.id_origen",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Records of users' past travel experiences, including destinations visited and ratings provided.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_UserHistory.csv",
+      "columna_original": "UserID",
+      "nombre_procesado": "interacciones.usuario_id",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Records of users' past travel experiences, including destinations visited and ratings provided.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_UserHistory.csv",
+      "columna_original": "DestinationID",
+      "nombre_procesado": "interacciones.destino_id",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Records of users' past travel experiences, including destinations visited and ratings provided.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_UserHistory.csv",
+      "columna_original": "VisitDate",
+      "nombre_procesado": "interacciones.fecha_visita",
+      "tipo": "texto con forma AAAA-MM-DD",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Records of users' past travel experiences, including destinations visited and ratings provided.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_UserHistory.csv",
+      "columna_original": "ExperienceRating",
+      "nombre_procesado": "interacciones.calificacion",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Records of users' past travel experiences, including destinations visited and ratings provided.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "UserID",
+      "nombre_procesado": "usuarios.usuario_id",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "Name",
+      "nombre_procesado": null,
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas.",
+      "excluida_motivo": "Privacidad (D6): identifica a la persona; no pasa a data/processed/ ni a results/. Se describe solo con conteos. 20 nombres distintos en 999 usuarios."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "Email",
+      "nombre_procesado": null,
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas.",
+      "excluida_motivo": "Privacidad (D6): identifica a la persona; no pasa a data/processed/ ni a results/. Se describe solo con conteos. 20 correos distintos en 999 usuarios; 999 tienen la forma nombre en minúsculas + dominio."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "Preferences",
+      "nombre_procesado": "usuarios.preferencias",
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas.",
+      "columnas_derivadas": [
+        "usuarios.pref_adventure",
+        "usuarios.pref_beaches",
+        "usuarios.pref_city",
+        "usuarios.pref_historical",
+        "usuarios.pref_nature"
+      ]
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "Gender",
+      "nombre_procesado": "usuarios.genero",
+      "tipo": "texto",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "NumberOfAdults",
+      "nombre_procesado": "usuarios.n_adultos",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    },
+    {
+      "archivo": "Final_Updated_Expanded_Users.csv",
+      "columna_original": "NumberOfChildren",
+      "nombre_procesado": "usuarios.n_ninos",
+      "tipo": "entero",
+      "significado": "no documentado por la fuente",
+      "descripcion_del_archivo_en_la_fuente": "Profiles of users including their preferences and demographic information. This dataset has been enriched with gender diversity and includes details on the number of adults and children for travel.",
+      "nota_correspondencia": "La correspondencia archivo ↔ componente de la descripción es inferencia nuestra: la fuente no nombra los archivos ni las columnas."
+    }
+  ],
+  "inconsistencias": [
+    {
+      "id": "tipo_buscado_ausente",
+      "se_presenta": true,
+      "descripcion": "La descripción menciona «mountain»; ningún valor de Type lo contiene.",
+      "medido": {
+        "descripcion_menciona_el_tipo": true,
+        "tipo_buscado": "mountain",
+        "tipos_medidos": [
+          "Adventure",
+          "Beach",
+          "City",
+          "Historical",
+          "Nature"
+        ],
+        "ningun_tipo_lo_contiene": true
+      }
+    },
+    {
+      "id": "ids_vs_lugares",
+      "se_presenta": true,
+      "descripcion": "1000 DestinationID corresponden a 5 lugares; los ids de un mismo lugar comparten nombre, estado, tipo y temporada (comprobado al construir destinos).",
+      "medido": {
+        "ids": 1000,
+        "lugares": 5,
+        "ids_por_lugar": {
+          "goa_beaches": 200,
+          "jaipur_city": 200,
+          "kerala_backwaters": 200,
+          "leh_ladakh": 200,
+          "taj_mahal": 200
+        },
+        "k_minimo_destinationid_nombre": 5
+      }
+    },
+    {
+      "id": "visitdate_periodica_y_posterior",
+      "se_presenta": true,
+      "descripcion": "VisitDate tiene 3 valores distintos, función exacta de HistoryID mod 3; 666 de 999 filas son posteriores a la publicación del conjunto (2024-01-23).",
+      "medido": {
+        "filas": 999,
+        "valores_distintos": [
+          "2024-01-01",
+          "2024-02-15",
+          "2024-03-20"
+        ],
+        "k_minimo_historyid": 3,
+        "fecha_publicacion": "2024-01-23",
+        "filas_posteriores_a_la_publicacion": 666
+      }
+    },
+    {
+      "id": "reviewtext_plantilla",
+      "se_presenta": true,
+      "descripcion": "ReviewText toma 3 valores en 999 reseñas, función exacta de ReviewID mod 3; su asociación con el lugar del destino reseñado es V de Cramér = 0.043 (χ² p = 0.884).",
+      "medido": {
+        "filas": 999,
+        "textos_distintos": 3,
+        "conteos_por_texto": [
+          333,
+          333,
+          333
+        ],
+        "k_minimo_reviewid": 3,
+        "asociacion_con_el_lugar_del_destino": {
+          "chi2": 3.6946448419085995,
+          "gl": 8,
+          "p": 0.8835697351602294,
+          "v_de_cramer": 0.04300199521588326
+        }
+      }
+    },
+    {
+      "id": "vocabularios_preferencias_vs_type",
+      "se_presenta": true,
+      "descripcion": "4 de 5 opciones de Preferences coinciden con valores de Type; solo en Preferences: Beaches; solo en Type: Beach. Cruzarlos exige un emparejamiento que es supuesto nuestro, no de la fuente.",
+      "medido": {
+        "opciones_de_preferencias": [
+          "Adventure",
+          "Beaches",
+          "City",
+          "Historical",
+          "Nature"
+        ],
+        "valores_de_type": [
+          "Adventure",
+          "Beach",
+          "City",
+          "Historical",
+          "Nature"
+        ],
+        "solo_en_preferencias": [
+          "Beaches"
+        ],
+        "solo_en_type": [
+          "Beach"
+        ],
+        "en_ambos": [
+          "Adventure",
+          "City",
+          "Historical",
+          "Nature"
+        ]
+      }
+    },
+    {
+      "id": "licencias_contradictorias",
+      "se_presenta": true,
+      "descripcion": "El campo formal de licencia de Kaggle (MIT) no aparece en la sección «License» de la descripción; las citas literales de «License» y «Usage» están en `medido`.",
+      "medido": {
+        "campo_formal": [
+          "MIT"
+        ],
+        "formal_aparece_en_license": false,
+        "license": "CC0: Public Domain - The dataset is in the public domain and can be used without restrictions.",
+        "usage": "This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider. Remember to cite the source when using this dataset in your projects."
+      }
+    }
+  ]
+}

@@ -12,6 +12,12 @@
   danielgonzalez2709, Root Directory = `app`; producción desde `main`, vistas previas por rama): Next.js 16.4.6 estático,
   4 páginas con datos de juguete, ONNX de juguete con onnxruntime-web servido desde la app, contratos en
   `app/lib/contratos.ts` (núcleo §5.4, §5.6, §5.8, v0.6).
+- JJ-1 (datos de M3) terminado en `dev/juanjose` el mié 25, pendiente de PR: `run.py m3-datos` construye
+  `data/processed/m3/{destinos,usuarios,interacciones}.parquet` y `results/data/m3/eda/{ficha,calidad,diccionario}`
+  desde `data/raw/m3/` (Kaggle `amanmehra23/travel-recommendation-dataset`, descarga manual del 25-nov; no versionado).
+  999 usuarios, 1 000 destinos (5 lugares), 1 998 interacciones (999 reseñas + 999 historial), densidad 0,20 %.
+  Revisado por revisor-spec y revisor-calidad (aprobados en la 2.ª vuelta) y cazador-alucinaciones (0 afirmaciones
+  incorrectas vigentes). Investigación: `docs/investigacion/JJ-1_fuentes_m3.md`.
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -26,25 +32,39 @@
 - M1: reglas contra fuga del arnés (núcleo §5.3): lista blanca de columnas; test sin excluir anómalos; ventanas desde
   2021-06-01; rejilla de orígenes anclada al 2023-12-01 para cubrir el fin de año; composición por clase solo con train.
 - Serie sintética: códigos ficticios del departamento `00`. JSON de juguete de la app: en DA-5.
+- M3 [DECIDIDO, Juan José, 25-nov; `docs/spec/partes/juanjose.md` §3.1]: interacción = unión de Reviews y UserHistory
+  como implícita (no comparten pares); destino = los 1 000 `DestinationID`, con `lugar` (5 lugares) para el análisis
+  complementario; partición por usuario (JJ-3; `VisitDate` solo descriptiva: 3 valores ligados al número de fila y
+  posteriores a la publicación); datos generados según la fuente («generated for educational and research purposes»);
+  licencia MIT del campo formal con contradicción documentada; `Name`, `Email` y `ReviewText` no pasan a procesados ni a
+  resultados.
 
 ## Avisos para el equipo
 - Windows: clonar en una ruta corta (p. ej. `C:\proy\`); en rutas profundas `pip install` falla por el límite de 260 caracteres.
 - Usar siempre `.venv\Scripts\python` (el `python` del PATH puede ser 3.13).
 - M1 (Camila, Andrés): `sin_registro` vale 0 pero no es demanda (enmascarar); `anomalo` nunca como entrada; salto del tránsito
   en 11001-15759 desde nov-2022; 2021 muy por debajo de 2022–2023. Ver `docs/investigacion/DA-3_auditoria_fugas.md`.
+- M3: para que la CI pase, el PR de JJ-1 debe incluir `configs/m3/datos.yaml`, `docs/investigacion/JJ-1_kaggle_metadata.json`
+  y `tests/fixtures/m3/` (las pruebas los leen).
 
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
 2. GPU para las 30 semillas de M2.
 3. Daniel: DA-11 (notebook 00), DA-6/DA-7/DA-8 cuando lleguen las exportaciones reales (sáb 28), grabación del video.
+4. Juan José: PR de JJ-1; confirmar las columnas de `interacciones.parquet` frente a §5.7 (`fecha_visita`, `id_origen`,
+   `origen`) y, si se confirman, PR dedicado al núcleo; JJ-2 y JJ-3.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
-  `\bibliografia` del blog guardada con un backspace por el agente de DA-1b; evidencia y pruebas listas).
+  `\bibliografia` del blog guardada con un backspace por el agente de DA-1b; evidencia y pruebas listas); 2 candidatos de M3 (JJ-1b, sin número,
+  Datos del mundo real): «las tres licencias piden citar la fuente» (orquestador Opus + implementador Sonnet) y «Preferences
+  y Type no comparten vocabulario» (implementador Sonnet); ver `alucinaciones/registro.md`.
 - Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-25 · Juan José · JJ-1 ✅ (fases A y B): inventario y fuente de M3 verificados, datos procesados de M3,
+  ficha/calidad/diccionario, D1–D7 en `juanjose.md` §3.1; 2 candidatos a la cacería.
 - 2026-11-24 · Daniel · PR #3 fusionado; app publicada en Vercel (DA-5 ✅); URL en README, blog y guion.
 - 2026-11-24 · Daniel · DA-5 app con contratos (Spec v0.6) y PR #3; blog 01/03/11/13 y guion del video adelantados; H-01.
 - 2026-11-24 · Daniel · DA-2/DA-3/DA-4 terminados (series reales de M1) y en PR #2; Spec v0.3–v0.5 (periodo, tránsito,

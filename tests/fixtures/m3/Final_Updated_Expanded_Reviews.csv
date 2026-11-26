@@ -1,0 +1,5 @@
+ReviewID,DestinationID,UserID,Rating,ReviewText
+1,1,1,5,Texto de prueba 1
+2,2,2,3,Texto de prueba 2
+3,3,1,4,Texto de prueba 3
+4,5,3,1,Texto de prueba 1
