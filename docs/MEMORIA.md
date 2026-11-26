@@ -1,7 +1,7 @@
 # MEMORIA — estado del Trabajo 3 (≤ 150 líneas)
 
 ## Estado
-- Spec v0.6. `main` protegida (ruleset `proteger-main`: PR + Code Owners + check `pruebas`; Daniel fusiona). Ramas `dev/*`.
+- Spec v0.7. `main` protegida (ruleset `proteger-main`: PR + Code Owners + check `pruebas`; Daniel fusiona). Ramas `dev/*`.
 - Blog publicado en GitHub Pages: https://danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales/ (esqueleto).
 - DA-1 (infraestructura) en `main` (PR #1): `src/comun/`, `run.py` con 17 subcomandos, blog, serie sintética, CI.
 - DA-2/DA-3/DA-4 terminados el mar 24 (PR #2): series reales de M1 en `data/processed/m1/` (6 series, 2021-01-01..2023-12-31),
@@ -45,6 +45,10 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-26 · Daniel · DA-7 CAM pintado en la app y CAM ≡ Grad-CAM verificado (verificador-matematico: aprobado con
+  observaciones, aplicadas); DA-11 esqueleto del notebook 00; borrador del blog 08; condiciones del ONNX real en la spec de José.
+- 2026-11-26 · Daniel · DA-5c (aviso de Juan José): juguete como fixture (`app/tests/fixtures/juguete/`), pruebas de lo
+  servido válidas para modelos reales, nombres repetidos de M3 como «Nombre (#id)»; Spec v0.7 (§5.7 columnas reales de M3).
 - 2026-11-24 · Daniel · PR #3 fusionado; app publicada en Vercel (DA-5 ✅); URL en README, blog y guion.
 - 2026-11-24 · Daniel · DA-5 app con contratos (Spec v0.6) y PR #3; blog 01/03/11/13 y guion del video adelantados; H-01.
 - 2026-11-24 · Daniel · DA-2/DA-3/DA-4 terminados (series reales de M1) y en PR #2; Spec v0.3–v0.5 (periodo, tránsito,

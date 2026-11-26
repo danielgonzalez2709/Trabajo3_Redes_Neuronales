@@ -1,9 +1,11 @@
 "use client";
 // Conducción distractiva (M2): sube una imagen o elige un ejemplo; el ONNX corre en el navegador (onnxruntime-web, con los
-// .wasm servidos desde la propia app). El mapa de interpretabilidad (CAM) llega en DA-7: aquí queda su espacio reservado.
+// .wasm servidos desde la propia app). El mapa de interpretabilidad (CAM, DA-7) se pinta sobre la imagen preprocesada en
+// components/MapaCam.tsx.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ControlNumerico } from "../../components/ControlNumerico";
 import { Aviso, AvisoJuguete, Encabezado, Pagina, Pie, Provisional } from "../../components/Marco";
+import { MapaCam } from "../../components/MapaCam";
 import { FilaTarjetas, TarjetaResultado } from "../../components/TarjetaResultado";
 import { useCarga } from "../../hooks/useCarga";
 import { decidirAlerta } from "../../lib/clasificar";
@@ -32,13 +34,14 @@ export default function Conduccion() {
   );
 }
 
-type Estado = { fase: "inicio" } | { fase: "procesando" } | { fase: "error"; mensaje: string } | { fase: "listo"; salida: SalidaModelo };
+type Estado = { fase: "inicio" } | { fase: "procesando" } | { fase: "error"; mensaje: string } | { fase: "listo"; salida: SalidaModelo; rgb: Uint8ClampedArray; turno: number };
 
 function Contenido({ meta }: { meta: MetaM2 }) {
   const [umbral, setUmbral] = useState(meta.umbral_por_defecto);
   const [vista, setVista] = useState<string | null>(null); // URL de la imagen mostrada
   const [elegido, setElegido] = useState<string | null>(null); // id del ejemplo elegido
   const [estado, setEstado] = useState<Estado>({ fase: "inicio" });
+  const [opacidad, setOpacidad] = useState(0.6);
   const ultimo = useRef(0);
   const urlSubida = useRef<string | null>(null); // URL de objeto de la imagen subida: hay que revocarla al reemplazarla
 
@@ -59,7 +62,7 @@ function Contenido({ meta }: { meta: MetaM2 }) {
         const img = await cargarImagen(origen);
         const rgb = aRgb(img, meta.tamano_entrada.alto, meta.tamano_entrada.ancho);
         const salida = await ejecutarModelo(meta, rgb);
-        if (turno === ultimo.current) setEstado({ fase: "listo", salida });
+        if (turno === ultimo.current) setEstado({ fase: "listo", salida, rgb, turno });
       } catch (e) {
         if (turno === ultimo.current) setEstado({ fase: "error", mensaje: e instanceof Error ? e.message : String(e) });
       }
@@ -133,13 +136,18 @@ function Contenido({ meta }: { meta: MetaM2 }) {
           {estado.fase === "error" && <Aviso tipo="error">{estado.mensaje}</Aviso>}
           <div className={estilos.vista}>
             {vista && <img className={estilos.imagen} src={vista} alt="Imagen analizada" />}
-            <div className={estilos.reservado} role="img" aria-label="Espacio reservado para el mapa de interpretabilidad">
-              <p>
-                <strong>Mapa de interpretabilidad (CAM)</strong>
-                <br />
-                Llega en DA-7: mostrará en qué zona de la imagen se apoya el modelo.
-              </p>
-            </div>
+            {estado.fase === "listo" && (
+              <MapaCam
+                key={estado.turno}
+                meta={meta}
+                rgb={estado.rgb}
+                mapas={estado.salida.mapas}
+                formaMapas={estado.salida.formaMapas}
+                claseAsignada={estado.salida.claseIndice}
+                opacidad={opacidad}
+                onOpacidad={setOpacidad}
+              />
+            )}
           </div>
           {salida && clase && decision && (
             <>

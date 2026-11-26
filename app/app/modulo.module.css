@@ -232,18 +232,6 @@
   border-radius: var(--ds-radio-control);
 }
 
-.reservado {
-  display: grid;
-  place-items: center;
-  min-height: 10rem;
-  padding: 1rem;
-  text-align: center;
-  font-size: 0.875rem;
-  color: var(--ds-texto-suave);
-  background: var(--ds-superficie);
-  border: 2px dashed var(--ds-borde);
-  border-radius: var(--ds-radio-control);
-}
 
 .barras {
   display: grid;

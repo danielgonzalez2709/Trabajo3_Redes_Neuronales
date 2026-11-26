@@ -11,6 +11,11 @@ los modelos reales. Los entregables reales (Camila, José y Juan José) reemplaz
 - M3: destinos y usuarios FICTICIOS y un recomendador de dos torres (MLP de usuario y embedding por destino) con pesos
   aleatorios con semilla, en el formato general que usará el real (§5.8).
 
+Por defecto escribe en ``app/tests/fixtures/juguete/``: el juguete es un FIXTURE versionado de las pruebas de la app y
+**no** toca ``app/public/model/``, donde viven los archivos que sirve la app (los dueños de módulo los reemplazan por sus
+exportaciones reales). Para volver a servir el juguete a propósito (sobrescribe lo que haya ahí, sea real o no):
+``--salida app/public/model``.
+
 Uso: ``.venv\\Scripts\\python scripts/generar_juguetes_app.py [--salida app/public/model]``.
 """
 
@@ -36,7 +41,7 @@ from src.comun.seeds import fijar_semillas, make_rng  # noqa: E402
 
 VERSION = 2  # versión del esquema de los archivos (2: parámetros con fuente, dos torres, preprocesado de M2)
 SEMILLA = 20261124
-SALIDA_POR_DEFECTO = RAIZ / "app" / "public" / "model"
+SALIDA_POR_DEFECTO = RAIZ / "app" / "tests" / "fixtures" / "juguete"  # fixture de pruebas, NO lo que sirve la app
 
 # ----------------------------------------------------------------------------------------------------- M1
 CUANTILES = [0.5, 0.75, 0.9, 0.95]
@@ -337,6 +342,15 @@ def _definir_red():
     return RedJuguete(), torch
 
 
+def crear_red_juguete():
+    """La red de juguete con sus pesos (semilla fija), en modo evaluación: la misma que exporta ``generar_m2``. La usa
+    también la prueba CAM ≡ Grad-CAM de tests/test_juguetes_app.py."""
+    fijar_semillas(SEMILLA)
+    red, torch = _definir_red()
+    red.eval()
+    return red, torch
+
+
 def _imagen_sintetica(rng: np.random.Generator, tamano: int, variante: int) -> np.ndarray:
     """Imagen RGB uint8 (alto, ancho, 3) sintética: degradado de fondo y figuras de color. No es una foto de nadie."""
     ys, xs = np.mgrid[0:tamano, 0:tamano] / (tamano - 1)
@@ -359,9 +373,7 @@ def generar_m2(salida: Path) -> None:
     import onnxruntime as ort
     from PIL import Image
 
-    fijar_semillas(SEMILLA)
-    red, torch = _definir_red()
-    red.eval()
+    red, torch = crear_red_juguete()
     carpeta = salida / "m2"
     (carpeta / "ejemplos").mkdir(parents=True, exist_ok=True)
     (carpeta / "casos").mkdir(parents=True, exist_ok=True)
@@ -646,7 +658,8 @@ def generar(salida: Path) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--salida", type=Path, default=SALIDA_POR_DEFECTO, help="carpeta que recibe m1/, m2/ y m3/")
+    parser.add_argument("--salida", type=Path, default=SALIDA_POR_DEFECTO, help="carpeta que recibe m1/, m2/ y m3/ (por defecto el fixture app/tests/fixtures/juguete; "
+                        "app/public/model vuelve a servir el juguete y sobrescribe lo que haya ahí)")
     args = parser.parse_args(argv)
     generar(args.salida)
     print(f"Juguetes escritos en {args.salida}")

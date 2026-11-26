@@ -39,6 +39,14 @@ fijo — redimensionar **estirando** con interpolación **bilineal** (como PIL `
 media/desviación. Entrena y evalúa con ese mismo preprocesado. Salidas del ONNX: `logits` (5) y `mapas` (última
 convolución); cabeza GAP + lineal (sus pesos van en `pesos_cabeza` y `sesgo_cabeza`). Referencia: `scripts/generar_juguetes_app.py`.
 
+**CAM ≡ Grad-CAM en la app (DA-7, verificado el 26-nov con el juguete).** Para que la equivalencia valga con tu modelo real:
+(1) la salida `mapas` del ONNX es exactamente el tensor al que se aplica el GAP (si hay BN o ReLU al final, exporta su
+salida); (2) la cabeza es solo GAP (media) + una única `nn.Linear` sobre los logits previos al softmax; (3) `pesos_cabeza` =
+`cabeza.weight` (clases × canales, filas en el orden de `clases`) y `sesgo_cabeza` = `cabeza.bias`; (4) en cada caso de
+paridad `logits ≈ W·mean(mapas) + b` (atol 1e-4); (5) forma NCHW `[1, C, H, W]` con C = columnas de W, exportado en `eval()`;
+(6) repite con tu modelo la prueba `test_m2_cam_coincide_con_grad_cam` de `tests/test_juguetes_app.py` (gradiente constante =
+w/(H·W) y H·W·Grad-CAM = ReLU(CAM)).
+
 ### 3.1 Datos y descriptivo (JO-1, JO-2)
 Descarga desde Mendeley (DOI 10.17632/mzb4b6dff3.1) [VERIFICAR estructura de carpetas y conteos]; lectura del artículo de Data in
 Brief (DOI 10.1016/j.dib.2025.111529) con `investigador-fuentes`. Imágenes redimensionadas y comprimidas en el repo (§5.5).

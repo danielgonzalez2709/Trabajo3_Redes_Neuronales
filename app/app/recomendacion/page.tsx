@@ -12,7 +12,7 @@ import {
 } from "../../lib/contratos";
 import { cargarJson } from "../../lib/datos";
 import { formatearNumero } from "../../lib/formato";
-import { recomendarPerfil } from "../../lib/recomendar";
+import { nombresParaMostrar, recomendarPerfil } from "../../lib/recomendar";
 import estilos from "../modulo.module.css";
 
 interface DatosM3 {
@@ -53,7 +53,7 @@ function Contenido({ destinos, usuarios, perfil }: DatosM3) {
   const [usuarioId, setUsuarioId] = useState(usuarios.usuarios[0].id);
   const [seleccion, setSeleccion] = useState<SeleccionM3>({});
   const [k, setK] = useState(perfil.k_defecto);
-  const nombre = useMemo(() => new Map(destinos.destinos.map((d) => [d.id, d.nombre])), [destinos]);
+  const nombre = useMemo(() => nombresParaMostrar(destinos.destinos), [destinos]);
   const usuario = usuarios.usuarios.find((u) => u.id === usuarioId) ?? usuarios.usuarios[0];
   const kMax = Math.min(perfil.k_max, usuarios.k_max, destinos.destinos.length);
   const kUso = Math.min(k, kMax); // el K que se usa en todo: nunca más que el máximo

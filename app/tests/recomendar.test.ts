@@ -1,15 +1,15 @@
-// Recomendador de dos torres de M3 y su paridad con Python (m3/casos_paridad.json).
+// Recomendador de dos torres de M3 sobre el fixture de juguete (ids y preferencias conocidos) y su paridad con Python.
 import { describe, expect, it } from "vitest";
 import {
   validarCasosM3, validarCoherenciaM3, validarDestinos, validarPerfilNuevo, validarUsuarios, type CapaM3, type DestinoM3, type PreferenciaM3,
 } from "../lib/contratos";
-import { codificarSeleccion, puntuar, recomendarPerfil, torreUsuario } from "../lib/recomendar";
-import { leerModelo } from "./ayuda";
+import { codificarSeleccion, nombresParaMostrar, puntuar, recomendarPerfil, torreUsuario } from "../lib/recomendar";
+import { leerJuguete } from "./ayuda";
 
-const destinos = validarDestinos(leerModelo("m3/destinos.json")).destinos;
-const perfil = validarPerfilNuevo(leerModelo("m3/perfil_nuevo.json"));
-const casos = validarCasosM3(leerModelo("m3/casos_paridad.json"), perfil);
-const usuarios = validarUsuarios(leerModelo("m3/usuarios.json"));
+const destinos = validarDestinos(leerJuguete("m3/destinos.json")).destinos;
+const perfil = validarPerfilNuevo(leerJuguete("m3/perfil_nuevo.json"));
+const casos = validarCasosM3(leerJuguete("m3/casos_paridad.json"), perfil);
+const usuarios = validarUsuarios(leerJuguete("m3/usuarios.json"));
 
 describe("paridad con Python", () => {
   it("selección → vector de usuario → top-K: mismos destinos, mismo orden y mismos puntajes", () => {
@@ -32,7 +32,7 @@ describe("paridad con Python", () => {
   });
 
   it("el archivo es coherente con destinos, usuarios y perfil", () => {
-    const d = validarDestinos(leerModelo("m3/destinos.json"));
+    const d = validarDestinos(leerJuguete("m3/destinos.json"));
     expect(() => validarCoherenciaM3(d, usuarios, perfil, casos)).not.toThrow();
   });
 });
@@ -121,5 +121,41 @@ describe("usuario sin historial", () => {
     const u = usuarios.usuarios.find((x) => x.historial.length === 0)!;
     const esperado = puntuar(new Array(destinos[0].embedding.length).fill(0), destinos, usuarios.k_max);
     expect(u.top_k.map((f) => f.destino_id)).toEqual(esperado.map((f) => f.destino_id));
+  });
+});
+
+describe("nombres para mostrar", () => {
+  it("un nombre único se muestra solo", () => {
+    const m = nombresParaMostrar([{ id: "1", nombre: "Cartagena" }, { id: "2", nombre: "Machu Picchu" }]);
+    expect([...m]).toEqual([["1", "Cartagena"], ["2", "Machu Picchu"]]);
+  });
+
+  it("un nombre repetido lleva el id: «Nombre (#id)»", () => {
+    const m = nombresParaMostrar([{ id: "178", nombre: "Taj Mahal" }, { id: "9", nombre: "Taj Mahal" }, { id: "30", nombre: "Taj Mahal" }]);
+    expect(m.get("178")).toBe("Taj Mahal (#178)");
+    expect(m.get("9")).toBe("Taj Mahal (#9)");
+    expect(new Set(m.values()).size).toBe(3); // ya no se confunden
+  });
+
+  it("mezcla: solo los repetidos llevan el id", () => {
+    const m = nombresParaMostrar([
+      { id: "1", nombre: "Taj Mahal" }, { id: "2", nombre: "Petra" }, { id: "3", nombre: "Taj Mahal" }, { id: "4", nombre: "Petra" },
+      { id: "5", nombre: "Alhambra" },
+    ]);
+    expect(m.get("1")).toBe("Taj Mahal (#1)");
+    expect(m.get("4")).toBe("Petra (#4)");
+    expect(m.get("5")).toBe("Alhambra");
+  });
+
+  it("lista vacía y un solo destino", () => {
+    expect(nombresParaMostrar([]).size).toBe(0);
+    expect(nombresParaMostrar([{ id: "7", nombre: "X" }]).get("7")).toBe("X");
+  });
+
+  it("distingue mayúsculas (son nombres distintos) y no toca los datos de entrada", () => {
+    const lista = [{ id: "1", nombre: "Roma" }, { id: "2", nombre: "roma" }];
+    const m = nombresParaMostrar(lista);
+    expect(m.get("1")).toBe("Roma");
+    expect(lista[0].nombre).toBe("Roma");
   });
 });

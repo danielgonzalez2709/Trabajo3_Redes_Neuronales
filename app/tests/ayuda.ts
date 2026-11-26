@@ -1,20 +1,47 @@
-// Utilidades de las pruebas: lee los archivos de public/model/ tal como los sirve la app.
+// Utilidades de las pruebas. Hay DOS fuentes de archivos de modelo y las pruebas no deben confundirlas:
+// - lo SERVIDO (`leerModelo`, `rutaModelo`): app/public/model/, lo que ve el usuario; puede ser el juguete o el modelo real
+//   de cada módulo, así que las pruebas sobre esto solo comprueban lo que vale para ambos;
+// - el JUGUETE (`leerJuguete`, `rutaJuguete`): el fixture versionado app/tests/fixtures/juguete/ (lo escribe
+//   scripts/generar_juguetes_app.py), siempre `juguete: true` con ids y preferencias conocidos; aquí van la lógica, los
+//   casos inválidos y las funciones de juguete.
+// La variable de entorno MODELO_SERVIDO_DIR (SOLO para pruebas) apunta lo «servido» a otra carpeta con m1/, m2/ y m3/;
+// sirve para simular en una copia temporal la llegada de un modelo real sin tocar el repositorio.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { inflateSync } from "node:zlib";
 
 const raiz = (ruta: string) => fileURLToPath(new URL(`../public/${ruta}`, import.meta.url));
+const carpetaJuguete = fileURLToPath(new URL("./fixtures/juguete/", import.meta.url));
+const carpetaServida = (): string => {
+  const alt = process.env.MODELO_SERVIDO_DIR;
+  return alt ? alt.replace(/[\\/]+$/, "") + "/" : raiz("model/");
+};
 
-export const leerModelo = (ruta: string): unknown => JSON.parse(readFileSync(raiz(`model/${ruta}`), "utf-8"));
-export const existe = (ruta: string): boolean => {
+const leerJson = (ruta: string): unknown => JSON.parse(readFileSync(ruta, "utf-8"));
+const hay = (ruta: string): boolean => {
   try {
-    readFileSync(raiz(ruta));
+    readFileSync(ruta);
     return true;
   } catch {
     return false;
   }
 };
-/** Ruta en disco de un archivo de public/ (para los .wasm de onnxruntime y el modelo ONNX). */
+
+/** JSON servido (app/public/model/, o MODELO_SERVIDO_DIR): `ruta` como "m1/pronosticos.json". */
+export const leerModelo = (ruta: string): unknown => leerJson(carpetaServida() + ruta);
+/** Ruta en disco de un archivo servido de los modelos (p. ej. "m2/modelo.onnx"). */
+export const rutaModelo = (ruta: string): string => carpetaServida() + ruta;
+export const existeModelo = (ruta: string): boolean => hay(rutaModelo(ruta));
+
+/** JSON del fixture de juguete (app/tests/fixtures/juguete/). */
+export const leerJuguete = (ruta: string): unknown => leerJson(carpetaJuguete + ruta);
+/** Ruta en disco de un archivo del fixture de juguete (el ONNX, las imágenes de ejemplo). */
+export const rutaJuguete = (ruta: string): string => carpetaJuguete + ruta;
+export const existeJuguete = (ruta: string): boolean => hay(rutaJuguete(ruta));
+
+/** ¿Existe el archivo `ruta` dentro de public/ (p. ej. los .wasm de onnxruntime en "ort/")? */
+export const existe = (ruta: string): boolean => hay(raiz(ruta));
+/** Ruta en disco de un archivo de public/ (para los .wasm de onnxruntime). */
 export const rutaPublica = raiz;
 /** Copia profunda editable de un JSON para armar casos inválidos. */
 export const copia = <T,>(x: T): T => structuredClone(x);

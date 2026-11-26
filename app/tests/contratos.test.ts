@@ -3,17 +3,17 @@ import {
   ErrorContrato, resolverParametro, validarCasosM3, validarCoherenciaM1, validarCoherenciaM3, validarDestinos, validarEntradaCaso,
   validarMetaM2, validarOperacion, validarPerfilNuevo, validarPronosticos, validarUsuarios,
 } from "../lib/contratos";
-import { copia, leerModelo } from "./ayuda";
+import { copia, leerJuguete } from "./ayuda";
 
 type Cualquiera = Record<string, any>;
 
-const pronosticos = () => leerModelo("m1/pronosticos.json") as Cualquiera;
-const operacion = () => leerModelo("m1/operacion.json") as Cualquiera;
-const meta = () => leerModelo("m2/meta.json") as Cualquiera;
-const destinos = () => leerModelo("m3/destinos.json") as Cualquiera;
-const usuarios = () => leerModelo("m3/usuarios.json") as Cualquiera;
-const perfil = () => leerModelo("m3/perfil_nuevo.json") as Cualquiera;
-const casosM3 = () => leerModelo("m3/casos_paridad.json") as Cualquiera;
+const pronosticos = () => leerJuguete("m1/pronosticos.json") as Cualquiera;
+const operacion = () => leerJuguete("m1/operacion.json") as Cualquiera;
+const meta = () => leerJuguete("m2/meta.json") as Cualquiera;
+const destinos = () => leerJuguete("m3/destinos.json") as Cualquiera;
+const usuarios = () => leerJuguete("m3/usuarios.json") as Cualquiera;
+const perfil = () => leerJuguete("m3/perfil_nuevo.json") as Cualquiera;
+const casosM3 = () => leerJuguete("m3/casos_paridad.json") as Cualquiera;
 
 /** El validador debe lanzar un ErrorContrato cuyo mensaje contenga el fragmento (ruta del campo). */
 const rechaza = (f: () => unknown, fragmento: string) => {
