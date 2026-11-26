@@ -1,13 +1,13 @@
 // Lectura de m2/meta.json y la lógica de M2 que no necesita el navegador (preprocesado, softmax, alerta, CAM).
-// La inferencia con el ONNX en el navegador se prueba contra estos mismos casos en DA-7.
+// Sobre el fixture de juguete (con sus particularidades); lo que vale también para el modelo real está en servido.test.ts.
 import { describe, expect, it } from "vitest";
 import { calcularCam, decidirAlerta, indiceMaximo, preprocesar, probabilidadConAlerta, softmax } from "../lib/clasificar";
 import { MAX_CASOS_M2, validarEntradaCaso, validarMetaM2 } from "../lib/contratos";
-import { existe, leerModelo } from "./ayuda";
+import { existe, existeJuguete, leerJuguete } from "./ayuda";
 
-const meta = validarMetaM2(leerModelo("m2/meta.json"));
+const meta = validarMetaM2(leerJuguete("m2/meta.json"));
 
-describe("meta.json de M2", () => {
+describe("meta.json de M2 (juguete)", () => {
   it("trae las 5 clases del enunciado con su grupo de alerta", () => {
     expect(meta.clases.map((c) => c.nombre)).toEqual([
       "Conducción segura", "Giro", "Escribir en el teléfono", "Hablar por teléfono", "Otros comportamientos riesgosos",
@@ -27,8 +27,8 @@ describe("meta.json de M2", () => {
   });
 
   it("los archivos que nombra existen: modelo ONNX, ejemplos y los .wasm de onnxruntime servidos por la app", () => {
-    expect(existe(`model/m2/${meta.archivo_modelo}`)).toBe(true);
-    for (const e of meta.ejemplos) expect(existe(`model/m2/ejemplos/${e.archivo}`), e.archivo).toBe(true);
+    expect(existeJuguete(`m2/${meta.archivo_modelo}`)).toBe(true);
+    for (const e of meta.ejemplos) expect(existeJuguete(`m2/ejemplos/${e.archivo}`), e.archivo).toBe(true);
     expect(existe("ort/ort-wasm-simd-threaded.wasm")).toBe(true);
     expect(existe("ort/ort-wasm-simd-threaded.mjs")).toBe(true);
   });
@@ -43,10 +43,10 @@ describe("meta.json de M2", () => {
     expect(meta.casos_paridad.some((c) => c.entrada_archivo !== undefined)).toBe(true);
     for (const c of meta.casos_paridad) {
       if (c.entrada_archivo) {
-        const rgb = validarEntradaCaso(leerModelo(`m2/${c.entrada_archivo}`), meta.tamano_entrada, c.entrada_archivo);
+        const rgb = validarEntradaCaso(leerJuguete(`m2/${c.entrada_archivo}`), meta.tamano_entrada, c.entrada_archivo);
         expect(rgb).toHaveLength(meta.tamano_entrada.alto * meta.tamano_entrada.ancho * 3);
       }
-      if (c.imagen) expect(existe(`model/m2/ejemplos/${c.imagen}`), c.imagen).toBe(true);
+      if (c.imagen) expect(existeJuguete(`m2/ejemplos/${c.imagen}`), c.imagen).toBe(true);
     }
   });
 });

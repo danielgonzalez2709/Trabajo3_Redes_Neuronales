@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Curso | Redes neuronales y algoritmos bioinspirados — UNAL, Facultad de Minas, 2026-02 |
-| Versión | **0.6** — 2026-11-24 (§5.4, §5.6 y §5.8: contratos de exportación a la app fijados en `app/lib/contratos.ts` (DA-5); afecta a Camila y Andrés (M1), José (M2: preprocesado obligatorio) y Juan José (M3: formato de dos torres); Daniel) · 0.5 — 2026-11-24 (§5.3 reglas contra fuga del arnés de M1: lista blanca de columnas, test sin excluir anómalos, ventanas desde el 2021-06-01, rejilla de orígenes anclada al 2023-12-01; §5.4 composición por clase solo con train; §5.1 marcas solo descriptivas y `marcas_anomalos.parquet`; afecta a Andrés y Camila; Daniel, a partir de auditor-fugas) · 0.4 — 2026-11-24 (§5.1: mayo de 2021 se conserva con marcas y los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`); la flota usa despachos de ORIGEN; afecta a Camila y Andrés; Daniel) · 0.3 — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
+| Versión | **0.7** — 2026-11-26 (§5.7: columnas reales de las interacciones de M3 (`origen`, `id_origen`, `fecha_visita`) y nombres repetidos en la app; afecta a Juan José; Daniel) · 0.6 — 2026-11-24 (§5.4, §5.6 y §5.8: contratos de exportación a la app fijados en `app/lib/contratos.ts` (DA-5); afecta a Camila y Andrés (M1), José (M2: preprocesado obligatorio) y Juan José (M3: formato de dos torres); Daniel) · 0.5 — 2026-11-24 (§5.3 reglas contra fuga del arnés de M1: lista blanca de columnas, test sin excluir anómalos, ventanas desde el 2021-06-01, rejilla de orígenes anclada al 2023-12-01; §5.4 composición por clase solo con train; §5.1 marcas solo descriptivas y `marcas_anomalos.parquet`; afecta a Andrés y Camila; Daniel, a partir de auditor-fugas) · 0.4 — 2026-11-24 (§5.1: mayo de 2021 se conserva con marcas y los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`); la flota usa despachos de ORIGEN; afecta a Camila y Andrés; Daniel) · 0.3 — 2026-11-24 (§5.1: periodo 2021–2023, `pasajeros` incluye origen y tránsito, nueva tabla `demanda_detalle.parquet` por tipo de despacho y clase de vehículo; afecta a Camila y Andrés; Daniel) · 0.2 — 2026-11-24 (DA-1: §5.11 la serie sintética usa picos de temporada como proxy de festivos y códigos del departamento `00`; §5.12 agrega el veredicto `pendiente`; los JSON de juguete de la app pasan a DA-5; Daniel) · 0.1 — 2026-11-23 (borrador inicial a partir del enunciado y de la estructura del Trabajo 2; Daniel) |
 | Entrega | **mar 1-dic-2026** (hora por confirmar [VERIFICAR]) |
 | Repositorio | https://github.com/danielgonzalez2709/Trabajo3_Redes_Neuronales |
 
@@ -304,8 +304,14 @@ redimensionado bilineal tipo PIL está en `app/lib/imagen.ts`); máximo 3 `casos
 **CAM** (Σ w_c·mapa, sin sesgo); DA-7 demuestra su equivalencia con Grad-CAM de PyTorch para la cabeza GAP + lineal.
 
 ### 5.7 M3 — datos (produce y consume: Juan José)
-`data/processed/m3/interacciones.parquet` (`usuario_id, destino_id, calificacion, [fecha], split`), `usuarios.parquet`,
-`destinos.parquet` con las variables de contenido. Ninguna interacción de prueba se usa para entrenar.
+**[DECIDIDO, Daniel, 26-nov, a partir de JJ-1]** `data/processed/m3/interacciones.parquet` con `usuario_id, destino_id,
+origen ("resena" | "historial"), id_origen (ReviewID o HistoryID de la fuente, trazabilidad), calificacion (atributo, no
+objetivo), fecha_visita (solo descriptiva: 3 valores, no es una fecha real; no se usa para partir), split` (`split` lo agrega
+JJ-3; la partición es por usuario). `usuarios.parquet` y `destinos.parquet` con las variables de contenido (`destinos` trae
+`nombre` y `lugar`: en la fuente los 1 000 destinos son 5 lugares repetidos, ver JJ-1). Sin nombre, correo ni texto de reseña de
+los usuarios. Ninguna interacción de prueba se usa para entrenar.
+En la app (§5.8) el `id` de destino va como texto (p. ej. `"178"`); si un `nombre` se repite, la app lo muestra como
+«Nombre (#id)».
 
 ### 5.8 M3 — recomendador para la app (produce: Juan José · consume: Daniel)
 `app/public/model/m3/`: `destinos.json`, `usuarios.json`, `perfil_nuevo.json` y `casos_paridad.json`.

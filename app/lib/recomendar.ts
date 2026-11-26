@@ -73,3 +73,13 @@ export function recomendarPerfil(
   const vector_usuario = torreUsuario(codificarSeleccion(preferencias, seleccion), capas);
   return { vector_usuario, top_k: puntuar(vector_usuario, destinos, k, vistos) };
 }
+
+/**
+ * Nombre a mostrar de cada destino (id → texto). Si un `nombre` aparece más de una vez en la lista (en el conjunto real los
+ * destinos son pocos lugares repetidos muchas veces), se muestra «Nombre (#id)» para distinguirlos; si es único, solo el nombre.
+ */
+export function nombresParaMostrar(destinos: Pick<DestinoM3, "id" | "nombre">[]): Map<string, string> {
+  const veces = new Map<string, number>();
+  for (const d of destinos) veces.set(d.nombre, (veces.get(d.nombre) ?? 0) + 1);
+  return new Map(destinos.map((d) => [d.id, (veces.get(d.nombre) ?? 0) > 1 ? `${d.nombre} (#${d.id})` : d.nombre]));
+}

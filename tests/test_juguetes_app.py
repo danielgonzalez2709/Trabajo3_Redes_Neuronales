@@ -1,11 +1,15 @@
 """Pruebas de los JSON y el ONNX de juguete de la app (DA-5; núcleo §5.4, §5.6 y §5.8).
 
 Regeneran los juguetes en una carpeta temporal, comprueban que todo lleva ``juguete: true``, que el ONNX coincide con
-PyTorch (probabilidades y mapas) y que lo versionado en ``app/public/model`` es exactamente lo que genera el script.
+PyTorch (probabilidades y mapas) y que el fixture versionado en ``app/tests/fixtures/juguete`` es exactamente lo que genera
+el script. Lo que sirve la app (``app/public/model``) puede ser juguete o real: por módulo no se mezclan, y si es de juguete
+debe coincidir con el fixture.
 """
 
 import json
 import math
+import os
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -16,6 +20,9 @@ ARCHIVOS_JSON = [
     "m1/pronosticos.json", "m1/operacion.json", "m2/meta.json",
     "m3/destinos.json", "m3/usuarios.json", "m3/perfil_nuevo.json", "m3/casos_paridad.json",
 ]
+FIXTURE = g.SALIDA_POR_DEFECTO  # app/tests/fixtures/juguete
+# Lo que sirve la app. MODELO_SERVIDO_DIR existe SOLO para simular en una copia temporal la llegada de un modelo real.
+SERVIDO = Path(os.environ.get("MODELO_SERVIDO_DIR") or g.RAIZ / "app" / "public" / "model")
 
 
 @pytest.fixture(scope="module")
@@ -55,10 +62,38 @@ def _casi_igual(a, b, tol=1e-4):
     return a == b
 
 
-def test_lo_versionado_coincide_con_lo_que_genera_el_script(salida):
-    """Si cambia el generador hay que volver a correrlo y versionar el resultado."""
+def test_el_fixture_versionado_coincide_con_lo_que_genera_el_script(salida):
+    """Si cambia el generador hay que volver a correrlo y versionar el resultado en app/tests/fixtures/juguete."""
     for ruta in ARCHIVOS_JSON:
-        assert _casi_igual(_leer(g.SALIDA_POR_DEFECTO, ruta), _leer(salida, ruta)), f"{ruta} está desactualizado: corre el script"
+        assert _casi_igual(_leer(FIXTURE, ruta), _leer(salida, ruta)), f"{ruta} del fixture está desactualizado: corre el script"
+    assert (FIXTURE / "m2" / "modelo.onnx").is_file()
+    assert sorted(p.name for p in (FIXTURE / "m2" / "ejemplos").glob("*.png")) == sorted(p.name for p in (salida / "m2" / "ejemplos").glob("*.png"))
+    assert (FIXTURE / "m2" / "casos" / "caso_2.json").is_file()
+
+
+def _modulo_servido(modulo):
+    """`juguete` de cada JSON servido del módulo (los que existan)."""
+    return {r: _leer(SERVIDO, r)["juguete"] for r in ARCHIVOS_JSON if r.startswith(f"{modulo}/") and (SERVIDO / r).is_file()}
+
+
+@pytest.mark.parametrize("modulo", ["m1", "m2", "m3"])
+def test_lo_servido_no_mezcla_juguete_y_real_dentro_de_un_modulo(modulo):
+    valores = _modulo_servido(modulo)
+    assert valores, f"{modulo}: no hay JSON servidos en app/public/model"
+    assert all(isinstance(v, bool) for v in valores.values()), valores
+    assert len(set(valores.values())) == 1, f"{modulo}: mezcla juguete y real: {valores}"
+
+
+@pytest.mark.parametrize("modulo", ["m1", "m2", "m3"])
+def test_si_el_modulo_servido_es_de_juguete_coincide_con_el_fixture(modulo):
+    """Detecta juguetes servidos desactualizados. Un módulo real no se compara con nada aquí."""
+    valores = _modulo_servido(modulo)
+    if not valores or not all(valores.values()):
+        pytest.skip(f"{modulo} servido es real (juguete: false): no se compara con el fixture")
+    for ruta in (r for r in ARCHIVOS_JSON if r.startswith(f"{modulo}/")):
+        assert _casi_igual(_leer(SERVIDO, ruta), _leer(FIXTURE, ruta)), f"{ruta} servido está desactualizado frente al fixture"
+    if modulo == "m2":
+        assert (SERVIDO / "m2" / "modelo.onnx").read_bytes() == (FIXTURE / "m2" / "modelo.onnx").read_bytes()
 
 
 def test_m1_esquema_y_cuantiles(salida):
