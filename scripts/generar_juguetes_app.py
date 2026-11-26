@@ -342,6 +342,15 @@ def _definir_red():
     return RedJuguete(), torch
 
 
+def crear_red_juguete():
+    """La red de juguete con sus pesos (semilla fija), en modo evaluación: la misma que exporta ``generar_m2``. La usa
+    también la prueba CAM ≡ Grad-CAM de tests/test_juguetes_app.py."""
+    fijar_semillas(SEMILLA)
+    red, torch = _definir_red()
+    red.eval()
+    return red, torch
+
+
 def _imagen_sintetica(rng: np.random.Generator, tamano: int, variante: int) -> np.ndarray:
     """Imagen RGB uint8 (alto, ancho, 3) sintética: degradado de fondo y figuras de color. No es una foto de nadie."""
     ys, xs = np.mgrid[0:tamano, 0:tamano] / (tamano - 1)
@@ -364,9 +373,7 @@ def generar_m2(salida: Path) -> None:
     import onnxruntime as ort
     from PIL import Image
 
-    fijar_semillas(SEMILLA)
-    red, torch = _definir_red()
-    red.eval()
+    red, torch = crear_red_juguete()
     carpeta = salida / "m2"
     (carpeta / "ejemplos").mkdir(parents=True, exist_ok=True)
     (carpeta / "casos").mkdir(parents=True, exist_ok=True)

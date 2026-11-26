@@ -292,3 +292,56 @@ def test_m3_hay_un_usuario_sin_historial_con_top_k_completo(salida):
     u = _leer(salida, "m3/usuarios.json")
     sin = [x for x in u["usuarios"] if not x["historial"]]
     assert sin and all(len(x["top_k"]) >= u["k_max"] for x in sin)
+
+
+def test_m2_cam_coincide_con_grad_cam(salida):
+    """CAM ≡ Grad-CAM con cabeza GAP + lineal (núcleo §3), con Grad-CAM calculado DE VERDAD con autograd.
+
+    Derivación. Sean A_k(i, j) las activaciones de la última convolución (k = 1..K, i, j en una rejilla H × W) y
+    y_c = Σ_k w_{c,k} · (1/(H·W)) Σ_{i,j} A_k(i, j) + b_c el logit de la clase c (GAP y luego lineal). Entonces
+        ∂y_c / ∂A_k(i, j) = w_{c,k} / (H·W)          (no depende de i, j)
+        α_{c,k} = (1/(H·W)) Σ_{i,j} ∂y_c / ∂A_k(i, j) = w_{c,k} / (H·W)
+        Grad-CAM_c = ReLU(Σ_k α_{c,k} A_k) = ReLU(Σ_k w_{c,k} A_k) / (H·W) = ReLU(CAM_c) / (H·W),
+    porque H·W > 0 no cambia el signo. Así que (H·W)·Grad-CAM_c = ReLU(CAM_c): el CAM de la app (Σ w·A con `pesos_cabeza`
+    del meta, sin sesgo), tras la ReLU y la escala, es Grad-CAM. Tras la normalización a [0, 1] que hace la app para pintar,
+    ambos son idénticos.
+
+    Se comprueba para TODAS las clases de todos los casos de paridad, en float64, con tolerancia relativa 1e-5 (y absoluta
+    1e-5 · max|CAM| para los píxeles cercanos a cero). Si el modelo tuviera algo entre las activaciones y el GAP (otra
+    capa, un sesgo espacial) o la cabeza no fuera lineal, el gradiente dependería de (i, j) o ya no sería w/(H·W) (p. ej.
+    una BatchNorm en modo eval lo deja constante pero lo escala por γ/σ), y la prueba fallaría.
+    """
+    import torch
+
+    red, _ = g.crear_red_juguete()
+    red = red.double()
+    meta = _leer(salida, "m2/meta.json")
+    # La red reconstruida es la del meta (mismos pesos de la cabeza que lee la app).
+    np.testing.assert_allclose(red.cabeza.weight.detach().numpy(), np.array(meta["pesos_cabeza"]), atol=1e-8)
+    pesos = np.array(meta["pesos_cabeza"], dtype=np.float64)
+    alto, ancho = meta["tamano_entrada"]["alto"], meta["tamano_entrada"]["ancho"]
+    media = np.array(meta["media"], dtype=np.float64)[:, None, None]
+    desv = np.array(meta["desviacion"], dtype=np.float64)[:, None, None]
+    n_clases = len(meta["clases"])
+    comprobados = 0
+    for caso in meta["casos_paridad"]:
+        rgb = np.array(_entrada(salida, caso), dtype=np.uint8).reshape(alto, ancho, 3)
+        x = torch.from_numpy(((rgb.astype(np.float64).transpose(2, 0, 1) / 255.0 - media) / desv)[None])
+        for c in range(n_clases):
+            logits, mapas = red(x)
+            mapas.retain_grad()
+            logits[0, c].backward()
+            A = mapas.detach().numpy()[0]  # (K, H, W)
+            grad = mapas.grad.numpy()[0]
+            h, w = A.shape[1:]
+            alfa = grad.mean(axis=(1, 2))  # α_{c,k}: promedio espacial del gradiente
+            grad_cam = np.maximum(np.tensordot(alfa, A, axes=(0, 0)), 0.0)
+            cam = np.tensordot(pesos[c], A, axes=(0, 0))  # Σ_k w_{c,k} A_k, como calcularCam en la app
+            esperado = np.maximum(cam, 0.0)
+            np.testing.assert_allclose(h * w * grad_cam, esperado, rtol=1e-5, atol=1e-5 * max(np.abs(cam).max(), 1e-12))
+            # El gradiente es constante en el espacio e igual a w_{c,k} / (H·W): la hipótesis de la derivación.
+            np.testing.assert_allclose(grad, np.broadcast_to((pesos[c] / (h * w))[:, None, None], grad.shape), rtol=1e-5, atol=1e-12)
+            if c == caso["clase_predicha"]:  # y coincide con el CAM guardado en el meta (redondeado a 6 decimales)
+                np.testing.assert_allclose(cam.reshape(-1), caso["cam_clase_predicha"], atol=1e-5)
+            comprobados += 1
+    assert comprobados == n_clases * len(meta["casos_paridad"]) >= 15

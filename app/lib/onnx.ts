@@ -57,6 +57,9 @@ export async function ejecutarModelo(meta: MetaM2, rgb: ArrayLike<number>): Prom
   const dims = mapasT.dims;
   if (dims.length !== 4) throw new Error("La salida «mapas» debe tener forma [lote, canales, alto, ancho].");
   const forma: [number, number, number] = [dims[1], dims[2], dims[3]];
+  const canalesCabeza = meta.pesos_cabeza[0]?.length;
+  if (dims[1] !== canalesCabeza)
+    throw new Error(`La salida «mapas» tiene ${dims[1]} canales y pesos_cabeza espera ${canalesCabeza}: el modelo y meta.json no coinciden.`);
   const mapas = mapasT.data as Float32Array;
   const claseIndice = indiceMaximo(logits);
   return {

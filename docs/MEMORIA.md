@@ -45,6 +45,8 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-26 · Daniel · DA-7 CAM pintado en la app y CAM ≡ Grad-CAM verificado (verificador-matematico: aprobado con
+  observaciones, aplicadas); DA-11 esqueleto del notebook 00; borrador del blog 08; condiciones del ONNX real en la spec de José.
 - 2026-11-26 · Daniel · DA-5c (aviso de Juan José): juguete como fixture (`app/tests/fixtures/juguete/`), pruebas de lo
   servido válidas para modelos reales, nombres repetidos de M3 como «Nombre (#id)»; Spec v0.7 (§5.7 columnas reales de M3).
 - 2026-11-24 · Daniel · PR #3 fusionado; app publicada en Vercel (DA-5 ✅); URL en README, blog y guion.
