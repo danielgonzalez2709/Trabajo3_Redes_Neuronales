@@ -99,13 +99,17 @@ Los archivos de los modelos viven en `app/public/model/{m1,m2,m3}/` y sus contra
 `node_modules/onnxruntime-web/dist`; si se cambia la versión de onnxruntime-web hay que volver a copiarlos).
 
 **Datos de juguete (DA-5).** Mientras llegan los modelos reales, `app/public/model/` trae archivos ficticios con
-`"juguete": true` y cada página lo avisa. Se regeneran (semilla fija, mismo resultado) con:
+`"juguete": true` y cada página lo avisa. El juguete vive como fixture de pruebas en `app/tests/fixtures/juguete/` y se
+regenera (semilla fija, mismo resultado) con:
 
 ```bash
-.venv\Scripts\python scripts/generar_juguetes_app.py     # reescribe app/public/model/{m1,m2,m3}
+.venv\Scripts\python scripts/generar_juguetes_app.py     # escribe app/tests/fixtures/juguete/{m1,m2,m3}
+.venv\Scripts\python scripts/generar_juguetes_app.py --salida app/public/model   # solo para volver a servir el juguete
 .venv\Scripts\python -m pytest -q tests/test_juguetes_app.py   # incluye la paridad ONNX vs. PyTorch
 ```
-Los dueños de cada módulo reemplazan esos archivos con el mismo esquema y `"juguete": false`.
+Los dueños de cada módulo reemplazan los archivos de `app/public/model/<módulo>/` con el mismo esquema y `"juguete": false`
+(todo el módulo a la vez). Las pruebas de lo servido (`app/tests/servido.test.ts`) valen para juguete y real; las de lógica
+usan el fixture, así que no fallan cuando llega un modelo real.
 
 ## Pruebas
 

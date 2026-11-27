@@ -1,0 +1,14 @@
+# Notebook 00_sustentacion (núcleo §5.10): una demo por módulo. Cada demo corre `python run.py <subcomando> --config <config>`.
+# Las configs de demo las crean sus dueños; mientras no existan, la celda imprime «Pendiente» y no falla.
+# TODO(pendiente-dueños): `salida_temporal` (clave de la carpeta de salida de cada demo) no está definida en el Spec;
+#   cuando los dueños la fijen, se añade por demo para que la sustentación no sobrescriba results/.
+demos:
+  m1:
+    subcomando: m1
+    config: configs/m1/demo.yaml
+  m2:
+    subcomando: m2
+    config: configs/m2/demo.yaml
+  m3:
+    subcomando: m3
+    config: configs/m3/demo.yaml

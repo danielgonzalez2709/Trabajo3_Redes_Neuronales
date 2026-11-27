@@ -1,11 +1,12 @@
-// Función de dimensionamiento PROVISIONAL (juguete) y su paridad con Python (casos de operacion.json).
+// Función de dimensionamiento PROVISIONAL (juguete) y su paridad con Python (casos de operacion.json del fixture de juguete).
+// La paridad contra el M1 SERVIDO está en servido.test.ts (solo si declara esta función).
 import { describe, expect, it } from "vitest";
 import { validarOperacion, validarPronosticos } from "../lib/contratos";
 import { demandaDelCuantil, dimensionarJuguete, parametrosBase, tablaOperacion } from "../lib/dimensionar";
-import { leerModelo } from "./ayuda";
+import { leerJuguete } from "./ayuda";
 
-const operacion = validarOperacion(leerModelo("m1/operacion.json"));
-const pronosticos = validarPronosticos(leerModelo("m1/pronosticos.json"));
+const operacion = validarOperacion(leerJuguete("m1/operacion.json"));
+const pronosticos = validarPronosticos(leerJuguete("m1/pronosticos.json"));
 const ruta = pronosticos.rutas[0];
 const base = parametrosBase(operacion.parametros, ruta.ruta_id);
 

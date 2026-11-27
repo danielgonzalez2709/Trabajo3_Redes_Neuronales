@@ -89,11 +89,11 @@ Next.js estático en Vercel, como el Trabajo 2. Página de inicio con enlaces a 
 | DA-4 | Plantilla común secciones 1–2 para M1 | mié 25 | curador-datos (Sonnet) | revisor-spec (Sonnet) | `ficha.json` válido; inconsistencias diccionario vs. datos listadas | ✅ |
 | DA-5 | Esqueleto de la app + Vercel con JSON de juguete de M1, M2 y M3 en el formato de §5.4, §5.6 y §5.8 | jue 26 | implementador-web (Sonnet) | revisor-calidad (Haiku) | Despliegue en Vercel; `npm test` y `npm run build` en verde | ✅ (https://trabajo3-redes-neuronales.vercel.app/) |
 | DA-6 | Página de demanda con `dimensionar()` en TS | sáb 28 | implementador-web (Sonnet) | verificador-matematico (Opus) | Paridad TS vs. Python | ⬜ |
-| DA-7 | Página de conducción (ONNX + CAM + umbral) | sáb 28–dom 29 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | Paridad de probabilidades y mapa con los casos de `meta.json` | ⬜ |
+| DA-7 | Página de conducción (ONNX + CAM + umbral) | sáb 28–dom 29 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | Paridad de probabilidades y mapa con los casos de `meta.json` | 🟨 (CAM pintado y CAM ≡ Grad-CAM verificado con el juguete; falta el modelo real) |
 | DA-8 | Página de recomendación (existente + perfil nuevo) | dom 29 | implementador-web (Sonnet) | revisor-spec (Sonnet) | Paridad del top-K | ⬜ |
-| DA-9 | Blog: integración, secciones propias, publicación | lun 30 | redactor-tecnico (Sonnet) | auditor-entregables (Haiku) | `mkdocs build --strict` sin errores; sin figuras huérfanas | ⬜ |
+| DA-9 | Blog: integración, secciones propias, publicación | lun 30 | redactor-tecnico (Sonnet) | auditor-entregables (Haiku) | `mkdocs build --strict` sin errores; sin figuras huérfanas | 🟨 (borrador de 08 «Aplicación web») |
 | DA-10 | Video promocional | jue 26–lun 30 | implementador-web (Sonnet) | — | 2–3 min, publicado, enlazado en app y blog | 🟨 (guion listo) |
-| DA-11 | Notebook `00_sustentacion` (una celda por módulo) | dom 29 | implementador (Sonnet) | tutor-sustentacion (Sonnet) | Corre completo en < 2 min por módulo | ⬜ |
+| DA-11 | Notebook `00_sustentacion` (una celda por módulo) | dom 29 | implementador (Sonnet) | tutor-sustentacion (Sonnet) | Corre completo en < 2 min por módulo | 🟨 (esqueleto listo; cada celda «Pendiente» hasta que exista `configs/mX/demo.yaml`) |
 | DA-12 | Sección uso de IA (prompts principales e impacto) | dom 29 | redactor-tecnico (Sonnet) | — | Prompts literales enlazados a `alucinaciones/prompts/` | ⬜ |
 
 ## 5. Puntos calientes de alucinación
