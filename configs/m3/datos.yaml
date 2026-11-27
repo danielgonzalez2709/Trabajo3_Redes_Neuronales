@@ -1,6 +1,7 @@
-# M3 — datos procesados (JJ-1, fase B) y secciones 1–2 de la plantilla común (núcleo §5.12).
+# M3 — datos procesados (JJ-1, fase B), secciones 1–2 de la plantilla común (núcleo §5.12) y partición (JJ-3).
 # Uso: .venv\Scripts\python run.py m3-datos --config configs/m3/datos.yaml
-# Nada aleatorio: no hay base_seed. Sin red: lee data/raw/m3/ (descarga manual desde Kaggle; ver data/fuentes.md).
+# Lo único aleatorio es la partición (bloque `particion`, semilla fija; src/comun/seeds.py). Sin red: lee data/raw/m3/
+# (descarga manual desde Kaggle; ver data/fuentes.md).
 # Decisiones D1–D6 [DECIDIDO, Juan José, 25-nov] (D7 es de proceso): docs/spec/partes/juanjose.md §3.1. Cifras de
 # referencia de la fase A: docs/investigacion/JJ-1_fuentes_m3.md. Toda cifra de las salidas la calcula src/m3_recomendacion/datos.py.
 
@@ -76,9 +77,31 @@ ficha:
   palabra_sintetico: synthetic            # se busca (sin distinguir mayúsculas) en la descripción y los nombres de archivo
   tipo_mencionado_sin_datos: mountain     # tipo de destino citado en la descripción («beach, mountain, historical site, etc.»)
 
+# Partición sin fuga (JJ-3; D3, D8, D9 y D10 de docs/spec/partes/juanjose.md §3.1). Regla D3, por usuario (no por tiempo:
+# fecha_visita no es una fecha real): prueba = 1 interacción al azar de cada usuario con >= 2; validación = 1 más al azar de
+# cada usuario con >= 3; el resto, train; los usuarios con 1 interacción quedan solo en train. Queda en la columna `split`
+# (train | validacion | prueba) de interacciones.parquet: UNA sola partición para todos los modelos de M3, con su SHA-256 y
+# el de su huella en salida.particion/resumen.json. Azar: make_rng(semilla, 0) (semilla efectiva = semilla + 0).
+#
+# Demo en vivo (cambiar la semilla SIN tocar lo versionado): redirigir las tres salidas a results/data/m3_demo/, que
+# .gitignore excluye (results/data/*_demo/):
+#   .venv\Scripts\python run.py m3-datos --config configs/m3/datos.yaml --set particion.semilla=7
+#       --set salida.carpeta=results/data/m3_demo/processed --set salida.eda=results/data/m3_demo/eda
+#       --set salida.particion=results/data/m3_demo/particion
+# (una sola línea al escribirla). Cambian la huella y qué interacción va a cada split; los conteos por split y por usuario no.
+# Sin redirigir, --set particion.semilla=… PISA data/processed/m3/interacciones.parquet y results/data/m3/particion/
+# resumen.json versionados, y las pruebas con datos reales de tests/test_fuga_m3.py fallan hasta volver a la semilla de aquí.
+particion:
+  semilla: 2026                    # fija; cambiarla cambia qué interacción va a cada split, no cuántas (ni por usuario)
+  # Umbral de los grupos de actividad para el reporte por grupos (pocas = 1..umbral, muchas > umbral; total de
+  # interacciones del usuario). Debe ser igual a actividad.pocas_max de configs/m3/eda.yaml (lo comprueba
+  # tests/test_fuga_m3.py): umbral de JJ-2 [PROPUESTO, a confirmar por Juan José]. Solo estratifica; no es variable de modelos.
+  umbral_pocas_max: 2
+
 salida:
   carpeta: data/processed/m3
   destinos: destinos.parquet
   usuarios: usuarios.parquet
   interacciones: interacciones.parquet
   eda: results/data/m3/eda
+  particion: results/data/m3/particion   # resumen.json (conteos, diagnósticos, SHA-256 del parquet y de la huella)

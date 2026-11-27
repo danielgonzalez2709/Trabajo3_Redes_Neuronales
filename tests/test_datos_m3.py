@@ -82,8 +82,10 @@ def montar(tmp_path: Path, csv: dict | None = None, meta=None, cfg_extra=None) -
         "conclusion_real_o_sintetico": "Conclusión de prueba.",
         "ficha": {"tope_usuarios_por_interacciones": 5, "k_max_periodicidad": 10, "palabra_sintetico": "synthetic",
                   "tipo_mencionado_sin_datos": "mountain"},
+        "particion": {"semilla": 0, "umbral_pocas_max": 2},       # JJ-3 (D3, D8): bloque obligatorio de m3-datos
         "salida": {"carpeta": str(tmp_path / "proc"), "destinos": "destinos.parquet", "usuarios": "usuarios.parquet",
-                   "interacciones": "interacciones.parquet", "eda": str(tmp_path / "eda")},
+                   "interacciones": "interacciones.parquet", "eda": str(tmp_path / "eda"),
+                   "particion": str(tmp_path / "part")},
     }
     if cfg_extra is not None:
         cfg_extra(cfg)
@@ -118,10 +120,11 @@ def test_la_union_no_repite_ni_pierde_pares(corrida):
     assert len(inter) == 4 + 4 == len(esperados)
     assert set(zip(inter["usuario_id"], inter["destino_id"])) == esperados
     assert not inter.duplicated(["usuario_id", "destino_id"]).any()
-    assert list(inter.columns) == ["usuario_id", "destino_id", "origen", "id_origen", "calificacion", "fecha_visita"]
+    assert list(inter.columns) == ["usuario_id", "destino_id", "origen", "id_origen", "calificacion", "fecha_visita",
+                                   "split"]
     assert inter["origen"].value_counts().to_dict() == {"resena": 4, "historial": 4}
     assert list(inter["usuario_id"]) == sorted(inter["usuario_id"])  # orden por (usuario_id, destino_id)
-    assert "split" not in inter.columns
+    assert set(inter["split"]) <= {"train", "validacion", "prueba"}   # JJ-3 agrega split (tests/test_fuga_m3.py)
 
 
 def test_calificacion_origen_y_fecha_de_cada_par(corrida):

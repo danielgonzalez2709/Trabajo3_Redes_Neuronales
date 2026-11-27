@@ -19,6 +19,13 @@
   Revisado por revisor-spec y revisor-calidad (aprobados en la 2.ª vuelta) y cazador-alucinaciones (0 afirmaciones
   incorrectas vigentes). Investigación: `docs/investigacion/JJ-1_fuentes_m3.md`. Rótulo de fecha: «creación de la versión 1 en Kaggle (2024-01-23)».
 - JJ-2 (descriptivo de M3 + caso de uso) terminado en `dev/juanjose` el jue 26, pendiente de PR junto con JJ-1: `run.py m3-eda --config configs/m3/eda.yaml` escribe en `results/data/m3/eda/` las tablas de actividad, concentración, calificaciones, coincidencia preferencia–tipo, pruebas e `hipotesis.json` (9 hipótesis: H-M3-1 y H-M3-4 no concluyentes, H-M3-2/3/5/6 refutadas, H-M3-7/8/9 pendientes para JJ-10); `run.py figures` genera 4 figuras en `blog/docs/figures/m3/` (cola larga, Lorenz, preferencias × tipo, calificaciones); blog 07 con caso de uso y las 7 subsecciones. Las interacciones se parecen a un reparto uniforme al azar (sin cola larga más allá del azar). Revisado por revisor-spec (aprobado), verificador-matematico (aprobado en la 2.ª vuelta), revisor-calidad (2 vueltas; el último bloqueante lo corrigió la sesión principal) y cazador-alucinaciones.
+- JJ-3 (partición sin fuga de M3) terminado en `dev/juanjose` el jue 26, pendiente de PR junto con JJ-1 y JJ-2: `run.py m3-datos`
+  agrega `split` ∈ {train, validacion, prueba} a `interacciones.parquet` (semilla `particion.semilla` = 2026) y escribe
+  `results/data/m3/particion/resumen.json` (conteos, diagnósticos, SHA-256 del parquet y huella `b35cd70b…58e8b8`). 1 066 train /
+  326 validación / 606 prueba; 858 usuarios con interacciones, 141 no evaluables. `src/m3_recomendacion/particion.py`
+  (`asignar_split`, `popularidad_train`, `historial_conocido`, `candidatos`); `tests/test_fuga_m3.py` (53 pruebas; mutantes
+  detectados). Revisado por auditor-fugas (SIN FUGA), revisor-spec (aprobado en la 2.ª vuelta) y revisor-calidad (aprobado en la
+  2.ª vuelta, más un ajuste de la sesión principal). Blog 07: subsección «Partición».
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -35,13 +42,18 @@
 - Serie sintética: códigos ficticios del departamento `00`. JSON de juguete de la app: en DA-5.
 - M3 [DECIDIDO, Juan José, 25-nov; `docs/spec/partes/juanjose.md` §3.1]: interacción = unión de Reviews y UserHistory
   como implícita (no comparten pares); destino = los 1 000 `DestinationID`, con `lugar` (5 lugares) para el análisis
-  complementario; partición por usuario (JJ-3; `VisitDate` solo descriptiva: 3 valores ligados al número de fila y
-  posteriores a la creación de la versión 1 en Kaggle, 2024-01-23); datos generados según la fuente («generated for educational and research purposes»);
+  complementario; partición por usuario (JJ-3; `VisitDate` solo descriptiva: 3 valores ligados al número de fila, 2 de ellos
+  (666 de 999 filas) posteriores a la creación de la versión 1 en Kaggle, 2024-01-23); datos generados según la fuente («generated for educational and research purposes»);
   licencia MIT del campo formal con contradicción documentada; `Name`, `Email` y `ReviewText` no pasan a procesados ni a
   resultados.
+- M3 [DECIDIDO, Juan José, 26-nov; `juanjose.md` §3.1, D8–D10]: una sola partición en la columna `split` del parquet para
+  todos los modelos, con su huella en la `evidencia`; HPO y parada temprana con validación, modelos finales solo con train y
+  una evaluación en prueba; toda estadística de interacciones solo con train (`popularidad_train`); candidatos = catálogo
+  menos historial conocido (prueba: train ∪ validación; validación: train); clave de una interacción = `(origen, id_origen)`.
 - [PROPUESTO por el analista, pendiente de Juan José] umbral de actividad pocas ≤ 2 / muchas ≥ 3; efectos mínimos y criterio de
   veredicto en `configs/m3/eda.yaml` (convención nuestra); emparejamiento léxico preferencia→tipo (Beaches→Beach, etc.); K = 5 por
-  defecto y K ∈ {1, 3, 5, 10}.
+  defecto y K ∈ {1, 3, 5, 10}; diagnósticos de `resumen.json` (destinos fríos, coincidencia de lugar con su esperado por azar),
+  guardas `AJUSTES_SOLO_TRAIN` para JJ-4/JJ-5 y nombre `particion.semilla` = 2026.
 
 ## Avisos para el equipo
 - Windows: clonar en una ruta corta (p. ej. `C:\proy\`); en rutas profundas `pip install` falla por el límite de 260 caracteres.
@@ -49,16 +61,22 @@
 - M1 (Camila, Andrés): `sin_registro` vale 0 pero no es demanda (enmascarar); `anomalo` nunca como entrada; salto del tránsito
   en 11001-15759 desde nov-2022; 2021 muy por debajo de 2022–2023. Ver `docs/investigacion/DA-3_auditoria_fugas.md`.
 - M3: para que la CI pase, el PR de JJ-1 debe incluir `configs/m3/datos.yaml`, `docs/investigacion/JJ-1_kaggle_metadata.json`
-  y `tests/fixtures/m3/` (las pruebas los leen).
+  y `tests/fixtures/m3/` (las pruebas los leen). El PR debe incluir también `results/data/m3/particion/resumen.json`
+  (las pruebas reales de `test_fuga_m3.py` lo leen).
+- M3: la demo en vivo con otra semilla debe redirigir las salidas a `results/data/m3_demo/` (orden en `configs/m3/datos.yaml`);
+  sin redirigir se pisan archivos versionados.
 
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
 2. GPU para las 30 semillas de M2.
 3. Daniel: DA-11 (notebook 00), DA-6/DA-7/DA-8 cuando lleguen las exportaciones reales (sáb 28), grabación del video.
-4. Juan José: PR de JJ-1 + JJ-2 (incluir `results/data/m3/eda/*` y `blog/docs/figures/m3/*`, que la CI necesita); confirmar las
+4. Juan José: PR de JJ-1 + JJ-2 + JJ-3 (incluir `results/data/m3/eda/*` y `blog/docs/figures/m3/*`, que la CI necesita); confirmar las
    columnas de `interacciones.parquet` frente a §5.7 (`fecha_visita`, `id_origen`, `origen`) y, si se confirman, PR dedicado al
    núcleo; confirmar umbral, efectos mínimos y criterio de `en_el_limite` de JJ-2; en JJ-9 verificar Bergsma (2013) y Romano et al.
-   (2006) antes de citarlos; JJ-3, con una prueba que compare la partición real con `actividad_usuarios.json` → `particion_d3`.
+   (2006) antes de citarlos; decidir lo [PROPUESTO] de JJ-3 (diagnósticos, guardas, nombre de la semilla) y el alcance de D10
+   sobre los 141 usuarios sin interacciones (sin verdad de terreno: solo ejemplos; los usuarios nuevos de la pregunta de negocio 1
+   se simulan en JJ-6 con usuarios de prueba); en JJ-4/JJ-5 registrar cada ajuste en `AJUSTES_SOLO_TRAIN` y copiar la huella a
+   `evidencia`; reportar el acierto por lugar frente a su línea base del azar.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
@@ -66,12 +84,16 @@
   Datos del mundo real): «las tres licencias piden citar la fuente» (orquestador Opus + implementador Sonnet) y «Preferences
   y Type no comparten vocabulario» (implementador Sonnet); 3 candidatos de M3 de JJ-2 (sin número): método de los p e IC mal descrito en el blog (redactor Sonnet,
   Matemáticas); regla de veredicto escrita distinta de la implementada (analista Sonnet, Código, menor); «no son umbrales de la
-  literatura» (redactor Sonnet, Conceptos, condicionado a fuente primaria); evidencia en `alucinaciones/evidencias/JJ-2/`; ver
-  `alucinaciones/registro.md`.
+  literatura» (redactor Sonnet, Conceptos, condicionado a fuente primaria); evidencia en `alucinaciones/evidencias/JJ-2/`; 2 candidatos de M3 de JJ-3 (sin número): «acierto por lugar trivial»
+  (Matemáticas; premisa del prompt humano convertida en hecho por el orquestador Opus y el implementador-experto Opus; 204 observados
+  frente a 198,0 por azar) y «los 3 valores de VisitDate son posteriores» (Datos del mundo real, menor; MEMORIA → orquestador →
+  redactor Sonnet); evidencia en `alucinaciones/evidencias/JJ-3/`; ver `alucinaciones/registro.md`.
 - Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-26 · Juan José · JJ-3 ✅: partición sin fuga de M3 (1 066 / 326 / 606, semilla 2026, huella en `resumen.json`),
+  `test_fuga_m3.py`, blog 07 «Partición»; D8–D10; 2 candidatos a la cacería.
 - 2026-11-26 · Juan José · JJ-2 ✅: descriptivo de M3 (9 hipótesis, 4 figuras, blog 07 con caso de uso); corrección del rótulo
   de fecha de JJ-1; 3 candidatos a la cacería.
 - 2026-11-26 · Daniel · DA-7 CAM pintado en la app y CAM ≡ Grad-CAM verificado (verificador-matematico: aprobado con

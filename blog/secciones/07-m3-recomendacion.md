@@ -1,6 +1,6 @@
 ## M3 — Recomendación de destinos
 
-<!-- JJ-2 (redactor-tecnico, Sonnet) para Juan José. Toda cifra sale de results/data/m3/eda/ (ruta entre paréntesis o en la fuente de cada tabla/figura). Las subsecciones «Implicaciones» y «Veredicto» son parciales hasta JJ-5/JJ-6/JJ-10. -->
+<!-- JJ-2 y JJ-3 (redactor-tecnico, Sonnet) para Juan José. Toda cifra sale de results/data/m3/eda/ o de results/data/m3/particion/resumen.json (ruta entre paréntesis o en la fuente de cada tabla/figura). Las subsecciones «Implicaciones» y «Veredicto» son parciales hasta JJ-5/JJ-6/JJ-10. -->
 
 **Caso de uso.** La empresa lanza una línea de turismo internacional con destinos en India. La recomendación se muestra en la
 aplicación web de la empresa, en la sección de esa línea, cuando el cliente entra a explorar viajes; opcionalmente podría
@@ -405,23 +405,12 @@ idénticos. Todo esto vale para estos datos generados (D4), no para turistas rea
 
 **(a) Partición por usuario (D3).** No se parte por tiempo porque `VisitDate` no es una fecha real. La regla es: prueba = 1
 interacción al azar de cada usuario con 2 o más; validación = 1 más de cada usuario con 3 o más; el resto, entrenamiento (los
-usuarios con 1 interacción quedan solo en entrenamiento). Contando esa regla sobre los datos (la partición real, con semilla y
-pruebas de fuga, es de JJ-3) salen **1 066 interacciones de entrenamiento, 326 de validación y 606 de prueba**
-(`results/data/m3/eda/actividad_usuarios.json`, `particion_d3.total`). Por grupo ([[tab:m3-particion]]), los usuarios con
-«pocas» interacciones aportan 532 interacciones de entrenamiento, ninguna de validación y 280 de prueba; los de «muchas», 534, 326 y 326. Es decir,
-**el grupo «pocas» sí existe en prueba** (280 usuarios), pero **la validación solo contiene usuarios de «muchas»**, y los 252
-usuarios con una sola interacción nunca se evalúan.
-
-::: tabla m3-particion
-Título: Interacciones por partición y grupo de actividad con la regla D3 (conteo, no la partición final)
-Fuente: `results/data/m3/eda/actividad_usuarios.json`, `particion_d3` (`interacciones`, `usuarios_con_prueba`, `usuarios_con_validacion`, `usuarios_solo_entrenamiento`, `total`). La partición real la hace JJ-3.
-
-| Grupo | Entrenamiento | Validación | Prueba | Usuarios con prueba | Usuarios solo en entrenamiento |
-|---|---:|---:|---:|---:|---:|
-| Pocas (1 a 2) | 532 | 0 | 280 | 280 | 252 |
-| Muchas (3 o más) | 534 | 326 | 326 | 326 | 0 |
-| **Total** | **1 066** | **326** | **606** | — | — |
-:::
+usuarios con 1 interacción quedan solo en entrenamiento). Contar esa regla sobre los datos da **1 066 interacciones de
+entrenamiento, 326 de validación y 606 de prueba**, y esas cifras, también por grupo de actividad, **coinciden** con las de la
+partición final construida con semilla y pruebas de fuga (véase la subsección «Partición» y la [[tab:m3-particion-final]], cuya
+fuente incluye esa comprobación). Lo que importa para el modelado es que **el grupo «pocas» sí existe en
+prueba** (280 usuarios), que **la validación solo contiene usuarios de «muchas»** y que los 252 usuarios con una sola interacción
+nunca se evalúan.
 
 **(b) Negativos: uniformes frente a por popularidad.** Un muestreo de negativos por popularidad tiene sentido si unos pocos destinos
 concentran las interacciones: así los negativos «difíciles» son los populares que el usuario no tocó. Aquí la concentración **no supera
@@ -486,3 +475,95 @@ compatible con cero y que se excluye un efecto del tamaño mínimo declarado, no
 «no concluyente» significa que los datos no permiten ni confirmar ni descartar un efecto de ese tamaño.
 
 <!-- revisar: Juan José — la «lectura de conjunto» es interpretación del redactor sobre los veredictos de hipotesis.json; valida el tono y el alcance (son datos generados, D4). -->
+
+### Partición
+
+El enunciado pide definir y justificar cómo se separan entrenamiento, validación y prueba, con una condición: ninguna interacción de
+prueba puede usarse para entrenar. Además, todos los modelos de un módulo deben usar el mismo preprocesamiento y las mismas
+particiones. Esta subsección dice cuál es la partición de M3, por qué es esa y qué se mide sobre ella.
+
+**La regla (D3).** La partición es **por usuario**. Para cada usuario se ordenan sus interacciones al azar; si tiene 2 o más, la
+primera va a **prueba**; si tiene 3 o más, la segunda va a **validación**; el resto es **entrenamiento**. Un usuario con una sola
+interacción queda solo en entrenamiento. El azar usa una semilla fija, 2026 ([[tab:m3-particion-final]]), y las
+interacciones se toman en un orden canónico por origen e identificador de origen, de modo que repetir el proceso da exactamente la
+misma partición. Una interacción se identifica por el par (origen, `id_origen`), porque los identificadores de reseña y de historial
+se solapan.
+
+**Por qué no es temporal.** La opción natural, partir por tiempo, no es posible: `VisitDate` no es una fecha real (3 valores ligados
+al número de fila, 2 de ellos —666 de 999 filas— posteriores a la creación de la versión 1 en Kaggle; véase la Ficha y la
+decisión D3). La fecha queda solo descriptiva.
+
+**Una sola partición para todos los modelos (D8).** La partición se calcula una vez, en el paso de datos, y se guarda en la columna
+`split` de las interacciones procesadas. La usan por igual las referencias y la red. Para poder comprobar que es la misma, se guarda
+su huella SHA-256 (de la tabla `usuario_id, destino_id, split` ordenada), que irá en la evidencia de cada archivo de resultados
+(núcleo §6): si dos corridas tienen huellas distintas, no son comparables.
+
+**Cómo se usa cada conjunto (D9).** La validación sirve solo para elegir hiperparámetros y para parar el entrenamiento. Los modelos
+finales (referencias y red, con sus 30 semillas) se entrenan **solo con entrenamiento** y se evalúan **una vez** en prueba. Toda
+estadística sacada de las interacciones, como la popularidad, los conteos por destino o los negativos muestreados por popularidad,
+se calcula **solo con entrenamiento**. Si se calcularan con todos los datos, la popularidad «sabría» qué destinos aparecen en prueba.
+
+**Qué se ordena al evaluar (D10).** Para cada usuario se ordenan todos los destinos del catálogo **excepto los que ya conoce**: en
+prueba, los de entrenamiento y validación; en validación, los de entrenamiento. Un destino ya visto nunca cuenta como acierto. Los
+141 usuarios sin interacciones no se evalúan: no tienen
+interacciones con qué medir. Como mucho sirven para mostrar recomendaciones sin métricas; cómo se mide el caso de usuarios nuevos
+(pregunta de negocio 1) se decide en JJ-6.
+
+<!-- revisar: Juan José — D10 dice que los 141 sirven para el escenario de usuario nuevo; sin interacciones no hay con qué medir; decidir en JJ-6. -->
+
+**Qué quedó en cada conjunto.** La [[tab:m3-particion-final]] da las interacciones y los usuarios por partición y por grupo de
+actividad. El grupo se define con el **total** de interacciones del usuario (entrenamiento, validación y prueba juntas): «pocas» es
+1 a 2 y «muchas» es 3 o más. Solo sirve para estratificar el reporte; no es una variable de ningún modelo. Hay 858 usuarios con
+alguna interacción, todos con al menos una en entrenamiento; 606 tienen una interacción de prueba y 326 una de validación. La
+validación contiene únicamente usuarios de «muchas»; de los 532 usuarios de «pocas», 252 (con una sola interacción) nunca se
+evalúan y los otros 280 sí tienen prueba, con una única interacción de entrenamiento cada uno.
+
+::: tabla m3-particion-final
+Título: Interacciones y usuarios por partición y grupo de actividad en la partición final de M3
+Fuente: `results/data/m3/particion/resumen.json` (`conteos.interacciones`, `conteos.usuarios`, `por_grupo_de_actividad.<grupo>` con `n_usuarios`, `interacciones`, `usuarios_con_prueba`, `usuarios_con_validacion` y `usuarios_solo_train`; la semilla 2026 sale de `semilla` con `run_id` = 0 y la huella SHA-256 de la partición, de `sha256.huella`). Los 141 usuarios sin interacciones (`conteos.usuarios_sin_interacciones_no_evaluables`) no están en ningún grupo y no se evalúan; «Solo entrenamiento» cuenta usuarios cuya única interacción es de entrenamiento. Comprobación: `results/data/m3/eda/actividad_usuarios.json`, `particion_d3` (`interacciones`, `usuarios_con_prueba`, `usuarios_con_validacion`, `usuarios_solo_entrenamiento`, `total`) da las mismas cifras de la regla D3.
+
+| Grupo | Usuarios | Interacciones de entrenamiento | Interacciones de validación | Interacciones de prueba | Usuarios con prueba | Usuarios con validación | Solo entrenamiento |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Pocas (1 a 2) | 532 | 532 | 0 | 280 | 280 | 0 | 252 |
+| Muchas (3 o más) | 326 | 534 | 326 | 326 | 326 | 326 | 0 |
+| **Total** | **858** | **1 066** | **326** | **606** | **606** | **326** | **252** |
+:::
+
+**Dos hechos medidos que condicionan la evaluación.** Se miden sobre la partición para leer los resultados; como usan prueba y
+validación, ningún modelo los usa como entrada (D9). Las cifras están en la [[tab:m3-particion-diagnosticos]].
+
+::: tabla m3-particion-diagnosticos
+Título: Diagnósticos de la partición final de M3: destinos fríos y coincidencia de lugar con el historial conocido
+Fuente: `results/data/m3/particion/resumen.json`, `diagnosticos.items_frios.<split>` (`interacciones`, `interacciones_con_destino_sin_train`, `destinos_distintos`, `destinos_distintos_sin_train`) y `diagnosticos.mismo_lugar_en_historial_conocido.<split>` (`usuarios`, `con_otro_id_del_mismo_lugar`, `n_lugares` y `esperado_por_azar`; el supuesto del azar está en `supuesto_esperado_por_azar`). Los porcentajes no están en el archivo: son la división de las dos cifras de cada celda (205/606, 111/326, 204/606, 198,0/606, 95/326 y 95,8/326).
+
+| Medida | Prueba | Validación |
+|---|---:|---:|
+| Interacciones del conjunto | 606 | 326 |
+| Interacciones con destino sin ninguna interacción en entrenamiento (destino frío) | 205 (33,8 %) | 111 (34,0 %) |
+| Destinos distintos | 463 | 280 |
+| Destinos distintos sin interacción en entrenamiento | 158 | 95 |
+| Usuarios evaluables | 606 | 326 |
+| Usuarios con otro id del mismo lugar en su historial conocido | 204 (33,7 %) | 95 (29,1 %) |
+| Esperado por azar con 5 lugares | 198,0 (32,7 %) | 95,8 (29,4 %) |
+:::
+
+- **Destinos fríos.** De las 606 interacciones de prueba, **205 (33,8 %)** son de destinos que no tienen **ninguna** interacción en
+  entrenamiento; en destinos distintos, son 158 de 463. Para esas 205 interacciones la popularidad de entrenamiento es 0 y un
+  filtrado colaborativo no tiene señal. En validación son 111 de 326 (34,0 %).
+- **Coincidencia de lugar con el historial conocido.** Se cuenta cuántos usuarios de prueba tienen en su historial conocido
+  (entrenamiento o validación) algún otro id del **mismo lugar** que su destino de prueba: son **204 de 606 (33,7 %)**. Es **lo
+  esperable por azar**: como los 1 000 ids son 5 lugares (D2), el azar predice **198,0 usuarios (32,7 %)**, bajo el supuesto de que
+  el lugar del destino de prueba es uniforme sobre los 5 lugares e independiente del historial conocido, con un objetivo por
+  usuario. En validación son 95 de 326 (29,1 %) frente a 95,8 esperados (29,4 %). Además, un modelo no sabe cuál de los lugares
+  que el usuario ya conoce es el del destino que se busca, de modo que esa coincidencia no vuelve «trivial» ni «resuelto de
+  antemano» el acierto por lugar.
+
+Dos consecuencias para leer los resultados. Primera, un tercio de la prueba (destinos fríos) no tiene señal en las interacciones
+de entrenamiento. Segunda, todo acierto por lugar debe compararse con su línea base del azar, y la métrica principal es la de
+`destino_id`.
+
+Como la validación solo tiene usuarios de «muchas», los hiperparámetros se eligen con ese grupo: es un sesgo de selección que hay
+que tener en cuenta al comparar los grupos «pocas» y «muchas» en prueba.
+
+<!-- revisar: Juan José — cómo se reporta el acierto por lugar lo propone el auditor-fugas y se decide en JJ-6. -->
+<!-- revisar: Juan José — los porcentajes 33,8 %, 34,0 %, 33,7 %, 32,7 %, 29,1 % y 29,4 % son división del redactor sobre cifras del JSON; la lectura de que los destinos fríos «no tienen señal» en las interacciones es interpretación del redactor. -->

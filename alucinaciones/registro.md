@@ -9,7 +9,7 @@ evidencia no cuenta.
 |---|---|---|---|---|---|
 | M1 | | | | | |
 | M2 | | | | | |
-| M3 | 1 candidato sin número (JJ-2, redactor) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
+| M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
 | Común | | H-01 (candidato) | | | |
 
 ## Hallazgos
@@ -201,6 +201,53 @@ evidencia no cuenta.
   literatura también exige fuente. Un número no redondo como 0,147 es una señal de que viene de alguna parte.
 - **Estado:** candidato **condicionado**. Como un «SIN PROMPT», no cuenta hasta que JJ-9 lea la ponencia primaria y confirme
   el 0,147.
+
+### H-?? (JJ-3) — «Para esos usuarios un "acierto por lugar" es trivial» (204 de 606 usuarios de prueba)
+- **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (razonamiento probabilístico sobre una línea base; Andrés
+  puede reclasificarlo como Conceptos) / lo detectó el `auditor-fugas` (Opus) en R1 de JJ-3; lo reprodujo la sesión principal.
+  Dirige: Juan José.
+- **1. Prompt literal:** la premisa la escribió Juan José en `alucinaciones/prompts/JJ-3.md` (R1: «hace trivial un "acierto por
+  lugar"»). La sesión principal (Opus 5.5) la convirtió en afirmación sobre un grupo medido en
+  `alucinaciones/prompts/JJ-3-implementador-experto.md` (l. 102: «un "acierto por lugar" sería trivial para ellos») y en
+  `JJ-3-redactor-tecnico.md` (l. 39). El `implementador-experto` (Opus) la escribió como hecho en el código.
+- **2. Respuesta relevante de la IA:** `src/m3_recomendacion/particion.py`, 1.ª vuelta, `definicion` de
+  `diagnosticos.mismo_lugar_en_historial_conocido` en `results/data/m3/particion/resumen.json`: «… del mismo lugar que su
+  destino objetivo: los 1000 ids del catálogo son 5 lugares (D2), así que para ellos un «acierto por lugar» es trivial». El
+  `redactor-tecnico` (Sonnet) lo llevó al blog: «una tercera parte de los usuarios de prueba lo tiene resuelto de antemano».
+- **3. Cómo se sospechó:** el auditor comparó el conteo observado con el esperado si el lugar del objetivo fuera independiente
+  del historial, y probó la heurística «repetir el lugar más frecuente del historial».
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-3/verificar_mismo_lugar.py` → `verificar_mismo_lugar_salida.txt`:
+  observado 204, esperado por azar 198,0 (Σ_u |lugares distintos conocidos| / 5). La coincidencia es la del azar con 5
+  lugares. El modelo no sabe cuál de sus lugares conocidos es el objetivo. Según el auditor, la heurística acierta a K = 1 el
+  0,196 global, frente a 0,2 del azar. El 0,583 que da dentro de los 204 es selección por la respuesta: ese grupo se define con
+  el lugar del objetivo de prueba.
+- **5. Corrección:** `JJ-3-implementador-experto-2.md`: la `definicion` ya no dice «trivial». `resumen.json` trae
+  `esperado_por_azar` (198,0 en prueba, 95,8 en validación) y su supuesto. Para el blog, `JJ-3-redactor-tecnico-2.md`: el
+  acierto por lugar se compara con su línea base del azar y la métrica principal es la de `destino_id`.
+- **6. Lección aprendida:** «X ocurre» no implica «X es un atajo»: antes de llamar trivial a un acierto, hay que compararlo con
+  lo que da el azar. Con pocas clases (5 lugares), las coincidencias son frecuentes por construcción.
+- **Estado:** candidato. Matiz para Andrés: la premisa la puso un humano en su prompt; el error de la IA es haberla convertido,
+  sin medirla, en un hecho sobre un grupo concreto, en el código y en el blog.
+
+### H-?? (JJ-3) — «Los 3 valores de VisitDate son posteriores a la creación del conjunto»
+- **Módulo / categoría / quién lo encontró:** M3 / **Datos del mundo real** (lo medido en el conjunto de Kaggle) / lo detectó la
+  sesión principal (Opus 5.5) al revisar el blog contra la Ficha. Dirige: Juan José.
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-3-redactor-tecnico.md`, l. 24 (sesión principal → redactor-tecnico,
+  Sonnet): «la fecha de visita no es una fecha real (3 valores ligados al número de fila, posteriores a la creación del
+  conjunto…)». La sesión principal lo tomó de `docs/MEMORIA.md` (Decisiones vigentes, M3: «3 valores ligados al número de fila
+  y posteriores a la creación de la versión 1 en Kaggle»), que se carga en cada sesión.
+- **2. Respuesta relevante de la IA:** el redactor lo copió al blog (subsección «Partición», 1.ª versión): «3 valores ligados
+  al número de fila, posteriores a la creación del conjunto».
+- **3. Cómo se sospechó:** la misma sección del blog, en la Ficha, dice «666 de 999 filas son posteriores».
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-3/visitdate_posteriores.md`. En `ficha.json`,
+  `real_o_sintetico.senales_medidas.visit_date` da los valores 2024-01-01, 2024-02-15 y 2024-03-20, la versión 1 del
+  2024-01-23 y 666 filas posteriores. 2024-01-01 es anterior.
+- **5. Corrección:** el blog dice «3 valores ligados al número de fila, 2 de ellos —666 de 999 filas— posteriores a la creación
+  de la versión 1 en Kaggle». `docs/MEMORIA.md` se corrigió al cierre de JJ-3.
+- **6. Lección aprendida:** una memoria resumida que se carga en cada sesión propaga sus imprecisiones a todos los prompts
+  siguientes. Las cifras de un prompt se copian del archivo de resultados, no de la memoria.
+- **Estado:** candidato menor. El origen probable es la redacción de MEMORIA (documentador o sesión de JJ-2; no se buscó el
+  prompt exacto); el prompt literal del eslabón de JJ-3 sí está guardado.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto

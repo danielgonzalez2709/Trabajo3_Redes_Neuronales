@@ -2,14 +2,18 @@
 
 Entrada: los 4 CSV de «Travel Recommendation Dataset» (Kaggle, Aman Mehra) y su ``archive.zip`` en ``data/raw/m3/`` (descarga
 manual; SHA-256 verificados contra la config) y los metadatos crudos de la API de Kaggle (``JJ-1_kaggle_metadata.json``).
-Salida: ``destinos.parquet``, ``usuarios.parquet`` e ``interacciones.parquet`` (núcleo §5.7) y, en ``results/data/m3/eda/``
-(núcleo §5.12), ``ficha.json``, ``calidad.csv`` y ``diccionario.json``.
+Salida: ``destinos.parquet``, ``usuarios.parquet`` e ``interacciones.parquet`` (núcleo §5.7, con la columna ``split`` de JJ-3)
+y, en ``results/data/m3/eda/`` (núcleo §5.12), ``ficha.json``, ``calidad.csv`` y ``diccionario.json``; en
+``results/data/m3/particion/`` (JJ-3, D8), ``resumen.json`` con los conteos de la partición y sus dos SHA-256.
 
 Decisiones [DECIDIDO, Juan José, 25-nov] (docs/spec/partes/juanjose.md §3.1):
   D1  interacción = unión de Reviews y UserHistory como retroalimentación implícita; ``Rating`` / ``ExperienceRating`` se
       conservan como ``calificacion`` con su ``origen``; un par (usuario, destino) repetido es error (no se fusiona en silencio).
   D2  destino = cada ``DestinationID``; ``lugar`` agrupa los ids con el mismo nombre (clave en minúsculas con guiones bajos).
-  D3  ``VisitDate`` queda solo descriptiva (``fecha_visita``); la partición NO se hace aquí (es de JJ-3: no hay ``split``).
+  D3  ``VisitDate`` queda solo descriptiva (``fecha_visita``); la partición es por usuario (JJ-3, ``particion.py``): ``main``
+      agrega ``split`` con la semilla del bloque ``particion`` de la config. ``ficha.json``, ``calidad.csv`` y
+      ``diccionario.json`` describen las columnas de la fuente y no incluyen ``split`` (su resumen está en
+      ``results/data/m3/particion/resumen.json``).
   D4  la ficha cita literal la fuente y lista las señales MEDIDAS de datos generados.
   D5  licencia: el campo formal de Kaggle y la contradicción con la descripción.
   D6  ``Name``, ``Email`` y ``ReviewText`` no pasan a ninguna salida.
@@ -33,12 +37,19 @@ from scipy import stats
 
 from src.comun.eda import escribir_ficha, tabla_calidad
 from src.comun.results import save_json
+from src.comun.seeds import validar_entero
+from src.m3_recomendacion import particion
 
 COL_DESTINOS = ["DestinationID", "Name", "State", "Type", "Popularity", "BestTimeToVisit"]
 COL_RESENAS = ["ReviewID", "DestinationID", "UserID", "Rating", "ReviewText"]
 COL_HISTORIAL = ["HistoryID", "UserID", "DestinationID", "VisitDate", "ExperienceRating"]
 COL_USUARIOS = ["UserID", "Name", "Email", "Preferences", "Gender", "NumberOfAdults", "NumberOfChildren"]
 COLUMNAS_INTERACCIONES = ["usuario_id", "destino_id", "origen", "id_origen", "calificacion", "fecha_visita"]
+# Dos listas porque son dos tablas distintas: COLUMNAS_INTERACCIONES es la tabla que se arma desde los CSV
+# (construir_interacciones; describe solo datos de la fuente y es la que entra en la ficha y en calidad.csv);
+# COLUMNAS_INTERACCIONES_PARQUET es la que se escribe en interacciones.parquet: la misma más ``split`` al final, que es una
+# asignación nuestra (JJ-3), no un dato de la fuente.
+COLUMNAS_INTERACCIONES_PARQUET = [*COLUMNAS_INTERACCIONES, "split"]
 COLUMNAS_DESTINOS = ["destino_id", "nombre", "lugar", "estado", "tipo", "mejor_epoca", "popularidad"]
 RESENA, HISTORIAL = "resena", "historial"      # valores de la columna ``origen`` de interacciones
 ORIGENES = (RESENA, HISTORIAL)
@@ -643,9 +654,23 @@ def _escribir_csv(df: pd.DataFrame, ruta: Path) -> None:
     tmp.replace(ruta)
 
 
+def leer_config_particion(cfg: dict) -> dict:
+    """Bloque ``particion`` (semilla entera >= 0, ``umbral_pocas_max`` >= 1) y ``salida.particion``; error claro si faltan."""
+    if "particion" not in cfg or "particion" not in cfg.get("salida", {}):
+        raise ValueError("la config de m3-datos necesita el bloque particion (semilla, umbral_pocas_max) y salida.particion "
+                         "(JJ-3, D8; ver configs/m3/datos.yaml)")
+    part = cfg["particion"]
+    faltan = [k for k in ("semilla", "umbral_pocas_max") if k not in part]
+    if faltan:
+        raise ValueError(f"particion: faltan las claves {faltan}")
+    return {"semilla": validar_entero(part["semilla"], "particion.semilla"),
+            "umbral_pocas_max": validar_entero(part["umbral_pocas_max"], "particion.umbral_pocas_max", minimo=1)}
+
+
 def main(cfg: dict) -> int:
     ent, sal = cfg["entrada"], cfg["salida"]
     # 1) Todo se lee y se valida antes de escribir: si algo falla, no queda ninguna salida a medias.
+    part = leer_config_particion(cfg)
     hashes = verificar_archivos(ent, cfg["sha256_esperado"])
     meta = leer_metadatos(Path(ent["metadatos_fuente"]))
     verificar_citas(cfg, meta)
@@ -655,6 +680,10 @@ def main(cfg: dict) -> int:
     destinos = construir_destinos(raw["destinos"])
     usuarios, opciones = construir_usuarios(raw["usuarios"])
     inter = construir_interacciones(raw["resenas"], raw["historial"], usuarios, destinos)
+    # JJ-3 (D3, D8): una sola partición por usuario para todos los modelos de M3. ``inter`` (sin split) alimenta la
+    # ficha y calidad.csv, que describen la fuente; ``inter_split`` (inter + split) es lo que se escribe en el parquet y
+    # de donde sale results/data/m3/particion/resumen.json.
+    inter_split = particion.asignar_split(inter, part["semilla"])[COLUMNAS_INTERACCIONES_PARQUET]
 
     asoc = asociacion_texto_lugar(raw["resenas"], destinos)
     sen = senales(raw, destinos, meta, cfg["ficha"], asoc)
@@ -674,21 +703,33 @@ def main(cfg: dict) -> int:
     eda = Path(sal["eda"])
     _escribir_parquet(destinos, salida / sal["destinos"])
     _escribir_parquet(usuarios, salida / sal["usuarios"])
-    _escribir_parquet(inter, salida / sal["interacciones"])
+    _escribir_parquet(inter_split, salida / sal["interacciones"])
     escribir_ficha(eda / "ficha.json", ficha)
     _escribir_csv(calidad, eda / "calidad.csv")
     save_json(eda / "diccionario.json", diccionario)
+    # El SHA-256 del parquet se calcula sobre los bytes ya escritos; la huella no depende del formato (particion.huella).
+    resumen = particion.resumen_particion(inter_split, destinos, usuarios["usuario_id"], semilla=part["semilla"],
+                                   umbral_pocas_max=part["umbral_pocas_max"],
+                                   sha256_parquet=sha256(salida / sal["interacciones"]))
+    ruta_resumen = Path(sal["particion"]) / "resumen.json"
+    save_json(ruta_resumen, resumen)
     _imprimir(ficha, [salida / sal[k] for k in ("destinos", "usuarios", "interacciones")]
-              + [eda / "ficha.json", eda / "calidad.csv", eda / "diccionario.json"])
+              + [eda / "ficha.json", eda / "calidad.csv", eda / "diccionario.json", ruta_resumen], resumen)
     return 0
 
 
-def _imprimir(ficha: dict, archivos: list[Path]) -> None:
+def _imprimir(ficha: dict, archivos: list[Path], resumen: dict) -> None:
     c = ficha["conteos"]
     print(f"Usuarios: {c['usuarios_maestra']} · destinos: {c['destinos_maestra']} · lugares: {c['lugares']}")
     print("Interacciones: " + " · ".join(f"{k} {v}" for k, v in c["interacciones"].items()))
     d = c["densidad"]["union"]
     print(f"Densidad de la unión: {d['maestras']:.6f} (maestras) · "
           + (f"{d['los_que_aparecen']:.6f}" if d["los_que_aparecen"] is not None else "-") + " (los que aparecen)")
+    cp = resumen["conteos"]
+    print(f"Partición (semilla {resumen['semilla']}): interacciones "
+          + " · ".join(f"{k} {cp['interacciones'][k]}" for k in particion.SPLITS)
+          + " · usuarios " + " · ".join(f"{k} {cp['usuarios'][k]}" for k in particion.SPLITS)
+          + f" · sin interacciones (no evaluables) {cp['usuarios_sin_interacciones_no_evaluables']}")
+    print(f"Huella de la partición: {resumen['sha256']['huella']}")
     for f in archivos:
         print(f"  {f.as_posix()} ({f.stat().st_size} B)")

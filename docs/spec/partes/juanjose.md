@@ -78,6 +78,29 @@ Decisiones [DECIDIDO, Juan José, 25-nov], con la justificación medida en la fa
   lo procesado (3 textos sin relación con el destino); se describe en el diccionario.
 - **D7.** El candidato débil de A1 («las variables son independientes») no se registra en la cacería.
 
+Decisiones de la partición (JJ-3) [DECIDIDO, Juan José, 26-nov], que concretan D3:
+- **D8. Dónde vive la partición.** La calcula `run.py m3-datos` (bloque `particion` de `configs/m3/datos.yaml`, con su
+  semilla) y queda en la columna `split` ∈ {`train`, `validacion`, `prueba`} de `data/processed/m3/interacciones.parquet`
+  (núcleo §5.7). Es **una sola partición para todos los modelos de M3** (referencias y red); su SHA-256 y el de una huella de
+  la tabla (`usuario_id, destino_id, split` ordenada) quedan en `results/data/m3/particion/resumen.json` y van en la
+  `evidencia` de cada JSON de resultados (núcleo §5.9, §6).
+- **D9. Uso de los conjuntos.** La búsqueda de hiperparámetros y la parada temprana usan validación; los modelos finales
+  (referencias y red, y las 30 semillas) se entrenan **solo con train** y se evalúan una vez en prueba. Toda estadística
+  derivada de las interacciones (popularidad, conteos por destino, negativos por popularidad, umbrales de actividad usados
+  como variable) se calcula **solo con train**.
+- **D10. Candidatos al evaluar.** Para cada usuario de prueba se rankean todos los destinos del catálogo **excepto** su
+  historial conocido (los de train y validación); en validación, excepto los de train. Un destino ya visto nunca cuenta como
+  acierto. Los usuarios sin interacciones (141 de 999) no se evalúan en prueba; sirven después para el escenario de usuario
+  nuevo (JJ-6).
+- Nota de JJ-3: `id_origen` no es único entre orígenes (ReviewID e HistoryID se solapan); la clave de una interacción es
+  `(origen, id_origen)`.
+- [PROPUESTO por el orquestador de JJ-3, 26-nov; pendiente de Juan José] `resumen.json` trae además `diagnosticos` medidos
+  para leer la evaluación (no son entrada de ningún modelo): destinos de prueba y validación sin interacciones en train
+  («fríos») y usuarios con otro id del mismo lugar en su historial conocido, con su `esperado_por_azar` (204 frente a 198,0
+  en prueba: coincidencia esperable con 5 lugares, no un atajo). `tests/test_fuga_m3.py` trae guardas para JJ-4/JJ-5
+  (`AJUSTES_SOLO_TRAIN`, prohibición de leer estadísticas calculadas con todas las interacciones), propuestas por el
+  auditor-fugas.
+
 Salidas de JJ-1 (`run.py m3-datos`) [DECIDIDO, Juan José, 25-nov]:
 - `interacciones.parquet` trae `usuario_id, destino_id, origen, id_origen, calificacion, fecha_visita`. Frente al núcleo §5.7
   (`usuario_id, destino_id, calificacion, [fecha], split`): `origen` lo pide D1; `id_origen` (ReviewID o HistoryID) da
@@ -107,7 +130,7 @@ Lista cerrada el vie 27 a partir de las configs finales de todos. Cada ecuación
 |---|---|---|---|---|---|---|
 | JJ-1 | Descarga y ficha; real o sintético | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json` con densidad y escala medidas | ✅ 25-nov |
 | JJ-2 | Descriptivo M3 (plantilla §5.12) + caso de uso | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json`; figura de cola larga | ✅ 26-nov |
-| JJ-3 | Partición sin fuga | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m3.py` en verde | ⬜ |
+| JJ-3 | Partición sin fuga | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m3.py` en verde | ✅ 26-nov |
 | JJ-4 | Popularidad + FC clásico + métricas @K | jue 26 | implementador (Sonnet) | verificador-matematico (Opus) | Métricas contra cálculo a mano | ⬜ |
 | JJ-5 | Red con contenido, negativos, pérdida, búsqueda, 30 semillas | jue 26–vie 27 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | `summary.json` completo | ⬜ |
 | JJ-6 | Negocio, 5 usuarios, embeddings 2D | sáb 28 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | Tablas y figuras mínimas de M3 | ⬜ |
