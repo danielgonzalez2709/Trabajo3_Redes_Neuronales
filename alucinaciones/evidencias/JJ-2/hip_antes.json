@@ -1,0 +1,92 @@
+[
+  {
+    "id": "H-M3-1",
+    "enunciado": "Las preferencias declaradas de un usuario explican el TIPO de destino con el que interactúa: la proporción de sus interacciones con destinos de un tipo que cubren sus preferencias supera lo esperado si eligiera un destino al azar del catálogo.",
+    "justificacion": "Preferences (usuario) y Type (destino) son las variables de contenido de la fuente que podrían relacionarse. Para compararlas se empareja cada opción con el tipo del mismo nombre (Beaches→Beach, Historical→Historical, City→City, Adventure→Adventure, Nature→Nature): es un emparejamiento léxico NUESTRO, la fuente no documenta esa correspondencia. Si las preferencias no importaran, la coincidencia esperada sería la fracción del catálogo cuyo tipo está en las preferencias del usuario (línea base exacta).",
+    "evidencia_esperada": "Si es cierta: tasa de coincidencia mayor que la línea base exacta en al menos 0,050 (IC 95 % por usuarios por encima de 0) y p ajustado < 0,05 en la permutación. Si es falsa: la tasa cae dentro de la variación de la permutación y la diferencia es compatible con cero.",
+    "figura_o_tabla": "preferencias_tipo.png; matriz_preferencias_tipo.csv; coincidencia_preferencias.json",
+    "resultado": "Tasa de coincidencia 0,423 (846 de 1998 interacciones) frente a una línea base de azar exacta de 0,400 (diferencia 0,023, IC 95 % [0,001; 0,047], bootstrap por usuarios) y de 0,401 con la distribución marginal de tipos observada. Por combinación: «Adventure, Nature»: tasa 0,454 frente a 0,400 (n = 659); «Beaches, Historical»: tasa 0,430 frente a 0,400 (n = 684); «City, Historical»: tasa 0,386 frente a 0,400 (n = 655). H1_permutacion_tasa: estadístico tasa_de_coincidencia = 0,4234, p crudo 0,020, p ajustado (Holm, m = 10) 0,200, tasa − línea base exacta (diferencia de proporciones) 0,023 (IC 95 % [0,001; 0,047]). χ² combinación × tipo: 18,35 (gl 8, p asintótico 0,019), V de Cramér 0,068 sin corregir; con corrección de sesgo 0,051 (IC 95 % [0,029; 0,099]). Criterio por prueba: H1_permutacion_tasa: indeterminada (mínimo diferencia_tasa = 0,050). Veredicto «no concluyente»: H1_permutacion_tasa: el IC 95 % del efecto excluye el 0 ([0,001; 0,047]) y es menor que el mínimo 0,050, pero el p ajustado (0,200; crudo 0,020) no llega a 0,05: ni se confirma ni se refuta. El emparejamiento preferencia→tipo es léxico y nuestro: con otro, el resultado cambia. Los IC y la permutación son por usuario porque cada uno aporta varias interacciones. Datos generados (D4): el patrón, si lo hay, no se atribuye a comportamiento real de turistas.",
+    "veredicto": "no concluyente",
+    "evidencia": "results/data/m3/eda/pruebas_hipotesis.json (H1_permutacion_tasa, C_H1_chi2_combinacion_tipo); results/data/m3/eda/coincidencia_preferencias.json; results/data/m3/eda/matriz_preferencias_tipo.csv"
+  },
+  {
+    "id": "H-M3-2",
+    "enunciado": "La calificación (1–5) de una interacción es mayor cuando el tipo del destino está cubierto por las preferencias del usuario.",
+    "justificacion": "Si las preferencias reflejaran gusto, una interacción con un destino del tipo preferido debería calificarse mejor. Usa el mismo emparejamiento léxico nuestro de H-M3-1 (no documentado por la fuente). La calificación es un atributo de la interacción, no el objetivo de los modelos (D1).",
+    "evidencia_esperada": "Si es cierta: diferencia de medias positiva, delta de Cliff >= 0,147 y p ajustado < 0,05. Si es falsa: la diferencia es compatible con cero con un IC estrecho.",
+    "figura_o_tabla": "pruebas_hipotesis.json (H2_permutacion_calificacion); calificaciones.csv",
+    "resultado": "Media de la calificación cuando el tipo coincide 2,940 (n = 846) frente a 2,982 cuando no coincide (n = 1152); diferencia -0,042 (IC 95 % [-0,164; 0,082]). H2_permutacion_calificacion: estadístico diferencia_de_medias = -0,0421, p crudo 0,847, p ajustado (Holm, m = 10) 1,000, delta de Cliff (coincide vs. no coincide) -0,017 (IC 95 % [-0,066; 0,033]). Mann–Whitney unilateral (complementaria): p asintótico 0,746. Criterio por prueba: H2_permutacion_calificacion: refuta (mínimo delta_de_cliff = 0,147). Veredicto «refutada»: ninguna prueba tiene p ajustado < 0,05 y el IC 95 % del efecto de todas contiene el 0 (o está por debajo en las unilaterales) y queda por debajo del mínimo declarado: el efecto es compatible con cero y se excluye un efecto de esa magnitud. El p viene de permutar combinaciones entre usuarios (respeta que un usuario aporta varias interacciones); Mann–Whitney supone independencia. Datos generados (D4): el patrón, si lo hay, no se atribuye a comportamiento real de turistas.",
+    "veredicto": "refutada",
+    "evidencia": "results/data/m3/eda/pruebas_hipotesis.json (H2_permutacion_calificacion, C_H2_mann_whitney_calificacion)"
+  },
+  {
+    "id": "H-M3-3",
+    "enunciado": "La popularidad del destino (Popularity de la fuente) se relaciona con su número de interacciones: ρ de Spearman a nivel destino_id distinto de cero.",
+    "justificacion": "Popularity es la única variable de contenido del destino que cambia entre los 1 000 ids (nombre, estado, tipo y temporada son constantes por lugar, D2); un puntaje de popularidad debería acompañar a la demanda. La fuente no dice cómo se calculó.",
+    "evidencia_esperada": "Si es cierta: |ρ| >= 0,100 y p ajustado < 0,05. Si es falsa: ρ compatible con 0 con IC estrecho.",
+    "figura_o_tabla": "interacciones_por_destino.csv; pruebas_hipotesis.json (H3_spearman_popularidad)",
+    "resultado": "H3_spearman_popularidad: estadístico rho_de_spearman = -0,0113, p crudo 0,720, p ajustado (Holm, m = 10) 1,000, ρ de Spearman -0,011 (IC 95 % [-0,073; 0,051]); 134 de 1000 destinos tienen 0 interacciones, por lo que hay muchos empates (rangos medios). Criterio por prueba: H3_spearman_popularidad: refuta (mínimo rho_de_spearman = 0,100). Veredicto «refutada»: ninguna prueba tiene p ajustado < 0,05 y el IC 95 % del efecto de todas contiene el 0 (o está por debajo en las unilaterales) y queda por debajo del mínimo declarado: el efecto es compatible con cero y se excluye un efecto de esa magnitud. Datos generados (D4): el patrón, si lo hay, no se atribuye a comportamiento real de turistas.",
+    "veredicto": "refutada",
+    "evidencia": "results/data/m3/eda/pruebas_hipotesis.json (H3_spearman_popularidad); results/data/m3/eda/interacciones_por_destino.csv"
+  },
+  {
+    "id": "H-M3-4",
+    "enunciado": "La demografía del usuario (género, número de adultos, número de niños) se relaciona con el tipo de destino elegido (p. ej. familias con niños eligen más playa).",
+    "justificacion": "Es la hipótesis de sentido común sobre quién va adónde; el conjunto trae esas tres variables del usuario. Tipo y lugar son la misma partición de los destinos (cada lugar tiene un solo tipo), así que una sola prueba por variable cubre ambos. Un usuario aporta varias interacciones: el p sale de permutar la variable ENTRE usuarios.",
+    "evidencia_esperada": "Si es cierta: V de Cramér >= 0,100 y p ajustado < 0,05 en al menos una variable. Si es falsa: V compatible con ruido (IC por debajo del mínimo) en las tres.",
+    "figura_o_tabla": "demografia_tipo.csv; pruebas_hipotesis.json (H4_*)",
+    "resultado": "H4_genero: χ² 0,40 (gl 4), p crudo 0,982, p ajustado 1,000, V sin corregir 0,014, V corregida 0,000 (IC 95 % [0,000; 0,065]); H4_n_adultos: χ² 6,60 (gl 4), p crudo 0,164, p ajustado 1,000, V sin corregir 0,057, V corregida 0,036 (IC 95 % [0,000; 0,101]); H4_n_ninos: χ² 10,55 (gl 8), p crudo 0,239, p ajustado 1,000, V sin corregir 0,051, V corregida 0,025 (IC 95 % [0,000; 0,082]). Criterio por prueba: H4_genero: refuta (mínimo v_de_cramer = 0,100); H4_n_adultos: indeterminada (mínimo v_de_cramer = 0,100); H4_n_ninos: refuta (mínimo v_de_cramer = 0,100). Veredicto «no concluyente»: H4_n_adultos: el IC 95 % ([0,000; 0,101]) no queda por debajo del mínimo 0,100, así que no se descarta un efecto de esa magnitud. Datos generados (D4): el patrón, si lo hay, no se atribuye a comportamiento real de turistas.",
+    "veredicto": "no concluyente",
+    "evidencia": "results/data/m3/eda/pruebas_hipotesis.json (H4_genero, H4_n_adultos, H4_n_ninos); results/data/m3/eda/demografia_tipo.csv"
+  },
+  {
+    "id": "H-M3-5",
+    "enunciado": "Las interacciones se concentran en pocos destinos más de lo esperado si las mismas interacciones se repartieran uniformemente al azar (cola larga más allá del azar), a nivel destino_id y lugar.",
+    "justificacion": "El enunciado pide la concentración en populares. Un reparto uniforme ya produce desigualdad por azar (unos destinos reciben 0 y otros varias); por eso se compara el Gini, el HHI y la cuota top con su distribución bajo reparto uniforme simulado y no con 0.",
+    "evidencia_esperada": "Si es cierta: Gini observado mayor que la media del azar en al menos 0,050 y fuera de su IC 95 %, p ajustado < 0,05. Si es falsa: el observado cae dentro de la banda del azar.",
+    "figura_o_tabla": "cola_larga.png; lorenz.png; concentracion.json",
+    "resultado": "destino_id: Gini 0,383 (azar: media 0,386, IC 95 % [0,370; 0,401]), HHI 0,00149 (azar 0,00150), cuota del 10 % más popular 0,236 (azar 0,238). lugar (5 lugares): Gini 0,025 (azar: media 0,023, IC 95 % [0,008; 0,040]). H5_gini_destino_id: estadístico gini = 0,3832, p crudo 0,624, p ajustado (Holm, m = 10) 1,000, Gini observado − media del Gini bajo azar -0,002 (IC 95 % [-0,018; 0,014]); H5_gini_lugar: estadístico gini = 0,0248, p crudo 0,383, p ajustado (Holm, m = 10) 1,000, Gini observado − media del Gini bajo azar 0,002 (IC 95 % [-0,015; 0,017]). Criterio por prueba: H5_gini_destino_id: refuta (mínimo exceso_de_gini = 0,050); H5_gini_lugar: refuta (mínimo exceso_de_gini = 0,050). Veredicto «refutada»: ninguna prueba tiene p ajustado < 0,05 y el IC 95 % del efecto de todas contiene el 0 (o está por debajo en las unilaterales) y queda por debajo del mínimo declarado: el efecto es compatible con cero y se excluye un efecto de esa magnitud. La referencia es un reparto multinomial uniforme (no impone pares usuario–destino únicos). Datos generados (D4): el patrón, si lo hay, no se atribuye a comportamiento real de turistas.",
+    "veredicto": "refutada",
+    "evidencia": "results/data/m3/eda/pruebas_hipotesis.json (H5_gini_destino_id, H5_gini_lugar); results/data/m3/eda/concentracion.json"
+  },
+  {
+    "id": "H-M3-6",
+    "enunciado": "Las reseñas y el historial se comportan distinto: difieren en los tipos de destino y en la distribución de las calificaciones.",
+    "justificacion": "D1 unió los dos archivos como una sola interacción implícita. Esa unión solo es inocua si ambos orígenes se parecen; si difirieran, habría que modelar el origen aparte.",
+    "evidencia_esperada": "Si es cierta: V de Cramér >= 0,100 (origen × tipo) o delta de Cliff >= 0,147 (calificación), con p ajustado < 0,05. Si es falsa: ambos efectos compatibles con cero.",
+    "figura_o_tabla": "calificaciones_origen.png; calificaciones.csv; pruebas_hipotesis.json (H6_*)",
+    "resultado": "H6_chi2_origen_tipo: estadístico chi2 = 1,0480, p crudo 0,902, p ajustado (Holm, m = 10) 1,000, V de Cramér con corrección de sesgo 0,000 (IC 95 % [0,000; 0,069]); H6_mann_whitney_calificacion: estadístico U = 522489,0, p crudo 0,063, p ajustado (Holm, m = 10) 0,567, delta de Cliff (reseña vs. historial) 0,047 (IC 95 % [-0,005; 0,098]). Criterio por prueba: H6_chi2_origen_tipo: refuta (mínimo v_de_cramer = 0,100); H6_mann_whitney_calificacion: refuta (mínimo delta_de_cliff = 0,147). Veredicto «refutada»: ninguna prueba tiene p ajustado < 0,05 y el IC 95 % del efecto de todas contiene el 0 (o está por debajo en las unilaterales) y queda por debajo del mínimo declarado: el efecto es compatible con cero y se excluye un efecto de esa magnitud. Los tests suponen independencia entre interacciones y la misma persona puede aparecer en ambos orígenes. Datos generados (D4): el patrón, si lo hay, no se atribuye a comportamiento real de turistas.",
+    "veredicto": "refutada",
+    "evidencia": "results/data/m3/eda/pruebas_hipotesis.json (H6_chi2_origen_tipo, H6_mann_whitney_calificacion); results/data/m3/eda/calificaciones.csv"
+  },
+  {
+    "id": "H-M3-7",
+    "enunciado": "Una red con variables de contenido (preferencias del usuario, tipo del destino) no supera a la línea base de popularidad por más que la variabilidad entre semillas (NDCG@5, 30 semillas).",
+    "justificacion": "Con datos generados donde la relación preferencias–tipo es débil o nula, el contenido puede no aportar; el enunciado pide comparar de forma justa y con 30 semillas.",
+    "evidencia_esperada": "Falsable: si la media de NDCG@5 de la red menos la de popularidad supera la desviación estándar entre las 30 semillas de la red, la hipótesis se refuta; si no, se confirma.",
+    "figura_o_tabla": "Se cierra al modelar (JJ-10): results/data/m3/summary.json",
+    "resultado": "Pendiente: se cierra en JJ-10, cuando existan la red, la línea base de popularidad y las 30 semillas.",
+    "veredicto": "pendiente",
+    "evidencia": "Aún no existe (results/data/m3/summary.json lo produce JJ-5)."
+  },
+  {
+    "id": "H-M3-8",
+    "enunciado": "El acierto medido por lugar (5 lugares) es mucho mayor que el medido por destino_id (1 000 ids) en todos los modelos.",
+    "justificacion": "Los 1 000 ids son 5 lugares repetidos 200 veces (D2): acertar el lugar es un problema de 5 clases y acertar el id exacto, de 1 000.",
+    "evidencia_esperada": "Falsable: Recall@K por lugar menor o igual que Recall@K por destino_id en algún modelo y algún K refuta la hipótesis.",
+    "figura_o_tabla": "Se cierra al modelar (JJ-6)",
+    "resultado": "Pendiente: se cierra en JJ-10, con las métricas por lugar y por destino_id de todos los modelos.",
+    "veredicto": "pendiente",
+    "evidencia": "Aún no existe."
+  },
+  {
+    "id": "H-M3-9",
+    "enunciado": "Los usuarios con pocas interacciones (1 a 2) obtienen un NDCG@5 menor que los de muchas (3 o más) tanto en la popularidad como en la red.",
+    "justificacion": "Con D3 los usuarios con pocas interacciones tienen una sola interacción de entrenamiento, así que los modelos colaborativos y de contenido tienen menos información sobre ellos.",
+    "evidencia_esperada": "Falsable: NDCG@5 de «pocas» mayor o igual que el de «muchas» en algún modelo refuta la hipótesis.",
+    "figura_o_tabla": "Se cierra al modelar (JJ-6)",
+    "resultado": "Pendiente: se cierra en JJ-10, con el desempeño separado por grupo de actividad.",
+    "veredicto": "pendiente",
+    "evidencia": "Aún no existe."
+  }
+]

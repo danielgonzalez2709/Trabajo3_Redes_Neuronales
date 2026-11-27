@@ -347,7 +347,7 @@ def describir_contenido(df: pd.DataFrame, columnas: list[str]) -> dict:
     return out
 
 
-def _publicacion(meta: dict) -> dt.date:
+def _creacion_version_1(meta: dict) -> dt.date:
     """Fecha (sin hora) de la versión 1 del conjunto en Kaggle, de ``versions[0].creationDate``."""
     return dt.datetime.fromisoformat(meta["fecha_creacion"].replace("Z", "+00:00")).date()
 
@@ -356,7 +356,7 @@ def senales(raw: dict[str, pd.DataFrame], destinos: pd.DataFrame, meta: dict, fi
     """Señales de datos generados, todas medidas aquí desde los CSV y el JSON (ver el bloque ``real_o_sintetico``)."""
     kmax = int(fic["k_max_periodicidad"])
     dest, res, hist, usr = raw["destinos"], raw["resenas"], raw["historial"], raw["usuarios"]
-    publicacion = _publicacion(meta)
+    creacion_v1 = _creacion_version_1(meta)
     fechas = pd.to_datetime(hist["VisitDate"], format=FORMATO_FECHA).dt.date
     correo_es_nombre = (usr["Email"].str.contains("@", regex=False)
                         & (usr["Email"].str.split("@").str[0] == usr["Name"].str.lower()))
@@ -368,8 +368,8 @@ def senales(raw: dict[str, pd.DataFrame], destinos: pd.DataFrame, meta: dict, fi
                     "conteos_por_texto": sorted((int(n) for n in res["ReviewText"].value_counts()), reverse=True),
                     "asociacion_con_el_lugar_del_destino": asoc},
         "visit_date": {"filas": int(len(hist)), "valores_distintos": sorted(map(str, hist["VisitDate"].unique())),
-                       "fecha_publicacion": publicacion.isoformat(),
-                       "filas_posteriores_a_la_publicacion": int((fechas > publicacion).sum())},
+                       "fecha_creacion_version_1": creacion_v1.isoformat(),
+                       "filas_posteriores_a_la_version_1": int((fechas > creacion_v1).sum())},
         "usuarios": {"ids": int(len(usr)), "nombres_distintos": int(usr["Name"].nunique()),
                      "correos_nombre_en_minusculas_mas_dominio": int(correo_es_nombre.sum()),
                      "combinaciones_de_preferencias": int(usr["Preferences"].map(
@@ -419,15 +419,15 @@ def _inc_ids_vs_lugares(dest: dict, k: int | None) -> dict:
 
 
 def _inc_visit_date(vd: dict, k: int | None) -> dict:
-    """``VisitDate``: valores distintos, periodicidad con ``HistoryID`` y filas posteriores a la publicación."""
-    post = vd["filas_posteriores_a_la_publicacion"]
+    """``VisitDate``: valores distintos, periodicidad con ``HistoryID`` y filas posteriores a la creación de la versión 1 en Kaggle."""
+    post = vd["filas_posteriores_a_la_version_1"]
     return {"id": "visitdate_periodica_y_posterior", "se_presenta": (k is not None and k > 1) or post > 0,
             "descripcion": (f"VisitDate tiene {len(vd['valores_distintos'])} valores distintos"
                             + texto_periodicidad(k, "HistoryID")
-                            + f"; {post} de {vd['filas']} filas son posteriores a la publicación del conjunto "
-                              f"({vd['fecha_publicacion']})."),
+                            + f"; {post} de {vd['filas']} filas son posteriores a la creación de la versión 1 en Kaggle "
+                              f"({vd['fecha_creacion_version_1']})."),
             "medido": {"filas": vd["filas"], "valores_distintos": vd["valores_distintos"], "k_minimo_historyid": k,
-                       "fecha_publicacion": vd["fecha_publicacion"], "filas_posteriores_a_la_publicacion": post}}
+                       "fecha_creacion_version_1": vd["fecha_creacion_version_1"], "filas_posteriores_a_la_version_1": post}}
 
 
 def _inc_review_text(rt: dict, k: int | None) -> dict:
@@ -521,8 +521,8 @@ def texto_periodo(cfg: dict, raw: dict[str, pd.DataFrame], sen: dict) -> str:
     return (f"Columnas con forma de fecha (AAAA-MM-DD): {', '.join(columnas) or 'ninguna'}. VisitDate tiene "
             f"{len(vd['valores_distintos'])} valores distintos ({', '.join(vd['valores_distintos'])})"
             + texto_periodicidad(per["visit_date"], "HistoryID")
-            + f"; {vd['filas_posteriores_a_la_publicacion']} de {vd['filas']} filas son posteriores a la publicación del "
-              f"conjunto ({vd['fecha_publicacion']}). Interpretación (D3): no es un periodo observado; solo descriptiva.")
+            + f"; {vd['filas_posteriores_a_la_version_1']} de {vd['filas']} filas son posteriores a la creación de la versión 1 "
+              f"en Kaggle ({vd['fecha_creacion_version_1']}). Interpretación (D3): no es un periodo observado; solo descriptiva.")
 
 
 def construir_ficha(cfg: dict, raw: dict[str, pd.DataFrame], hashes: dict[str, str], destinos: pd.DataFrame,

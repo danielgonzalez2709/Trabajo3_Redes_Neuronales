@@ -261,7 +261,7 @@
     {
       "id": "visitdate_periodica_y_posterior",
       "se_presenta": true,
-      "descripcion": "VisitDate tiene 3 valores distintos, función exacta de HistoryID mod 3; 666 de 999 filas son posteriores a la publicación del conjunto (2024-01-23).",
+      "descripcion": "VisitDate tiene 3 valores distintos, función exacta de HistoryID mod 3; 666 de 999 filas son posteriores a la creación de la versión 1 en Kaggle (2024-01-23).",
       "medido": {
         "filas": 999,
         "valores_distintos": [
@@ -270,8 +270,8 @@
           "2024-03-20"
         ],
         "k_minimo_historyid": 3,
-        "fecha_publicacion": "2024-01-23",
-        "filas_posteriores_a_la_publicacion": 666
+        "fecha_creacion_version_1": "2024-01-23",
+        "filas_posteriores_a_la_version_1": 666
       }
     },
     {

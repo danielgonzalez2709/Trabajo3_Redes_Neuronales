@@ -141,7 +141,7 @@ Al no haber pares comunes, no hay calificaciones que comparar. Sí se comparten 
   2024-03-20, con 333 filas cada uno. Es una función exacta de `HistoryID mod 3`.
 - 195 de los 642 usuarios de UserHistory tienen visitas en más de una fecha (172 en 2 fechas y 23 en 3).
 - **Reviews no tiene fecha.** `BestTimeToVisit` no es una fecha (0 de 1 000 parsean).
-- 666 de las 999 visitas (las de 2024-02-15 y 2024-03-20) son **posteriores a la creación del conjunto** en Kaggle
+- 666 de las 999 visitas (las de 2024-02-15 y 2024-03-20) son **posteriores a la creación de la versión 1 en Kaggle**
   (2024-01-23) (A3, `verificar_A3_salida.txt §V10`).
 
 ### 2.7 Destinos e identificadores (`§A1.9`)
@@ -179,7 +179,7 @@ contenido, aportan la misma información.
 | Uniformidad aproximada | Rating, ExperienceRating, Gender, NumberOfAdults, NumberOfChildren y Name: no se rechaza la uniforme (p de 0.118 a 0.825) |
 | Periodicidad respecto al id de fila | Destinos `mod 5`; `Preferences` `mod 3`; `ReviewText` `mod 3`; `VisitDate` `mod 3` |
 | Texto incoherente con el destino | `ReviewText` vs. destino reseñado: χ² p = 0.884, V = 0.043 (p. ej., «Incredible monument!» 60 veces sobre Goa Beaches); vs. `Rating`: p = 0.547 |
-| Visitas «futuras» | 666 de 999 `VisitDate` posteriores a la creación del conjunto (2024-01-23) |
+| Visitas «futuras» | 666 de 999 `VisitDate` posteriores a la creación de la versión 1 en Kaggle (2024-01-23) |
 | Usuarios repetidos | 20 nombres para 999 ids; el correo es siempre el nombre + `@example.com`; 342 perfiles distintos |
 | Preferencias vs. tipo visitado | Coincidencia observada frente a la esperada al azar: (i) 0.429 vs. 0.400 (z = 1.90, p = 0.058); (ii) 0.417 vs. 0.400 (z = 1.12, p = 0.26); (iii) 0.423 vs. 0.400 (z = 2.14, p = 0.033). Supuesto del análisis: `Beaches` ↔ `Beach` |
 | Calificación vs. contenido | Sin asociación con tipo de destino, género ni tamaño del grupo (Kruskal–Wallis p ≥ 0.18). Única χ² con p < 0.05: `Preferences` × `ExperienceRating`, p = 0.0074 (V = 0.10), con Kruskal–Wallis p = 0.18 |
@@ -271,7 +271,7 @@ componente y archivo (y entre frase y columna) es una inferencia nuestra y se ma
    site, etc.)», pero `Type` solo trae Historical, Beach, City, Nature y Adventure: no hay ningún tipo «mountain».
    Lo verificó la sesión principal leyendo el JSON y la columna.
 3. **Fechas imposibles y periódicas.** `VisitDate` tiene 3 valores, es función de `HistoryID mod 3`, y 666 de 999 visitas son
-   posteriores a la publicación del conjunto (2024-01-23).
+   posteriores a la creación de la versión 1 en Kaggle (2024-01-23).
 4. **Reseñas plantilla.** Hay 3 textos (`ReviewID mod 3`) que no tienen relación con el destino ni con la calificación.
 5. **Usuarios repetidos.** 999 ids con 20 nombres; 342 perfiles distintos. `Preferences` es función de `UserID mod 3`.
    141 usuarios maestros no aparecen en ninguna interacción (A1.7, unión).
@@ -327,7 +327,7 @@ componente y archivo (y entre frase y columna) es una inferencia nuestra y se ma
 ## 7. Implicaciones para la partición
 
 - **¿Hay fechas?** Solo `VisitDate`, solo en UserHistory, con 3 valores que dependen de `HistoryID mod 3` y en su mayoría
-  posteriores a la publicación. Una partición «temporal» daría a lo sumo 2 puntos de corte (3 bloques de 333) y equivaldría
+  posteriores a la creación de la versión 1 en Kaggle. Una partición «temporal» daría a lo sumo 2 puntos de corte (3 bloques de 333) y equivaldría
   a partir por el resto del id de fila (A3). Reviews no tiene fecha. Así que no hay una base real para una partición
   temporal, y la regla de la spec (§3.1: «si no, *leave-k-out* por usuario») apunta a *leave-k-out*.
 - **Usuarios con pocas interacciones** (de los 999 maestros, contando como 0 a los que no aparecen):

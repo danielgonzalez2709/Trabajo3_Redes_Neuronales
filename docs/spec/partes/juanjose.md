@@ -63,14 +63,14 @@ Decisiones [DECIDIDO, Juan José, 25-nov], con la justificación medida en la fa
   temporada idénticos) repetidos 200 veces cada uno, en ciclo `DestinationID mod 5`. Se agrega `lugar` (los 5 lugares) para un
   análisis complementario de «acierto por lugar» en la evaluación.
 - **D3. Partición por usuario, no por tiempo (la implementa JJ-3).** `VisitDate` solo existe en UserHistory, tiene 3 valores
-  que dependen de `HistoryID mod 3` y 666 de 999 son posteriores a la publicación del conjunto (2024-01-23): no es una fecha
+  que dependen de `HistoryID mod 3` y 666 de 999 son posteriores a la creación de la versión 1 en Kaggle (2024-01-23): no es una fecha
   real y queda solo descriptiva. Prueba = 1 interacción al azar de cada usuario con ≥ 2; validación = 1 más de cada usuario con
   ≥ 3; el resto, entrenamiento; los usuarios con 1 interacción quedan solo en entrenamiento; semilla fija. Con la unión hay 606
   usuarios en prueba y 326 en validación, y el grupo «pocas interacciones» existe en prueba.
 - **D4. Real o sintético.** Se cita literal la fuente («generated for educational and research purposes», «enriched with
   gender diversity»), se aclara que no usa la palabra «synthetic» y se listan las señales medidas (5 lugares en 1 000 ids, 3
   textos de reseña sin relación con el destino, 3 valores de `VisitDate` de los que 2 —666 de 999 filas— son posteriores a
-  la publicación, 20 nombres para 999 usuarios, preferencias periódicas en el id). Conclusión: datos generados; las conclusiones valen para el método, no para el
+  la creación de la versión 1 en Kaggle (2024-01-23), 20 nombres para 999 usuarios, preferencias periódicas en el id). Conclusión: datos generados; las conclusiones valen para el método, no para el
   comportamiento real de turistas.
 - **D5. Licencia.** Se cita la MIT del campo formal de Kaggle (`licenses`) y se documenta la contradicción con la descripción
   («CC0: Public Domain» y «free to use for non-commercial purposes») para la sección de ética.
@@ -106,7 +106,7 @@ Lista cerrada el vie 27 a partir de las configs finales de todos. Cada ecuación
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
 | JJ-1 | Descarga y ficha; real o sintético | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json` con densidad y escala medidas | ✅ 25-nov |
-| JJ-2 | Descriptivo M3 (plantilla §5.12) + caso de uso | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json`; figura de cola larga | ⬜ |
+| JJ-2 | Descriptivo M3 (plantilla §5.12) + caso de uso | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json`; figura de cola larga | ✅ 26-nov |
 | JJ-3 | Partición sin fuga | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m3.py` en verde | ⬜ |
 | JJ-4 | Popularidad + FC clásico + métricas @K | jue 26 | implementador (Sonnet) | verificador-matematico (Opus) | Métricas contra cálculo a mano | ⬜ |
 | JJ-5 | Red con contenido, negativos, pérdida, búsqueda, 30 semillas | jue 26–vie 27 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | `summary.json` completo | ⬜ |

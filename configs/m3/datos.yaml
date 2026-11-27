@@ -62,11 +62,12 @@ componentes:
     diversity and includes details on the number of adults and children for travel.
 
 # D4: sin cifras dentro del texto (las mide el código y quedan en real_o_sintetico.senales_medidas).
+# La fecha de referencia de VisitDate es la creación de la versión 1 en Kaggle (versions[0].creationDate).
 conclusion_real_o_sintetico: >-
   Datos generados, no observados: la fuente dice que el conjunto fue «generated» con fines educativos y de investigación
   (no usa la palabra «synthetic» ni dice con qué método) y las señales medidas en los datos (catálogo de lugares repetidos,
-  textos de reseña plantilla, fechas periódicas y posteriores a la publicación, nombres repetidos, preferencias periódicas en
-  el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el
+  textos de reseña plantilla, fechas periódicas y posteriores a la creación de la versión 1 en Kaggle, nombres repetidos,
+  preferencias periódicas en el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el
   comportamiento real de turistas.
 
 ficha:

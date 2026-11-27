@@ -1,0 +1,108 @@
+{
+  "n_interacciones": 1998,
+  "n_simulaciones": 2000,
+  "nivel_ic": 0.95,
+  "referencia": "reparto uniforme al azar de las interacciones entre las entidades maestras (multinomial con probabilidad 1/n; cada interacción elige una entidad al azar, sin respetar los pares únicos); media e IC por percentiles sobre las simulaciones",
+  "usuarios": {
+    "n_entidades": 999,
+    "tope": 5,
+    "observado": {
+      "0": 141,
+      "1": 252,
+      "2": 280,
+      "3": 195,
+      "4": 79,
+      "5+": 52
+    },
+    "azar_media": {
+      "0": 135.0685,
+      "1": 270.447,
+      "2": 270.242,
+      "3": 180.615,
+      "4": 90.258,
+      "5+": 52.3695
+    },
+    "azar_ic95": {
+      "0": [
+        119.0,
+        152.0
+      ],
+      "1": [
+        246.0,
+        295.0
+      ],
+      "2": [
+        242.0,
+        298.0
+      ],
+      "3": [
+        158.0,
+        203.0
+      ],
+      "4": [
+        75.0,
+        106.0
+      ],
+      "5+": [
+        41.0,
+        64.0
+      ]
+    },
+    "max_interacciones_observado": 7,
+    "max_interacciones_azar_media": 7.9
+  },
+  "destinos": {
+    "n_entidades": 1000,
+    "tope": 6,
+    "observado": {
+      "0": 134,
+      "1": 271,
+      "2": 270,
+      "3": 184,
+      "4": 89,
+      "5": 37,
+      "6+": 15
+    },
+    "azar_media": {
+      "0": 135.5745,
+      "1": 270.817,
+      "2": 270.783,
+      "3": 180.285,
+      "4": 90.0325,
+      "5": 36.128,
+      "6+": 16.38
+    },
+    "azar_ic95": {
+      "0": [
+        118.0,
+        153.0
+      ],
+      "1": [
+        247.0,
+        295.0
+      ],
+      "2": [
+        244.0,
+        298.0
+      ],
+      "3": [
+        158.0,
+        202.0
+      ],
+      "4": [
+        74.0,
+        106.0
+      ],
+      "5": [
+        26.0,
+        47.0
+      ],
+      "6+": [
+        10.0,
+        24.0
+      ]
+    },
+    "max_interacciones_observado": 7,
+    "max_interacciones_azar_media": 7.915
+  }
+}

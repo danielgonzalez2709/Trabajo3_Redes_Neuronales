@@ -13,7 +13,7 @@
   "unidad_de_observacion": "Par (usuario, destino) con una interacción implícita: una reseña (Reviews) o una visita registrada (UserHistory); la calificación es un atributo, no el objetivo (D1).",
   "n_registros": 1998,
   "n_variables": 23,
-  "periodo": "Columnas con forma de fecha (AAAA-MM-DD): Final_Updated_Expanded_UserHistory.csv (VisitDate). VisitDate tiene 3 valores distintos (2024-01-01, 2024-02-15, 2024-03-20), función exacta de HistoryID mod 3; 666 de 999 filas son posteriores a la publicación del conjunto (2024-01-23). Interpretación (D3): no es un periodo observado; solo descriptiva.",
+  "periodo": "Columnas con forma de fecha (AAAA-MM-DD): Final_Updated_Expanded_UserHistory.csv (VisitDate). VisitDate tiene 3 valores distintos (2024-01-01, 2024-02-15, 2024-03-20), función exacta de HistoryID mod 3; 666 de 999 filas son posteriores a la creación de la versión 1 en Kaggle (2024-01-23). Interpretación (D3): no es un periodo observado; solo descriptiva.",
   "conteos": {
     "usuarios_maestra": 999,
     "destinos_maestra": 1000,
@@ -255,8 +255,8 @@
           "2024-02-15",
           "2024-03-20"
         ],
-        "fecha_publicacion": "2024-01-23",
-        "filas_posteriores_a_la_publicacion": 666
+        "fecha_creacion_version_1": "2024-01-23",
+        "filas_posteriores_a_la_version_1": 666
       },
       "usuarios": {
         "ids": 999,
@@ -272,7 +272,7 @@
         "preferences": 3
       }
     },
-    "conclusion": "Datos generados, no observados: la fuente dice que el conjunto fue «generated» con fines educativos y de investigación (no usa la palabra «synthetic» ni dice con qué método) y las señales medidas en los datos (catálogo de lugares repetidos, textos de reseña plantilla, fechas periódicas y posteriores a la publicación, nombres repetidos, preferencias periódicas en el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el comportamiento real de turistas."
+    "conclusion": "Datos generados, no observados: la fuente dice que el conjunto fue «generated» con fines educativos y de investigación (no usa la palabra «synthetic» ni dice con qué método) y las señales medidas en los datos (catálogo de lugares repetidos, textos de reseña plantilla, fechas periódicas y posteriores a la creación de la versión 1 en Kaggle, nombres repetidos, preferencias periódicas en el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el comportamiento real de turistas."
   },
   "licencia": {
     "campo_formal": [

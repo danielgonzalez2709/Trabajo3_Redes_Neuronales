@@ -313,7 +313,7 @@ def test_bloque_real_o_sintetico(corrida):
     assert set(asoc) == {"chi2", "gl", "p", "v_de_cramer"} and asoc["gl"] == 4
     assert s["resenas"]["conteos_por_texto"] == [2, 1, 1]
     assert s["visit_date"]["valores_distintos"] == ["2024-01-01", "2024-02-15", "2024-03-20"]
-    assert s["visit_date"]["filas_posteriores_a_la_publicacion"] == 2 and s["visit_date"]["filas"] == 4
+    assert s["visit_date"]["filas_posteriores_a_la_version_1"] == 2 and s["visit_date"]["filas"] == 4
     assert s["usuarios"]["ids"] == 5 and s["usuarios"]["nombres_distintos"] == 2
     assert s["usuarios"]["correos_nombre_en_minusculas_mas_dominio"] == 4
     assert s["usuarios"]["combinaciones_de_preferencias"] == 2
@@ -420,7 +420,7 @@ def test_inconsistencias_calculadas(corrida):
     assert inc["ids_vs_lugares"]["medido"]["ids_por_lugar"] == {
         "lugar_ficticio_cuatro": 1, "lugar_ficticio_dos": 2, "lugar_ficticio_tres": 2, "lugar_ficticio_uno": 2}
     assert inc["visitdate_periodica_y_posterior"]["medido"]["k_minimo_historyid"] == 3
-    assert inc["visitdate_periodica_y_posterior"]["medido"]["filas_posteriores_a_la_publicacion"] == 2
+    assert inc["visitdate_periodica_y_posterior"]["medido"]["filas_posteriores_a_la_version_1"] == 2
     rt = inc["reviewtext_plantilla"]["medido"]
     assert rt["textos_distintos"] == 3 and rt["filas"] == 4 and rt["conteos_por_texto"] == [2, 1, 1]
     assert rt["k_minimo_reviewid"] == 3

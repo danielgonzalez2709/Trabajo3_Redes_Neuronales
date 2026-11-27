@@ -1,0 +1,56 @@
+== 1. Claves citadas en el blog que deben contener la cifra ==
+MAL l.225-226: el Gini por lugar (0,025 / 0,023) se cita a interacciones_por_lugar.csv; columnas del CSV: lugar,tipo,n_destinos,n_interacciones,proporcion_interacciones,media_por_destino
+     (el Gini por lugar está en concentracion.json niveles.lugar: 0.0248 / 0.0228)
+OK  l.224: 'máximo medio del azar 7,915' = destinos.max_interacciones_azar_media (7.915; usuarios 7.9)
+OK  l.150: todas las barras observadas dentro del IC 95 % del azar: True
+OK  l.53: los_que_aparecen union 0,00269 -> 0.00269
+OK  tabla m3-ficha: denominadores = usuarios x destinos que aparecen
+OK  l.310: en_el_limite = true solo en H1_permutacion_tasa y H4_n_adultos: ['H1_permutacion_tasa', 'H4_n_adultos']
+OK  Holm recalculado = p_ajustado guardado (10 pruebas)
+== 2. Regla vigente: función frente a lo guardado en hipotesis.json (10 pruebas) ==
+OK    H1_permutacion_tasa: función -> indeterminada; coincide con hipotesis.json
+OK    H2_permutacion_calificacion: función -> refuta; coincide con hipotesis.json
+OK    H3_spearman_popularidad: función -> refuta; coincide con hipotesis.json
+OK    H4_genero: función -> refuta; coincide con hipotesis.json
+OK    H4_n_adultos: función -> indeterminada; coincide con hipotesis.json
+OK    H4_n_ninos: función -> refuta; coincide con hipotesis.json
+OK    H5_gini_destino_id: función -> refuta; coincide con hipotesis.json
+OK    H5_gini_lugar: función -> refuta; coincide con hipotesis.json
+OK    H6_chi2_origen_tipo: función -> refuta; coincide con hipotesis.json
+OK    H6_mann_whitney_calificacion: función -> refuta; coincide con hipotesis.json
+== 3. Candidato analista: regla escrita en pruebas_hipotesis.json (copia del 26-nov 02:21) ==
+  regla escrita: la prueba cumple si p ajustado < alfa y |efecto| >= mínimo (en el sentido de la alternativa); refuta si p ajustado >= alfa y el IC 95 % del efecto queda dentro de ±mínimo; hipótesis con varias pruebas: confirmada si alguna cumple, refutada si todas refutan, si no, no concluyente; un efecto detectable pero menor que el mínimo nunca confirma
+  H1: p_aj=0.19998, IC=[0.000599; 0.046898] -> regla escrita: refuta (H-M3-1 «refutada»); función: indeterminada; veredicto guardado: no concluyente
+OK    la regla escrita y la función discrepan en H1
+  eda.py 1.ª versión del analista (06:50), condición 'estrecho': estrecho = hi < minimo if alternativa == "mayor" else (lo > -minimo and hi < minimo)
+  sha256 pr_antes.json: 64fba6e805021b4658289345cd55f95816ac49ecc7dd70ee4f9f3167c696fee8
+== 4. Candidato redactor: frase de métodos de la 1.ª versión del blog (07:01) ==
+  v1: Los p de H-M3-1 a H-M3-4 son por permutación entre usuarios (10 000 permutaciones, $p = (1+\#\{T^* \ge T_{obs}\})/(1+B)$); los de H-M3-5, por simulación del reparto uniforme (2 000); los intervalos son por percentiles de 2 000 remuestreos de usuarios (o de destinos en H-M3-3) (`pruebas_hipotesis.json`, `metodo_p`, `n_permutacion
+  H3_spearman_popularidad: descripcion='Permutación de la popularidad entre los destinos; estadístico ' | metodo_p='permutación (B=10000; p = (1 + #{|T*| >=' | metodo_ic='percentiles de 2000 remuestreos de destinos'
+  H5_gini_destino_id: descripcion='Gini de las interacciones por destino_id frente al reparto uni' | metodo_p='simulación uniforme (S=2000; p = (1 + #{' | metodo_ic='observado menos los percentiles de 2000 simul'
+  H6_chi2_origen_tipo: descripcion='χ² de independencia en la tabla origen (reseña / historial) × ' | metodo_p='asintótica (χ²)' | metodo_ic='percentiles de 2000 remuestreos de usuarios ('
+  H6_mann_whitney_calificacion: descripcion='Mann–Whitney bilateral de la calificación de reseñas frente a ' | metodo_p='asintótica con corrección por empates' | metodo_ic='percentiles de 2000 remuestreos de usuarios'
+OK    H-M3-3 permuta entre destinos, no entre usuarios
+OK    los IC de H-M3-5 no son remuestreos de usuarios
+OK    los p de H-M3-6 son asintóticos
+OK    la frase v1 ya no está en el blog vigente
+  v1 (mínimos):  Los efectos mínimos (0,05 puntos de tasa, V de Cramér 0,10, delta de Cliff 0,147, ρ de Spearman 0,10 y exceso de Gini 0,05) son **convención nuestra**, definida en `configs/m3/eda.yaml` (`efecto_minimo`) y copiada en `pruebas_hipotesis.json` (`criterio_de_veredicto`); no son umbrales de la literatu
+  sha256 blog_07_redactor_v1.md: 40c16854013ac41e58b420c3bf5d01f1206b52de9c10d9870852c9c6a8cdae42
+== 5. Cita del conjunto ==
+  creatorName: Aman Mehra | title: Travel Recommendation Dataset | currentVersionNumber: 1 | versions[0]: 1 2024-01-23T17:07:26.487Z
+OK    bib: autor Mehra, Aman
+OK    bib: year 2024 = año de creación de la versión 1
+OK    bib: version 1
+OK    bib: título
+OK    bib = ficha: url
+OK    bib urldate = ficha fecha_descarga = 2026-11-25
+OK    ficha.cita coherente con bib
+OK    blog: «publicaci» solo aparece para negar que 2024-01-23 sea publicación
+OK    cita literal (en inglés) ⊂ info.description: «generated for educational and research purposes»
+OK    cita literal (en inglés) ⊂ info.description: «enriched with gender diversity»
+OK    cita literal (en inglés) ⊂ info.description: «CC0: Public Domain - The dataset is in the public domain and can be used»
+OK    cita literal (en inglés) ⊂ info.description: «This dataset is free to use for non-commercial purposes. For commercial »
+OK    título alterno «India Travel Recommender System Dataset» ⊂ description
+OK    únicas referencias [@…] del blog: mehra2024
+
+TOTAL: 35 OK, 1 MAL
