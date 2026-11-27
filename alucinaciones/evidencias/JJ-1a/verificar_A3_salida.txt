@@ -1,0 +1,294 @@
+# JJ-1a / A3 - Verificacion adversarial de A1 (curador-datos) y A2 (investigador-fuentes)
+Python 3.12.6, pandas 3.1.1, numpy 2.5.5, scipy 1.18.1. Sin internet; sin aleatoriedad.
+
+## V1 Archivos, zip, codificacion ([A1-1] a [A1-3])
+
+Archivos en data/raw/m3/:
+  archive.zip: 34679 B, sha256=117e3135b2fb8ff1ecb1e3a2d4b57315273f7954520567bbb5663af2912d004d
+  Expanded_Destinations.csv: 60768 B, sha256=5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766
+  Final_Updated_Expanded_Reviews.csv: 33710 B, sha256=bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48
+  Final_Updated_Expanded_UserHistory.csv: 24683 B, sha256=df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b
+  Final_Updated_Expanded_Users.csv: 58535 B, sha256=a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac
+[A1-1] OK      | numero de archivos | afirmado: 5 | medido: 5
+[A1-1] OK      | archive.zip tamano | afirmado: 34679 | medido: 34679
+[A1-1] OK      | archive.zip sha256 empieza 117e3135 y termina d004d | afirmado: True | medido: True
+Miembros del zip: Expanded_Destinations.csv (60768 B, comprimido 13749, fecha zip (2024, 1, 23, 17, 7, 28)); Final_Updated_Expanded_Reviews.csv (33710 B, comprimido 7480, fecha zip (2024, 1, 23, 17, 7, 28)); Final_Updated_Expanded_UserHistory.csv (24683 B, comprimido 7490, fecha zip (2024, 1, 23, 17, 7, 28)); Final_Updated_Expanded_Users.csv (58535 B, comprimido 5216, fecha zip (2024, 1, 23, 17, 7, 28))
+[A1-2] OK      | CRC del zip sin errores (testzip None) | afirmado: None | medido: None
+[A1-2] OK      | los 4 CSV sueltos identicos byte a byte a los miembros | afirmado: True | medido: True
+[A1-3] OK      | Expanded_Destinations.csv: utf8 estricto, sin BOM, 0 bytes >127, solo LF, filas csv==pandas, campos constantes | afirmado: (True, False, 0, 0, True, 1) | medido: (True, False, 0, 0, True, 1)
+[A1-3] OK      | Final_Updated_Expanded_Reviews.csv: utf8 estricto, sin BOM, 0 bytes >127, solo LF, filas csv==pandas, campos constantes | afirmado: (True, False, 0, 0, True, 1) | medido: (True, False, 0, 0, True, 1)
+[A1-3] OK      | Final_Updated_Expanded_UserHistory.csv: utf8 estricto, sin BOM, 0 bytes >127, solo LF, filas csv==pandas, campos constantes | afirmado: (True, False, 0, 0, True, 1) | medido: (True, False, 0, 0, True, 1)
+[A1-3] OK      | Final_Updated_Expanded_Users.csv: utf8 estricto, sin BOM, 0 bytes >127, solo LF, filas csv==pandas, campos constantes | afirmado: (True, False, 0, 0, True, 1) | medido: (True, False, 0, 0, True, 1)
+
+## V2 Estructura, contadores, duplicados ([A1-4] a [A1-8])
+
+[A1-4] OK      | filas D/R/H/U | afirmado: (1000, 999, 999, 999) | medido: (1000, 999, 999, 999)
+[A1-5] OK      | UserID maestro = 1..999 y DestinationID maestro = 1..1000 (conjuntos) | afirmado: (True, True) | medido: (True, True)
+[A1-6] OK      | faltantes / cadenas vacias / duplicados exactos en todos | afirmado: (0, 0, 0) | medido: (0, 0, 0)
+  primera columna: D=DestinationID, R=ReviewID, H=HistoryID, U=UserID
+[A1-6] OK      | primera columna de cada archivo = 1..n en orden | afirmado: {'D': True, 'R': True, 'H': True, 'U': True} | medido: {'D': True, 'R': True, 'H': True, 'U': True}
+[A1-7] OK      | Users sin UserID: filas sobrantes / combinaciones distintas | afirmado: (657, 342) | medido: (657, 342)
+[A1-7] OK      | D, R, H sin su contador: 0 sobrantes | afirmado: (0, 0, 0) | medido: (0, 0, 0)
+[A1-8] OK      | filas de R/H con usuario o destino fuera de la maestra | afirmado: (0, 0, 0, 0) | medido: (0, 0, 0, 0)
+
+## V3 Calificaciones y Popularity ([A1-9] a [A1-11])
+
+[A1-9] OK      | Rating frecuencias 1..5 | afirmado: {1: 198, 2: 199, 3: 185, 4: 216, 5: 201} | medido: {1: 198, 2: 199, 3: 185, 4: 216, 5: 201}
+[A1-9] OK      | Rating media (3 dec.) | afirmado: 3.023 | medido: 3.023
+[A1-10] OK      | ExperienceRating frecuencias 1..5 | afirmado: {1: 206, 2: 228, 3: 201, 4: 183, 5: 181} | medido: {1: 206, 2: 228, 3: 201, 4: 183, 5: 181}
+[A1-10] OK      | ExperienceRating media (3 dec.) | afirmado: 2.905 | medido: 2.905
+[A1-11] OK      | Popularity distintos / min / max / mediana (4 dec.) | afirmado: (1000, 7.5045, 9.4998, 8.4965) | medido: (1000, 7.5045, 9.4998, 8.4965)
+
+## V4 Interacciones, densidad, distribuciones ([A1-12] a [A1-16])
+
+[A1-12] OK      | Reviews: pares distintos, repetidos, usuarios, destinos | afirmado: (999, 0, 624, 651) | medido: (999, 0, 624, 651)
+[A1-12] OK      | UserHistory: pares distintos, repetidos, usuarios, destinos | afirmado: (999, 0, 642, 638) | medido: (999, 0, 642, 638)
+[A1-13] OK      | densidad (a) R y H (6 dec.) | afirmado: (0.001, 0.001) | medido: (0.001, 0.001)
+[A1-13] OK      | densidad (b) R y H (6 dec.) | afirmado: (0.002459, 0.002439) | medido: (0.002459, 0.002439)
+[A1-14] OK      | usuarios maestros ausentes R/H; destinos ausentes R/H | afirmado: (375, 357, 349, 362) | medido: (375, 357, 349, 362)
+[A1-15] OK      | Reviews por usuario: mediana, media, max, 1/2/3/4/>=5 | afirmado: (1.0, 1.601, 5, (355, 190, 58, 15, 6)) | medido: (1.0, 1.601, 5, (355, 190, 58, 15, 6))
+[A1-15] OK      | UserHistory por usuario: mediana, media, max, 1/2/3/4/>=5 | afirmado: (1.0, 1.556, 6, (384, 180, 60, 16, 2)) | medido: (1.0, 1.556, 6, (384, 180, 60, 16, 2))
+[A1-16] OK      | Reviews por destino: mediana, max, 1/2/3/4/>=5 | afirmado: (1.0, 5, (396, 178, 62, 14, 1)) | medido: (1.0, 5, (396, 178, 62, 14, 1))
+[A1-16] OK      | UserHistory por destino: max, 1/2/3/4/>=5 | afirmado: (6, (383, 177, 56, 17, 5)) | medido: (6, (383, 177, 56, 17, 5))
+
+## V5 Solapamiento y opciones de interaccion ([A1-17] a [A1-20])
+
+[A1-17] OK      | pares en ambos / solo R / solo H / union | afirmado: (0, 999, 999, 1998) | medido: (0, 999, 999, 1998)
+[A1-18] OK      | usuarios ambos/solo R/solo H; destinos ambos/solo R/solo H | afirmado: (408, 216, 234, 423, 228, 215) | medido: (408, 216, 234, 423, 228, 215)
+[A1-19] OK      | (iii) union: pares, usuarios, destinos | afirmado: (1998, 858, 866) | medido: (1998, 858, 866)
+[A1-19] OK      | (iii) densidad (a) y (b) (6 dec.) | afirmado: (0.002, 0.002689) | medido: (0.002, 0.002689)
+[A1-19] OK      | (iii) mediana por usuario y usuarios que aparecen con <2, <3, <5 | afirmado: (2.0, 252, 532, 806) | medido: (2.0, 252, 532, 806)
+[A1-19] OK      | (iv) interseccion vacia | afirmado: 0 | medido: 0
+[A1-20] OK      | con ceros: (i) <2,<3,<5 | afirmado: (730, 920, 993) | medido: (730, 920, 993)
+[A1-20] OK      | con ceros: (ii) <2,<3,<5 | afirmado: (741, 921, 997) | medido: (741, 921, 997)
+[A1-20] OK      | con ceros: (iii) <2,<3,<5 | afirmado: (393, 673, 947) | medido: (393, 673, 947)
+  usuarios maestros sin ninguna interaccion en la union: 141 (A1 seccion 3 dice 141)
+
+## V6 Fechas ([A1-21] a [A1-25])
+
+  D.Name: fraccion que parsea AAAA-MM-DD = 0.000
+  D.State: fraccion que parsea AAAA-MM-DD = 0.000
+  D.Type: fraccion que parsea AAAA-MM-DD = 0.000
+  D.BestTimeToVisit: fraccion que parsea AAAA-MM-DD = 0.000
+  R.ReviewText: fraccion que parsea AAAA-MM-DD = 0.000
+  H.VisitDate: fraccion que parsea AAAA-MM-DD = 1.000
+  U.Name: fraccion que parsea AAAA-MM-DD = 0.000
+  U.Email: fraccion que parsea AAAA-MM-DD = 0.000
+  U.Preferences: fraccion que parsea AAAA-MM-DD = 0.000
+  U.Gender: fraccion que parsea AAAA-MM-DD = 0.000
+[A1-21] OK      | columnas de texto que parsean como fecha | afirmado: ['H.VisitDate'] | medido: ['H.VisitDate']
+[A1-21] OK      | VisitDate valores y frecuencias | afirmado: {'2024-01-01': 333, '2024-02-15': 333, '2024-03-20': 333} | medido: {'2024-01-01': 333, '2024-02-15': 333, '2024-03-20': 333}
+[A1-22] OK      | VisitDate funcion exacta de HistoryID mod 3 (k minimo) | afirmado: 3 | medido: 3
+  pureza VisitDate, k no multiplo de 3 (k<=60): min=0.3333, max=0.3644 (en k=52); multiplos de 3: [1.0]
+  k no multiplos de 3 con pureza que redondea a 0.333: [1, 37]
+  pureza k=1..12: 1:0.333, 2:0.334, 3:1.000, 4:0.335, 5:0.335, 6:1.000, 7:0.336, 8:0.336, 9:1.000, 10:0.339, 11:0.339, 12:1.000
+[A1-22] DIFIERE | 'el resto de k son 0.333' (k no multiplo de 3, redondeo a 3 dec.) | afirmado: todas 0.333 | medido: de 0.333 a 0.364
+[A1-23] OK      | usuarios H con >1 fecha; con 2; con 3; con 1 | afirmado: (195, 172, 23, 447) | medido: (195, 172, 23, 447)
+[A1-24] OK      | BestTimeToVisit: parsea AAAA-MM-DD, valores distintos, k minimo | afirmado: (0, 5, 5) | medido: (0, 5, 5)
+[A1-25] OK      | Reviews no tiene columna de fecha | afirmado: True | medido: True
+
+## V7 Destinos y usuarios ([A1-26] a [A1-34])
+
+[A1-26] OK      | 5 nombres, 200 ids cada uno | afirmado: (5, {200}) | medido: (5, {200})
+[A1-26] OK      | combinaciones Name+State+Type+BestTimeToVisit | afirmado: 5 | medido: 5
+[A1-27] OK      | Name/State/Type/BestTimeToVisit k minimo respecto a DestinationID | afirmado: (5, 5, 5, 5) | medido: (5, 5, 5, 5)
+[A1-27] OK      | ciclo de nombres | afirmado: ['Taj Mahal', 'Goa Beaches', 'Jaipur City', 'Kerala Backwaters', 'Leh Ladakh'] | medido: ['Taj Mahal', 'Goa Beaches', 'Jaipur City', 'Kerala Backwaters', 'Leh Ladakh']
+[A1-27] OK      | Popularity media por nombre, rango (2 dec.) | afirmado: (8.49, 8.55) | medido: (8.49, 8.55)
+[A1-28] OK      | usuarios: nombres, min-max ids por nombre, (Name,Email) distintas, dominios | afirmado: (20, 38, 64, 20, {'example.com': 999}) | medido: (20, 38, 64, 20, {'example.com': 999})
+[A1-29] OK      | Email == lower(Name)+'@example.com' | afirmado: 999 | medido: 999
+[A1-30] OK      | nombres con mas de un Gender | afirmado: 0 | medido: 0
+[A1-31] OK      | Preferences k minimo respecto a UserID | afirmado: 3 | medido: 3
+[A1-31] OK      | Name, Email, Gender, Adults, Children sin k<=60 | afirmado: (None, None, None, None, None) | medido: (None, None, None, None, None)
+[A1-32] OK      | Preferences: combinaciones, opciones por fila, opciones sueltas | afirmado: ({333}, {2}, {'Historical': 666, 'Beaches': 333, 'Nature': 333, 'Adventure': 333, 'City': 333}) | medido: ({333}, {2}, {'Beaches': 333, 'Historical': 666, 'Nature': 333, 'Adventure': 333, 'City': 333})
+[A1-33] OK      | Gender, Adults, Children: conteos/valores | afirmado: ({'Male': 503, 'Female': 496}, [1, 2], [0, 1, 2]) | medido: ({'Male': 503, 'Female': 496}, [1, 2], [0, 1, 2])
+  Preferences x Gender: chi2=1.3774, gl=2, p=0.5022 (con Yates si 2x2: p=0.5022)
+  Preferences x NumberOfAdults: chi2=3.1955, gl=2, p=0.2024 (con Yates si 2x2: p=0.2024)
+  Preferences x NumberOfChildren: chi2=1.5124, gl=4, p=0.8244 (con Yates si 2x2: p=0.8244)
+  Gender x NumberOfAdults: chi2=0.3638, gl=1, p=0.5464 (con Yates si 2x2: p=0.5893)
+  Gender x NumberOfChildren: chi2=1.8171, gl=2, p=0.4031 (con Yates si 2x2: p=0.4031)
+  NumberOfAdults x NumberOfChildren: chi2=0.9247, gl=2, p=0.6298 (con Yates si 2x2: p=0.6298)
+[A1-34] OK      | min p de chi2 entre variables de usuario >= 0.20 | afirmado: True | medido: 0.2024
+  Nota: no rechazar H0 con p>=0.20 no prueba independencia; [A1-34] la enuncia como hecho ('son independientes').
+  Potencia del chi2 de independencia (alfa=0.05, n=999) frente a una dependencia de tamano w de Cohen (no centralidad n*w^2):
+    gl=1: potencia(w=0.05)=0.352; potencia(w=0.10)=0.885
+    gl=2: potencia(w=0.05)=0.273; potencia(w=0.10)=0.815
+    gl=4: potencia(w=0.05)=0.207; potencia(w=0.10)=0.715
+
+## V8 Textos ([A1-35], [A1-36])
+
+[A1-35] OK      | ReviewText: 3 textos x 333; k minimo respecto a ReviewID | afirmado: ({333}, 3) | medido: ({333}, 3)
+[A1-36] OK      | ReviewText x Rating: p (4 dec.) | afirmado: 0.5465 | medido: 0.5465
+      chi2=6.9084, gl=8, V=0.0588
+[A1-36] OK      | ReviewText x destino: p (4 dec.) | afirmado: 0.8836 | medido: 0.8836
+      chi2=3.6946, gl=8, V=0.0430
+[A1-36] OK      | ReviewText x preferencias: p (4 dec.) | afirmado: 0.2971 | medido: 0.2971
+      chi2=4.9056, gl=4, V=0.0496
+  'Loved the beaches!' por destino: {'Leh Ladakh': 80, 'Kerala Backwaters': 68, 'Goa Beaches': 65, 'Taj Mahal': 63, 'Jaipur City': 57}
+[A1-36] OK      | 'Loved the beaches!' aparece en los 5 destinos | afirmado: 5 | medido: 5
+
+## V9 Senales de datos generados ([A1-37] a [A1-43])
+
+  D.Name: razon max/min=1.000, chi2=0.0000, p=1.0000
+  D.State: razon max/min=1.000, chi2=0.0000, p=1.0000
+  D.Type: razon max/min=1.000, chi2=0.0000, p=1.0000
+  D.BestTimeToVisit: razon max/min=1.000, chi2=0.0000, p=1.0000
+  R.Rating: razon max/min=1.168, chi2=2.4364, p=0.6561
+  R.ReviewText: razon max/min=1.000, chi2=0.0000, p=1.0000
+  H.VisitDate: razon max/min=1.000, chi2=0.0000, p=1.0000
+  H.ExperienceRating: razon max/min=1.260, chi2=7.3614, p=0.1180
+  U.Name: razon max/min=1.684, chi2=13.7928, p=0.7956
+  U.Email: razon max/min=1.684, chi2=13.7928, p=0.7956
+  U.Preferences: razon max/min=1.000, chi2=0.0000, p=1.0000
+  U.Gender: razon max/min=1.014, chi2=0.0490, p=0.8247
+  U.NumberOfAdults: razon max/min=1.018, chi2=0.0811, p=0.7758
+  U.NumberOfChildren: razon max/min=1.066, chi2=0.7748, p=0.6788
+  Opciones sueltas de Preferences (fila 'opciones separadas' de A1.13a): cada fila aporta 2 opciones y las 3 combinaciones son [['Adventure', 'Nature'], ['Beaches', 'Historical'], ['City', 'Historical']]; con 333 filas por combinacion la razon 2:1 de 'Historical' queda fijada por la composicion, asi que la p del chi2 de bondad de ajuste sobre las 1998 opciones (no independientes) no es una prueba valida.
+[A1-37] OK      | columnas con razon max/min = 1.000 | afirmado: ['D.BestTimeToVisit', 'D.Name', 'D.State', 'D.Type', 'H.VisitDate', 'R.ReviewText', 'U.Preferences'] | medido: ['D.BestTimeToVisit', 'D.Name', 'D.State', 'D.Type', 'H.VisitDate', 'R.ReviewText', 'U.Preferences']
+[A1-37] OK      | demas: razones 1.014..1.684 | afirmado: (1.014, 1.684) | medido: (1.014, 1.684)
+[A1-37] DIFIERE | demas: p 0.12..0.83 (redondeo a 2 dec.) | afirmado: (0.12, 0.83) | medido: (0.12, 0.82)
+[A1-38] OK      | Rating chi2 y p; ExperienceRating chi2 y p | afirmado: (2.44, 0.656, 7.36, 0.118) | medido: (2.44, 0.656, 7.36, 0.118)
+[A1-38] OK      | Rating y ExperienceRating sin k<=60 respecto a su id | afirmado: (None, None) | medido: (None, None)
+  indices de dispersion R-u, R-d, H-u, H-d: [np.float64(1.029), np.float64(0.9179), np.float64(0.963), np.float64(1.006)]; ceros: [375, 349, 357, 362]; ceros esperados (usuario, destino): [367.3, 368.1]
+[A1-39] OK      | rango indice de dispersion (3 dec.) | afirmado: (0.918, 1.029) | medido: (0.918, 1.029)
+[A1-39] OK      | rango ceros observados; esperados (entero) | afirmado: ((349, 375), (367, 368)) | medido: ((349, 375), (367, 368))
+[A1-40] OK      | (i) observada, esperada, z, p | afirmado: (0.4294, 0.4, 1.9, 0.058) | medido: (0.4294, 0.4, 1.9, 0.058)
+      control: p binomial exacta (H0 p=0.4) = 0.0610
+[A1-41] OK      | (i) chi2 Preferences x Type: p, V | afirmado: (0.171, 0.076) | medido: (0.171, 0.076)
+[A1-40] OK      | (ii) observada, esperada, z, p | afirmado: (0.4174, 0.4, 1.12, 0.26) | medido: (0.4174, 0.4, 1.12, 0.26)
+      control: p binomial exacta (H0 p=0.4) = 0.2722
+[A1-41] OK      | (ii) chi2 Preferences x Type: p, V | afirmado: (0.026, 0.093) | medido: (0.026, 0.093)
+[A1-40] OK      | (iii) observada, esperada, z, p | afirmado: (0.4234, 0.4, 2.14, 0.033) | medido: (0.4234, 0.4, 2.14, 0.033)
+      control: p binomial exacta (H0 p=0.4) = 0.0337
+[A1-41] OK      | (iii) chi2 Preferences x Type: p, V | afirmado: (0.019, 0.068) | medido: (0.019, 0.068)
+  Reviews Rating x Name: chi2 p=0.8035 (V=0.0527); Kruskal-Wallis p=0.8884
+  Reviews Rating x Name_u: chi2 p=0.5864 (V=0.1349); Kruskal-Wallis p=0.9161
+  Reviews Rating x Preferences: chi2 p=0.2144 (V=0.0735); Kruskal-Wallis p=0.2683
+  Reviews Rating x Gender: chi2 p=0.4873 (V=0.0587); Kruskal-Wallis p=0.2576
+  Reviews Rating x NumberOfAdults: chi2 p=0.7163 (V=0.0459); Kruskal-Wallis p=0.6519
+  Reviews Rating x NumberOfChildren: chi2 p=0.5861 (V=0.0572); Kruskal-Wallis p=0.5798
+  Reviews Rating x coincide: chi2 p=0.8841 (V=0.0341); Kruskal-Wallis p=0.3235
+  Reviews Rating x ReviewText: chi2 p=0.5465 (V=0.0588); Kruskal-Wallis p=0.7429
+[A1-42] OK      | Reviews: min p chi2 >= 0.21 | afirmado: True | medido: 0.2144
+[A1-42] DIFIERE | Reviews: min p Kruskal-Wallis >= 0.26 (literal) | afirmado: True | medido: 0.2576
+[A1-43] OK      | Reviews: rho(Popularity, calif.), rho(Popularity, n del destino) | afirmado: (0.044, -0.041) | medido: (0.044, -0.041)
+[A1-43] OK      | Reviews: ambas p > 0.16 | afirmado: True | medido: (0.167, 0.195)
+  UserHistory ExperienceRating x Name: chi2 p=0.2036 (V=0.0714); Kruskal-Wallis p=0.3299
+  UserHistory ExperienceRating x Name_u: chi2 p=0.9868 (V=0.1133); Kruskal-Wallis p=0.9187
+  UserHistory ExperienceRating x Preferences: chi2 p=0.0074 (V=0.1023); Kruskal-Wallis p=0.1827
+  UserHistory ExperienceRating x Gender: chi2 p=0.8164 (V=0.0395); Kruskal-Wallis p=0.8407
+  UserHistory ExperienceRating x NumberOfAdults: chi2 p=0.8709 (V=0.0353); Kruskal-Wallis p=0.5853
+  UserHistory ExperienceRating x NumberOfChildren: chi2 p=0.9222 (V=0.0399); Kruskal-Wallis p=0.6967
+  UserHistory ExperienceRating x coincide: chi2 p=0.9799 (V=0.0208); Kruskal-Wallis p=0.9901
+  UserHistory ExperienceRating x VisitDate: chi2 p=0.7435 (V=0.0507); Kruskal-Wallis p=0.9553
+[A1-42] OK      | UserHistory Preferences x ExperienceRating: p chi2, V, p KW | afirmado: (0.0074, 0.102, 0.18) | medido: (0.0074, 0.102, 0.18)
+[A1-42] OK      | UserHistory: resto de p >= 0.05 | afirmado: True | medido: 0.2036
+[A1-43] OK      | UserHistory: rho(Popularity, calif.), rho(Popularity, n del destino) | afirmado: (0.028, 0.022) | medido: (0.028, 0.022)
+[A1-43] OK      | UserHistory: ambas p > 0.16 | afirmado: True | medido: (0.3852, 0.4852)
+
+## V10 Observaciones adicionales de A3 (no afirmadas por A1)
+
+VisitDate posterior a la creacion de la version 1 en Kaggle (2024-01-23, versions[0].creationDate): 666 de 999 filas; valores: ['2024-02-15', '2024-03-20']
+Particion 'por tiempo' de UserHistory = particion por HistoryID mod 3 (VisitDate es funcion exacta de ese resto): True
+Fechas distintas=3 -> a lo sumo 2 puntos de corte (3 bloques), no '3 cortes'.
+Tipo del destino por nombre: {'Taj Mahal': 'Historical', 'Goa Beaches': 'Beach', 'Jaipur City': 'City', 'Kerala Backwaters': 'Nature', 'Leh Ladakh': 'Adventure'}
+
+## W1 Integridad del JSON de A2 y comparacion con la re-descarga de A3
+
+[A2-intro] OK      | numero de respuestas | afirmado: 5 | medido: 5
+[A2-intro] OK      | #0 sha256(cuerpo_crudo utf-8) == sha256_cuerpo; json(cuerpo_crudo) == cuerpo; status 200 | afirmado: (True, True, 200) | medido: (True, True, 200)
+[A2-intro] OK      | #1 sha256(cuerpo_crudo utf-8) == sha256_cuerpo; json(cuerpo_crudo) == cuerpo; status 200 | afirmado: (True, True, 200) | medido: (True, True, 200)
+[A2-intro] OK      | #2 sha256(cuerpo_crudo utf-8) == sha256_cuerpo; json(cuerpo_crudo) == cuerpo; status 200 | afirmado: (True, True, 200) | medido: (True, True, 200)
+[A2-intro] OK      | #3 sha256(cuerpo_crudo utf-8) == sha256_cuerpo; json(cuerpo_crudo) == cuerpo; status 200 | afirmado: (True, True, 200) | medido: (True, True, 200)
+[A2-intro] OK      | #4 sha256(cuerpo_crudo utf-8) == sha256_cuerpo; json(cuerpo_crudo) == cuerpo; status 200 | afirmado: (True, True, 200) | medido: (True, True, 200)
+[A2-intro] OK      | re-descarga A3 r0 (2026-11-25T23:26:26Z, status 200) identica byte a byte a A2 #0 | afirmado: ('https://www.kaggle.com/api/v1/datasets/metadata/amanmehra23/travel-recommendation-dataset', 'bb5d50608d20e6416319fe2cb0a094efafbb2892441c4e06fbc363c9c6923170') | medido: ('https://www.kaggle.com/api/v1/datasets/metadata/amanmehra23/travel-recommendation-dataset', 'bb5d50608d20e6416319fe2cb0a094efafbb2892441c4e06fbc363c9c6923170')
+[A2-intro] OK      | re-descarga A3 r1 (2026-11-25T23:26:27Z, status 200) identica byte a byte a A2 #1 | afirmado: ('https://www.kaggle.com/api/v1/datasets/list/amanmehra23/travel-recommendation-dataset', '6cde29d898d0fdb38d22610fc83461878d493d21a8aa8cb13fc89b6609156513') | medido: ('https://www.kaggle.com/api/v1/datasets/list/amanmehra23/travel-recommendation-dataset', '6cde29d898d0fdb38d22610fc83461878d493d21a8aa8cb13fc89b6609156513')
+[A2-intro] OK      | re-descarga A3 r2 (2026-11-25T23:26:27Z, status 200) identica byte a byte a A2 #3 | afirmado: ('https://www.kaggle.com/api/v1/datasets/view/amanmehra23/travel-recommendation-dataset', '186a1c5ccc4109b135bfdfc78a6e1657de3e5da95feb4a9b7e5fa065078fb58a') | medido: ('https://www.kaggle.com/api/v1/datasets/view/amanmehra23/travel-recommendation-dataset', '186a1c5ccc4109b135bfdfc78a6e1657de3e5da95feb4a9b7e5fa065078fb58a')
+[A2-intro] OK      | re-descarga A3 r3 (2026-11-25T23:26:27Z, status 200) identica byte a byte a A2 #4 | afirmado: ('https://www.kaggle.com/api/v1/datasets/list?search=travel-recommendation-dataset&user=amanmehra23', 'a5b3836fea1aabfa3f0ff3517a259ca0cf681f9170b6809de2b7baee162860c9') | medido: ('https://www.kaggle.com/api/v1/datasets/list?search=travel-recommendation-dataset&user=amanmehra23', 'a5b3836fea1aabfa3f0ff3517a259ca0cf681f9170b6809de2b7baee162860c9')
+[A2-intro] OK      | #2 (barra final) identico a #0 | afirmado: bb5d50608d20e6416319fe2cb0a094efafbb2892441c4e06fbc363c9c6923170 | medido: bb5d50608d20e6416319fe2cb0a094efafbb2892441c4e06fbc363c9c6923170
+Fechas de consulta guardadas por A2: 2026-11-25T23:16:55Z, 2026-11-25T23:16:55Z, 2026-11-25T23:16:55Z, 2026-11-25T23:16:56Z, 2026-11-25T23:16:56Z
+[A2-intro] OK      | #4 devuelve un solo conjunto | afirmado: 1 | medido: 1
+
+## W2 Campos y fragmentos literales ([A2-1] a [A2-20] y tablas)
+
+[A2-1] OK      | titulo #0/#3/#4 | afirmado: ('Travel Recommendation Dataset', 'Travel Recommendation Dataset', 'Travel Recommendation Dataset') | medido: ('Travel Recommendation Dataset', 'Travel Recommendation Dataset', 'Travel Recommendation Dataset')
+[A2-2] OK      | primera linea de info.description | afirmado: ### Title: India Travel Recommender System Dataset | medido: ### Title: India Travel Recommender System Dataset
+[A2-3] OK      | creatorName/ownerName #3 y #4, versions[0].creatorName | afirmado: ('Aman Mehra', 'Aman Mehra', 'Aman Mehra', 'Aman Mehra', 'Aman Mehra') | medido: ('Aman Mehra', 'Aman Mehra', 'Aman Mehra', 'Aman Mehra', 'Aman Mehra')
+[A2-3] OK      | ownerRef #3/#4 y info.ownerUser #0 | afirmado: ('amanmehra23', 'amanmehra23', 'amanmehra23') | medido: ('amanmehra23', 'amanmehra23', 'amanmehra23')
+[A2-4] OK      | ref #3/#4; id #3/#4; datasetId #0 | afirmado: ('amanmehra23/travel-recommendation-dataset', 'amanmehra23/travel-recommendation-dataset', 4345382, 4345382, 4345382) | medido: ('amanmehra23/travel-recommendation-dataset', 'amanmehra23/travel-recommendation-dataset', 4345382, 4345382, 4345382)
+[A2-5] OK      | #3 versions: n, versionNumber, versionNotes, creationDate; currentVersionNumber #3/#4 | afirmado: (1, 1, 'Initial release', '2024-01-23T17:07:26.487Z', 1, 1) | medido: (1, 1, 'Initial release', '2024-01-23T17:07:26.487Z', 1, 1)
+  nota: #4 trae versions=[] (vacio); la unica lista de versiones es la de #3.
+[A2-6] OK      | lastUpdated #3/#4 | afirmado: ('2024-01-23T17:07:26.487Z', '2024-01-23T17:07:26.487Z') | medido: ('2024-01-23T17:07:26.487Z', '2024-01-23T17:07:26.487Z')
+[A2-7] OK      | datasetFiles: nombres, tamanos y fechas | afirmado: {'Expanded_Destinations.csv': (60768, '2024-01-23T17:07:28.041Z'), 'Final_Updated_Expanded_Reviews.csv': (33710, '2024-01-23T17:07:28.068Z'), 'Final_Updated_Expanded_UserHistory.csv': (24683, '2024-01-23T17:07:27.95Z'), 'Final_Updated_Expanded_Users.csv': (58535, '2024-01-23T17:07:28.103Z')} | medido: {'Expanded_Destinations.csv': (60768, '2024-01-23T17:07:28.041Z'), 'Final_Updated_Expanded_Reviews.csv': (33710, '2024-01-23T17:07:28.068Z'), 'Final_Updated_Expanded_UserHistory.csv': (24683, '2024-01-23T17:07:27.95Z'), 'Final_Updated_Expanded_Users.csv': (58535, '2024-01-23T17:07:28.103Z')}
+[A2-8] OK      | suma de datasetFiles == totalBytes #3 | afirmado: (177696, 177696) | medido: (177696, 177696)
+[A2-9] OK      | columns [], description '', hasDescription False en los 4 archivos | afirmado: True | medido: True
+[A2-9] OK      | #3 files [] y #0 info.data [] | afirmado: ([], []) | medido: ([], [])
+[A2-10] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'This dataset was generated for educational and res...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-11] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'This dataset has been enriched with gender diversi...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-12] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'User-generated reviews and ratings for the differe...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-15] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'CC0: Public Domain - The dataset is in the public ...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-16] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'This dataset is free to use for non-commercial pur...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-sec6-Destinations] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'Information about various travel destinations in I...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-sec6-Users-1] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'Profiles of users including their preferences and ...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-sec6-Reviews] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'User-generated reviews and ratings for the differe...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-sec6-UserHistory] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'Records of users' past travel experiences, includi...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-sec5-Usage] OK      | literal en info.description (#0), en cuerpo_crudo #0 (escapado JSON) y en description #3: 'This dataset is free to use for non-commercial pur...' | afirmado: (True, True, True) | medido: (True, True, True)
+[A2-sec3] OK      | description #3 identica a info.description #0 | afirmado: True | medido: True
+[A2-sec3] OK      | bloque '## 3' de la respuesta de A2 == info.description (exacto, con espacios finales) | afirmado: True | medido: True
+[A2-14] OK      | licencia #0 licenses[0].name; #3/#4 licenseName y licenseNameNullable; numero de licencias en #0 | afirmado: ('MIT', 'MIT', 'MIT', 'MIT', 'MIT', 1) | medido: ('MIT', 'MIT', 'MIT', 'MIT', 'MIT', 1)
+[A2-17] OK      | keywords #0; tags #3/#4 (nombre, fullPath) | afirmado: (['travel'], [('travel', 'subject > people and society > business > travel'), ('travel', 'subject > people and society > business > travel')]) | medido: (['travel'], [('travel', 'subject > people and society > business > travel'), ('travel', 'subject > people and society > business > travel')])
+[A2-18] OK      | usability #0, #3, #4 | afirmado: (0.5882352941176471, 0.5882353, 0.5882353) | medido: (0.5882352941176471, 0.5882353, 0.5882353)
+[A2-18] OK      | descargas/vistas/votos #0; #3; #4; kernelCount #3/#4 | afirmado: ((4014, 18351, 15), (4014, 18351, 15), (4014, 18351, 15), (1, 1)) | medido: ((4014, 18351, 15), (4014, 18351, 15), (4014, 18351, 15), (1, 1))
+[A2-20] OK      | expectedUpdateFrequency; userSpecifiedSources; hasUserSpecifiedSources | afirmado: ('not specified', '', False) | medido: ('not specified', '', False)
+[A2-tabla] OK      | subtitle #0; collaborators #0; url #3; creatorUrl #3; url #4 | afirmado: ('', [], '', '', 'https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset') | medido: ('', [], '', '', 'https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset')
+  nota: creatorUrl de #4 = 'amanmehra23' (no es una URL).
+
+## W3 Ausencias (busqueda programatica, sin distinguir mayusculas)
+
+  'synthetic': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'simulated': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'augmented': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'sample': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'scraped': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'collected': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'survey': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'artificial': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'fake': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'mock': subcadena en los 5 crudos=0; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'generated': subcadena en los 5 crudos=12; palabra completa en los 5 crudos=12; palabra completa en info.description=2
+  'enriched': subcadena en los 5 crudos=6; palabra completa en los 5 crudos=6; palabra completa en info.description=1
+  'expanded': subcadena en los 5 crudos=8; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+  'real': subcadena en los 5 crudos=6; palabra completa en los 5 crudos=0; palabra completa en info.description=0
+[A2-13] OK      | 'synthetic' en los 5 cuerpo_crudo (subcadena, sin mayusculas) | afirmado: 0 | medido: 0
+[A2-sec4] OK      | ninguna de synthetic/simulated/augmented/sample/scraped/collected/survey en info.description | afirmado: 0 | medido: 0
+[A2-sec4] OK      | 'real' como palabra completa en los 5 crudos (subcadena solo en 'realm') | afirmado: 0 | medido: 0
+[A2-sec4] OK      | 'expanded' en info.description (A2: solo en nombres de archivo) | afirmado: 0 | medido: 0
+[A2-19] OK      | 'doi' (subcadena) y patron 10.NNNN/ en los 5 crudos; claves con 'doi' | afirmado: (0, 0, []) | medido: (0, 0, [])
+[A2-tabla] OK      | claves con 'publish'/'publication' (A2: no existe campo de publicacion) | afirmado: [] | medido: []
+  claves con 'date' o 'updated': creationDate, expectedUpdateFrequency, expectedUpdateFrequencyNullable, hasExpectedUpdateFrequency, lastUpdated
+[A2-sec6] OK      | la descripcion dice que cada componente es un CSV aparte (sin mapear nombres) | afirmado: True | medido: True
+
+## W4 Fuente frente a archivos locales (tamanos y fechas)
+
+[A2-7/local] OK      | Expanded_Destinations.csv: totalBytes Kaggle == tamano local == tamano en el zip; fecha zip vs creationDate | afirmado: (60768, 60768) | medido: (60768, 60768)
+      fecha del miembro en el zip (hora local sin zona): (2024, 1, 23, 17, 7, 28); creationDate Kaggle: 2024-01-23T17:07:28.041Z
+[A2-7/local] OK      | Final_Updated_Expanded_Reviews.csv: totalBytes Kaggle == tamano local == tamano en el zip; fecha zip vs creationDate | afirmado: (33710, 33710) | medido: (33710, 33710)
+      fecha del miembro en el zip (hora local sin zona): (2024, 1, 23, 17, 7, 28); creationDate Kaggle: 2024-01-23T17:07:28.068Z
+[A2-7/local] OK      | Final_Updated_Expanded_UserHistory.csv: totalBytes Kaggle == tamano local == tamano en el zip; fecha zip vs creationDate | afirmado: (24683, 24683) | medido: (24683, 24683)
+      fecha del miembro en el zip (hora local sin zona): (2024, 1, 23, 17, 7, 28); creationDate Kaggle: 2024-01-23T17:07:27.95Z
+[A2-7/local] OK      | Final_Updated_Expanded_Users.csv: totalBytes Kaggle == tamano local == tamano en el zip; fecha zip vs creationDate | afirmado: (58535, 58535) | medido: (58535, 58535)
+      fecha del miembro en el zip (hora local sin zona): (2024, 1, 23, 17, 7, 28); creationDate Kaggle: 2024-01-23T17:07:28.103Z
+[A2-obs3] OK      | totalBytes de #4 (34679) == tamano de archive.zip descargado | afirmado: 34679 | medido: 34679
+  suma de tamanos comprimidos de los miembros = 33935 (+ cabeceras y directorio central = 34679)
+
+## R Reproducibilidad del script de A1 (ejecucion del original sin escribir a disco)
+
+SHA-256 de la salida guardada por A1: d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93 (45173 B, 682 lineas, secciones '## A1.': 14)
+SHA-256 del script de A1: e21e00a1088c83c2555955246ce22ec0baab0f85fa508f2b6e38384ab1aba680
+corrida 1: el script intento escribir en docs\investigacion\JJ-1_inventario_salida.txt; sha256 de lo que habria escrito = d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93
+corrida 2: el script intento escribir en docs\investigacion\JJ-1_inventario_salida.txt; sha256 de lo que habria escrito = d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93
+[R] OK      | salida regenerada (2 corridas) == salida guardada | afirmado: ('d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93', 'd3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93') | medido: ('d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93', 'd3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93')
+[R] OK      | la salida guardada no fue modificada por esta verificacion | afirmado: d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93 | medido: d3d258d725d8d23c00fe9eb5f5c723eb3f388a62b3d64e111c54e6311488cb93
+
+## Resumen de comprobaciones automaticas
+
+OK=137; DIFIERE=3 (los DIFIERE se analizan uno a uno en el informe)

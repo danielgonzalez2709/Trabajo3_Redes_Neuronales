@@ -1,0 +1,90 @@
+# M3 — análisis descriptivo (JJ-2): secciones 3–7 de la plantilla común (núcleo §5.12).
+# Uso: .venv\Scripts\python run.py m3-eda --config configs/m3/eda.yaml     (segundos, sin red; solo lee data/processed/m3/)
+# Figuras: .venv\Scripts\python run.py figures                              (lee solo results/data/m3/eda/)
+# Los datos son GENERADOS (D4, docs/spec/partes/juanjose.md §3.1): ningún patrón de aquí se atribuye a turistas reales.
+# Toda cifra de las salidas la calcula src/m3_recomendacion/eda.py; nada se escribe a mano en results/.
+
+entrada:
+  carpeta: data/processed/m3          # solo los parquet procesados de m3-datos; nunca data/raw
+  destinos: destinos.parquet
+  usuarios: usuarios.parquet
+  interacciones: interacciones.parquet
+
+salida:
+  carpeta: results/data/m3/eda        # no se tocan ficha.json, calidad.csv ni diccionario.json (son de m3-datos)
+
+figuras:
+  carpeta: blog/docs/figures/m3
+
+# --- Azar -------------------------------------------------------------------------------------------------------------
+# Semilla efectiva de cada uso del azar = base_seed + run_id (src/comun/seeds.py). Cada uso tiene su propio run_id.
+base_seed: 0
+run_id:
+  permutacion_h1: 0            # H-M3-1: permutación de las combinaciones de preferencias entre usuarios
+  simulacion_usuarios: 1       # reparto uniforme al azar de las interacciones entre usuarios
+  simulacion_destinos: 2       # reparto uniforme al azar entre destinos (alimenta histograma, Gini/HHI/top y Lorenz)
+  bootstrap_h1: 3              # H-M3-1: remuestreo de usuarios (diferencia de tasas y V de Cramér)
+  permutacion_h2: 4            # H-M3-2: permutación de las combinaciones (diferencia de medias de calificación)
+  bootstrap_h2: 5              # H-M3-2: remuestreo de usuarios (diferencia de medias, delta de Cliff)
+  permutacion_h3: 6            # H-M3-3: permutación de la popularidad entre destinos
+  bootstrap_h3: 7              # H-M3-3: remuestreo de destinos (Spearman)
+  permutacion_h4_genero: 8     # H-M3-4: permutación del género entre usuarios
+  permutacion_h4_adultos: 9    # H-M3-4: permutación de n_adultos entre usuarios
+  permutacion_h4_ninos: 10     # H-M3-4: permutación de n_ninos entre usuarios
+  bootstrap_h4: 11             # H-M3-4: remuestreo de usuarios (V de Cramér de las tres variables)
+  bootstrap_h6: 12             # H-M3-6: remuestreo de usuarios (V de Cramér y delta de Cliff)
+
+n_permutaciones: 10000         # p = (1 + #{T* >= T_obs}) / (1 + B); con B = 10 000 el p crudo mínimo es 1/10 001 ≈ 1e-4
+n_bootstrap: 2000              # réplicas del remuestreo (por usuarios, o por destinos en H-M3-3) para los IC
+n_simulaciones_azar: 2000      # simulaciones del reparto uniforme de las interacciones (media e IC de la referencia)
+nivel_ic: 0.95                 # intervalos por percentiles (bootstrap y simulaciones): cuantiles 2,5 % y 97,5 %
+
+# --- Descriptivo -------------------------------------------------------------------------------------------------------
+niveles: [destino_id, lugar]   # niveles de la concentración (lugar = los 5 lugares de D2)
+fracciones_top: [0.1, 0.2]     # cuota de interacciones de la fracción más popular (k = ceil(fracción · n), al menos 1)
+tope_usuarios: 5               # histograma de usuarios: 0, 1, …, tope-1 y «tope+» (igual que ficha.json; se compara con él)
+tope_destinos: 6               # histograma de destinos: 0, 1, …, tope-1 y «tope+»
+
+# Grupos de actividad según el número de interacciones del usuario (unión de reseñas e historial, D1).
+# Con D3 (la partición la hace JJ-3): n=1 → solo entrenamiento; n=2 → 1 entrenamiento + 1 prueba; n>=3 → además 1 de
+# validación (n=3 deja también 1 solo en entrenamiento). Umbral por defecto [PROPUESTO por esta tarea, a confirmar por
+# Juan José]: «pocas» = 1 o 2 interacciones (los que aportan prueba pero no validación), «muchas» = 3 o más. Los usuarios
+# con 0 interacciones no son un grupo evaluable y se reportan aparte. La tabla de sensibilidad muestra otros umbrales.
+actividad:
+  pocas_max: 2
+  sensibilidad_pocas_max: [1, 2, 3, 4]
+
+# --- Preferencias y tipo de destino ------------------------------------------------------------------------------------
+# EMPAREJAMIENTO LÉXICO NUESTRO: opción de preferencia de la fuente → valor de Type de la fuente. La fuente NO documenta
+# esta correspondencia (las opciones y los tipos usan vocabularios distintos, p. ej. «Beaches» vs «Beach»; ver
+# diccionario.json, inconsistencia de vocabularios). Se empareja por el nombre. Si el emparejamiento es otro, cambian las
+# conclusiones de H-M3-1 y H-M3-2.
+emparejamiento_preferencia_tipo:
+  Beaches: Beach
+  Historical: Historical
+  City: City
+  Adventure: Adventure
+  Nature: Nature
+
+# --- Pruebas de hipótesis ----------------------------------------------------------------------------------------------
+alfa: 0.05
+ajuste_multiple: holm          # sobre la familia confirmatoria (H-M3-1 a H-M3-6); la lista exacta se escribe en pruebas_hipotesis.json
+# Criterio de veredicto (nuestro, no una norma): se aplica al p ajustado y al tamaño de efecto de cada prueba confirmatoria.
+# El texto de abajo DESCRIBE la regla (el código lo copia a pruebas_hipotesis.json); la implementa
+# src/m3_recomendacion/eda_hipotesis.py::veredicto_de_prueba y una prueba comprueba que texto y función concuerdan.
+regla_de_veredicto: >-
+  cumple: p ajustado < alfa y efecto >= mínimo (alternativa «mayor») o |efecto| >= mínimo (alternativa «dos_colas»).
+  refuta: p ajustado >= alfa y el IC 95 % del efecto contiene el 0 y queda dentro de (−mínimo, +mínimo) (alternativa «dos_colas»);
+  en la alternativa «mayor», el IC 95 % empieza en 0 o antes y termina por debajo de +mínimo (compatible con cero o con un efecto
+  contrario). indeterminada: en cualquier otro caso, p. ej. un efecto detectable pero menor que el mínimo, o un IC 95 % que excluye
+  el 0 con p ajustado >= alfa por el ajuste de Holm. Hipótesis con varias pruebas: confirmada si alguna cumple; refutada si todas
+  refutan; en otro caso, no concluyente. Un efecto detectable pero menor que el mínimo nunca confirma.
+# Marca `efecto.en_el_limite`: un límite del IC 95 % a menos de esta tolerancia del mínimo (+mínimo; y −mínimo si es bilateral).
+# Con esa cercanía el veredicto depende del ruido de Monte Carlo (semilla): no se lee como hallazgo. No mueve ningún veredicto.
+tolerancia_limite: 0.005
+efecto_minimo:
+  diferencia_tasa: 0.05        # H-M3-1: tasa de coincidencia − línea base de azar (5 puntos porcentuales)
+  v_de_cramer: 0.10            # H-M3-1 (χ²), H-M3-4 y H-M3-6 (tablas de contingencia); se aplica a la V CORREGIDA por sesgo
+  delta_de_cliff: 0.147        # H-M3-2 y H-M3-6 (calificaciones)
+  rho_de_spearman: 0.10        # H-M3-3
+  exceso_de_gini: 0.05         # H-M3-5: Gini observado − media del Gini bajo reparto uniforme

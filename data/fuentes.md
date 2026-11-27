@@ -137,3 +137,43 @@ Parquets crudos (`data/raw/m1/rutas/`, no versionados):
 
 `TODO(cita)`: la página oficial del DANE (nomenclatura DIVIPOLA) no enlaza un archivo descargable ni su fecha de corte; se usa la
 publicación del propio DANE en datos.gov.co.
+
+## M3 — Recomendación de destinos
+
+### Conjunto principal
+| Dato | Valor |
+|---|---|
+| Conjunto | «Travel Recommendation Dataset» (la descripción lo titula «India Travel Recommender System Dataset»), Aman Mehra, usuario `amanmehra23` en Kaggle (ref. `amanmehra23/travel-recommendation-dataset`, id 4345382) |
+| URL | https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset |
+| Versión | 1 («Initial release»), creada el 2024-01-23T17:07:26.487Z; sin actualizaciones posteriores |
+| DOI | No hay |
+| Licencia | **Contradictoria** (D5, `docs/spec/partes/juanjose.md` §3.1): el campo formal de Kaggle dice «MIT»; la sección «License» de la descripción dice «CC0: Public Domain - The dataset is in the public domain and can be used without restrictions.»; la sección «Usage» dice «This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider. Remember to cite the source when using this dataset in your projects.». Los textos oficiales de MIT (https://opensource.org/license/mit) y CC0 (https://creativecommons.org/publicdomain/zero/1.0/) permiten el uso comercial; «Usage» lo restringe. Para este trabajo académico no comercial las tres permiten el uso; solo la sección «Usage» pide citar la fuente (`docs/investigacion/JJ-1_fuentes_m3.md` §3.2) |
+| Fecha de descarga | 2026-11-25 |
+| Descargó | Juan José, a mano desde la página de Kaggle con su cuenta (botón Download → `archive.zip`); sin clave de API |
+| Cita (APA 7) | Mehra, A. (2024). *Travel recommendation dataset* (Versión 1) [Conjunto de datos]. Kaggle. https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset |
+| ¿Real o sintético? | La fuente dice «generated for educational and research purposes»; no usa la palabra «synthetic». Señales medidas y conclusión (D4): `results/data/m3/eda/ficha.json` → `real_o_sintetico` |
+
+### Archivos (`data/raw/m3/`, no versionado)
+| Archivo | Bytes | SHA-256 |
+|---|---|---|
+| `archive.zip` | 34 679 | `117e3135b2fb8ff1ecb1e3a2d4b57315273f7954520567bbb5663af2912d004d` |
+| `Expanded_Destinations.csv` | 60 768 | `5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766` |
+| `Final_Updated_Expanded_Reviews.csv` | 33 710 | `bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48` |
+| `Final_Updated_Expanded_UserHistory.csv` | 24 683 | `df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b` |
+| `Final_Updated_Expanded_Users.csv` | 58 535 | `a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac` |
+
+Los 4 CSV sueltos son idénticos byte a byte a los miembros del .zip. Los mismos SHA-256 están en `configs/m3/datos.yaml`
+(`sha256_esperado`): el comando se detiene si algún archivo no coincide.
+
+### Metadatos de la fuente
+Respuestas crudas de la API pública de Kaggle (sin credenciales), consultadas el 2026-11-25 a las 23:16 UTC y guardadas en
+`docs/investigacion/JJ-1_kaggle_metadata.json`; de ahí salen la descripción, el campo formal de licencia, la fecha de la
+versión y la lista de archivos (con `columns` vacío: la fuente no documenta columnas). Verificación independiente:
+`docs/investigacion/JJ-1_verificacion_A3.md`.
+
+### Cómo regenerar
+1. Descargar `archive.zip` desde la página del conjunto en Kaggle (con sesión iniciada) y guardarlo en `data/raw/m3/`.
+2. Descomprimirlo ahí mismo (quedan los 4 CSV junto al .zip).
+3. Sin red: `.venv\Scripts\python run.py m3-datos --config configs/m3/datos.yaml`. Escribe `data/processed/m3/{destinos,usuarios,
+   interacciones}.parquet` y `results/data/m3/eda/{ficha.json,calidad.csv,diccionario.json}`. `Name`, `Email` y `ReviewText` no
+   pasan a ninguna salida (D6).

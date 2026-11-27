@@ -1,0 +1,176 @@
+{
+  "emparejamiento_preferencia_tipo": {
+    "Beaches": "Beach",
+    "Historical": "Historical",
+    "City": "City",
+    "Adventure": "Adventure",
+    "Nature": "Nature"
+  },
+  "nota_emparejamiento": "Emparejamiento léxico NUESTRO (la fuente no documenta la correspondencia entre las opciones de Preferences y los valores de Type); ver configs/m3/eda.yaml.",
+  "tipos_del_catalogo": [
+    "Adventure",
+    "Beach",
+    "City",
+    "Historical",
+    "Nature"
+  ],
+  "ids_por_tipo": {
+    "Adventure": 200,
+    "Beach": 200,
+    "City": 200,
+    "Historical": 200,
+    "Nature": 200
+  },
+  "global": {
+    "n": 1998,
+    "n_coinciden": 846,
+    "tasa": 0.42342342342342343,
+    "linea_base_exacta": 0.4,
+    "linea_base_marginal": 0.4013317621926231,
+    "diferencia_exacta": 0.023423423423423406,
+    "diferencia_marginal": 0.022091661230800308,
+    "tasa_ic95": [
+      0.4005991070633578,
+      0.44689777783692897
+    ],
+    "diferencia_exacta_ic95": [
+      0.0005991070633575374,
+      0.04689777783692871
+    ],
+    "diferencia_marginal_ic95": [
+      -0.0006962961184811926,
+      0.04542534487704986
+    ],
+    "metodo_ic": "percentiles de 2000 remuestreos de usuarios (con sus interacciones)",
+    "diferencia_exacta_ic_ajustado": {
+      "nivel": 0.995,
+      "m_familia": 10,
+      "ic": [
+        -0.009682514122881333,
+        0.05782584226410422
+      ],
+      "metodo": "percentiles de los mismos remuestreos de usuarios que el IC 95 %, con nivel 1 − alfa/m (m = tamaño de la familia confirmatoria); coherente con la multiplicidad (Bonferroni)"
+    }
+  },
+  "distribucion_marginal_de_tipos": {
+    "Adventure": 0.21121121121121122,
+    "Beach": 0.19019019019019018,
+    "City": 0.1881881881881882,
+    "Historical": 0.2042042042042042,
+    "Nature": 0.2062062062062062
+  },
+  "nulo_permutacion": {
+    "n_permutaciones": 10000,
+    "tasa_media": 0.4014209209209209,
+    "tasa_ic95": [
+      0.38038038038038036,
+      0.42242242242242245
+    ]
+  },
+  "chi2_combinacion_tipo": {
+    "chi2": 18.346011435124982,
+    "gl": 8,
+    "p_asintotico": 0.01877683226710838,
+    "residuos_estandarizados": {
+      "Adventure, Nature": {
+        "Adventure": 0.9107048941074863,
+        "Beach": -0.6469055750017583,
+        "City": -0.48891832896700876,
+        "Historical": -1.7199195973227972,
+        "Nature": 1.8947788976044984
+      },
+      "Beaches, Historical": {
+        "Adventure": 0.6389671816057766,
+        "Beach": 0.4697352870903233,
+        "City": 0.2749449120671008,
+        "Historical": 2.377141123345445,
+        "Nature": -3.7344631575771925
+      },
+      "City, Historical": {
+        "Adventure": -1.55799083522007,
+        "Beach": 0.1731003769581018,
+        "City": 0.21176257681651184,
+        "Historical": -0.6802322169964238,
+        "Nature": 1.877088134846421
+      }
+    },
+    "residuos_de_pearson": {
+      "Adventure, Nature": {
+        "Adventure": 0.6621411544227951,
+        "Beach": -0.47656808737084544,
+        "City": -0.36062559604549294,
+        "Historical": -1.2560343359779587,
+        "Nature": 1.3819901109827457
+      },
+      "Beaches, Historical": {
+        "Adventure": 0.4602129741369784,
+        "Beach": 0.34280302333085066,
+        "City": 0.20089693502757947,
+        "Historical": 1.7197120171138265,
+        "Nature": -2.6982486563555166
+      },
+      "City, Historical": {
+        "Adventure": -1.1344504393780241,
+        "Beach": 0.12771143792355946,
+        "City": 0.1564289608753371,
+        "Historical": -0.4975059528810159,
+        "Nature": 1.3711304585542106
+      }
+    },
+    "definicion_residuo": "estandarizado ajustado = (O − E) / sqrt(E·(1 − fila/n)·(1 − columna/n)); de Pearson = (O − E) / sqrt(E); |residuo| > 2 llama la atención. El ajustado es mayor en valor absoluto",
+    "residuo_maximo_absoluto": {
+      "combinacion": "Beaches, Historical",
+      "tipo": "Nature",
+      "valor": -3.7344631575771925,
+      "valor_de_pearson": -2.6982486563555166
+    },
+    "aporte": {
+      "celdas_coincidentes": 5.695233102797517,
+      "celdas_no_coincidentes": 12.650778332327468,
+      "n_celdas_coincidentes": 6,
+      "n_celdas_no_coincidentes": 9,
+      "definicion": "suma de (O − E)²/E en las celdas cuyo tipo está cubierto por la combinación frente a las demás; suman el χ²"
+    }
+  },
+  "por_combinacion": {
+    "Adventure, Nature": {
+      "n": 659,
+      "n_usuarios": 333,
+      "n_usuarios_con_interacciones": 286,
+      "tipos_cubiertos": [
+        "Adventure",
+        "Nature"
+      ],
+      "tasa": 0.4537177541729894,
+      "linea_base_exacta": 0.39999999999999997,
+      "linea_base_marginal": 0.4174174174174174,
+      "diferencia_exacta": 0.05371775417298941
+    },
+    "Beaches, Historical": {
+      "n": 684,
+      "n_usuarios": 333,
+      "n_usuarios_con_interacciones": 286,
+      "tipos_cubiertos": [
+        "Beach",
+        "Historical"
+      ],
+      "tasa": 0.4298245614035088,
+      "linea_base_exacta": 0.39999999999999997,
+      "linea_base_marginal": 0.3943943943943944,
+      "diferencia_exacta": 0.02982456140350881
+    },
+    "City, Historical": {
+      "n": 655,
+      "n_usuarios": 333,
+      "n_usuarios_con_interacciones": 286,
+      "tipos_cubiertos": [
+        "City",
+        "Historical"
+      ],
+      "tasa": 0.38625954198473283,
+      "linea_base_exacta": 0.3999999999999999,
+      "linea_base_marginal": 0.39239239239239243,
+      "diferencia_exacta": -0.013740458015267076
+    }
+  }
+}

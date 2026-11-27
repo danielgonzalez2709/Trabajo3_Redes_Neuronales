@@ -1,0 +1,99 @@
+{
+  "umbral": {
+    "pocas_max": 2,
+    "regla": "pocas = 1 a 2 interacciones; muchas = 3 o más; sin_interacciones = 0 (no evaluable)",
+    "justificacion": "Con la partición D3 (prueba = 1 interacción de cada usuario con >= 2; validación = 1 más con >= 3; el resto, entrenamiento) los usuarios con 1 o 2 interacciones aportan a lo sumo una interacción de prueba y ninguna de validación; los de 3 o más aportan además validación. Umbral PROPUESTO por esta tarea: Juan José debe confirmarlo. Los usuarios con exactamente 3 interacciones también quedan con una sola de entrenamiento: `sensibilidad_umbral` muestra qué pasa con otros umbrales."
+  },
+  "grupos": {
+    "sin_interacciones": {
+      "n_usuarios": 141,
+      "proporcion_de_maestros": 0.14114114114114115,
+      "n_interacciones": 0,
+      "media_interacciones": 0.0
+    },
+    "pocas": {
+      "n_usuarios": 532,
+      "proporcion_de_maestros": 0.5325325325325325,
+      "n_interacciones": 812,
+      "media_interacciones": 1.5263157894736843
+    },
+    "muchas": {
+      "n_usuarios": 326,
+      "proporcion_de_maestros": 0.3263263263263263,
+      "n_interacciones": 1186,
+      "media_interacciones": 3.638036809815951
+    }
+  },
+  "particion_d3": {
+    "pocas": {
+      "usuarios_con_prueba": 280,
+      "usuarios_con_validacion": 0,
+      "usuarios_solo_entrenamiento": 252,
+      "interacciones": {
+        "entrenamiento": 532,
+        "validacion": 0,
+        "prueba": 280
+      },
+      "entrenamiento_por_usuario": {
+        "min": 1,
+        "media": 1.0,
+        "max": 1
+      }
+    },
+    "muchas": {
+      "usuarios_con_prueba": 326,
+      "usuarios_con_validacion": 326,
+      "usuarios_solo_entrenamiento": 0,
+      "interacciones": {
+        "entrenamiento": 534,
+        "validacion": 326,
+        "prueba": 326
+      },
+      "entrenamiento_por_usuario": {
+        "min": 1,
+        "media": 1.638036809815951,
+        "max": 5
+      }
+    },
+    "regla": "D3 (docs/spec/partes/juanjose.md §3.1): prueba = 1 interacción al azar de cada usuario con >= 2; validación = 1 más de cada usuario con >= 3; el resto, entrenamiento; con 1 solo entrenamiento. Esto solo CUENTA; la partición real es de JJ-3.",
+    "total": {
+      "entrenamiento": 1066,
+      "validacion": 326,
+      "prueba": 606
+    }
+  },
+  "proporcion_pocas": {
+    "sobre_usuarios_maestros": 0.5325325325325325,
+    "sobre_usuarios_que_aparecen": 0.62004662004662
+  },
+  "sensibilidad_umbral": [
+    {
+      "pocas_max": 1,
+      "n_pocas": 252,
+      "n_muchas": 606,
+      "proporcion_sobre_maestros": 0.25225225225225223,
+      "proporcion_sobre_los_que_aparecen": 0.2937062937062937
+    },
+    {
+      "pocas_max": 2,
+      "n_pocas": 532,
+      "n_muchas": 326,
+      "proporcion_sobre_maestros": 0.5325325325325325,
+      "proporcion_sobre_los_que_aparecen": 0.62004662004662
+    },
+    {
+      "pocas_max": 3,
+      "n_pocas": 727,
+      "n_muchas": 131,
+      "proporcion_sobre_maestros": 0.7277277277277278,
+      "proporcion_sobre_los_que_aparecen": 0.8473193473193473
+    },
+    {
+      "pocas_max": 4,
+      "n_pocas": 806,
+      "n_muchas": 52,
+      "proporcion_sobre_maestros": 0.8068068068068068,
+      "proporcion_sobre_los_que_aparecen": 0.9393939393939394
+    }
+  ]
+}

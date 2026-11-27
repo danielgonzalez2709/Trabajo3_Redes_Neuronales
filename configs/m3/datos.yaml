@@ -1,0 +1,107 @@
+# M3 — datos procesados (JJ-1, fase B), secciones 1–2 de la plantilla común (núcleo §5.12) y partición (JJ-3).
+# Uso: .venv\Scripts\python run.py m3-datos --config configs/m3/datos.yaml
+# Lo único aleatorio es la partición (bloque `particion`, semilla fija; src/comun/seeds.py). Sin red: lee data/raw/m3/
+# (descarga manual desde Kaggle; ver data/fuentes.md).
+# Decisiones D1–D6 [DECIDIDO, Juan José, 25-nov] (D7 es de proceso): docs/spec/partes/juanjose.md §3.1. Cifras de
+# referencia de la fase A: docs/investigacion/JJ-1_fuentes_m3.md. Toda cifra de las salidas la calcula src/m3_recomendacion/datos.py.
+
+entrada:
+  carpeta: data/raw/m3                      # no se versiona (data/fuentes.md dice cómo regenerarlo)
+  destinos: Expanded_Destinations.csv
+  resenas: Final_Updated_Expanded_Reviews.csv
+  historial: Final_Updated_Expanded_UserHistory.csv
+  usuarios: Final_Updated_Expanded_Users.csv
+  zip: archive.zip
+  metadatos_fuente: docs/investigacion/JJ-1_kaggle_metadata.json   # respuestas crudas de la API de Kaggle (2026-11-25, 23:16 UTC)
+
+# SHA-256 de los bytes en disco (docs/investigacion/JJ-1_fuentes_m3.md §1). Si un archivo no coincide, no se escribe nada.
+sha256_esperado:
+  archive.zip: 117e3135b2fb8ff1ecb1e3a2d4b57315273f7954520567bbb5663af2912d004d
+  Expanded_Destinations.csv: 5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766
+  Final_Updated_Expanded_Reviews.csv: bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48
+  Final_Updated_Expanded_UserHistory.csv: df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b
+  Final_Updated_Expanded_Users.csv: a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac
+
+fuente:
+  nombre: Travel Recommendation Dataset      # la descripción lo titula «India Travel Recommender System Dataset»
+  autor: Aman Mehra
+  usuario_kaggle: amanmehra23
+  ref: amanmehra23/travel-recommendation-dataset
+  url: https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset
+  version: 1
+  fecha_creacion_version: "2024-01-23T17:07:26.487Z"   # debe coincidir con versions[0].creationDate del JSON
+  fecha_descarga: "2026-11-25"
+  descargo: Juan José, a mano desde la página de Kaggle con su cuenta (botón Download → archive.zip)
+  cita: >-
+    Mehra, A. (2024). Travel recommendation dataset (Versión 1) [Conjunto de datos]. Kaggle.
+    https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset
+
+# Fragmentos de info.description que usan la ficha y el diccionario, copiados de docs/investigacion/JJ-1_kaggle_metadata.json.
+# El código comprueba que cada uno es subcadena EXACTA de la descripción leída del JSON y falla si no lo es.
+# Las claves generado, diversidad_de_genero, uso y licencia son obligatorias (las lee el código).
+citas_literales:
+  generado: generated for educational and research purposes          # sección «Acknowledgements» (D4)
+  diversidad_de_genero: enriched with gender diversity               # componente «Users» (D4)
+  uso: >-
+    This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider.
+    Remember to cite the source when using this dataset in your projects.
+  licencia: "CC0: Public Domain - The dataset is in the public domain and can be used without restrictions."
+
+# Archivo → fragmento de la descripción del componente. La correspondencia archivo ↔ componente es INFERENCIA nuestra:
+# la fuente no nombra los archivos ni las columnas.
+componentes:
+  Expanded_Destinations.csv: >-
+    Information about various travel destinations in India, including details like type of destination (beach, mountain,
+    historical site, etc.), popularity, and best time to visit.
+  Final_Updated_Expanded_Reviews.csv: >-
+    User-generated reviews and ratings for the different destinations, offering insights into visitor experiences and
+    satisfaction.
+  Final_Updated_Expanded_UserHistory.csv: >-
+    Records of users' past travel experiences, including destinations visited and ratings provided.
+  Final_Updated_Expanded_Users.csv: >-
+    Profiles of users including their preferences and demographic information. This dataset has been enriched with gender
+    diversity and includes details on the number of adults and children for travel.
+
+# D4: sin cifras dentro del texto (las mide el código y quedan en real_o_sintetico.senales_medidas).
+# La fecha de referencia de VisitDate es la creación de la versión 1 en Kaggle (versions[0].creationDate).
+conclusion_real_o_sintetico: >-
+  Datos generados, no observados: la fuente dice que el conjunto fue «generated» con fines educativos y de investigación
+  (no usa la palabra «synthetic» ni dice con qué método) y las señales medidas en los datos (catálogo de lugares repetidos,
+  textos de reseña plantilla, fechas periódicas y posteriores a la creación de la versión 1 en Kaggle, nombres repetidos,
+  preferencias periódicas en el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el
+  comportamiento real de turistas.
+
+ficha:
+  tope_usuarios_por_interacciones: 5      # usuarios por número de interacciones: 0, 1, …, tope-1 y «tope+» (5+)
+  k_max_periodicidad: 10                  # se busca el menor k ≤ este valor tal que la columna es función exacta de id mod k
+  palabra_sintetico: synthetic            # se busca (sin distinguir mayúsculas) en la descripción y los nombres de archivo
+  tipo_mencionado_sin_datos: mountain     # tipo de destino citado en la descripción («beach, mountain, historical site, etc.»)
+
+# Partición sin fuga (JJ-3; D3, D8, D9 y D10 de docs/spec/partes/juanjose.md §3.1). Regla D3, por usuario (no por tiempo:
+# fecha_visita no es una fecha real): prueba = 1 interacción al azar de cada usuario con >= 2; validación = 1 más al azar de
+# cada usuario con >= 3; el resto, train; los usuarios con 1 interacción quedan solo en train. Queda en la columna `split`
+# (train | validacion | prueba) de interacciones.parquet: UNA sola partición para todos los modelos de M3, con su SHA-256 y
+# el de su huella en salida.particion/resumen.json. Azar: make_rng(semilla, 0) (semilla efectiva = semilla + 0).
+#
+# Demo en vivo (cambiar la semilla SIN tocar lo versionado): redirigir las tres salidas a results/data/m3_demo/, que
+# .gitignore excluye (results/data/*_demo/):
+#   .venv\Scripts\python run.py m3-datos --config configs/m3/datos.yaml --set particion.semilla=7
+#       --set salida.carpeta=results/data/m3_demo/processed --set salida.eda=results/data/m3_demo/eda
+#       --set salida.particion=results/data/m3_demo/particion
+# (una sola línea al escribirla). Cambian la huella y qué interacción va a cada split; los conteos por split y por usuario no.
+# Sin redirigir, --set particion.semilla=… PISA data/processed/m3/interacciones.parquet y results/data/m3/particion/
+# resumen.json versionados, y las pruebas con datos reales de tests/test_fuga_m3.py fallan hasta volver a la semilla de aquí.
+particion:
+  semilla: 2026                    # fija; cambiarla cambia qué interacción va a cada split, no cuántas (ni por usuario)
+  # Umbral de los grupos de actividad para el reporte por grupos (pocas = 1..umbral, muchas > umbral; total de
+  # interacciones del usuario). Debe ser igual a actividad.pocas_max de configs/m3/eda.yaml (lo comprueba
+  # tests/test_fuga_m3.py): umbral de JJ-2 [PROPUESTO, a confirmar por Juan José]. Solo estratifica; no es variable de modelos.
+  umbral_pocas_max: 2
+
+salida:
+  carpeta: data/processed/m3
+  destinos: destinos.parquet
+  usuarios: usuarios.parquet
+  interacciones: interacciones.parquet
+  eda: results/data/m3/eda
+  particion: results/data/m3/particion   # resumen.json (conteos, diagnósticos, SHA-256 del parquet y de la huella)

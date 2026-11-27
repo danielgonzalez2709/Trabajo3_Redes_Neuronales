@@ -1,0 +1,16 @@
+combinacion,tipo,conteo,proporcion_fila,n_interacciones_fila,n_usuarios_fila,coincide,linea_base_fila
+"Adventure, Nature",Adventure,147,0.22306525037936267,659,333,True,0.4
+"Adventure, Nature",Beach,120,0.18209408194233687,659,333,False,0.4
+"Adventure, Nature",City,120,0.18209408194233687,659,333,False,0.4
+"Adventure, Nature",Historical,120,0.18209408194233687,659,333,False,0.4
+"Adventure, Nature",Nature,152,0.2306525037936267,659,333,True,0.4
+"Beaches, Historical",Adventure,150,0.21929824561403508,684,333,False,0.4
+"Beaches, Historical",Beach,134,0.195906432748538,684,333,True,0.4
+"Beaches, Historical",City,131,0.1915204678362573,684,333,False,0.4
+"Beaches, Historical",Historical,160,0.23391812865497075,684,333,True,0.4
+"Beaches, Historical",Nature,109,0.15935672514619884,684,333,False,0.4
+"City, Historical",Adventure,125,0.19083969465648856,655,333,False,0.4
+"City, Historical",Beach,126,0.19236641221374046,655,333,False,0.4
+"City, Historical",City,125,0.19083969465648856,655,333,True,0.4
+"City, Historical",Historical,128,0.19541984732824427,655,333,True,0.4
+"City, Historical",Nature,151,0.23053435114503817,655,333,False,0.4

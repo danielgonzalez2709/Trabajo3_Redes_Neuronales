@@ -1,0 +1,7 @@
+Campo formal de licencia: ['MIT']
+
+Sección «Usage»: 'This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider. Remember to cite the source when using this dataset in your projects.'
+  pide citar/atribuir: True -> ['cite']
+
+Sección «License»: 'CC0: Public Domain - The dataset is in the public domain and can be used without restrictions.'
+  pide citar/atribuir: False -> []

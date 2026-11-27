@@ -1,0 +1,682 @@
+# JJ-1 A1 - Inventario medido del conjunto Travel Recommendation Dataset (data/raw/m3/)
+Generado por docs/investigacion/JJ-1_inventario.py; solo archivos locales; sin aleatoriedad.
+
+## A1.1 Archivos
+
+Ruta (relativa a la raiz): data/raw/m3/ ; SHA-256 de los bytes tal como estan en disco.
+Entorno: Python 3.12.6, pandas 3.1.1, numpy 2.5.5, scipy 1.18.1
+
+- archive.zip: 34679 bytes, sha256=117e3135b2fb8ff1ecb1e3a2d4b57315273f7954520567bbb5663af2912d004d
+- Expanded_Destinations.csv: 60768 bytes, sha256=5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766
+- Final_Updated_Expanded_Reviews.csv: 33710 bytes, sha256=bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48
+- Final_Updated_Expanded_UserHistory.csv: 24683 bytes, sha256=df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b
+- Final_Updated_Expanded_Users.csv: 58535 bytes, sha256=a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac
+Archivos que no son .zip ni .csv en la carpeta: ninguno
+
+Miembros de archive.zip (leidos en memoria, sin extraer):
+  testzip (CRC): sin errores
+  Expanded_Destinations.csv: tamano=60768 (comprimido 13749), sha256=5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766; CSV suelto IDENTICO byte a byte
+  Final_Updated_Expanded_Reviews.csv: tamano=33710 (comprimido 7480), sha256=bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48; CSV suelto IDENTICO byte a byte
+  Final_Updated_Expanded_UserHistory.csv: tamano=24683 (comprimido 7490), sha256=df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b; CSV suelto IDENTICO byte a byte
+  Final_Updated_Expanded_Users.csv: tamano=58535 (comprimido 5216), sha256=a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac; CSV suelto IDENTICO byte a byte
+  CSV sueltos que no estan en el .zip: ninguno
+
+Codificacion, fin de linea y filas (csv de la biblioteca estandar vs pandas):
+- Expanded_Destinations.csv: utf-8 estricto valido; BOM=no; caracteres no ASCII=0; fin de linea CRLF=0, LF solo=1001, CR solo=0; termina en salto de linea=True
+    filas de datos con csv estandar=1000; con pandas=1000; coinciden; numero de campos por fila (valores distintos)=[6]; lineas vacias ignoradas=0
+- Final_Updated_Expanded_Reviews.csv: utf-8 estricto valido; BOM=no; caracteres no ASCII=0; fin de linea CRLF=0, LF solo=1000, CR solo=0; termina en salto de linea=True
+    filas de datos con csv estandar=999; con pandas=999; coinciden; numero de campos por fila (valores distintos)=[5]; lineas vacias ignoradas=0
+- Final_Updated_Expanded_UserHistory.csv: utf-8 estricto valido; BOM=no; caracteres no ASCII=0; fin de linea CRLF=0, LF solo=1000, CR solo=0; termina en salto de linea=True
+    filas de datos con csv estandar=999; con pandas=999; coinciden; numero de campos por fila (valores distintos)=[5]; lineas vacias ignoradas=0
+- Final_Updated_Expanded_Users.csv: utf-8 estricto valido; BOM=no; caracteres no ASCII=0; fin de linea CRLF=0, LF solo=1000, CR solo=0; termina en salto de linea=True
+    filas de datos con csv estandar=999; con pandas=999; coinciden; numero de campos por fila (valores distintos)=[7]; lineas vacias ignoradas=0
+
+Roles detectados por nombre de columna (no por significado): Destinations=destinos; Reviews=interaccion; UserHistory=interaccion; Users=usuarios
+
+## A1.2 Estructura por archivo
+
+### Destinations (Expanded_Destinations.csv): 1000 filas x 6 columnas
+  - DestinationID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=1000; ejemplos=[1, 2, 3]
+  - Name: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=5; ejemplos=['Taj Mahal', 'Goa Beaches', 'Jaipur City']
+  - State: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=5; ejemplos=['Uttar Pradesh', 'Goa', 'Rajasthan']
+  - Type: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=5; ejemplos=['Historical', 'Beach', 'City']
+  - Popularity: dtype pandas=float64; tipo inferido=decimal; faltantes=0; valores unicos=1000; ejemplos=[8.691906258695031, 8.605031858363876, 9.225372007612826]
+  - BestTimeToVisit: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=5; ejemplos=['Nov-Feb', 'Nov-Mar', 'Oct-Mar']
+  Filas duplicadas exactas: 0
+  La primera columna (DestinationID) es un contador 1..1000 sin huecos y en orden: SI (medido).
+  Filas duplicadas ignorando DestinationID: 0 (filas sobrantes; filas distintas sin ella: 1000)
+
+### Reviews (Final_Updated_Expanded_Reviews.csv): 999 filas x 5 columnas
+  - ReviewID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=999; ejemplos=[1, 2, 3]
+  - DestinationID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=651; ejemplos=[178, 411, 927]
+  - UserID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=624; ejemplos=[327, 783, 12]
+  - Rating: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=5; ejemplos=[2, 1, 3]
+  - ReviewText: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=3; ejemplos=['Incredible monument!', 'Loved the beaches!', 'A historical wonder']
+  Filas duplicadas exactas: 0
+  La primera columna (ReviewID) es un contador 1..999 sin huecos y en orden: SI (medido).
+  Filas duplicadas ignorando ReviewID: 0 (filas sobrantes; filas distintas sin ella: 999)
+
+### UserHistory (Final_Updated_Expanded_UserHistory.csv): 999 filas x 5 columnas
+  - HistoryID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=999; ejemplos=[1, 2, 3]
+  - UserID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=642; ejemplos=[525, 184, 897]
+  - DestinationID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=638; ejemplos=[760, 532, 786]
+  - VisitDate: dtype pandas=str; tipo inferido=texto (todos con forma AAAA-MM-DD); faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=3; ejemplos=['2024-01-01', '2024-02-15', '2024-03-20']
+  - ExperienceRating: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=5; ejemplos=[3, 5, 2]
+  Filas duplicadas exactas: 0
+  La primera columna (HistoryID) es un contador 1..999 sin huecos y en orden: SI (medido).
+  Filas duplicadas ignorando HistoryID: 0 (filas sobrantes; filas distintas sin ella: 999)
+
+### Users (Final_Updated_Expanded_Users.csv): 999 filas x 7 columnas
+  - UserID: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=999; ejemplos=[1, 2, 3]
+  - Name: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=20; ejemplos=['Kavya', 'Rohan', 'Anika']
+  - Email: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=20; ejemplos=['kavya@example.com', 'rohan@example.com', 'anika@example.com']
+  - Preferences: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=3; ejemplos=['Beaches, Historical', 'Nature, Adventure', 'City, Historical']
+  - Gender: dtype pandas=str; tipo inferido=texto; faltantes=0, cadenas vacias=0, con espacios en los extremos=0; valores unicos=2; ejemplos=['Female', 'Male']
+  - NumberOfAdults: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=2; ejemplos=[1, 2]
+  - NumberOfChildren: dtype pandas=int64; tipo inferido=entero; faltantes=0; valores unicos=3; ejemplos=[0, 2, 1]
+  Filas duplicadas exactas: 0
+  La primera columna (UserID) es un contador 1..999 sin huecos y en orden: SI (medido).
+  Filas duplicadas ignorando UserID: 657 (filas sobrantes; filas distintas sin ella: 342)
+
+
+## A1.3 Claves e integridad referencial
+
+Columnas candidatas a id (por nombre): usuario ~ '^user.?id$', destino ~ '^destination.?id$'; otras terminadas en 'ID' = id de fila.
+- Destinations.DestinationID: entero=True; n=1000; unicos=1000; unica=True; rango=[1, 1000]; huecos en el rango=0
+- Reviews.ReviewID: entero=True; n=999; unicos=999; unica=True; rango=[1, 999]; huecos en el rango=0
+- Reviews.DestinationID: entero=True; n=999; unicos=651; unica=False; rango=[1, 1000]; huecos en el rango=349 (primeros: [3, 6, 7, 16, 18, 19, 21, 22, 26, 30])
+- Reviews.UserID: entero=True; n=999; unicos=624; unica=False; rango=[2, 999]; huecos en el rango=374 (primeros: [3, 7, 8, 9, 11, 13, 17, 18, 19, 22])
+- UserHistory.HistoryID: entero=True; n=999; unicos=999; unica=True; rango=[1, 999]; huecos en el rango=0
+- UserHistory.UserID: entero=True; n=999; unicos=642; unica=False; rango=[1, 999]; huecos en el rango=357 (primeros: [4, 6, 10, 12, 14, 19, 22, 25, 28, 31])
+- UserHistory.DestinationID: entero=True; n=999; unicos=638; unica=False; rango=[2, 1000]; huecos en el rango=361 (primeros: [12, 13, 15, 18, 23, 26, 28, 31, 32, 34])
+- Users.UserID: entero=True; n=999; unicos=999; unica=True; rango=[1, 999]; huecos en el rango=0
+
+Tabla maestra de usuarios: Users.UserID (unica: True); tabla maestra de destinos: Destinations.DestinationID (unica: True)
+
+Integridad referencial (identificadores de las interacciones que no estan en la tabla maestra):
+- Reviews.UserID (usuario): filas sin maestro=0; identificadores distintos sin maestro=0; identificadores distintos usados=624; rango usado=[2, 999]
+- Reviews.DestinationID (destino): filas sin maestro=0; identificadores distintos sin maestro=0; identificadores distintos usados=651; rango usado=[1, 1000]
+- UserHistory.UserID (usuario): filas sin maestro=0; identificadores distintos sin maestro=0; identificadores distintos usados=642; rango usado=[1, 999]
+- UserHistory.DestinationID (destino): filas sin maestro=0; identificadores distintos sin maestro=0; identificadores distintos usados=638; rango usado=[2, 1000]
+
+Maestro que no aparece en cada interaccion se mide en A1.5.
+
+## A1.4 Calificaciones y puntajes (escala medida)
+
+Cuartiles con interpolacion lineal (numpy.percentile).
+### Reviews.Rating: minimo=1, maximo=5, valores distintos=5 -> [1, 2, 3, 4, 5]; faltantes=0
+  Frecuencia por valor:
+    1: 198 (19.82%)
+    2: 199 (19.92%)
+    3: 185 (18.52%)
+    4: 216 (21.62%)
+    5: 201 (20.12%)
+  Resumen: min=1.0000, q1=2.0000, mediana=3.0000, q3=4.0000, max=5.0000, media=3.0230, unicos=5
+### UserHistory.ExperienceRating: minimo=1, maximo=5, valores distintos=5 -> [1, 2, 3, 4, 5]; faltantes=0
+  Frecuencia por valor:
+    1: 206 (20.62%)
+    2: 228 (22.82%)
+    3: 201 (20.12%)
+    4: 183 (18.32%)
+    5: 181 (18.12%)
+  Resumen: min=1.0000, q1=2.0000, mediana=3.0000, q3=4.0000, max=5.0000, media=2.9049, unicos=5
+
+### Destinations.Popularity (numerica): min=7.5045, q1=8.0345, mediana=8.4965, q3=9.0208, max=9.4998, media=8.5139, unicos=1000; faltantes=0
+
+Otras columnas numericas enteras de las tablas maestras (no son calificaciones por nombre; se reportan por completitud):
+- Users.NumberOfAdults: min=1.0000, q1=1.0000, mediana=2.0000, q3=2.0000, max=2.0000, media=1.5045, unicos=2
+    1: 495 (49.55%)
+    2: 504 (50.45%)
+- Users.NumberOfChildren: min=0.0000, q1=0.0000, mediana=1.0000, q3=2.0000, max=2.0000, media=0.9820, unicos=3
+    0: 338 (33.83%)
+    1: 341 (34.13%)
+    2: 320 (32.03%)
+
+## A1.5 Interacciones por archivo (Reviews y UserHistory por separado)
+
+### Reviews: 999 filas
+  Pares (usuario, destino) distintos: 999
+  Pares repetidos (aparecen > 1 vez): 0; filas sobrantes por repeticion: 0; max repeticiones de un par=1
+  Interacciones (filas) por usuario:
+    aparecen=624 (de ellos en la maestra=624); maestra que NO aparece=375
+    solo los que aparecen: min=1, mediana=1.0000, media=1.6010, max=5
+    exactamente 1/2/3/4 y >=5: 1=355, 2=190, 3=58, 4=15, >=5=6
+    contando 0 a la maestra que no aparece (n=999): min=0, mediana=1.0000, media=1.0000, max=5; con 0=375, 1=355, 2=190, 3=58, 4=15, >=5=6
+  Pares distintos por usuario:
+    aparecen=624 (de ellos en la maestra=624); maestra que NO aparece=375
+    solo los que aparecen: min=1, mediana=1.0000, media=1.6010, max=5
+    exactamente 1/2/3/4 y >=5: 1=355, 2=190, 3=58, 4=15, >=5=6
+    contando 0 a la maestra que no aparece (n=999): min=0, mediana=1.0000, media=1.0000, max=5; con 0=375, 1=355, 2=190, 3=58, 4=15, >=5=6
+  Interacciones (filas) por destino:
+    aparecen=651 (de ellos en la maestra=651); maestra que NO aparece=349
+    solo los que aparecen: min=1, mediana=1.0000, media=1.5346, max=5
+    exactamente 1/2/3/4 y >=5: 1=396, 2=178, 3=62, 4=14, >=5=1
+    contando 0 a la maestra que no aparece (n=1000): min=0, mediana=1.0000, media=0.9990, max=5; con 0=349, 1=396, 2=178, 3=62, 4=14, >=5=1
+  Pares distintos por destino:
+    aparecen=651 (de ellos en la maestra=651); maestra que NO aparece=349
+    solo los que aparecen: min=1, mediana=1.0000, media=1.5346, max=5
+    exactamente 1/2/3/4 y >=5: 1=396, 2=178, 3=62, 4=14, >=5=1
+    contando 0 a la maestra que no aparece (n=1000): min=0, mediana=1.0000, media=0.9990, max=5; con 0=349, 1=396, 2=178, 3=62, 4=14, >=5=1
+  Densidad = pares distintos / (usuarios x destinos):
+    (a) maestras: 999 / (999 x 1000) = 0.001000 (0.1000%)
+    (b) que aparecen: 999 / (624 x 651) = 0.002459 (0.2459%)
+
+### UserHistory: 999 filas
+  Pares (usuario, destino) distintos: 999
+  Pares repetidos (aparecen > 1 vez): 0; filas sobrantes por repeticion: 0; max repeticiones de un par=1
+  Interacciones (filas) por usuario:
+    aparecen=642 (de ellos en la maestra=642); maestra que NO aparece=357
+    solo los que aparecen: min=1, mediana=1.0000, media=1.5561, max=6
+    exactamente 1/2/3/4 y >=5: 1=384, 2=180, 3=60, 4=16, >=5=2
+    contando 0 a la maestra que no aparece (n=999): min=0, mediana=1.0000, media=1.0000, max=6; con 0=357, 1=384, 2=180, 3=60, 4=16, >=5=2
+  Pares distintos por usuario:
+    aparecen=642 (de ellos en la maestra=642); maestra que NO aparece=357
+    solo los que aparecen: min=1, mediana=1.0000, media=1.5561, max=6
+    exactamente 1/2/3/4 y >=5: 1=384, 2=180, 3=60, 4=16, >=5=2
+    contando 0 a la maestra que no aparece (n=999): min=0, mediana=1.0000, media=1.0000, max=6; con 0=357, 1=384, 2=180, 3=60, 4=16, >=5=2
+  Interacciones (filas) por destino:
+    aparecen=638 (de ellos en la maestra=638); maestra que NO aparece=362
+    solo los que aparecen: min=1, mediana=1.0000, media=1.5658, max=6
+    exactamente 1/2/3/4 y >=5: 1=383, 2=177, 3=56, 4=17, >=5=5
+    contando 0 a la maestra que no aparece (n=1000): min=0, mediana=1.0000, media=0.9990, max=6; con 0=362, 1=383, 2=177, 3=56, 4=17, >=5=5
+  Pares distintos por destino:
+    aparecen=638 (de ellos en la maestra=638); maestra que NO aparece=362
+    solo los que aparecen: min=1, mediana=1.0000, media=1.5658, max=6
+    exactamente 1/2/3/4 y >=5: 1=383, 2=177, 3=56, 4=17, >=5=5
+    contando 0 a la maestra que no aparece (n=1000): min=0, mediana=1.0000, media=0.9990, max=6; con 0=362, 1=383, 2=177, 3=56, 4=17, >=5=5
+  Densidad = pares distintos / (usuarios x destinos):
+    (a) maestras: 999 / (999 x 1000) = 0.001000 (0.1000%)
+    (b) que aparecen: 999 / (642 x 638) = 0.002439 (0.2439%)
+
+
+## A1.6 Solapamiento Reviews vs. UserHistory
+
+Pares en ambos: 0; solo en Reviews: 999; solo en UserHistory: 999; union: 1998
+Usuarios en ambos archivos: 408 (solo Reviews 216, solo UserHistory 234); destinos en ambos: 423 (solo Reviews 228, solo UserHistory 215)
+Filas del cruce (fila de Reviews x fila de UserHistory) en pares comunes: 0
+  No hay pares en comun: no hay calificaciones que comparar.
+
+## A1.7 Opciones de 'interaccion' (solo medidas; no se elige ninguna)
+
+### (i) solo Reviews
+  pares distintos=999; usuarios que aparecen=624; destinos que aparecen=651
+  densidad (a) maestras 999/(999x1000)=0.001000; (b) que aparecen 999/(624x651)=0.002459
+  pares por usuario (solo los que aparecen): min=1, mediana=1.0000, media=1.6010, max=5
+  usuarios que aparecen con < 2: 355; < 3: 545; < 5: 618
+  contando 0 a los 375 usuarios maestros que no aparecen: con < 2: 730; < 3: 920; < 5: 993 (de 999); min=0, mediana=1.0000, media=1.0000, max=5
+  pares por destino (solo los que aparecen): min=1, mediana=1.0000, media=1.5346, max=5
+
+### (ii) solo UserHistory
+  pares distintos=999; usuarios que aparecen=642; destinos que aparecen=638
+  densidad (a) maestras 999/(999x1000)=0.001000; (b) que aparecen 999/(642x638)=0.002439
+  pares por usuario (solo los que aparecen): min=1, mediana=1.0000, media=1.5561, max=6
+  usuarios que aparecen con < 2: 384; < 3: 564; < 5: 640
+  contando 0 a los 357 usuarios maestros que no aparecen: con < 2: 741; < 3: 921; < 5: 997 (de 999); min=0, mediana=1.0000, media=1.0000, max=6
+  pares por destino (solo los que aparecen): min=1, mediana=1.0000, media=1.5658, max=6
+
+### (iii) union de pares
+  pares distintos=1998; usuarios que aparecen=858; destinos que aparecen=866
+  densidad (a) maestras 1998/(999x1000)=0.002000; (b) que aparecen 1998/(858x866)=0.002689
+  pares por usuario (solo los que aparecen): min=1, mediana=2.0000, media=2.3287, max=7
+  usuarios que aparecen con < 2: 252; < 3: 532; < 5: 806
+  contando 0 a los 141 usuarios maestros que no aparecen: con < 2: 393; < 3: 673; < 5: 947 (de 999); min=0, mediana=2.0000, media=2.0000, max=7
+  pares por destino (solo los que aparecen): min=1, mediana=2.0000, media=2.3072, max=7
+
+### (iv) interseccion de pares
+  pares distintos=0; usuarios que aparecen=0; destinos que aparecen=0
+  densidad (a) maestras 0/(999x1000)=0.000000; (b) que aparecen 0/(0x0)=nan
+
+
+## A1.8 Fechas y horas
+
+Columnas candidatas (por nombre o porque >50% de sus valores tiene forma AAAA-MM-DD):
+- Destinations.BestTimeToVisit (por nombre=True, por forma de valor=False)
+- UserHistory.VisitDate (por nombre=True, por forma de valor=True)
+
+### Destinations.BestTimeToVisit: dtype=str; faltantes=0; valores distintos=5
+  parsean como AAAA-MM-DD: 0 de 1000; con analisis flexible (pandas 'mixed'): 0 de 1000
+  frecuencia de cada valor:
+    'Apr-Jun': 200 (20.00%)
+    'Nov-Feb': 200 (20.00%)
+    'Nov-Mar': 200 (20.00%)
+    'Oct-Mar': 200 (20.00%)
+    'Sep-Mar': 200 (20.00%)
+  primeros 12 valores en el orden del archivo: ['Nov-Feb', 'Nov-Mar', 'Oct-Mar', 'Sep-Mar', 'Apr-Jun', 'Nov-Feb', 'Nov-Mar', 'Oct-Mar', 'Sep-Mar', 'Apr-Jun', 'Nov-Feb', 'Nov-Mar']
+  Patron periodico contra DestinationID (pureza = fraccion de filas cuyo valor es el valor mas frecuente de su clase DestinationID mod k):
+    k=1:0.200, k=2:0.200, k=3:0.201, k=4:0.200, k=5:1.000, k=6:0.204, k=7:0.203, k=8:0.200, k=9:0.207, k=10:1.000, k=11:0.208, k=12:0.204
+    k minimo con pureza exacta 1.0 (k<=60): 5
+    Tabla DestinationID mod 5 contra el valor:
+BestTimeToVisit  Apr-Jun  Nov-Feb  Nov-Mar  Oct-Mar  Sep-Mar
+DestinationID                                               
+0                    200        0        0        0        0
+1                      0      200        0        0        0
+2                      0        0      200        0        0
+3                      0        0        0      200        0
+4                      0        0        0        0      200
+
+### UserHistory.VisitDate: dtype=str; faltantes=0; valores distintos=3
+  parsean como AAAA-MM-DD: 999 de 999; con analisis flexible (pandas 'mixed'): 999 de 999
+  rango: 2024-01-01 .. 2024-03-20; dias entre extremos=79
+  frecuencia de cada valor:
+    '2024-01-01': 333 (33.33%)
+    '2024-02-15': 333 (33.33%)
+    '2024-03-20': 333 (33.33%)
+  primeros 12 valores en el orden del archivo: ['2024-01-01', '2024-02-15', '2024-03-20', '2024-01-01', '2024-02-15', '2024-03-20', '2024-01-01', '2024-02-15', '2024-03-20', '2024-01-01', '2024-02-15', '2024-03-20']
+  Patron periodico contra HistoryID (pureza = fraccion de filas cuyo valor es el valor mas frecuente de su clase HistoryID mod k):
+    k=1:0.333, k=2:0.334, k=3:1.000, k=4:0.335, k=5:0.335, k=6:1.000, k=7:0.336, k=8:0.336, k=9:1.000, k=10:0.339, k=11:0.339, k=12:1.000
+    k minimo con pureza exacta 1.0 (k<=60): 3
+    Tabla HistoryID mod 3 contra el valor:
+VisitDate  2024-01-01  2024-02-15  2024-03-20
+HistoryID                                    
+0                   0           0         333
+1                 333           0           0
+2                   0         333           0
+  Usuarios con interacciones: 642; con > 1 fecha distinta: 195; con exactamente 1: 447
+  distribucion del numero de fechas distintas por usuario:
+    1: 447 (69.63%)
+    2: 172 (26.79%)
+    3: 23 (3.58%)
+
+## A1.9 Destinos
+
+Columna de nombre: Name; columnas decimales continuas: ['Popularity']; demas atributos: ['State', 'Type', 'BestTimeToVisit']
+Nombres distintos=5; identificadores distintos=1000; filas=1000
+Nombres con mas de un identificador: 5; identificadores por nombre: min=200, mediana=200.0000, max=200
+Por nombre (hasta 30 nombres):
+             Name  ids  combinaciones distintas de demas atributos  State distintos  Type distintos  BestTimeToVisit distintos  Popularity min  Popularity media  Popularity max
+        Taj Mahal  200                                           1                1               1                          1          7.5099            8.5495          9.4839
+      Goa Beaches  200                                           1                1               1                          1          7.5045            8.4952          9.4998
+      Jaipur City  200                                           1                1               1                          1          7.5114            8.5303          9.4969
+Kerala Backwaters  200                                           1                1               1                          1          7.5267            8.4905          9.4901
+       Leh Ladakh  200                                           1                1               1                          1          7.5282            8.5041          9.4813
+Nombres cuyos demas atributos CAMBIAN entre sus identificadores: 0 de 5
+Combinaciones distintas de (nombre + demas atributos): 5
+
+  Patron periodico respecto a DestinationID (k minimo con pureza exacta 1.0, k<=60; pureza para k=2..8):
+    Name: k minimo=5; pureza 2:0.200, 3:0.201, 4:0.200, 5:1.000, 6:0.204, 7:0.203, 8:0.200
+    State: k minimo=5; pureza 2:0.200, 3:0.201, 4:0.200, 5:1.000, 6:0.204, 7:0.203, 8:0.200
+    Type: k minimo=5; pureza 2:0.200, 3:0.201, 4:0.200, 5:1.000, 6:0.204, 7:0.203, 8:0.200
+    BestTimeToVisit: k minimo=5; pureza 2:0.200, 3:0.201, 4:0.200, 5:1.000, 6:0.204, 7:0.203, 8:0.200
+  Primeros 12 nombres en orden de DestinationID: ['Taj Mahal', 'Goa Beaches', 'Jaipur City', 'Kerala Backwaters', 'Leh Ladakh', 'Taj Mahal', 'Goa Beaches', 'Jaipur City', 'Kerala Backwaters', 'Leh Ladakh', 'Taj Mahal', 'Goa Beaches']
+
+## A1.10 Usuarios
+
+Nombres distintos=20; identificadores distintos=999; filas=999
+Nombres con mas de un identificador: 20; ids por nombre: min=38, mediana=49.0000, max=64
+Combinaciones (Name, Email) distintas=20; con mas de un identificador=20; ids por combinacion: min=38, mediana=49.0000, max=64
+
+Dominios de correo (conteo): {'example.com': 999}
+Correos sin '@' o con mas de una '@': 0
+Coherencia nombre-correo: parte local == nombre en minusculas (exacto): 999 de 999; no coinciden: 0
+
+Gender por nombre: nombres con mas de un valor de Gender: 0 de 20
+Gender  Female  Male
+Name                
+Aanya       64     0
+Aarav        0    55
+Aditya       0    51
+Anika       54     0
+Arjun        0    48
+Dhruv        0    52
+Diya        38     0
+Hitesh       0    54
+Isha        47     0
+Ishaan       0    51
+Karan        0    46
+Kavya       47     0
+Meera       56     0
+Pooja       45     0
+Ritvik       0    48
+Riya        59     0
+Rohan        0    48
+Saanvi      43     0
+Tanvi       43     0
+Vivaan       0    50
+
+  Patron periodico respecto a UserID (k minimo con pureza exacta 1.0, k<=60; pureza para k=2..8):
+    Name: k minimo=ninguno; pureza 2:0.070, 3:0.073, 4:0.075, 5:0.086, 6:0.085, 7:0.086, 8:0.091
+    Email: k minimo=ninguno; pureza 2:0.070, 3:0.073, 4:0.075, 5:0.086, 6:0.085, 7:0.086, 8:0.091
+    Preferences: k minimo=3; pureza 2:0.334, 3:1.000, 4:0.335, 5:0.335, 6:1.000, 7:0.336, 8:0.336
+    Gender: k minimo=ninguno; pureza 2:0.523, 3:0.519, 4:0.529, 5:0.541, 6:0.532, 7:0.515, 8:0.532
+    NumberOfAdults: k minimo=ninguno; pureza 2:0.512, 3:0.526, 4:0.534, 5:0.530, 6:0.536, 7:0.532, 8:0.538
+    NumberOfChildren: k minimo=ninguno; pureza 2:0.362, 3:0.352, 4:0.362, 5:0.354, 6:0.364, 7:0.364, 8:0.375
+  Combinacion de TODAS las columnas salvo id: k minimo=ninguno; combinaciones distintas=342
+
+Cruces entre columnas de usuarios (filas = primera, columnas = segunda); chi2 de independencia:
+- Gender x Preferences: chi2=1.3774, gl=2, p=0.5022, V de Cramer=0.0371
+Preferences  Beaches, Historical  City, Historical  Nature, Adventure
+Gender                                                               
+Female                       174               162                160
+Male                         159               171                173
+- Gender x NumberOfAdults: chi2=0.3638, gl=1, p=0.5464, V de Cramer=0.0191
+NumberOfAdults    1    2
+Gender                  
+Female          241  255
+Male            254  249
+- Gender x NumberOfChildren: chi2=1.8171, gl=2, p=0.4031, V de Cramer=0.0426
+NumberOfChildren    0    1    2
+Gender                         
+Female            177  161  158
+Male              161  180  162
+- NumberOfAdults x Preferences: chi2=3.1955, gl=2, p=0.2024, V de Cramer=0.0566
+Preferences     Beaches, Historical  City, Historical  Nature, Adventure
+NumberOfAdults                                                          
+1                               177               164                154
+2                               156               169                179
+- NumberOfAdults x NumberOfChildren: chi2=0.9247, gl=2, p=0.6298, V de Cramer=0.0304
+NumberOfChildren    0    1    2
+NumberOfAdults                 
+1                 174  163  158
+2                 164  178  162
+- NumberOfChildren x Preferences: chi2=1.5124, gl=4, p=0.8244, V de Cramer=0.0275
+Preferences       Beaches, Historical  City, Historical  Nature, Adventure
+NumberOfChildren                                                          
+0                                 112               117                109
+1                                 114               106                121
+2                                 107               110                103
+
+## A1.11 Variables de contenido de usuarios y destinos
+
+### Users
+- Name: texto, 20 categorias
+    'Aanya': 64 (6.41%)
+    'Riya': 59 (5.91%)
+    'Meera': 56 (5.61%)
+    'Aarav': 55 (5.51%)
+    'Anika': 54 (5.41%)
+    'Hitesh': 54 (5.41%)
+    'Dhruv': 52 (5.21%)
+    'Aditya': 51 (5.11%)
+    'Ishaan': 51 (5.11%)
+    'Vivaan': 50 (5.01%)
+    'Rohan': 48 (4.80%)
+    'Arjun': 48 (4.80%)
+    'Ritvik': 48 (4.80%)
+    'Kavya': 47 (4.70%)
+    'Isha': 47 (4.70%)
+    'Karan': 46 (4.60%)
+    'Pooja': 45 (4.50%)
+    'Tanvi': 43 (4.30%)
+    'Saanvi': 43 (4.30%)
+    'Diya': 38 (3.80%)
+- Email: texto, 20 categorias
+    'aanya@example.com': 64 (6.41%)
+    'riya@example.com': 59 (5.91%)
+    'meera@example.com': 56 (5.61%)
+    'aarav@example.com': 55 (5.51%)
+    'anika@example.com': 54 (5.41%)
+    'hitesh@example.com': 54 (5.41%)
+    'dhruv@example.com': 52 (5.21%)
+    'aditya@example.com': 51 (5.11%)
+    'ishaan@example.com': 51 (5.11%)
+    'vivaan@example.com': 50 (5.01%)
+    'rohan@example.com': 48 (4.80%)
+    'arjun@example.com': 48 (4.80%)
+    'ritvik@example.com': 48 (4.80%)
+    'kavya@example.com': 47 (4.70%)
+    'isha@example.com': 47 (4.70%)
+    'karan@example.com': 46 (4.60%)
+    'pooja@example.com': 45 (4.50%)
+    'tanvi@example.com': 43 (4.30%)
+    'saanvi@example.com': 43 (4.30%)
+    'diya@example.com': 38 (3.80%)
+- Preferences: texto, 3 categorias
+    'Beaches, Historical': 333 (33.33%)
+    'Nature, Adventure': 333 (33.33%)
+    'City, Historical': 333 (33.33%)
+  LISTA EN TEXTO: separador ',' (otros separadores presentes: []); se separa y se quitan espacios
+  opciones distintas=5; frecuencia de cada opcion (sobre 999 filas):
+    'Historical': 666 (33.33%)
+    'Beaches': 333 (16.67%)
+    'Nature': 333 (16.67%)
+    'Adventure': 333 (16.67%)
+    'City': 333 (16.67%)
+  numero de opciones por fila:
+    2: 999 (100.00%)
+  combinaciones distintas (como texto original)=3; como conjunto (sin importar el orden)=3; opciones repetidas dentro de una fila: 0
+  combinaciones (conjunto) y frecuencia:
+    "('Beaches', 'Historical')": 333 (33.33%)
+    "('Adventure', 'Nature')": 333 (33.33%)
+    "('City', 'Historical')": 333 (33.33%)
+- Gender: texto, 2 categorias
+    'Male': 503 (50.35%)
+    'Female': 496 (49.65%)
+- NumberOfAdults: entero, 2 categorias
+    2: 504 (50.45%)
+    1: 495 (49.55%)
+- NumberOfChildren: entero, 3 categorias
+    1: 341 (34.13%)
+    0: 338 (33.83%)
+    2: 320 (32.03%)
+
+### Destinations
+- Name: texto, 5 categorias
+    'Taj Mahal': 200 (20.00%)
+    'Goa Beaches': 200 (20.00%)
+    'Jaipur City': 200 (20.00%)
+    'Kerala Backwaters': 200 (20.00%)
+    'Leh Ladakh': 200 (20.00%)
+- State: texto, 5 categorias
+    'Uttar Pradesh': 200 (20.00%)
+    'Goa': 200 (20.00%)
+    'Rajasthan': 200 (20.00%)
+    'Kerala': 200 (20.00%)
+    'Jammu and Kashmir': 200 (20.00%)
+- Type: texto, 5 categorias
+    'Historical': 200 (20.00%)
+    'Beach': 200 (20.00%)
+    'City': 200 (20.00%)
+    'Nature': 200 (20.00%)
+    'Adventure': 200 (20.00%)
+- Popularity: decimal continua, 1000 valores distintos de 1000; min=7.5045, q1=8.0345, mediana=8.4965, q3=9.0208, max=9.4998, media=8.5139, unicos=1000
+- BestTimeToVisit: texto, 5 categorias
+    'Nov-Feb': 200 (20.00%)
+    'Nov-Mar': 200 (20.00%)
+    'Oct-Mar': 200 (20.00%)
+    'Sep-Mar': 200 (20.00%)
+    'Apr-Jun': 200 (20.00%)
+
+
+## A1.12 Textos libres
+
+### Patron periodico de las columnas categoricas de Reviews y UserHistory respecto a su id de fila
+  Patron periodico respecto a ReviewID (k minimo con pureza exacta 1.0, k<=60; pureza para k=2..8):
+    Rating: k minimo=ninguno; pureza 2:0.218, 3:0.225, 4:0.222, 5:0.237, 6:0.225, 7:0.256, 8:0.240
+    ReviewText: k minimo=3; pureza 2:0.334, 3:1.000, 4:0.335, 5:0.335, 6:1.000, 7:0.336, 8:0.336
+  Patron periodico respecto a HistoryID (k minimo con pureza exacta 1.0, k<=60; pureza para k=2..8):
+    VisitDate: k minimo=3; pureza 2:0.334, 3:1.000, 4:0.335, 5:0.335, 6:1.000, 7:0.336, 8:0.336
+    ExperienceRating: k minimo=ninguno; pureza 2:0.228, 3:0.230, 4:0.232, 5:0.244, 6:0.239, 7:0.241, 8:0.249
+
+### Reviews.ReviewText: textos distintos=3; filas=999
+    'Incredible monument!': 333 (33.33%)
+    'Loved the beaches!': 333 (33.33%)
+    'A historical wonder': 333 (33.33%)
+  Texto x Rating: chi2=6.9084, gl=8, p=0.5465, V de Cramer=0.0588
+Rating                 1   2   3   4   5
+ReviewText                              
+A historical wonder   61  66  64  72  70
+Incredible monument!  77  57  56  75  68
+Loved the beaches!    60  76  65  69  63
+  Texto x destino.Name (misma particion de destinos: ['Name', 'State', 'Type', 'BestTimeToVisit']): chi2=3.6946, gl=8, p=0.8836, V de Cramer=0.0430
+d_Name                Goa Beaches  Jaipur City  Kerala Backwaters  Leh Ladakh  Taj Mahal
+ReviewText                                                                              
+A historical wonder            65           62                 68          68         70
+Incredible monument!           60           72                 65          70         66
+Loved the beaches!             65           57                 68          80         63
+  por texto, fraccion de filas en su columna modal: 'A historical wonder':0.210, 'Incredible monument!':0.216, 'Loved the beaches!':0.240
+  Texto x preferencias del usuario (Preferences): chi2=4.9056, gl=4, p=0.2971, V de Cramer=0.0496
+preferencias del usuario  Beaches, Historical  City, Historical  Nature, Adventure
+ReviewText                                                                        
+A historical wonder                       133                97                103
+Incredible monument!                      109               107                117
+Loved the beaches!                        112               112                109
+
+UserHistory: sin columnas de texto libre (no fecha).
+
+## A1.13 Senales de datos generados (solo medidas, sin concluir)
+
+### A1.13a Uniformidad de las distribuciones (chi2 de bondad de ajuste a la uniforme; gl = categorias - 1)
+p calculada con scipy.stats.chi2.sf.
+Autoverificacion de la implementacion explicita contra scipy en (chi2=7.5, gl=4): 0.1117092928 vs 0.1117092928
+
+archivo.columna | categorias | n | min..max frecuencia | razon max/min | chi2 | gl | p
+Destinations.Name | 5 | 1000 | 200..200 | 1.000 | 0.0000 | 4 | 1.0000
+Destinations.State | 5 | 1000 | 200..200 | 1.000 | 0.0000 | 4 | 1.0000
+Destinations.Type | 5 | 1000 | 200..200 | 1.000 | 0.0000 | 4 | 1.0000
+Destinations.BestTimeToVisit | 5 | 1000 | 200..200 | 1.000 | 0.0000 | 4 | 1.0000
+Reviews.Rating | 5 | 999 | 185..216 | 1.168 | 2.4364 | 4 | 0.6561
+Reviews.ReviewText | 3 | 999 | 333..333 | 1.000 | 0.0000 | 2 | 1.0000
+UserHistory.VisitDate | 3 | 999 | 333..333 | 1.000 | 0.0000 | 2 | 1.0000
+UserHistory.ExperienceRating | 5 | 999 | 181..228 | 1.260 | 7.3614 | 4 | 0.1180
+Users.Name | 20 | 999 | 38..64 | 1.684 | 13.7928 | 19 | 0.7956
+Users.Email | 20 | 999 | 38..64 | 1.684 | 13.7928 | 19 | 0.7956
+Users.Preferences | 3 | 999 | 333..333 | 1.000 | 0.0000 | 2 | 1.0000
+Users.Gender | 2 | 999 | 496..503 | 1.014 | 0.0490 | 1 | 0.8247
+Users.NumberOfAdults | 2 | 999 | 495..504 | 1.018 | 0.0811 | 1 | 0.7758
+Users.NumberOfChildren | 3 | 999 | 320..341 | 1.066 | 0.7748 | 2 | 0.6788
+Users.Preferences (opciones separadas) | 5 | 1998 | 333..666 | 2.000 | 222.0000 | 4 | 6.959e-47
+
+### A1.13b Dispersion de interacciones por usuario y por destino frente a una asignacion uniforme al azar
+Indice de dispersion = varianza / media de los conteos por id de la maestra (incluidos los ceros); bajo una asignacion uniforme e independiente (multinomial con m filas en N ids) vale 1 - 1/N, aprox. 1. Ceros esperados = N*(1-1/N)^m.
+- Reviews por usuario: N=999, m=999, media=1.0000, varianza=1.0290, indice de dispersion=1.0290 (esperado 0.9990); ceros observados=375, esperados=367.3; max=5
+- Reviews por destino: N=1000, m=999, media=0.9990, varianza=0.9170, indice de dispersion=0.9179 (esperado 0.9990); ceros observados=349, esperados=368.1; max=5
+- UserHistory por usuario: N=999, m=999, media=1.0000, varianza=0.9630, indice de dispersion=0.9630 (esperado 0.9990); ceros observados=357, esperados=367.3; max=6
+- UserHistory por destino: N=1000, m=999, media=0.9990, varianza=1.0050, indice de dispersion=1.0060 (esperado 0.9990); ceros observados=362, esperados=368.1; max=6
+
+### A1.13c Patrones periodicos respecto al identificador (de A1.8-A1.10; k minimo con pureza exacta)
+- Destinations.Name: 5
+- Destinations.State: 5
+- Destinations.Type: 5
+- Destinations.BestTimeToVisit: 5
+- Users.Name: ninguno
+- Users.Email: ninguno
+- Users.Preferences: 3
+- Users.Gender: ninguno
+- Users.NumberOfAdults: ninguno
+- Users.NumberOfChildren: ninguno
+- Users.(todas): ninguno
+- Reviews.Rating: ninguno
+- Reviews.ReviewText: 3
+- UserHistory.VisitDate: 3
+- UserHistory.ExperienceRating: ninguno
+
+### A1.13d Preferencias declaradas del usuario vs tipo de destino de sus interacciones
+SUPUESTO DEL ANALISIS (no es significado de la fuente): emparejamiento explicito de vocabularios {'Beaches': 'Beach'}; el resto de etiquetas se compara por igualdad exacta.
+Opciones de Preferences: ['Adventure', 'Beaches', 'City', 'Historical', 'Nature']; valores de Type: ['Adventure', 'Beach', 'City', 'Historical', 'Nature']
+Emparejamiento aplicado: {'Adventure': 'Adventure', 'Beaches': 'Beach', 'City': 'City', 'Historical': 'Historical', 'Nature': 'Nature'}
+Opciones sin tipo equivalente tras el emparejamiento: ninguna; tipos sin opcion equivalente: ninguno
+Cuota de cada tipo en el catalogo maestro (1000 destinos): Adventure=0.200, Beach=0.200, City=0.200, Historical=0.200, Nature=0.200
+Para cada opcion de interaccion (mismos pares distintos de A1.7): tasa observada = fraccion de pares con tipo del destino en las preferencias del usuario; tasa esperada si el destino se eligiera al azar del catalogo maestro = media de P(tipo en preferencias) sobre los mismos pares; z = (obs - esp)/sqrt(suma p(1-p)).
+- (i) solo Reviews: pares usados=999 (descartados por id sin maestro: 0); observada=0.4294; esperada al azar=0.4000; razon=1.074; z=1.899; p bilateral=0.0576
+    Preferencias x tipo de destino: chi2=11.5792, gl=8, p=0.1710, V de Cramer=0.0761
+tipo de destino             Adventure  Beach  City  Historical  Nature
+preferencias (emparejadas)                                            
+Adventure, Nature                  76     49    64          64      76
+Beach, Historical                  81     77    62          76      58
+City, Historical                   61     64    65          59      67
+- (ii) solo UserHistory: pares usados=999 (descartados por id sin maestro: 0); observada=0.4174; esperada al azar=0.4000; razon=1.044; z=1.124; p bilateral=0.2611
+    Preferencias x tipo de destino: chi2=17.3911, gl=8, p=0.0263, V de Cramer=0.0933
+tipo de destino             Adventure  Beach  City  Historical  Nature
+preferencias (emparejadas)                                            
+Adventure, Nature                  71     71    56          56      76
+Beach, Historical                  69     57    69          84      51
+City, Historical                   64     62    60          69      84
+- (iii) union de pares: pares usados=1998 (descartados por id sin maestro: 0); observada=0.4234; esperada al azar=0.4000; razon=1.059; z=2.137; p bilateral=0.0326
+    Preferencias x tipo de destino: chi2=18.3460, gl=8, p=0.0188, V de Cramer=0.0678
+tipo de destino             Adventure  Beach  City  Historical  Nature
+preferencias (emparejadas)                                            
+Adventure, Nature                 147    120   120         120     152
+Beach, Historical                 150    134   131         160     109
+City, Historical                  125    126   125         128     151
+- (iv) interseccion de pares: sin pares
+
+### A1.13e Asociacion de la calificacion con otras variables
+Por factor: media de la calificacion por grupo (n), chi2 de independencia calificacion x grupo y Kruskal-Wallis (H, p). Los factores de usuario/destino se unen por id desde las tablas maestras (prefijos u_ y d_). Columnas de las maestras con particion identica a otra ya incluida se agrupan en una sola.
+  (misma particion: ['d_Name', 'd_State', 'd_Type', 'd_BestTimeToVisit']; se usa d_Name)
+  (misma particion: ['u_Name', 'u_Email']; se usa u_Name)
+#### Reviews (calificacion = Rating, n=999)
+- Reviews.ReviewText: grupos=3; chi2=6.9084, gl=8, p=0.5465, V=0.0588; Kruskal-Wallis=H=0.5944, p=0.7429
+    medias: A historical wonder: 3.072 (n=333), Incredible monument!: 3.000 (n=333), Loved the beaches!: 2.997 (n=333)
+- d_Name: grupos=5; chi2=11.0957, gl=16, p=0.8035, V=0.0527; Kruskal-Wallis=H=1.1364, p=0.8884
+    medias: Goa Beaches: 3.005 (n=190), Jaipur City: 3.073 (n=191), Kerala Backwaters: 3.035 (n=201), Leh Ladakh: 2.945 (n=218), Taj Mahal: 3.065 (n=199)
+- u_Name: grupos=20; chi2=72.6899, gl=76, p=0.5864, V=0.1349; Kruskal-Wallis=H=11.2237, p=0.9161
+    medias: Aanya: 3.092 (n=65), Aarav: 3.037 (n=54), Aditya: 3.385 (n=52), Anika: 2.719 (n=64), Arjun: 2.925 (n=53), Dhruv: 3.018 (n=56), Diya: 2.889 (n=36), Hitesh: 3.279 (n=61), Isha: 2.958 (n=48), Ishaan: 2.959 (n=49), Karan: 3.114 (n=35), Kavya: 2.884 (n=43), Meera: 3.129 (n=62), Pooja: 2.842 (n=38), Ritvik: 3.000 (n=43), Riya: 3.000 (n=52), Rohan: 3.034 (n=58), Saanvi: 3.146 (n=48), Tanvi: 3.000 (n=42), Vivaan: 2.925 (n=40)
+- u_Preferences: grupos=3; chi2=10.7814, gl=8, p=0.2144, V=0.0735; Kruskal-Wallis=H=2.6312, p=0.2683
+    medias: Beaches, Historical: 3.105 (n=354), City, Historical: 3.028 (n=316), Nature, Adventure: 2.930 (n=329)
+- u_Gender: grupos=2; chi2=3.4382, gl=4, p=0.4873, V=0.0587; Kruskal-Wallis=H=1.2814, p=0.2576
+    medias: Female: 2.972 (n=498), Male: 3.074 (n=501)
+- u_NumberOfAdults: grupos=2; chi2=2.1057, gl=4, p=0.7163, V=0.0459; Kruskal-Wallis=H=0.2035, p=0.6519
+    medias: 1: 3.002 (n=486), 2: 3.043 (n=513)
+- u_NumberOfChildren: grupos=3; chi2=6.5483, gl=8, p=0.5861, V=0.0572; Kruskal-Wallis=H=1.0903, p=0.5798
+    medias: 0: 2.968 (n=339), 1: 3.024 (n=334), 2: 3.080 (n=326)
+- coincide_tipo_con_preferencias (supuesto de emparejamiento): grupos=2; chi2=1.1631, gl=4, p=0.8841, V=0.0341; Kruskal-Wallis=H=0.9747, p=0.3235
+    medias: False: 3.061 (n=570), True: 2.972 (n=429)
+- Spearman entre Popularity del destino y Rating: rho=0.0438, p=0.1670, n=999
+- Spearman entre Popularity del destino y el numero de filas de Reviews del destino (sobre toda la maestra): rho=-0.0410, p=0.1950, n=1000
+
+  (misma particion: ['d_Name', 'd_State', 'd_Type', 'd_BestTimeToVisit']; se usa d_Name)
+  (misma particion: ['u_Name', 'u_Email']; se usa u_Name)
+#### UserHistory (calificacion = ExperienceRating, n=999)
+- UserHistory.VisitDate: grupos=3; chi2=5.1308, gl=8, p=0.7435, V=0.0507; Kruskal-Wallis=H=0.0916, p=0.9553
+    medias: 2024-01-01: 2.913 (n=333), 2024-02-15: 2.886 (n=333), 2024-03-20: 2.916 (n=333)
+- d_Name: grupos=5; chi2=20.3800, gl=16, p=0.2036, V=0.0714; Kruskal-Wallis=H=4.6085, p=0.3299
+    medias: Goa Beaches: 2.942 (n=190), Jaipur City: 2.805 (n=185), Kerala Backwaters: 2.777 (n=211), Leh Ladakh: 2.985 (n=204), Taj Mahal: 3.010 (n=209)
+- u_Name: grupos=20; chi2=51.2943, gl=76, p=0.9868, V=0.1133; Kruskal-Wallis=H=11.1490, p=0.9187
+    medias: Aanya: 3.154 (n=52), Aarav: 2.940 (n=50), Aditya: 2.792 (n=48), Anika: 2.895 (n=57), Arjun: 2.720 (n=50), Dhruv: 2.872 (n=47), Diya: 2.903 (n=31), Hitesh: 2.707 (n=58), Isha: 3.041 (n=49), Ishaan: 2.963 (n=54), Karan: 3.077 (n=39), Kavya: 2.980 (n=51), Meera: 3.125 (n=56), Pooja: 2.787 (n=47), Ritvik: 3.174 (n=46), Riya: 2.671 (n=73), Rohan: 3.000 (n=46), Saanvi: 2.830 (n=47), Tanvi: 2.824 (n=51), Vivaan: 2.787 (n=47)
+- u_Preferences: grupos=3; chi2=20.9203, gl=8, p=0.0074, V=0.1023; Kruskal-Wallis=H=3.3996, p=0.1827
+    medias: Beaches, Historical: 2.927 (n=330), City, Historical: 2.796 (n=339), Nature, Adventure: 2.994 (n=330)
+- u_Gender: grupos=2; chi2=1.5576, gl=4, p=0.8164, V=0.0395; Kruskal-Wallis=H=0.0404, p=0.8407
+    medias: Female: 2.914 (n=514), Male: 2.895 (n=485)
+- u_NumberOfAdults: grupos=2; chi2=1.2433, gl=4, p=0.8709, V=0.0353; Kruskal-Wallis=H=0.2978, p=0.5853
+    medias: 1: 2.880 (n=468), 2: 2.927 (n=531)
+- u_NumberOfChildren: grupos=3; chi2=3.1854, gl=8, p=0.9222, V=0.0399; Kruskal-Wallis=H=0.7228, p=0.6967
+    medias: 0: 2.895 (n=344), 1: 2.957 (n=322), 2: 2.865 (n=333)
+- coincide_tipo_con_preferencias (supuesto de emparejamiento): grupos=2; chi2=0.4302, gl=4, p=0.9799, V=0.0208; Kruskal-Wallis=H=0.0001531, p=0.9901
+    medias: False: 2.904 (n=582), True: 2.906 (n=417)
+- Spearman entre Popularity del destino y ExperienceRating: rho=0.0275, p=0.3852, n=999
+- Spearman entre Popularity del destino y el numero de filas de UserHistory del destino (sobre toda la maestra): rho=0.0221, p=0.4852, n=1000
+
+
+## A1.14 Resumen final (numeros clave medidos)
+
+clave | valor
+--- | ---
+filas Destinations | 1000
+filas Reviews | 999
+filas UserHistory | 999
+filas Users | 999
+usuarios (maestra) | 999
+destinos (maestra) | 1000
+escala Reviews.Rating | min=1, max=5, distintos=5 [1, 2, 3, 4, 5]
+escala UserHistory.ExperienceRating | min=1, max=5, distintos=5 [1, 2, 3, 4, 5]
+Destinations.Popularity | min=7.5045, max=9.4998, unicos=1000
+pares distintos Reviews | 999
+densidad (a) Reviews | 0.001000
+densidad (b) Reviews | 0.002459
+pares distintos UserHistory | 999
+densidad (a) UserHistory | 0.001000
+densidad (b) UserHistory | 0.002439
+pares en ambos | 0
+pares solo Reviews | 999
+pares solo UserHistory | 999
+calificaciones iguales en pares comunes | 0 de 0
+(i) solo Reviews: pares / usuarios / destinos / dens(a) / dens(b) | 999 / 624 / 651 / 0.001000 / 0.002459
+(ii) solo UserHistory: pares / usuarios / destinos / dens(a) / dens(b) | 999 / 642 / 638 / 0.001000 / 0.002439
+(iii) union de pares: pares / usuarios / destinos / dens(a) / dens(b) | 1998 / 858 / 866 / 0.002000 / 0.002689
+(iv) interseccion de pares: pares / usuarios / destinos / dens(a) / dens(b) | 0 / 0 / 0 / 0.000000 / nan
+columnas de fecha (forma AAAA-MM-DD) | ['UserHistory.VisitDate']
+periodo de Destinations.BestTimeToVisit respecto a DestinationID | k minimo=5
+fecha UserHistory.VisitDate | 2024-01-01 .. 2024-03-20; 3 valores distintos
+periodo de UserHistory.VisitDate respecto a HistoryID | k minimo=3
+usuarios con >1 fecha (UserHistory) | 195 de 642
+destinos: nombres distintos | 5
+destinos: nombres repetidos con distintos ids | 5 nombres (de 5), 200-200 ids por nombre
+destinos: periodo del nombre | k minimo=5
+usuarios: nombres distintos | 20
+usuarios: combinaciones (nombre, correo) distintas | 20
+usuarios: correo = nombre en minusculas + dominio | 999 de 999
+Users.Preferences: opciones distintas / combinaciones | 5 / 3
+textos distintos Reviews.ReviewText | 3
+afinidad (i) solo Reviews: obs / esperada / z | 0.4294 / 0.4000 / 1.90
+afinidad (ii) solo UserHistory: obs / esperada / z | 0.4174 / 0.4000 / 1.12
+afinidad (iii) union de pares: obs / esperada / z | 0.4234 / 0.4000 / 2.14
