@@ -111,6 +111,27 @@ Salidas de JJ-1 (`run.py m3-datos`) [DECIDIDO, Juan José, 25-nov]:
 
 ### 3.2 Modelos (JJ-4, JJ-5) [PROPUESTO]
 - Popularidad (calculada solo con train) y factorización de matrices (o KNN por ítems).
+
+Decisiones de las referencias (JJ-4) [DECIDIDO, Juan José, 27-nov]:
+- **D11. Referencias.** (a) **Popularidad** = conteo de interacciones por destino **solo en train**
+  (`particion.popularidad_train`; nunca la columna `popularidad` de la fuente), empates rotos al azar con la semilla de la
+  corrida. (b) **Factorización de matrices implícita por ALS** (Hu, Koren y Volinsky, 2008 [VERIFICAR en JJ-9; sin DOI hasta
+  entonces]): confianza c = 1 + α·r, regularización λ, f factores; implementada con numpy/scipy, actualizaciones cerradas y
+  determinista dada la semilla de inicialización. (c) **Aleatorio** como piso de referencia, con su valor esperado analítico.
+- **D13. Búsqueda.** Optuna (TPE con semilla fija) con **20 ensayos** para la factorización (mismo presupuesto que la red de
+  JJ-5, núcleo §6), objetivo **NDCG@5 en validación**, espacio declarado en `configs/m3/hpo.yaml` (f, λ, α, iteraciones).
+  Popularidad y aleatorio: 0 hiperparámetros, `n_configuraciones_busqueda` = 1. Tiempos medidos.
+- **D14. Corridas finales.** Entrenadas **solo con train** (D9), evaluadas una vez en prueba, con `base_seed + 0…29`
+  (`semillas.n` = 30) para las tres referencias; `summary.json` con media, desviación, mejor y peor. Destinos sin ninguna
+  interacción en train (205 de las 606 interacciones de prueba): se reporta cuántos aciertos son posibles para cada modelo y
+  cómo los trata (la popularidad los pone al final; la MF no tiene información de ellos).
+- **Valores de JJ-4** [DECIDIDO, Juan José, 27-nov] (antes [PROPUESTO] por la tarea): espacio de búsqueda de `configs/m3/hpo.yaml`
+  (factores 4–64, λ 1e-3–5,0, α 1–100, iteraciones 5–30); tope λ = 5,0 < (1 + α_min)·σ_max(P_train) (si λ ≥ (1 + α)σ_max el único
+  mínimo es X = Y = 0); tolerancia de degeneración 1e-8 (una de las tres condiciones de la guarda); semilla del sampler 2026;
+  `n_parametros` de la popularidad = 1 000 conteos; respaldo de la MF (16, 0,1, 10, 10); grupo vacío como `{"n_usuarios": 0}`.
+  El mejor λ (≈ 0,0021, ensayo 19) quedó cerca del borde inferior del rango (1e-3); **no se amplió**, porque los datos no tienen
+  patrón (todos los modelos quedan al nivel del azar) y ampliar el rango no cambiaría esa conclusión.
+
 - Red: NCF o dos torres con variables de contenido del usuario (p. ej. preferencias) y del destino (p. ej. tipo, región)
   [VERIFICAR cuáles existen]. Negativos muestreados uniformes o por popularidad, justificados; pérdida BCE o BPR derivada.
 - La torre de usuario debe poder recibir un **perfil nuevo armado con la lista de preferencias** (lo pide la app).
@@ -120,6 +141,13 @@ Salidas de JJ-1 (`run.py m3-datos`) [DECIDIDO, Juan José, 25-nov]:
 Métricas @K para K ∈ {1, 3, 5, 10} [PROPUESTO], cobertura, Gini o HHI de las exposiciones, desempeño por grupo de actividad,
 5 usuarios explicados, t-SNE o UMAP de los embeddings de destinos. Usuarios nuevos simulados ocultando su historial en test
 (popularidad vs. contenido/preferencias). Campaña: grupo objetivo y conversiones esperadas con supuestos explícitos.
+
+- **D12. Evaluación** [DECIDIDO, Juan José, 27-nov]. Candidatos de D10 (catálogo menos el historial conocido). Como hay 1
+  destino de prueba por usuario, **Recall@K = acierto@K** y **Precision@K = acierto@K / K** (se dice explícito). NDCG@K binario
+  con un relevante (1/log2(rango + 1) si está en el top-K; IDCG = 1). Cobertura del catálogo = destinos distintos recomendados en
+  algún top-K / 1 000. Concentración de las recomendaciones: Gini y HHI de las exposiciones en el top-K (pregunta de negocio 2).
+  Resultados por grupo de actividad (pocas ≤ 2, muchas ≥ 3). «Acierto por lugar» solo para K ∈ {1, 3} y siempre junto a su línea
+  base del azar. K ∈ {1, 3, 5, 10} (`evaluacion.k`).
 
 ### 3.4 Fundamentación común (JJ-8) y bibliografía (JJ-9)
 Lista cerrada el vie 27 a partir de las configs finales de todos. Cada ecuación revisada por el `verificador-matematico`.
@@ -131,7 +159,7 @@ Lista cerrada el vie 27 a partir de las configs finales de todos. Cada ecuación
 | JJ-1 | Descarga y ficha; real o sintético | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json` con densidad y escala medidas | ✅ 25-nov |
 | JJ-2 | Descriptivo M3 (plantilla §5.12) + caso de uso | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json`; figura de cola larga | ✅ 26-nov |
 | JJ-3 | Partición sin fuga | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m3.py` en verde | ✅ 26-nov |
-| JJ-4 | Popularidad + FC clásico + métricas @K | jue 26 | implementador (Sonnet) | verificador-matematico (Opus) | Métricas contra cálculo a mano | ⬜ |
+| JJ-4 | Popularidad + FC clásico + métricas @K | jue 26 | implementador (Sonnet) | verificador-matematico (Opus) | Métricas contra cálculo a mano | ✅ 27-nov |
 | JJ-5 | Red con contenido, negativos, pérdida, búsqueda, 30 semillas | jue 26–vie 27 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | `summary.json` completo | ⬜ |
 | JJ-6 | Negocio, 5 usuarios, embeddings 2D | sáb 28 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | Tablas y figuras mínimas de M3 | ⬜ |
 | JJ-7 | Exportación para la app + paridad | sáb 28, noche | implementador (Sonnet) | revisor-spec (Sonnet) | Top-K igual en Python y en los casos de paridad | ⬜ |

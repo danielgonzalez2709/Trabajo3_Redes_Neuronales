@@ -1,0 +1,16 @@
+# M3 — demo en vivo (JJ-4): las tres referencias con pocas semillas y pocos ensayos; corre en < 2 min en CPU, sin red.
+# Uso: .venv\Scripts\python run.py m3 --config configs/m3/demo.yaml [--set evaluacion.k=3] [--set semillas.n=2]
+# Corre primero la búsqueda de la MF (busqueda.n_ensayos ensayos con validación) y evalúa en prueba con su mejor
+# configuración. Escribe SOLO en results/data/m3_demo/ y models/m3_demo/ (ambos en .gitignore): no pisa lo versionado.
+hereda: hpo.yaml
+
+semillas:
+  n: 3
+
+busqueda:
+  n_ensayos: 4
+  ejecutar_en_experimento: true
+
+salida:
+  carpeta: results/data/m3_demo
+  modelos: models/m3_demo

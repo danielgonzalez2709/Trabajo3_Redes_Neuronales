@@ -9,7 +9,7 @@ evidencia no cuenta.
 |---|---|---|---|---|---|
 | M1 | | | | | |
 | M2 | | | | | |
-| M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
+| M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) · 1 candidato sin número (JJ-4, orquestador + implementador: MF colapsada) · 1 candidato menor sin número (JJ-4, redactor) | 1 candidato menor sin número (JJ-2, analista) · 1 candidato menor sin número (JJ-4, guarda 1e-8) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
 | Común | | H-01 (candidato) | | | |
 
 ## Hallazgos
@@ -248,6 +248,56 @@ evidencia no cuenta.
   siguientes. Las cifras de un prompt se copian del archivo de resultados, no de la memoria.
 - **Estado:** candidato menor. El origen probable es la redacción de MEMORIA (documentador o sesión de JJ-2; no se buscó el
   prompt exacto); el prompt literal del eslabón de JJ-3 sí está guardado.
+
+### H-?? (JJ-4) — La «mejor» factorización de la búsqueda era la solución trivial X = Y = 0
+- **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (con efecto en Código) / lo detectó el
+  `verificador-matematico` (Opus) en R1 de JJ-4; lo confirmó la sesión principal con numpy. Dirige: Juan José.
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-4-implementador.md`, C5 (sesión principal, Opus 5.5 → implementador, Sonnet):
+  «Rangos [PROPUESTO por esta tarea …]: factores 4–64, λ 1e-3–1e2, α 1–100, iteraciones 5–30».
+- **2. Respuesta relevante de la IA:** el implementador declaró ese espacio, corrió 20 ensayos y reportó como mejor el ensayo 3
+  (f = 8, λ = 29,542, α = 1,248; NDCG@5 en validación 0,0101) sin advertencia; el redactor (Sonnet) escribió que el empate de los
+  ensayos 3, 14 y 18 «no se explica» y presentó la fila de la MF como una factorización normal.
+- **3. Cómo se sospechó:** el verificador recalculó la pérdida de los factores guardados y dio exactamente (1 + α)·1 066, la
+  pérdida en X = Y = 0.
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-4/colapso_mf.md` (+ `hpo_ensayos_colapsado.json`, `mf_als_colapsado.json`,
+  `hpo_colapsado.yaml`): max|X| = 6,45e-23, max|Y| = 1,31e-23; σ_max(P_train) = 2,871; derivación
+  L(X, Y) − L(0, 0) ≥ (λ − (1 + α)σ_max)(‖X‖² + ‖Y‖²); 8 de 20 ensayos (los 5 mejores entre ellos) con λ > (1 + α)·2,871.
+- **5. Corrección:** λ ≤ 5,0 < (1 + α_min)σ_max = 5,742 (calculado solo con train y escrito en `hpo_ensayos.json`), guarda de
+  degeneración, búsqueda y 30 corridas regeneradas (0 degenerados; mejor ensayo 19). Prompts `JJ-4-implementador-2.md` a `-4.md`.
+- **6. Lección aprendida:** con datos casi aleatorios una búsqueda puede premiar una solución degenerada que empata con el azar;
+  hay que mirar la norma de los factores (o la pérdida frente a L(0, 0)) del mejor ensayo y acotar la regularización con la
+  escala de los datos antes de declarar el espacio.
+- **Estado:** candidato. Origen en el prompt del orquestador (Opus); el implementador y el redactor (Sonnet) no lo detectaron.
+
+### H-?? (JJ-4) — «La tolerancia 1e-8 detecta el colapso» y «la cota es suficiente, no necesaria»
+- **Módulo / categoría / quién lo encontró:** M3 / **Código** (menor; con un matiz de Matemáticas) / `verificador-matematico`
+  (Opus), R1 2.ª vuelta (N1 y N3).
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-4-implementador-2.md` (sesión principal → implementador): «una guarda marca
+  como degenerado todo ajuste con max|x_uᵀy_i| < tolerancia … nunca puede ser el mejor» y «la cota es suficiente, no necesaria».
+- **2. Respuesta relevante de la IA:** el implementador (Sonnet) lo implementó tal cual y el redactor lo escribió en el blog
+  («la búsqueda nunca elige un ensayo degenerado»).
+- **3. Cómo se sospechó:** el verificador probó ajustes justo encima de la cota con pocos barridos.
+- **4. Evidencia:** informe de R1 (2.ª vuelta): con λ/((1 + α)σ_max) = 1,05 y 5 barridos, max|S| = 8,7e-5 > 1e-8 (no detectado);
+  además, en la dirección de los primeros vectores singulares, L − L(0, 0) = 2t²(λ − (1 + α)σ_max) + O(t⁴): la condición es «si y
+  solo si», no solo suficiente (lo suficiente es solo el tope del espacio). Tabla en
+  `alucinaciones/evidencias/JJ-4/guarda_tolerancia.md` (los scripts del verificador quedaron en el scratchpad, no versionados).
+- **5. Corrección:** regla exacta de tres condiciones (λ ≥ (1 + α)σ_max, pérdida ≥ L(0, 0), o max|S| < tolerancia) con pruebas de
+  cada motivo (`JJ-4-implementador-4.md`); texto corregido en YAML, docstrings y blog.
+- **6. Lección aprendida:** un umbral numérico absoluto no sustituye a la condición teórica cuando ésta se conoce.
+- **Estado:** candidato menor (origen compartido orquestador Opus + implementador Sonnet).
+
+### H-?? (JJ-4) — Afirmaciones numéricas del redactor en la «lectura de resultados»
+- **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (menor) / `verificador-matematico` (Opus), R1 (H2, H3, H4, N2).
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-4-redactor-tecnico.md` y `-2.md` (sesión principal → redactor, Sonnet).
+- **2. Respuesta relevante de la IA:** «diferencias de 0,0004 a 0,0035» (el mínimo real era 0,00017); «Gini hasta 0,999; HHI de
+  0,001 a 1» sin depender de K; «de 1 a 3 aciertos por grupo» (eran 0,97 a 3,33); «la mayor diferencia con el esperado en la tabla
+  es la de la popularidad con K = 10» (falso en esa tabla: la cobertura se aleja mucho más).
+- **3. Cómo se sospechó:** recálculo independiente de cada cifra del texto contra los JSON.
+- **4. Evidencia:** informes de R1 (1.ª y 2.ª vuelta): con listas de K destinos distintos, Gini ≤ 1 − K/n y HHI ≤ 1/K; cobertura de
+  la popularidad 0,0250 frente a 0,9977 esperado con K = 10.
+- **5. Corrección:** texto reescrito con las cifras recalculadas (`JJ-4-redactor-tecnico-2.md` y `-4.md`).
+- **6. Lección aprendida:** toda frase comparativa («la mayor», «de a … b») se recalcula sobre todas las filas de la tabla.
+- **Estado:** candidato menor.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto

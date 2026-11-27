@@ -1,0 +1,130 @@
+{
+  "modelo": "aleatorio",
+  "semilla": 16,
+  "run_id": 16,
+  "split_evaluado": "prueba",
+  "n_usuarios_evaluados": 606,
+  "tiempo_s": 0.1887155000003986,
+  "hiperparametros": {},
+  "n_parametros": 0,
+  "diagnosticos": {},
+  "metricas": {
+    "global": {
+      "precision@1": 0.0,
+      "recall@1": 0.0,
+      "ndcg@1": 0.0,
+      "acierto@1": 0.0,
+      "cobertura@1": 0.445,
+      "precision@3": 0.0022002200220022,
+      "recall@3": 0.006600660066006601,
+      "ndcg@3": 0.003948497129891704,
+      "acierto@3": 0.006600660066006601,
+      "cobertura@3": 0.829,
+      "precision@5": 0.0023102310231023103,
+      "recall@5": 0.01155115511551155,
+      "ndcg@5": 0.006080559298571868,
+      "acierto@5": 0.01155115511551155,
+      "cobertura@5": 0.947,
+      "precision@10": 0.0021452145214521457,
+      "recall@10": 0.02145214521452145,
+      "ndcg@10": 0.009209487045886942,
+      "acierto@10": 0.02145214521452145,
+      "cobertura@10": 0.996,
+      "acierto_por_lugar@1": 0.19471947194719472,
+      "acierto_por_lugar@3": 0.4801980198019802
+    },
+    "concentracion": {
+      "gini@1": 0.645805280528053,
+      "hhi@1": 0.0027720593841562375,
+      "gini@3": 0.40325962596259646,
+      "hhi@3": 0.0015442688383249766,
+      "gini@5": 0.3155584158415843,
+      "hhi@5": 0.0013225282924332034,
+      "gini@10": 0.23494620462046223,
+      "hhi@10": 0.0011764641810715723
+    },
+    "por_grupo": {
+      "pocas": {
+        "n_usuarios": 280,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.234,
+        "precision@3": 0.0011904761904761904,
+        "recall@3": 0.0035714285714285713,
+        "ndcg@3": 0.0022533205484694912,
+        "acierto@3": 0.0035714285714285713,
+        "cobertura@3": 0.568,
+        "precision@5": 0.0014285714285714286,
+        "recall@5": 0.007142857142857143,
+        "ndcg@5": 0.0037914511130173237,
+        "acierto@5": 0.007142857142857143,
+        "cobertura@5": 0.744,
+        "precision@10": 0.002142857142857143,
+        "recall@10": 0.02142857142857143,
+        "ndcg@10": 0.008404310083622031,
+        "acierto@10": 0.02142857142857143,
+        "cobertura@10": 0.94,
+        "acierto_por_lugar@1": 0.20357142857142857,
+        "acierto_por_lugar@3": 0.5
+      },
+      "muchas": {
+        "n_usuarios": 326,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.279,
+        "precision@3": 0.003067484662576687,
+        "recall@3": 0.009202453987730062,
+        "ndcg@3": 0.005404477015775813,
+        "acierto@3": 0.009202453987730062,
+        "cobertura@3": 0.613,
+        "precision@5": 0.003067484662576687,
+        "recall@5": 0.015337423312883436,
+        "ndcg@5": 0.008046664488618715,
+        "acierto@5": 0.015337423312883436,
+        "cobertura@5": 0.783,
+        "precision@10": 0.0021472392638036807,
+        "recall@10": 0.02147239263803681,
+        "ndcg@10": 0.009901050080961097,
+        "acierto@10": 0.02147239263803681,
+        "cobertura@10": 0.96,
+        "acierto_por_lugar@1": 0.18711656441717792,
+        "acierto_por_lugar@3": 0.46319018404907975
+      }
+    },
+    "destinos_frios": {
+      "1": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 0.36633663366336633
+      },
+      "3": {
+        "acierto_objetivo_frio": 0.004878048780487805,
+        "acierto_objetivo_no_frio": 0.007481296758104738,
+        "frios_por_lista": 1.0874587458745875
+      },
+      "5": {
+        "acierto_objetivo_frio": 0.004878048780487805,
+        "acierto_objetivo_no_frio": 0.014962593516209476,
+        "frios_por_lista": 1.768976897689769
+      },
+      "10": {
+        "acierto_objetivo_frio": 0.014634146341463415,
+        "acierto_objetivo_no_frio": 0.02493765586034913,
+        "frios_por_lista": 3.4735973597359737
+      }
+    }
+  },
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}

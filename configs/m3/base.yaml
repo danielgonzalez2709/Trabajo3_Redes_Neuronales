@@ -1,0 +1,53 @@
+# M3 — modelos de referencia (JJ-4): popularidad, factorización de matrices implícita por ALS y aleatorio, evaluados en prueba.
+# Uso (en este orden; la búsqueda escribe los hiperparámetros que el experimento lee):
+#   .venv\Scripts\python run.py m3-hpo --config configs/m3/hpo.yaml     # 20 ensayos de Optuna con validación (D13)
+#   .venv\Scripts\python run.py m3     --config configs/m3/base.yaml    # 30 semillas × modelos, una evaluación en prueba (D14)
+# Sin red: lee data/processed/m3/ (partición en la columna `split`) y de resumen.json SOLO el bloque sha256 (evidencia).
+# Decisiones D9–D14 [DECIDIDO, Juan José, 26/27-nov]: docs/spec/partes/juanjose.md §3.1–§3.3.
+#   D9  modelos finales y HPO usan solo train (la búsqueda y la parada temprana, validación; la prueba se evalúa una vez).
+#   D10 candidatos = catálogo − historial conocido (prueba: train ∪ validación; validación: train).
+#   D12 K ∈ {1, 3, 5, 10}; Recall@K = acierto@K y Precision@K = acierto@K / K (1 destino de prueba por usuario).
+#   D14 semillas base_seed + 0…29 (semillas.n = 30) para las tres referencias.
+# Cambios en vivo sin editar código (núcleo §4.1):  --set evaluacion.k=3   --set "evaluacion.k=[1, 3]"   --set semillas.n=5
+
+datos:
+  carpeta: data/processed/m3
+  destinos: destinos.parquet
+  usuarios: usuarios.parquet
+  interacciones: interacciones.parquet           # trae `split` ∈ {train, validacion, prueba} (JJ-3)
+  resumen_particion: results/data/m3/particion/resumen.json   # solo se lee su bloque `sha256` (huella y SHA-256 del parquet)
+
+salida:
+  carpeta: results/data/m3                       # summary.json, semillas/, metricas_por_k.json, metricas_por_grupo.json,
+                                                 # recomendaciones_prueba.parquet y hpo_ensayos.json
+  modelos: models/m3                             # factores de la MF de la semilla base_seed + 0
+
+semillas:
+  base_seed: 0                                   # semilla efectiva de la corrida r = base_seed + r (src/comun/seeds.py)
+  n: 30                                          # D14 y núcleo §6: ≥ 30 semillas
+
+device: cpu                                      # las referencias son numpy; se reporta en summary.json
+
+modelos: [popularidad, mf_als, aleatorio]        # claves de referencias.MODELOS; JJ-5 agrega la red aquí
+
+evaluacion:
+  k: [1, 3, 5, 10]                               # D12 [PROPUESTO por el enunciado: «@K»]; también acepta un entero
+  k_lugar: [1, 3]                                # D12: «acierto por lugar» solo para estos K (los que también estén en k)
+  top_guardar: 10                                # destinos guardados por usuario en recomendaciones_prueba.parquet
+  umbral_pocas_max: 2                            # grupo «pocas» = 1..2 interacciones en total, «muchas» = más; debe ser
+                                                 # igual a particion.umbral_pocas_max de configs/m3/datos.yaml (lo prueba un test)
+
+mf_als:
+  # «hpo»: hiperparámetros = familias.mf_als.mejor de <salida.carpeta>/hpo_ensayos.json (error claro si no existe);
+  # «config»: los de `hiperparametros` (valores de respaldo, elección nuestra: no vienen de la literatura ni de la búsqueda).
+  hiperparametros_desde: hpo
+  hiperparametros:
+    factores: 16
+    regularizacion: 0.1
+    alfa: 10.0
+    iteraciones: 10
+  escala_inicial: 0.01                           # desviación de la inicialización N(0, escala²) de X e Y [PROPUESTO: no se busca]
+  # Guarda de degeneración (condiciones y derivación: docstring de MFImplicitaALS, src/m3_recomendacion/referencias.py): si
+  # max |x_uᵀ y_i| < tolerancia_degenerado los puntajes son numéricamente nulos. La búsqueda nunca elige un ensayo degenerado y
+  # el experimento falla con error claro si la MF final lo es. La tolerancia es [PROPUESTO].
+  tolerancia_degenerado: 1.0e-8

@@ -567,3 +567,430 @@ que tener en cuenta al comparar los grupos «pocas» y «muchas» en prueba.
 
 <!-- revisar: Juan José — cómo se reporta el acierto por lugar lo propone el auditor-fugas y se decide en JJ-6. -->
 <!-- revisar: Juan José — los porcentajes 33,8 %, 34,0 %, 33,7 %, 32,7 %, 29,1 % y 29,4 % son división del redactor sobre cifras del JSON; la lectura de que los destinos fríos «no tienen señal» en las interacciones es interpretación del redactor. -->
+
+### Métricas de evaluación
+
+<!-- JJ-4 (redactor-tecnico, Sonnet) para Juan José. Las ecuaciones siguen `src/m3_recomendacion/metricas.py` (y `eda_estadistica.py` para Gini y HHI); toda cifra sale de `results/data/m3/` (ruta o clave en la fuente de cada tabla). Las lecturas de resultados son interpretación del redactor y están marcadas. -->
+
+El enunciado pide métricas @K, cobertura del catálogo, concentración de las recomendaciones y desempeño por grupo de actividad.
+Esta subsección define cada una con la misma fórmula que usa el código; los resultados se leen en «Modelos de referencia». Los
+candidatos de cada usuario y la partición son los de la subsección «Partición» (D8 a D10).
+
+**Notación.** $\mathcal{U}$ es el conjunto de usuarios evaluados (606 en prueba) y $n$ el tamaño del catálogo (1 000 destinos). Para un usuario $u$: $C_u$ son sus **candidatos** (el
+catálogo menos el historial conocido, D10) y $N_u = |C_u|$; $R_u \subset C_u$ son sus destinos **relevantes** (el destino de la
+partición evaluada; en prueba y en validación $|R_u| = 1$, D3); y $L_u^K = (L_u(1), \dots, L_u(K))$ es la lista recomendada,
+ordenada de mejor a peor, sin repetidos y contenida en $C_u$, donde $L_u(r)$ es el destino en el **rango** $r$ (1 es el primero).
+En las intersecciones $L_u^K$ se trata como conjunto.
+
+**Métricas por usuario.** Acierto, Precision y Recall en $K$:
+
+$$
+\text{Acierto@}K(u) = \mathbb{1}\!\left[\,|L_u^K \cap R_u| > 0\,\right], \qquad
+\text{Precision@}K(u) = \frac{|L_u^K \cap R_u|}{K}, \qquad
+\text{Recall@}K(u) = \frac{|L_u^K \cap R_u|}{|R_u|},
+$$
+
+donde Precision@$K$ divide por el $K$ nominal. NDCG@$K$ binario es el cociente entre la ganancia descontada de la lista y la de una
+lista ideal:
+
+$$
+\text{DCG@}K(u) = \sum_{r=1}^{K} \frac{\mathbb{1}[L_u(r) \in R_u]}{\log_2(r+1)}, \qquad
+\text{IDCG@}K(u) = \sum_{r=1}^{\min(|R_u|,\,K)} \frac{1}{\log_2(r+1)}, \qquad
+\text{NDCG@}K(u) = \frac{\text{DCG@}K(u)}{\text{IDCG@}K(u)} .
+$$
+
+**Con un único relevante.** Como cada usuario de prueba tiene exactamente un destino relevante (D12), las fórmulas generales se
+simplifican: $\text{Recall@}K(u) = \text{Acierto@}K(u)$, $\text{Precision@}K(u) = \text{Acierto@}K(u)/K$ e $\text{IDCG@}K(u) = 1$.
+Por eso Precision@$K$ **tiene techo $1/K$** (0,1 con $K = 10$, aunque el usuario acierte siempre) y Recall@$K$ coincide con el
+acierto. Siguen siendo tres métricas porque las fórmulas generales son las del enunciado y el módulo no cambia si algún día hay más
+de un relevante. Con un relevante en el rango $r_u$, NDCG@$K$ vale $1/\log_2(r_u+1)$ si $r_u \le K$ y 0 si no (por ejemplo, 1 en el
+rango 1, 0,631 en el 2, 0,387 en el 5 y 0,289 en el 10).
+
+**Promedio sobre los usuarios evaluados.** Cada métrica por usuario $M_u$ (Acierto, Precision, Recall, NDCG y acierto por lugar) se
+reporta como el promedio simple
+
+$$
+\overline{M}@K = \frac{1}{|\mathcal{U}|} \sum_{u \in \mathcal{U}} M_u@K ,
+$$
+
+y en cada una de las 30 semillas se calcula una vez ese promedio; las tablas dan la media y la desviación de esos 30 valores
+(desviación muestral, con $n-1$ en el denominador).
+
+**Cobertura, exposiciones y concentración.** La **cobertura** es la fracción del catálogo que aparece en alguna lista, y la
+**exposición** $e_i$ de un destino es en cuántas listas entra:
+
+$$
+\text{Cobertura@}K = \frac{\left|\bigcup_{u \in \mathcal{U}} L_u^K\right|}{n}, \qquad
+e_i = \#\{\,u \in \mathcal{U} : i \in L_u^K\,\}, \quad i = 1, \dots, n .
+$$
+
+Estas dos no se promedian por usuario: se calculan sobre todas las listas de una corrida. La concentración de las exposiciones usa
+las mismas definiciones del análisis descriptivo (subsección «Estructura y heterogeneidad»), con $e_i$ en lugar del número de
+interacciones $x_i$: con $e_{(1)} \le \dots \le e_{(n)}$ las exposiciones ordenadas de menos a más (los destinos con exposición 0
+**cuentan**: son $n = 1\,000$ en total) y $s_i = e_i / \sum_j e_j$,
+
+$$
+\text{Gini} = \frac{2 \sum_{i=1}^{n} i\, e_{(i)}}{n \sum_{i=1}^{n} e_{(i)}} - \frac{n+1}{n}, \qquad
+\text{HHI} = \sum_{i=1}^{n} s_i^2 .
+$$
+
+El Gini no está reescalado y, en general, va de 0 a $(n-1)/n = 0{,}999$; el HHI va de $1/n = 0{,}001$ a 1. Pero **los extremos
+alcanzables dependen de $K$ y del número de usuarios**: cada lista tiene $K$ destinos distintos, así que un destino aparece a lo
+sumo una vez por usuario y las exposiciones suman $\sum_i e_i = \sum_u |L_u^K|$ ($606\,K$ con listas completas). La mayor
+concentración posible es que todos los usuarios reciban los mismos $K$ destinos, y entonces
+
+$$
+\text{Gini} \le 1 - \frac{K}{n}, \qquad \text{HHI} \le \frac{1}{K},
+$$
+
+es decir, Gini $\le$ 0,999, 0,997, 0,995 y 0,990 y HHI $\le$ 1, 0,333, 0,200 y 0,100 para $K = 1, 3, 5, 10$. En el otro extremo, con
+$K = 1$ hay 606 exposiciones repartidas entre 1 000 destinos: al menos 394 destinos tienen $e_i = 0$ y HHI $\ge 1/606 = 0{,}0017$,
+aunque las listas se sortearan sin ningún criterio. Por eso estas medidas se comparan con el máximo alcanzable para ese $K$ y con el
+recomendador aleatorio, y no con 0 ni con 1. Son las que se usarán para la pregunta de negocio 2 (concentración de las
+recomendaciones); aquí solo se miden.
+
+<!-- revisar: Juan José — las cotas 1 − K/n y 1/K, «al menos 394 destinos con exposición 0» (1 000 − 606) y HHI ≥ 1/606 son aritmética del redactor (con la corrección de R1), no cifras de un JSON; el Gini y el HHI máximos son los de «todos reciben los mismos K destinos». -->
+
+**Acierto por lugar.** Los 1 000 destinos son 5 lugares (decisión D2). Con $\ell(i)$ el lugar del destino $i$ y $o_u$ el destino
+objetivo de $u$ (con $R_u = \{o_u\}$), el **acierto por lugar** es
+
+$$
+\text{Lugar@}K(u) = \mathbb{1}\!\left[\,\exists\, i \in L_u^K : \ell(i) = \ell(o_u)\,\right],
+$$
+
+que se promedia como las demás. Solo se calcula para $K \in \{1, 3\}$ (D12) y **siempre junto a su línea base del azar**, porque con
+5 lugares acertar uno por casualidad es fácil (véase el diagnóstico de la partición en la [[tab:m3-particion-diagnosticos]]).
+
+**El recomendador aleatorio como piso, con valores esperados.** El aleatorio recomienda, a cada usuario, un subconjunto uniforme de
+$K'_u = \min(K, N_u)$ candidatos, en orden al azar. Su valor esperado para cada métrica tiene forma cerrada (aquí $|R_u| = 1$, y
+como $N_u$ es cercano a 1 000 y $K \le 10$, $K'_u = K$):
+
+$$
+\mathbb{E}[\text{Acierto@}K] = 1 - \frac{\binom{N_u - |R_u|}{K'_u}}{\binom{N_u}{K'_u}} = \frac{K'_u}{N_u}, \qquad
+\mathbb{E}[\text{Precision@}K] = \frac{|R_u|\,K'_u}{N_u\, K}, \qquad
+\mathbb{E}[\text{Recall@}K] = \frac{K'_u}{N_u},
+$$
+
+$$
+\mathbb{E}[\text{NDCG@}K] = \frac{1}{N_u} \sum_{r=1}^{K'_u} \frac{1}{\log_2(r+1)}, \qquad
+\mathbb{E}[\text{Lugar@}K] = 1 - \frac{\binom{N_u - m_u}{K'_u}}{\binom{N_u}{K'_u}}, \quad
+m_u = \#\{\,i \in C_u : \ell(i) = \ell(o_u)\,\},
+$$
+
+$$
+\mathbb{E}[\text{Cobertura@}K] = \frac{1}{n} \sum_{i=1}^{n} \left[\, 1 - \prod_{u:\, i \in C_u} \left(1 - \frac{K'_u}{N_u}\right) \right],
+$$
+
+donde en NDCG el relevante está en cada rango con probabilidad $1/N_u$, $m_u$ incluye al propio objetivo y la cobertura supone
+independencia entre usuarios (exacta, porque cada usuario sortea por separado). Los esperados de Acierto, Precision, Recall, NDCG y
+Lugar se promedian sobre los usuarios evaluados con la ecuación de arriba; así, $\mathbb{E}[\text{Precision@}K]$ es la misma
+constante para todo $K \le N_u$ (0,0010 en prueba) y $\mathbb{E}[\text{Recall@}K] \approx K/N_u$. Son el piso con el que se leen los
+resultados: una métrica cercana a su esperado aleatorio no muestra nada que el azar no explique.
+
+**Valores de $K$.** $K \in \{1, 3, 5, 10\}$ (`evaluacion.k`, D12); $K = 5$ es el valor por defecto del caso de uso (el que muestra la
+aplicación) y $K = 10$ es el máximo del contrato.
+
+**Resultados por grupo de actividad.** El grupo de un usuario se define con el **total** de sus interacciones (entrenamiento,
+validación y prueba): «pocas» es 1 a 2 y «muchas» es 3 o más (véase «Partición»). Se reporta cada métrica por grupo, con los
+usuarios de prueba de cada uno (280 y 326), **solo para estratificar**: el grupo no es entrada de ningún modelo. La validación
+solo tiene usuarios de «muchas», así que los hiperparámetros de la factorización se eligieron con ese grupo.
+
+<!-- revisar: Juan José — K ∈ {1, 3, 5, 10} sigue siendo [PROPUESTO por el enunciado («@K»)] en tu spec D12; confirma. La cobertura por grupo no se reporta: en el archivo se calcula solo con las listas de ese grupo y no es comparable con la global. -->
+<!-- TODO(cita): NDCG, el acierto/recall@K y la cobertura/diversidad del catálogo necesitan referencia verificada en blog/references.bib (JJ-9); no se citan de memoria. -->
+
+### Modelos de referencia
+
+<!-- JJ-4 (redactor-tecnico, Sonnet) para Juan José. Cifras de results/data/m3/{summary.json, metricas_por_k.json, metricas_por_grupo.json, hpo_ensayos.json}; ecuaciones de src/m3_recomendacion/{referencias.py, hpo.py, metricas.py}. Sin conclusiones sobre la red (JJ-5, JJ-10) ni respuestas a las preguntas de negocio (JJ-6). -->
+
+El enunciado pide comparar la red con al menos dos modelos de referencia bajo el mismo preprocesamiento y la misma partición. Los tres
+de esta subsección usan la partición única de D8 (huella `b35cd70b…58e8b8`, la misma en todos los resultados),
+se ajustan **solo con entrenamiento** (D9), se evalúan una vez en prueba con las 30 semillas $0, \dots, 29$ (`semillas.base_seed` =
+0 y `semillas.n` = 30; D14) y reciben los mismos candidatos (D10). La [[tab:m3-presupuesto]] resume su presupuesto y su costo.
+
+**Popularidad (D11 a).** El puntaje es el conteo de interacciones del destino en entrenamiento, igual para todos los usuarios:
+
+$$
+s^{\text{pop}}_{ui} = n_i = \#\{\,(u', i) \in \text{train}\,\} \quad \text{para todo } u .
+$$
+
+Un destino sin ninguna interacción en entrenamiento tiene puntaje 0 y queda al final; los empates se rompen al azar con la semilla de
+la corrida (se permutan los candidatos de forma uniforme y se ordena de forma estable por puntaje descendente). **La columna
+`popularidad` de la fuente no se usa**: es un atributo del destino y no un conteo de interacciones, y el descriptivo muestra que no
+se relaciona con ellas (H-M3-3, ρ de Spearman = −0,011). No tiene hiperparámetros, pero estima un conteo por destino, así que
+reporta 1 000 parámetros.
+
+**Factorización de matrices implícita por ALS (D11 b).** Sigue la formulación de Hu, Koren y Volinsky (2008) para retroalimentación
+implícita. <!-- TODO(cita): Hu, Koren y Volinsky (2008) [VERIFICAR en JJ-9]; pasar a [@clave] cuando esté en references.bib -->
+Con $r_{ui} = 1$ si el par $(u, i)$ es una interacción de entrenamiento y 0 si no (la calificación no se usa, D1), se define la
+preferencia $p_{ui} = r_{ui}$ y la confianza $c_{ui} = 1 + \alpha\, r_{ui}$. Cada usuario con al menos una interacción de
+entrenamiento tiene un factor $x_u \in \mathbb{R}^f$ y cada destino del catálogo un factor $y_i \in \mathbb{R}^f$ (las sumas sobre
+usuarios recorren solo a esos usuarios); el modelo minimiza, **sobre todos los pares usuario × destino** (no solo los observados),
+
+$$
+L(X, Y) = \sum_{u, i} c_{ui}\,\bigl(p_{ui} - x_u^\top y_i\bigr)^2 + \lambda \Bigl(\sum_{u} \lVert x_u \rVert^2 + \sum_{i} \lVert y_i \rVert^2\Bigr),
+$$
+
+y puntúa $s_{ui} = x_u^\top y_i$. Con $Y$ fija, $L$ se separa por usuario y cada $x_u$ resuelve un problema cuadrático estrictamente
+convexo (la matriz $Y^\top C^u Y + \lambda I$ es definida positiva si $\lambda > 0$), cuyo minimizador es cerrado; lo mismo vale para
+cada $y_i$ con $X$ fija. Con $C^u$ la matriz diagonal de las confianzas $c_{ui}$ de los destinos, $C^i$ la de las confianzas $c_{ui}$ de
+los usuarios, $N(u)$ los destinos de entrenamiento de $u$ y $N(i)$ los usuarios de entrenamiento de $i$:
+
+$$
+x_u = \bigl(Y^\top C^u Y + \lambda I\bigr)^{-1} Y^\top C^u\, p(u), \qquad
+y_i = \bigl(X^\top C^i X + \lambda I\bigr)^{-1} X^\top C^i\, p(i),
+$$
+
+y, como $C^u$ difiere de la identidad solo en los destinos de $N(u)$, la matriz del sistema se arma con la identidad que hace barato
+el paso:
+
+$$
+Y^\top C^u Y = Y^\top Y + Y^\top (C^u - I)\, Y = Y^\top Y + \alpha \sum_{i \in N(u)} y_i y_i^\top, \qquad
+Y^\top C^u\, p(u) = (1 + \alpha) \sum_{i \in N(u)} y_i ,
+$$
+
+y lo mismo para $y_i$ con los factores $x_u$, $u \in N(i)$. Así $Y^\top Y$ se calcula una vez por medio paso y por cada usuario
+solo se suman sus destinos (sin armar la matriz usuario × destino por usuario). Como cada medio paso minimiza exactamente $L$ en
+un bloque con el otro fijo, **la pérdida no aumenta en ningún medio paso** (salvo error de redondeo) y el algoritmo es
+determinista dada la inicialización. **Inicialización:** las entradas de $X$ y de $Y$ se sortean de $\mathcal{N}(0, \sigma^2)$ con
+$\sigma = 0{,}01$ (`escala_inicial`, valor fijo, no se busca) usando la semilla de la corrida, y las filas de $Y$ de destinos sin
+interacciones de entrenamiento se ponen en 0. Cada barrido actualiza $X$ con $Y$ fija y luego $Y$ con $X$ fija, durante
+`iteraciones` barridos. **Destinos sin entrenamiento:** su minimizador exacto es $y_i = 0$ (todos sus $p_{ui}$ valen 0 y
+$\lambda > 0$) y así quedan; su puntaje es 0 para todos los usuarios y el modelo no tiene información de ellos. **Parámetros:**
+$(n_{\text{usuarios}} + n_{\text{destinos}}) \cdot f$, con $n_{\text{usuarios}} = 858$ (los usuarios con alguna interacción de
+entrenamiento, véase «Partición») y $n_{\text{destinos}} = 1\,000$, es decir $7\,432$ con $f = 4$. Esa cifra incluye las filas de
+los 345 destinos sin entrenamiento, que valen 0 por construcción; sin ellas, los parámetros con datos son
+$(858 + 655) \cdot 4 = 6\,052$. Cada medio paso cuesta del orden
+de $(\text{filas del otro lado} + |\text{train}|)\, f^2 + \text{filas}\cdot f^3$ operaciones, porque se forma $F^\top F$ una vez, se
+suman $|N(\cdot)|$ términos $f \times f$ por fila y se resuelve un sistema $f \times f$ por fila.
+
+<!-- revisar: Juan José — (1) las ecuaciones son las de `referencias.py` (`perdida_als`, `actualizar_factores`); falta contrastar la notación con el artículo de Hu, Koren y Volinsky cuando JJ-9 lo verifique, y no se afirma aquí nada del artículo más allá de c = 1 + α·r y las actualizaciones cerradas que implementa el código. (2) El orden de costo por medio paso es lectura del redactor del código, no una medición. -->
+
+**Aleatorio.** Piso de referencia: el puntaje de cada par es un número uniforme en (0, 1), independiente; con el desempate al azar
+el top-$K$ entre los candidatos es un subconjunto uniforme sin reemplazo. No estima nada (0 parámetros) y su valor esperado es
+analítico (ecuaciones de «Métricas de evaluación»). Las 30 semillas del aleatorio sirven para comprobar que el código de las
+métricas coincide con ese esperado y para mostrar cuánto varían las métricas solo por azar.
+
+**Búsqueda declarada (comparación justa).** Solo la factorización tiene hiperparámetros que buscar. Se usa Optuna con el muestreador
+TPE (semilla 2026), **20 ensayos** (D13, el mismo presupuesto de la red, núcleo §6) y por objetivo el **NDCG@5 medio en
+validación** (326 usuarios, candidatos = catálogo menos entrenamiento). Cada ensayo ajusta el modelo solo con entrenamiento, y en
+todos el modelo y el desempate usan la misma semilla de corrida (la semilla 0), así que solo cambian los hiperparámetros. La
+búsqueda no lee prueba. El espacio es elección del equipo, no de la literatura ([[tab:m3-hpo-espacio]]). Popularidad y aleatorio
+tienen 0 hiperparámetros y 1 configuración. Recuérdese el sesgo anotado en «Partición»: como la
+validación solo contiene usuarios de «muchas», la configuración elegida optimiza para ese grupo.
+
+<!-- TODO(cita): Optuna y el muestreador TPE necesitan referencia verificada en blog/references.bib (JJ-9). -->
+
+**Por qué se acota λ: la solución nula.** Con $\lambda$ grande, el único mínimo global de $L$ es $X = Y = 0$. Sea $P$ la matriz de
+preferencias de entrenamiento ($p_{ui}$) y $\sigma_{\max}$ su mayor valor singular. En $(X, Y) = (0, 0)$ solo contribuyen los pares
+observados, $L(0, 0) = (1 + \alpha)\,|\text{train}|$, y con $Z = XY^\top$ (de elementos $z_{ui} = x_u^\top y_i$) se tiene
+
+$$
+L(X, Y) - L(0, 0) = \sum_{u,i} c_{ui}\, z_{ui}^2 - 2(1 + \alpha)\,\langle P, Z \rangle + \lambda\bigl(\lVert X \rVert^2 + \lVert Y \rVert^2\bigr)
+\;\ge\; \bigl(\lambda - (1 + \alpha)\,\sigma_{\max}\bigr)\bigl(\lVert X \rVert^2 + \lVert Y \rVert^2\bigr),
+$$
+
+porque $\sum c_{ui} z_{ui}^2 \ge 0$, $\langle P, Z \rangle \le \sigma_{\max} \lVert Z \rVert_*$ y $\lVert Z \rVert_* \le \tfrac{1}{2}
+(\lVert X \rVert^2 + \lVert Y \rVert^2)$ (norma nuclear de $Z$; las normas de $X$ y $Y$ son de Frobenius). Si
+$\lambda \ge (1 + \alpha)\,\sigma_{\max}$, entonces $X = Y = 0$ es el único mínimo global de $L$. La condición es **exacta**: si
+$\lambda < (1 + \alpha)\,\sigma_{\max}$, el origen es un punto de silla (en la dirección de los primeros vectores singulares,
+$L - L(0, 0) = 2t^2\,(\lambda - (1 + \alpha)\,\sigma_{\max}) + O(t^4) < 0$) y existe un mínimo no nulo. Con los datos de
+entrenamiento, $\sigma_{\max} = 2{,}871$ y, como $\alpha \ge \alpha_{\min} = 1$ en el rango declarado,
+$(1 + \alpha)\,\sigma_{\max} \ge (1 + \alpha_{\min})\,\sigma_{\max} = 5{,}742$. **En una primera corrida** el espacio permitía
+$\lambda$ hasta 100 y la búsqueda eligió esa solución nula (los factores guardados eran del orden de $10^{-23}$ y la pérdida era
+exactamente $L(0, 0)$): sus listas salían del residuo numérico y no de lo aprendido. Se detectó al verificar la pérdida de los
+factores, y es parte de la metodología de este trabajo. Por eso el tope de $\lambda$ es **5,0**, por debajo de 5,742: ningún punto del espacio cae en la región degenerada. Lo que es solo **suficiente, no necesario**
+es ese tope del espacio (para $\alpha$ grande, $\lambda$ podría llegar más arriba sin colapsar).
+
+Además hay una guarda. Un ajuste de la factorización se marca como **degenerado** si se cumple cualquiera de estas tres condiciones:
+$\lambda \ge (1 + \alpha)\,\sigma_{\max}(P_{\text{train}})$; la pérdida final es $\ge L(0, 0) = (1 + \alpha)\,|\text{train}|$; o
+$\max_{u,i} |x_u^\top y_i| < 10^{-8}$ (`tolerancia_degenerado`). Un ensayo degenerado se registra, cuenta en el presupuesto y nunca puede
+ser el mejor, y el experimento falla si la factorización final lo es; la tolerancia por sí sola no basta, porque solo detecta
+puntajes numéricamente nulos. En la búsqueda actual hay 0 ensayos degenerados, y el puntaje máximo de las 30
+factorizaciones finales es en media 0,805 (desviación 0,028), muy por encima de $10^{-8}$.
+
+<!-- revisar: Juan José — σ_max, α_min, λ_max y la cota salen de `hpo_ensayos.json`, `familias.mf_als.cota_solucion_nula`. Los factores del orden de 1e-23 y la pérdida exactamente L(0, 0) de la primera corrida NO están en `results/` (la corrida se sobrescribió): vienen de la verificación (evidencia en `alucinaciones/evidencias/JJ-4/colapso_mf.md`) y se citan como hecho de la metodología, no como resultado regenerable. La desigualdad y la derivación (L(0,0) = (1+α)|train|) las revisé a mano; la exactitud de la condición λ ≥ (1+α)σ_max (si y solo si) y el punto de silla con L − L(0,0) = 2t²(λ − (1+α)σ_max) + O(t⁴) vienen de la verificación (R1) y de la `nota` de `cota_solucion_nula`; no los derivé yo, solo la desigualdad. Lo suficiente, no necesario, es el tope del espacio. Las tres condiciones de la guarda son las de `referencias.py` (`condiciones_degenerado`). El tope de λ = 5,0 y la tolerancia 1e-8 son [PROPUESTOS], a decidir por ti. -->
+
+::: tabla m3-hpo-espacio
+Título: Espacio de búsqueda de la factorización por ALS y mejor configuración (20 ensayos de Optuna, TPE)
+Fuente: `results/data/m3/hpo_ensayos.json`, `familias.mf_als` (`espacio`, `mejor`, `n_degenerados`, `cota_solucion_nula` con `sigma_max_train`, `alfa_min`, `lambda_max`, `cota` y `lambda_max_bajo_la_cota`; `nota_degenerados`, `ensayos[*].valor`, `semilla_sampler`); `results/data/m3/summary.json`, `modelos.mf_als.diagnosticos.max_abs_puntaje` (`media` y `desviacion` entre 30 semillas, para el puntaje máximo de las factorizaciones finales); `configs/m3/hpo.yaml`, `busqueda.espacio`; `configs/m3/base.yaml`, `mf_als.tolerancia_degenerado`. Los rangos son elección del equipo [PROPUESTO por JJ-4]; el tope de λ sale de la cota de arriba. Valor del objetivo: NDCG@5 medio en validación de una sola semilla (la 0) con los 326 usuarios de «muchas», a cuatro cifras significativas.
+
+| Hiperparámetro | Tipo | Rango | Escala | Mejor valor (ensayo 19) |
+|---|---|---|---|---:|
+| Factores f (`factores`) | entero | 4 a 64 | logarítmica | 4 |
+| Regularización λ (`regularizacion`) | real | 0,001 a 5 | logarítmica | 0,002104 |
+| Confianza α (`alfa`) | real | 1 a 100 | logarítmica | 1,485 |
+| Barridos (`iteraciones`) | entero | 5 a 30 | lineal | 9 |
+| Escala inicial σ (`escala_inicial`) | real | no se busca | no aplica | 0,01 (fijo) |
+| **NDCG@5 en validación** | | | | **0,01015** |
+:::
+
+El mejor valor del objetivo es **0,01015** (ensayo 19; $f = 4$, $\lambda = 0{,}002104$, $\alpha = 1{,}485$, 9 barridos), con Recall@5 de
+0,0184 en validación (6 de 326 usuarios; 0,0184 × 326, cálculo del redactor). Los valores de los 20 ensayos van de 0 (ensayo 7) a
+0,01015, y ninguno es degenerado. Los cuatro hiperparámetros del mejor ensayo quedan en el extremo bajo o cerca de él: $f = 4$ es el
+mínimo del rango, $\lambda = 0{,}0021$ queda cerca del mínimo (0,001) y $\alpha = 1{,}485$ cerca del suyo (1); los barridos (9) quedan
+en el tramo bajo del rango.
+
+<!-- revisar: Juan José — que los mejores valores queden en el extremo bajo de los rangos (f = 4 es el mínimo, λ y α cerca del mínimo) es observación del redactor sobre hpo_ensayos.json; sugiere que quizá habría que ampliar el rango hacia abajo, pero no se hizo ni se afirma que eso mejore algo. El 0,0184 × 326 ≈ 6 aciertos es cálculo del redactor. -->
+
+::: tabla m3-presupuesto
+Título: Presupuesto y costo de cómputo de los tres modelos de referencia
+Fuente: `results/data/m3/summary.json`, `modelos.<modelo>` (`hiperparametros`, `n_parametros`, `n_configuraciones_busqueda`, `tiempo_busqueda_s`, `tiempo_corridas_finales_s`, `tiempo_total_s`, `device`; y `diagnosticos.n_parametros_con_datos`, resumido entre semillas con `media`, `desviacion`, `minimo`, `maximo` y `n`). Los tiempos son de pared, de una sola ejecución; las corridas finales son las 30 semillas juntas e incluyen el ajuste, la puntuación, el ordenamiento y las métricas de cada una. Dispositivo: CPU (`device` = cpu). Los parámetros de la factorización son (858 usuarios + 1 000 destinos) · f = 7 432 e incluyen las filas de los 345 destinos sin entrenamiento, que valen 0 por construcción; sin ellas son (858 + 655) · 4 = 6 052 (`modelos.mf_als.diagnosticos.n_parametros_con_datos`, `media`).
+
+| Modelo | Hiperparámetros | Parámetros estimados | Configuraciones de la búsqueda | Búsqueda (s) | 30 corridas finales (s) | Total (s) |
+|---|---|---:|---:|---:|---:|---:|
+| Popularidad | ninguno | 1 000 | 1 | 0,00 | 5,65 | 5,65 |
+| Factorización por ALS | f = 4, λ = 0,002104, α = 1,485, 9 barridos (los 4 buscados; σ = 0,01 fijo) | 7 432 (6 052 con datos) | 20 | 17,16 | 16,70 | 33,86 |
+| Aleatorio | ninguno | 0 | 1 | 0,00 | 7,79 | 7,79 |
+:::
+
+<!-- TODO(dato-faltante): hardware de la máquina que midió los tiempos de la tabla m3-presupuesto (CPU, RAM, sistema); no está en summary.json. -->
+
+**Resultados en prueba.** La [[tab:m3-resultados-k]] da la media y la desviación entre las 30 semillas de Precision, Recall, NDCG y
+cobertura para cada $K$, junto con el esperado analítico del aleatorio. Recall@$K$ es igual al acierto@$K$ y Precision@$K$ es el
+acierto dividido por $K$ (un relevante por usuario).
+
+::: tabla m3-resultados-k
+Título: Resultados en prueba por K de los tres modelos de referencia (media ± desviación entre 30 semillas) y esperado analítico del aleatorio
+Fuente: `results/data/m3/summary.json`, `modelos.<modelo>.metricas` (`precision@K`, `recall@K`, `ndcg@K`, `cobertura@K`; `media` y `desviacion`, ddof = 1, n = 30) y `linea_base_aleatoria_analitica.global` (esperado del aleatorio). 606 usuarios de prueba. Las mismas cifras están en `results/data/m3/metricas_por_k.json`. Cuatro decimales.
+
+| Métrica | K | Popularidad | Factorización por ALS | Aleatorio | Esperado del aleatorio |
+|---|---:|---:|---:|---:|---:|
+| Precision | 1 | 0,0000 ± 0,0000 | 0,0007 ± 0,0009 | 0,0010 ± 0,0015 | 0,0010 |
+| Precision | 3 | 0,0006 ± 0,0003 | 0,0007 ± 0,0007 | 0,0009 ± 0,0008 | 0,0010 |
+| Precision | 5 | 0,0007 ± 0,0000 | 0,0009 ± 0,0005 | 0,0010 ± 0,0007 | 0,0010 |
+| Precision | 10 | 0,0007 ± 0,0002 | 0,0011 ± 0,0004 | 0,0010 ± 0,0004 | 0,0010 |
+| Recall (= acierto) | 1 | 0,0000 ± 0,0000 | 0,0007 ± 0,0009 | 0,0010 ± 0,0015 | 0,0010 |
+| Recall (= acierto) | 3 | 0,0017 ± 0,0010 | 0,0021 ± 0,0021 | 0,0028 ± 0,0023 | 0,0030 |
+| Recall (= acierto) | 5 | 0,0033 ± 0,0000 | 0,0044 ± 0,0025 | 0,0048 ± 0,0034 | 0,0050 |
+| Recall (= acierto) | 10 | 0,0069 ± 0,0020 | 0,0105 ± 0,0043 | 0,0096 ± 0,0040 | 0,0100 |
+| NDCG | 1 | 0,0000 ± 0,0000 | 0,0007 ± 0,0009 | 0,0010 ± 0,0015 | 0,0010 |
+| NDCG | 3 | 0,0010 ± 0,0006 | 0,0015 ± 0,0014 | 0,0021 ± 0,0019 | 0,0021 |
+| NDCG | 5 | 0,0016 ± 0,0002 | 0,0024 ± 0,0015 | 0,0029 ± 0,0022 | 0,0030 |
+| NDCG | 10 | 0,0028 ± 0,0007 | 0,0043 ± 0,0017 | 0,0044 ± 0,0022 | 0,0046 |
+| Cobertura | 1 | 0,0037 ± 0,0006 | 0,0245 ± 0,0025 | 0,4561 ± 0,0084 | 0,4546 |
+| Cobertura | 3 | 0,0050 ± 0,0000 | 0,0486 ± 0,0023 | 0,8398 ± 0,0090 | 0,8381 |
+| Cobertura | 5 | 0,0183 ± 0,0015 | 0,0677 ± 0,0035 | 0,9523 ± 0,0067 | 0,9521 |
+| Cobertura | 10 | 0,0250 ± 0,0000 | 0,1006 ± 0,0043 | 0,9974 ± 0,0018 | 0,9977 |
+:::
+
+**Por grupo de actividad.** La [[tab:m3-resultados-grupo]] repite NDCG@5 y Recall@10 para los usuarios de «pocas» y de «muchas».
+
+::: tabla m3-resultados-grupo
+Título: NDCG@5 y Recall@10 en prueba por grupo de actividad (media ± desviación entre 30 semillas) y esperado del aleatorio de cada grupo
+Fuente: `results/data/m3/metricas_por_grupo.json`, `modelos.<modelo>.<grupo>` (`n_usuarios`, `ndcg@5`, `recall@10`; `media`, `desviacion`, `mejor`, `peor` y `n` = 30) y `aleatorio_analitico.<grupo>` (esperado del aleatorio, promediado sobre los usuarios del grupo). El grupo se define con el total de interacciones del usuario (pocas = 1 a 2; muchas = 3 o más). Cuatro decimales.
+
+| Grupo | Usuarios de prueba | Métrica | Popularidad | Factorización por ALS | Aleatorio | Esperado del aleatorio |
+|---|---:|---|---:|---:|---:|---:|
+| Pocas (1 a 2) | 280 | NDCG@5 | 0,0035 ± 0,0004 | 0,0028 ± 0,0020 | 0,0027 ± 0,0024 | 0,0030 |
+| Pocas (1 a 2) | 280 | Recall@10 | 0,0115 ± 0,0032 | 0,0115 ± 0,0061 | 0,0092 ± 0,0054 | 0,0100 |
+| Muchas (3 o más) | 326 | NDCG@5 | 0,0000 ± 0,0000 | 0,0021 ± 0,0019 | 0,0031 ± 0,0029 | 0,0030 |
+| Muchas (3 o más) | 326 | Recall@10 | 0,0030 ± 0,0031 | 0,0096 ± 0,0045 | 0,0099 ± 0,0056 | 0,0100 |
+:::
+
+**Concentración y acierto por lugar.** La [[tab:m3-exposiciones]] reúne el Gini y el HHI de las exposiciones para cada $K$ y el acierto
+por lugar para $K \in \{1, 3\}$ con su línea base del azar (la línea base es la misma para los tres modelos).
+
+::: tabla m3-exposiciones
+Título: Concentración de las exposiciones (Gini y HHI) y acierto por lugar en prueba, con la línea base del azar
+Fuente: `results/data/m3/summary.json`, `modelos.<modelo>.concentracion` (`gini@K`, `hhi@K`; `media` y `desviacion` entre 30 semillas), `modelos.<modelo>.metricas` (`acierto_por_lugar@K`) y `modelos.<modelo>.acierto_por_lugar_linea_base` (también `linea_base_aleatoria_analitica.global`). Las exposiciones son sobre los 1 000 destinos del catálogo y los 606 usuarios de prueba; Gini sin reescalar. Máximos alcanzables (aritmética del redactor, no están en el archivo): Gini ≤ 1 − K/1 000 y HHI ≤ 1/K, cuando todos los usuarios reciben los mismos K destinos; con K = 1, HHI ≥ 1/606. Cuatro decimales para las medias y las desviaciones.
+
+| K | Gini: popularidad | Gini: factorización | Gini: aleatorio | Gini máximo alcanzable | HHI: popularidad | HHI: factorización | HHI: aleatorio | HHI máximo alcanzable |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0,9990 ± 0,0000 | 0,9893 ± 0,0013 | 0,6308 ± 0,0109 | 0,999 | 0,9869 ± 0,0000 | 0,0911 ± 0,0126 | 0,0026 ± 0,0001 | 1,000 |
+| 3 | 0,9957 ± 0,0000 | 0,9790 ± 0,0012 | 0,4021 ± 0,0075 | 0,997 | 0,2217 ± 0,0001 | 0,0448 ± 0,0033 | 0,0016 ± 0,0000 | 0,333 |
+| 5 | 0,9949 ± 0,0000 | 0,9694 ± 0,0015 | 0,3166 ± 0,0063 | 0,995 | 0,1972 ± 0,0000 | 0,0305 ± 0,0016 | 0,0013 ± 0,0000 | 0,200 |
+| 10 | 0,9828 ± 0,0001 | 0,9494 ± 0,0016 | 0,2269 ± 0,0048 | 0,990 | 0,0620 ± 0,0000 | 0,0181 ± 0,0006 | 0,0012 ± 0,0000 | 0,100 |
+
+| Acierto por lugar | Popularidad | Factorización por ALS | Aleatorio | Línea base del azar |
+|---|---:|---:|---:|---:|
+| K = 1 | 0,2017 ± 0,0007 | 0,2045 ± 0,0166 | 0,1999 ± 0,0179 | 0,2000 |
+| K = 3 | 0,4756 ± 0,0093 | 0,5063 ± 0,0241 | 0,4876 ± 0,0219 | 0,4883 |
+:::
+
+**Destinos fríos (D14).** Un destino frío es uno sin ninguna interacción en entrenamiento. Entre los 606 usuarios de prueba, 205 tienen
+un objetivo frío (ya contados en «Partición»), y 345 de los 1 000 destinos del catálogo son fríos. La popularidad los pone al final y
+no puede acertar esos 205 usuarios mientras tenga al menos $K$ candidatos con conteo mayor que 0 (el mínimo entre usuarios es 649,
+mayor que $K = 10$, así que la condición se cumple): su acierto tiene un techo de $(606 - 205)/606 = 0{,}6617$. La factorización les
+da puntaje 0 a todos los destinos fríos y su posición depende del signo de los demás puntajes del usuario, así que se mide cuántas
+veces entra un destino frío en la lista. El aleatorio no distingue entre destinos fríos y no fríos ([[tab:m3-frios-modelos]]).
+
+::: tabla m3-frios-modelos
+Título: Destinos fríos en prueba: techo de acierto de la popularidad y destinos fríos en las listas de cada modelo
+Fuente: `results/data/m3/summary.json`, `destinos_frios` (`usuarios_prueba`, `usuarios_prueba_con_objetivo_frio`, `destinos_sin_train_en_catalogo`, `techo_acierto_popularidad`, `min_candidatos_no_frios`, `popularidad_techo_valido`) y `destinos_frios.por_modelo.<modelo>.<K>` (`frios_por_lista` y `acierto_objetivo_no_frio`; `media` y `desviacion` entre 30 semillas). «Fríos por lista» es el promedio, sobre los usuarios de prueba, de cuántos destinos fríos hay en su lista de K; «acierto con objetivo no frío» es el acierto@K de los 401 usuarios cuyo objetivo no es frío (606 − 205, cálculo del redactor). Techo de la popularidad = 0,6617 = 401/606.
+
+| Concepto | Valor |
+|---|---:|
+| Usuarios de prueba | 606 |
+| Usuarios de prueba con objetivo frío | 205 |
+| Destinos fríos en el catálogo (de 1 000) | 345 |
+| Techo de acierto de la popularidad | 0,6617 |
+| Mínimo de candidatos no fríos por usuario (supera a K = 10) | 649 |
+
+| K | Fríos por lista: popularidad | Fríos por lista: factorización | Fríos por lista: aleatorio | Acierto con objetivo no frío: popularidad | Acierto con objetivo no frío: factorización | Acierto con objetivo no frío: aleatorio |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0,000 ± 0,000 | 0,000 ± 0,000 | 0,342 ± 0,021 | 0,0000 ± 0,0000 | 0,0011 ± 0,0014 | 0,0012 ± 0,0022 |
+| 3 | 0,000 ± 0,000 | 0,000 ± 0,000 | 1,039 ± 0,035 | 0,0026 ± 0,0015 | 0,0032 ± 0,0031 | 0,0033 ± 0,0033 |
+| 5 | 0,000 ± 0,000 | 0,000 ± 0,000 | 1,726 ± 0,044 | 0,0050 ± 0,0000 | 0,0067 ± 0,0037 | 0,0053 ± 0,0043 |
+| 10 | 0,000 ± 0,000 | 0,000 ± 0,000 | 3,429 ± 0,058 | 0,0105 ± 0,0030 | 0,0159 ± 0,0064 | 0,0101 ± 0,0058 |
+:::
+
+**Lectura de los resultados.** Todo lo que sigue es una lectura del redactor sobre las tablas.
+
+1. **Los tres modelos quedan en torno al piso del azar.** En Recall@10 la factorización alcanza 0,0105, el aleatorio 0,0096 y el
+   esperado del aleatorio es 0,0100; la popularidad, 0,0069. En NDCG@10 las medias son 0,0043, 0,0044 y 0,0028 frente a un esperado
+   de 0,0046. En Recall@$K$ la factorización queda por debajo del esperado con $K = 1, 3, 5$ (por 0,0003, 0,0009 y 0,0006) y por
+   encima con $K = 10$ (por 0,0005); la popularidad queda por debajo en los cuatro $K$ (por 0,0010, 0,0013, 0,0017 y 0,0031). La mayor
+   diferencia con el esperado **en Recall@$K$** de la [[tab:m3-resultados-k]] es la de la popularidad con $K = 10$ (0,0069 frente a 0,0100) y equivale a
+   **menos de dos aciertos** sobre 606 usuarios (0,0031 × 606 ≈ 1,9); las demás son de un acierto o menos (la popularidad con
+   $K = 5$, ≈ 1,0). Como Precision@$K$ tiene techo $1/K$ y su esperado es 0,001, lo que se ve es el mismo hecho: acertar con un
+   destino de 1 000 por casualidad ocurre rara vez.
+2. **La desviación entre semillas no es la incertidumbre de la prueba.** Las desviaciones de la tabla recogen solo lo que cambia con
+   la semilla (la inicialización de la factorización, los empates de la popularidad y el sorteo del aleatorio) con la prueba fija;
+   **no** recogen que los 606 usuarios de prueba son una muestra. Para una proporción $\hat p$ medida sobre $n = 606$ usuarios, el
+   error estándar es $\sqrt{\hat p (1 - \hat p)/n}$: en Recall@10 es 0,0041 para la factorización ($\hat p = 0{,}0105$, unos 6,4
+   aciertos), 0,0034 para la popularidad ($\hat p = 0{,}0069$, 4,2 aciertos) y 0,0040 para el aleatorio ($\hat p = 0{,}0096$); en
+   Recall@5, 0,0027, 0,0023 y 0,0028. La diferencia de dos modelos tiene error estándar $\sqrt{\text{SE}_1^2 + \text{SE}_2^2}$ (con
+   la aproximación de tratarlos como independientes): para la factorización frente a la popularidad es 0,0053 en Recall@10, donde
+   la diferencia es 0,0036, y 0,0036 en Recall@5, donde es 0,0011. Con unos pocos aciertos la aproximación normal es solo un orden de
+   magnitud. Con estos datos **no se puede decir que algún modelo supere o quede por debajo del azar**, ni ordenar la
+   factorización y la popularidad entre sí: ninguna diferencia de Recall@5 o Recall@10 entre modelos o con el esperado supera su
+   error estándar. Para el acierto por lugar el error estándar con la línea base es 0,016 ($K = 1$) y 0,020 ($K = 3$), y la mayor
+   diferencia con la línea base (factorización, $K = 3$, +0,0180) es de 0,9 error estándar.
+3. **Lo que ya sabíamos del descriptivo.** El descriptivo mostró que las interacciones se parecen a un reparto uniforme al azar: la
+   concentración no supera a la del azar y la popularidad de la fuente no se relaciona con ellas. Una popularidad calculada con
+   1 066 interacciones de entrenamiento sería sobre todo ruido de muestreo, y una factorización con 858 usuarios y esas mismas
+   interacciones tiene poco que aprender. Los resultados son los esperables de ese hecho, y las medias del aleatorio coinciden con su
+   esperado analítico dentro de la desviación entre semillas. Esto vale para estos datos generados (D4), no para turistas reales.
+4. **Por grupo, con pocos aciertos.** En «pocas» la popularidad llega a 0,0115 en Recall@10 y en «muchas» a 0,0030; la factorización,
+   a 0,0115 y 0,0096; el aleatorio, a 0,0092 y 0,0099. Con 280 y 326 usuarios son de 1,0 a 3,2 aciertos medios por grupo (media ×
+   usuarios del grupo), y los errores estándar de $\hat p$ van de 0,003 a 0,006, del mismo orden que las diferencias. La hipótesis
+   H-M3-9 (pocas frente a muchas) se cierra en JJ-10 con todos los modelos.
+5. **Los destinos fríos no explican el resultado.** La popularidad no puede acertar el tercio de usuarios con objetivo frío (techo
+   0,6617), pero entre los 401 con objetivo no frío su acierto con $K = 10$ es 0,0105, muy por debajo de ese techo y del mismo orden
+   que el del aleatorio en ese subgrupo (0,0101) y que el de la factorización (0,0159). La factorización no mete ningún destino frío
+   en su lista; el aleatorio mete 3,43 por lista con $K = 10$, cerca de lo que daría la fracción de destinos fríos del catálogo
+   (345 de 1 000).
+6. **Concentración.** Frente a los máximos alcanzables de la [[tab:m3-exposiciones]], la popularidad está casi en el tope con
+   $K = 1$ y $K = 5$: con $K = 5$ su Gini es 0,9949 (máximo 0,995) y su HHI 0,1972 (máximo 0,200), unos 5 destinos igualmente
+   expuestos ($1/\text{HHI} \approx 5{,}1$), y con $K = 1$ el HHI es 0,9869 (máximo 1): casi todos reciben el mismo destino. Con
+   $K = 3$ y $K = 10$ queda más lejos (HHI 0,2217 de 0,333 y 0,0620 de 0,100). La factorización queda en medio (con $K = 5$, Gini
+   0,9694 y HHI 0,0305, unos 33 destinos equivalentes; cobertura 0,0677) y el aleatorio, que no tiene criterio, expone casi todo el
+   catálogo (cobertura 0,9523 con $K = 5$; HHI 0,0013, unos 750 destinos equivalentes). Una concentración alta de la popularidad
+   significa que a casi todos se les muestran los mismos destinos; que la de la factorización sea menor que la de la popularidad pero
+   mucho mayor que la del aleatorio significa que sus listas se parecen entre sí mucho más que las de un recomendador sin criterio,
+   aunque su acierto no sea mayor que el del azar. Qué implica eso para el negocio es la pregunta 2 y se responde en JJ-6.
+7. **Costo.** La factorización cuesta 7 432 parámetros (6 052 con datos) y 33,86 s en total (17,16 s de búsqueda y 16,70 s de 30
+   corridas), frente a 1 000 parámetros y 5,65 s de la popularidad. El único modelo con una configuración elegida con datos es la
+   factorización, y su valor de validación (NDCG@5 = 0,01015) es mayor que su NDCG@5 en prueba (0,0024 ± 0,0015). Las dos cifras no
+   son comparables sin cautela: la de validación es de **una sola semilla** y de **otra población** (los 326 usuarios de «muchas»),
+   y es el máximo de 20 ensayos, así que es optimista por la propia selección; la de prueba es el promedio de 30 semillas sobre 606
+   usuarios.
+
+Estos resultados son solo de los tres modelos de referencia: no incluyen la red ni cierran ninguna de las hipótesis H-M3-7 a H-M3-9.
+
+<!-- revisar: Juan José — las multiplicaciones (media × 606; media × 280 o 326; 606 − 205 = 401) y los errores estándar son cálculo del redactor con sqrt(p(1−p)/n) aplicada a la media entre semillas: Recall@10 factorización 0,0041, popularidad 0,0034, aleatorio 0,0040; Recall@5 0,0027, 0,0023, 0,0028; por lugar 0,0162 (K=1) y 0,0203 (K=3), con p = línea base; por grupo (Recall@10) 0,0064, 0,0064 y 0,0057 en «pocas» y 0,0030, 0,0054 y 0,0055 en «muchas». El error estándar de la diferencia factorización − popularidad (0,0053 en Recall@10; 0,0036 en Recall@5) supone independencia entre los dos modelos, aunque se evalúan sobre los mismos usuarios. Ninguno sale de un JSON. -->
+<!-- revisar: Juan José — «1/HHI ≈ 5,1, 33 y 750 destinos equivalentes» (número equivalente de destinos igualmente expuestos) es una lectura del redactor, definición suya, no del Spec ni del enunciado. -->
+<!-- revisar: Juan José — «cerca de lo que daría la fracción de destinos fríos» (345/1 000 × 10 = 3,45) es un cálculo aproximado del redactor: los candidatos excluyen el historial conocido y algunos destinos de validación también son fríos. -->
+<!-- revisar: Juan José — «no se puede decir que algún modelo supere o quede por debajo del azar» y «el valor de validación es optimista» son interpretación del redactor; el segundo se apoya en que la configuración es el máximo de 20 ensayos (hpo_ensayos.json) y en que la validación es de una semilla y de otra población; no se afirma que haya sobreajuste. -->
+<!-- revisar: Juan José — la lectura 3 (los resultados son los esperables del descriptivo) relaciona dos resultados; es interpretación del redactor, no está contrastada con una corrida sobre datos con estructura. También lo es que las listas de la factorización «se parezcan entre sí mucho más» que las de un recomendador sin criterio: no se midió la similitud entre listas, solo la concentración de las exposiciones. -->
+<!-- revisar: Juan José — las comparaciones de la popularidad con el máximo alcanzable (casi en el tope con K = 1 y 5, más lejos con K = 3 y 10) son lectura del redactor sobre las cotas 1 − K/n y 1/K. -->

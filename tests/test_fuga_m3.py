@@ -24,8 +24,9 @@ import pandas as pd
 import pytest
 import yaml
 
+from src.comun.seeds import make_rng
 from src.m3_recomendacion import datos as dm
-from src.m3_recomendacion import particion
+from src.m3_recomendacion import particion, referencias
 from test_datos_m3 import montar, salidas
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -520,8 +521,28 @@ def test_real_popularidad_y_candidatos_sin_fuga():
 # el catálogo y devuelve algo comparable con ``==`` tras ``np.asarray`` (vector de puntajes, embeddings con semilla fija,
 # negativos muestreados con un generador fijo…). JJ-4 y JJ-5 AGREGAN aquí sus funciones de ajuste: la prueba exige que la
 # salida no cambie si se alteran o se eliminan las interacciones de validación y de prueba (D9: «solo con train»).
+def _ajuste_popularidad(inter, cat):
+    """JJ-4: puntajes de ``referencias.Popularidad`` (semilla fija) para un usuario cualquiera."""
+    return referencias.Popularidad().ajustar(inter, cat, make_rng(0, 0)).puntuar([1])
+
+
+def _ajuste_mf_als(inter, cat):
+    """JJ-4: factores (usuarios y destinos) de ``referencias.MFImplicitaALS`` con semilla fija y pocos hiperparámetros."""
+    m = referencias.MFImplicitaALS(factores=4, regularizacion=0.1, alfa=10.0, iteraciones=3, escala_inicial=0.01)
+    m.ajustar(inter, cat, make_rng(0, 0))
+    return np.concatenate([m.X.ravel(), m.Y.ravel()])
+
+
+def _ajuste_aleatorio(inter, cat):
+    """JJ-4: puntajes de ``referencias.Aleatorio`` (semilla fija); hoy no lee ``inter``, la guarda vigila que siga así."""
+    return referencias.Aleatorio().ajustar(inter, cat, make_rng(0, 0)).puntuar([1, 2])
+
+
 AJUSTES_SOLO_TRAIN = {
     "popularidad_train": lambda inter, cat: particion.popularidad_train(inter, cat),
+    "referencias.popularidad": _ajuste_popularidad,
+    "referencias.mf_als": _ajuste_mf_als,
+    "referencias.aleatorio": _ajuste_aleatorio,
 }
 
 
@@ -566,6 +587,23 @@ def test_ningun_modelo_de_m3_lee_estadisticas_calculadas_con_todas_las_interacci
         if malas:
             infractores[f.relative_to(RAIZ).as_posix()] = malas
     assert not infractores, f"modelos que leen estadísticas con validación/prueba: {infractores}"
+
+
+# Guarda propuesta por el auditor-fugas en JJ-4: los modelos reciben todo por ``ajustar(inter, catalogo, rng)``; no abren
+# parquet ni JSON (la fábrica recibe el cfg completo, con rutas) ni leen salidas de evaluación calculadas con prueba (D9).
+# No va en PROHIBIDAS_PARA_MODELOS porque experimento.py escribe esas salidas con razón.
+ARCHIVOS_DE_MODELO_M3 = {"referencias.py"}   # JJ-5 agrega aquí el archivo de su red
+SALIDAS_DE_EVALUACION_M3 = ("recomendaciones_prueba", "summary.json", "metricas_por_k.json", "metricas_por_grupo.json",
+                            "semillas/")
+LECTURAS_DE_ARCHIVOS = ("read_parquet", "load_json", "open(", "read_csv")
+
+
+def test_los_modelos_no_leen_archivos_ni_salidas_de_evaluacion():
+    carpeta = RAIZ / "src" / "m3_recomendacion"
+    for nombre in sorted(ARCHIVOS_DE_MODELO_M3):
+        texto = (carpeta / nombre).read_text(encoding="utf-8")
+        assert not [p for p in SALIDAS_DE_EVALUACION_M3 if p in texto], f"{nombre} lee salidas de evaluación"
+        assert not [p for p in LECTURAS_DE_ARCHIVOS if p in texto], f"{nombre} abre archivos por su cuenta"
 
 
 @real
