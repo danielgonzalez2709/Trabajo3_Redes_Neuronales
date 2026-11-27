@@ -20,6 +20,11 @@ sin cambios:
    (b) calendario de T: `dia_semana` en dummies (lunes = referencia), `festivo`, `puente`, `semana_santa`,
        `jueves_viernes_santo`, `fin_de_anio` y `vacaciones_escolares_<origen_divipola de la ruta>`;
    (c) h / horizonte_máximo.
+   Regla 0.9 para (b): la variable de vacaciones del día objetivo vale 0 (sin receso; NO NaN) si el origen es anterior a la
+   columna `vacaciones_escolares_<divipola>_conocible_desde` de esa fecha (el acto que la fija aún no existía). Vale 0 y no NaN
+   porque es el mismo tratamiento que se da a un nulo al pronosticar (0 = sin receso) y porque descartar la fila haría el
+   entrenamiento distinto del pronóstico; se aplica igual en train y en pronóstico. Si el calendario no trae la columna
+   `_conocible_desde` (p. ej. datos sintéticos) no se anula nada; un `conocible_desde` nulo tampoco anula.
    Ridge de sklearn con alpha fijo (config; sin búsqueda: `n_configuraciones_busqueda` = 0; alpha = 0 es mínimos cuadrados).
    Cuantiles: se estima z_hat; los residuos de train (z − z_hat) se agrupan por tramo de horizonte y ruta; el cuantil q es
    expm1(z_hat + cuantil_q(residuos)) truncado en 0. El punto es expm1(z_hat). Sesgo de la retransformación: expm1(E[z]) es la
@@ -53,6 +58,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import time
 from datetime import date
 from pathlib import Path
@@ -69,6 +75,7 @@ COLUMNAS_SERIE = ("ruta_id", "fecha", "pasajeros")  # lista blanca (§5.3 regla 
 COLUMNA_MASCARA = "sin_registro"  # solo para enmascarar días sin dato (ver docstring)
 COLUMNAS_CALENDARIO = ("festivo", "puente", "semana_santa", "jueves_viernes_santo", "fin_de_anio")
 PREFIJO_VACACIONES = "vacaciones_escolares_"
+SUFIJO_CONOCIBLE = "_conocible_desde"
 DIAS_SEMANA = 7
 COLUMNAS_PRED = ["origen", "ruta_id", "fecha", "h", "y", "punto"]
 DEVICE = "cpu"
@@ -84,9 +91,26 @@ def nombre_cuantil(q: float) -> str:
 
 def _validar_tramos(tramos) -> list[tuple[int, int]]:
     t = [(int(a), int(b)) for a, b in tramos]
-    if not t or t[0][0] != 1 or any(a > b for a, b in t) or any(t[i][1] + 1 != t[i + 1][0] for i in range(len(t) - 1)):
+    vacio_o_no_empieza_en_1 = not t or t[0][0] != 1
+    invertido = any(a > b for a, b in t)
+    con_hueco_o_traslape = any(t[i][1] + 1 != t[i + 1][0] for i in range(len(t) - 1))
+    if vacio_o_no_empieza_en_1 or invertido or con_hueco_o_traslape:
         raise ValueError(f"Los tramos de horizonte deben ser contiguos y empezar en 1: {tramos}")
     return t
+
+
+def _nanmean(g: np.ndarray) -> np.ndarray:
+    """Media por fila ignorando NaN (NaN si toda la fila lo es)."""
+    ok = ~np.isnan(g)
+    n = ok.sum(axis=1)
+    s = np.where(ok, g, 0.0).sum(axis=1)
+    return np.where(n > 0, s / np.maximum(n, 1), np.nan)
+
+
+def _cuantiles_desplazados(muestras: list[np.ndarray], tramo: np.ndarray, q: float) -> np.ndarray:
+    """Cuantil `q` de la muestra de errores (o residuos) del tramo de cada horizonte: el desplazamiento que se suma al punto."""
+    por_tramo = [np.quantile(x, q) for x in muestras]
+    return np.array([por_tramo[i] for i in tramo])
 
 
 class _Base:
@@ -107,6 +131,10 @@ class _Base:
 
     # --- lectura -------------------------------------------------------------------------------------------------
     def _leer(self, serie: pd.DataFrame, calendario: pd.DataFrame) -> None:
+        self._leer_serie(serie)
+        self._leer_calendario(calendario)
+
+    def _leer_serie(self, serie: pd.DataFrame) -> None:
         faltan = [c for c in COLUMNAS_SERIE if c not in serie.columns]
         if faltan:
             raise KeyError(f"Faltan columnas en la serie: {faltan}")
@@ -127,6 +155,8 @@ class _Base:
         self._n_fin = (self.fin - self.inicio).days  # posición de fin_entrenamiento
         if self._n_fin >= len(eje):
             raise ValueError("fin_entrenamiento está fuera de la serie")
+
+    def _leer_calendario(self, calendario: pd.DataFrame) -> None:
         falta_cal = [c for c in ("fecha", "dia_semana", *COLUMNAS_CALENDARIO) if c not in calendario.columns]
         if falta_cal:
             raise KeyError(f"Faltan columnas en el calendario: {falta_cal}")
@@ -134,6 +164,9 @@ class _Base:
                 or c.startswith(PREFIJO_VACACIONES)]
         cal = calendario[usar].copy()
         cal["fecha"] = pd.to_datetime(cal["fecha"]).dt.normalize()
+        for c in cal.columns:
+            if c.endswith(SUFIJO_CONOCIBLE):
+                cal[c] = pd.to_datetime(cal[c])
         self._cal = cal.set_index("fecha")
 
     def _tramo(self, h: np.ndarray) -> np.ndarray:
@@ -236,13 +269,12 @@ class IngenuoEstacional(_Base):
         h = np.arange(1, horizonte + 1)
         punto = _punto_ingenuo(vv, np.full(h.shape, t0), h, self.retroceso)
         if np.isnan(punto).any():
+            # Al pronosticar no se puede descartar el día (hay que entregar un valor): se usa la media de la historia <= origen.
+            # En el ajuste, en cambio, los puntos sin base se excluyen de los errores (no hay error que medir).
             media = np.nanmean(vv)
             punto = np.where(np.isnan(punto), media, punto)
         tr = self._tramo(h)
-        vals = []
-        for q in cuantiles:
-            desp = np.array([np.quantile(self._err[ruta][i], q) for i in tr])
-            vals.append(np.maximum(punto + desp, 0.0))
+        vals = [np.maximum(punto + _cuantiles_desplazados(self._err[ruta], tr, q), 0.0) for q in cuantiles]
         return self._salida(ruta, self.inicio + pd.Timedelta(days=t0), h, np.maximum(punto, 0.0), vals, cuantiles)
 
 
@@ -260,7 +292,6 @@ class RegresionCalendario(_Base):
         self._modelo: dict[str, Ridge] = {}
         self._res: dict[str, list[np.ndarray]] = {}
         self._media: dict[str, float] = {}
-        self._cols: dict[str, list[str]] = {}
 
     # --- variables -----------------------------------------------------------------------------------------------
     def _cols_calendario(self, ruta: str) -> list[str]:
@@ -271,7 +302,15 @@ class RegresionCalendario(_Base):
         return cols
 
     def _matriz(self, ruta: str, v: np.ndarray, t0: np.ndarray, h: np.ndarray) -> np.ndarray:
-        """Variables (n, p) del par (t0, h) usando SOLO v[: t0 + 1] y el calendario de la fecha objetivo."""
+        """Variables (n, p) del par (t0, h) usando SOLO v[: t0 + 1] y el calendario de la fecha objetivo:
+        (a) resúmenes de la historia, (b) calendario de T = t0 + h, (c) h / horizonte_máximo."""
+        resumenes = self._resumenes_historia(v, t0, h)
+        cal = self._variables_calendario(ruta, t0, h)
+        return np.column_stack([resumenes, cal, h / self.hmax])
+
+    def _resumenes_historia(self, v: np.ndarray, t0: np.ndarray, h: np.ndarray) -> np.ndarray:
+        """(a) Medias de log1p de los últimos `vc` y `vl` días hasta t0 y del mismo día de la semana de T en las últimas
+        `sem` semanas con fecha <= t0. Columnas: m_corta, m_larga, m_dia."""
         lz = pd.Series(np.log1p(v))
         m_corta = lz.rolling(self.vc, min_periods=1).mean().to_numpy()[t0]
         m_larga = lz.rolling(self.vl, min_periods=1).mean().to_numpy()[t0]
@@ -279,21 +318,31 @@ class RegresionCalendario(_Base):
         idx = (t0 + h - DIAS_SEMANA * k)[:, None] - DIAS_SEMANA * np.arange(self.sem)[None, :]
         lv = np.log1p(v)
         g = np.where(idx >= 0, lv[np.clip(idx, 0, len(v) - 1)], np.nan)
-        m_dia = _nanmean(g)
+        return np.column_stack([m_corta, m_larga, _nanmean(g)])
+
+    def _variables_calendario(self, ruta: str, t0: np.ndarray, h: np.ndarray) -> np.ndarray:
+        """(b) Dummies de día de la semana de T (lunes = referencia) y las columnas de `_cols_calendario`. Regla 0.9: la
+        vacación de T vale 0 si el origen (inicio + t0 días) es anterior a su `conocible_desde` (ver docstring del módulo)."""
         fechas = self.inicio + pd.to_timedelta(t0 + h, unit="D")
         dow = np.asarray(fechas.day_of_week)
         dummies = np.stack([(dow == d).astype(float) for d in range(1, DIAS_SEMANA)], axis=1)
         if not fechas.isin(self._cal.index).all():
             raise ValueError("El calendario no cubre las fechas objetivo")
         cal = self._cal.reindex(fechas)
-        cals = np.stack([cal[c].to_numpy(dtype=float, na_value=np.nan) for c in self._cols_calendario(ruta)], axis=1)
-        return np.column_stack([m_corta, m_larga, m_dia, dummies, cals, h / self.hmax])
+        cols = self._cols_calendario(ruta)
+        cals = np.stack([cal[c].to_numpy(dtype=float, na_value=np.nan) for c in cols], axis=1)
+        vac = PREFIJO_VACACIONES + ruta.split("-")[0]
+        if vac in cols and vac + SUFIJO_CONOCIBLE in cal.columns:
+            origen = (self.inicio + pd.to_timedelta(t0, unit="D")).to_numpy()
+            aun_no_conocible = cal[vac + SUFIJO_CONOCIBLE].to_numpy() > origen  # NaT -> False: no se anula
+            cals[aun_no_conocible, cols.index(vac)] = 0.0
+        return np.column_stack([dummies, cals])
 
     # --- ajuste --------------------------------------------------------------------------------------------------
     def ajustar(self, serie: pd.DataFrame, calendario: pd.DataFrame) -> None:
         self._leer(serie, calendario)
         self._ajustado = True
-        self._modelo, self._res, self._media, self._cols = {}, {}, {}, {}
+        self._modelo, self._res, self._media = {}, {}, {}
         t0g, hg = np.meshgrid(np.arange(self.ventana - 1, self._n_fin), np.arange(1, self.hmax + 1), indexing="ij")
         t0g, hg = t0g.ravel(), hg.ravel()
         ok = t0g + hg <= self._n_fin
@@ -303,6 +352,7 @@ class RegresionCalendario(_Base):
             vt = v[: self._n_fin + 1]  # parámetros solo con fechas <= fin_entrenamiento
             X = self._matriz(r, vt, t0g, hg)
             z = np.log1p(vt[t0g + hg])
+            # Solo se ajusta con filas completas: un NaN (día sin_registro, nulo del calendario) no es un valor que explicar.
             val = np.isfinite(X).all(axis=1) & np.isfinite(z)
             if val.sum() == 0:
                 raise ValueError(f"Sin filas de entrenamiento para {r}")
@@ -310,7 +360,6 @@ class RegresionCalendario(_Base):
             res = z[val] - m.predict(X[val])
             self._modelo[r] = m
             self._media[r] = float(np.nanmean(np.log1p(vt)))
-            self._cols[r] = self._cols_calendario(r)
             self._res[r] = []
             for i in range(len(self.tramos)):
                 x = np.sort(res[tr[val] == i])
@@ -338,32 +387,22 @@ class RegresionCalendario(_Base):
         X = np.nan_to_num(X, nan=0.0)
         zhat = self._modelo[ruta].predict(X)
         tr = self._tramo(h)
-        vals = []
-        for q in cuantiles:
-            desp = np.array([np.quantile(self._res[ruta][i], q) for i in tr])
-            vals.append(np.maximum(np.expm1(zhat + desp), 0.0))
+        vals = [np.maximum(np.expm1(zhat + _cuantiles_desplazados(self._res[ruta], tr, q)), 0.0) for q in cuantiles]
         punto = np.maximum(np.expm1(zhat), 0.0)
         return self._salida(ruta, self.inicio + pd.Timedelta(days=t0), h, punto, vals, cuantiles)
 
 
-def _nanmean(g: np.ndarray) -> np.ndarray:
-    """Media por fila ignorando NaN (NaN si toda la fila lo es)."""
-    ok = ~np.isnan(g)
-    n = ok.sum(axis=1)
-    s = np.where(ok, g, 0.0).sum(axis=1)
-    return np.where(n > 0, s / np.maximum(n, 1), np.nan)
-
-
 # ================================================================================================= rejilla y main
 
-def rejilla_origenes(ultimo: date, n: int, paso: int, fin_entrenamiento: date) -> list[date]:
-    """Orígenes anclados al final (§5.3 regla 4): `ultimo` y los demás cada `paso` días hacia atrás, en orden ascendente."""
-    u = _ts(ultimo)
-    orig = [(u - pd.Timedelta(days=int(paso) * i)).date() for i in range(int(n))][::-1]
-    if _ts(orig[0]) < _ts(fin_entrenamiento):
-        raise ValueError(f"El origen {orig[0]} queda antes de fin_entrenamiento ({_ts(fin_entrenamiento).date()}): "
+def rejilla_origenes(ultimo, n: int, paso: int, fin_entrenamiento) -> list[date]:
+    """Orígenes anclados al final (§5.3 regla 4): `ultimo` y los demás cada `paso` días hacia atrás, en orden ascendente.
+    Las fechas se manejan como `Timestamp`; solo la salida (el protocolo `Pronosticador` recibe `date`) es `date`."""
+    u, fin = _ts(ultimo), _ts(fin_entrenamiento)
+    orig = [u - pd.Timedelta(days=int(paso) * i) for i in range(int(n))][::-1]
+    if orig[0] < fin:
+        raise ValueError(f"El origen {orig[0].date()} queda antes de fin_entrenamiento ({fin.date()}): "
                          "reduce n_origenes o paso_dias")
-    return orig
+    return [o.date() for o in orig]
 
 
 def construir_modelos(cfg: dict) -> list:
@@ -387,6 +426,14 @@ def _sha256(ruta: Path) -> str:
     return hashlib.sha256(Path(ruta).read_bytes()).hexdigest()
 
 
+def sha256_particion(inicio, fin, origenes) -> str:
+    """SHA-256 de la partición (§6): JSON ordenado y compacto de `inicio_entrenamiento`, `fin_entrenamiento` y la rejilla de
+    orígenes (fechas ISO)."""
+    cuerpo = json.dumps({"inicio_entrenamiento": str(_ts(inicio).date()), "fin_entrenamiento": str(_ts(fin).date()),
+                         "origenes": [str(_ts(o).date()) for o in origenes]}, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(cuerpo.encode("utf-8")).hexdigest()
+
+
 def _imprimir_config(cfg: dict) -> None:
     print(yaml.safe_dump(cfg, sort_keys=False, allow_unicode=True, explicit_start=True, explicit_end=True), end="")
 
@@ -397,11 +444,11 @@ def main(cfg: dict) -> int:
     d, rej = cfg["datos"], cfg["rejilla"]
     serie = pd.read_parquet(d["diaria"])
     cal = pd.read_parquet(d["calendario"])
-    origenes = rejilla_origenes(_ts(rej["ultimo_origen"]).date(), rej["n_origenes"], rej["paso_dias"],
-                                _ts(d["fin_entrenamiento"]).date())
+    origenes = rejilla_origenes(rej["ultimo_origen"], rej["n_origenes"], rej["paso_dias"], d["fin_entrenamiento"])
     horizonte, cuantiles = int(rej["horizonte"]), [float(q) for q in rej["cuantiles"]]
     obs = serie[["ruta_id", "fecha", "pasajeros"]].assign(fecha=lambda x: pd.to_datetime(x["fecha"]).dt.normalize())
-    evidencia = {"demanda_diaria_sha256": _sha256(d["diaria"]), "calendario_sha256": _sha256(d["calendario"])}
+    evidencia = {"demanda_diaria_sha256": _sha256(d["diaria"]), "calendario_sha256": _sha256(d["calendario"]),
+                 "particion_sha256": sha256_particion(d["inicio_entrenamiento"], d["fin_entrenamiento"], origenes)}
     carpeta, carpeta_ref = Path(cfg["salida"]["carpeta"]), Path(cfg["salida"]["carpeta_referencia"])
     carpeta.mkdir(parents=True, exist_ok=True)
     carpeta_ref.mkdir(parents=True, exist_ok=True)

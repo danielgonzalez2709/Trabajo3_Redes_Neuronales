@@ -140,7 +140,7 @@ publicación del propio DANE en datos.gov.co.
 
 ## Calendario exógeno de M1 (CA-1)
 
-Salida: `data/processed/m1/calendario.parquet` (1 461 filas, 2021-01-01..2024-12-31, una por `fecha`), generada con
+Salida: `data/processed/m1/calendario.parquet` (1 461 filas, 2021-01-01..2024-12-31, una por `fecha`; 21 columnas), generada con
 `.venv/bin/python -m src.m1_demanda.calendario` (sin red). Tablas de recesos y supuestos: `data/externos/m1/calendario_fuentes.yaml`
 (cada bloque con acto, fecha del acto, URL y fecha de consulta). Investigación de fuentes: `docs/investigacion/CA-1_fuentes_calendario.md`
 (investigador-fuentes, consulta 2026-11-26). Todo es conocible 30 días antes (regla 0.9): ley de 1983, cálculo determinista de la
@@ -158,6 +158,10 @@ modificaciones posteriores solo se documentan aquí). Excepciones que este mismo
 | `fin_de_anio` | **Supuesto del equipo** (no hay definición oficial de temporada alta; búsqueda negativa, confianza baja-media): del 15-dic al 15-ene, ambos inclusive | supuesto |
 | `vacaciones_escolares_11001/_76001/_15759/_52001/_52356` | Receso estudiantil del calendario A de colegios oficiales de la secretaría certificada de cada ciudad (Bogotá, Cali, Sogamoso, Pasto, Ipiales). Actos y URL en el yaml (listados MEN: https://www.mineducacion.gov.co/1780/w3-article-402903.html · `-408776` · `-413526` · `-419296`). Marco: Decreto 1075 de 2015, art. 2.4.3.4.1 (calendario antes del 1-nov) | calendarios oficiales; transcripción por OCR en parte (ver confianza por bloque en el yaml) |
 | `vacaciones_escolares` | = `vacaciones_escolares_11001` (Bogotá), por compatibilidad con núcleo §5.2 | derivada |
+| `vacaciones_escolares_<DIVIPOLA>_conocible_desde` y `vacaciones_escolares_conocible_desde` (Bogotá) | Fecha (`datetime64[ns]`, anulable) de expedición del acto **original** (`fecha_acto` del yaml, versión original: decisión de Camila, 26-nov) que fija el valor de ese día. Si el día es receso, es el bloque cuyos rangos lo contienen; si no, el bloque vigente (el de inicio más reciente <= día). Nulo si el valor de vacaciones es nulo o si el bloque no trae `fecha_acto` (`TODO(dato-faltante)`; no se inventa; hoy todos los bloques la traen). Ejemplo: Pasto 2022-01-03..06 -> 2021-12-07 (Res. 2706) | derivada del yaml |
+
+**Cómo deben usar la columna los modelos (regla 0.9):** para un par (origen, fecha objetivo), si `origen < <vacaciones>_conocible_desde` de la fecha objetivo, la variable de vacaciones **no era conocible** en el origen y debe anularse (valor 0/NaN según el modelo, documentado). Si `conocible_desde` es nulo, el valor ya es nulo. Excepciones en que el acto es posterior al propio día: Pasto 2021-01-04..14 (Res. 0064, 2021-01-15) e Ipiales 2021-01-04..13 (Res. 00023, 2021-01-14); caen antes del 2021-06-01 y no afectan el entrenamiento ni el test.
+**Festivos:** la Ley 51 de 1983 es anterior a todo el periodo; son conocibles siempre y no llevan columna. `fin_de_anio` y `puente` son reglas fijas (supuestos del equipo), conocibles siempre.
 
 ### Supuestos y decisiones declaradas
 1. Calendario B y colegios privados no cubiertos. Se supone que la demanda responde a la ciudad de origen o destino.

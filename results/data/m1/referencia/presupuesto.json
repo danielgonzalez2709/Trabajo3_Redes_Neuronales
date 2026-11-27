@@ -3,22 +3,24 @@
     "ingenuo_estacional": {
       "n_parametros": 0,
       "n_configuraciones_busqueda": 0,
-      "tiempo_total_s": 1.412,
+      "tiempo_total_s": 0.249,
       "device": "cpu",
       "evidencia": {
         "demanda_diaria_sha256": "caa2d340e7163f57b641783dfa1a34a474dd8a64ff25f62077aa7291930faf9f",
-        "calendario_sha256": "97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361"
+        "calendario_sha256": "7478d74ae318fd20157395212fc589777f59c0f646533e785518d5264baecec6",
+        "particion_sha256": "7b248080d706460f4acdd17a19132568d0425d8a00a25d111e63d6a35b7aca29"
       },
       "n_origenes": 40
     },
     "regresion_calendario": {
       "n_parametros": 102,
       "n_configuraciones_busqueda": 0,
-      "tiempo_total_s": 1.688,
+      "tiempo_total_s": 0.556,
       "device": "cpu",
       "evidencia": {
         "demanda_diaria_sha256": "caa2d340e7163f57b641783dfa1a34a474dd8a64ff25f62077aa7291930faf9f",
-        "calendario_sha256": "97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361"
+        "calendario_sha256": "7478d74ae318fd20157395212fc589777f59c0f646533e785518d5264baecec6",
+        "particion_sha256": "7b248080d706460f4acdd17a19132568d0425d8a00a25d111e63d6a35b7aca29"
       },
       "n_origenes": 40
     }

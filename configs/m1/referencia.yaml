@@ -1,5 +1,5 @@
 # M1 — modelos de referencia (CA-5; núcleo §5.3 y §6; spec de Camila §3.5).
-# Uso: python -m src.m1_demanda.referencia --config configs/m1/referencia.yaml --set regresion.alpha=10
+# Uso: python -m src.m1_demanda.referencia --config configs/m1/referencia.yaml --set regresion_calendario.alpha=10
 # (no hay subcomando en run.py). Nada aleatorio: no usa semillas. Sin red.
 
 datos:

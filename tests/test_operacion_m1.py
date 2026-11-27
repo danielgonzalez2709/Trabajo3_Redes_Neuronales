@@ -1,14 +1,17 @@
-"""CA-3 (ronda 2, prompt CA-3b): `dimensionar()` y conductores (núcleo §5.4; spec de Camila §3.3). Casos hechos a mano.
+"""CA-3 (rondas 2–3, prompts CA-3b y CA-3c): `dimensionar()` y conductores (núcleo §5.4; spec de Camila §3.3). Casos hechos a mano.
 
 Fórmula [DECIDIDO, Camila, 26-nov]; r' = ruta de regreso de r (`rutas.yaml`), {r, r'} = corredor:
     (1)  cap_ef(r)  = Σ_c π(r, c) · cap(c)
     (2)  desp(r, d) = ⌈ f(r) · D(r, d) / (cap_ef(r) · ρ) ⌉
     (3)  v(r)       = H / T_ciclo(r)                                   (fracción, sin piso ni mínimo)
     (4)  veh(r, d)  = ⌈ max(desp(r, d), desp(r', d)) / v(r) ⌉
-    (5a) C_serv     = ⌈ k_r · (desp(r, d) + desp(r', d)) · t_r / J_ef ⌉,  k_r = 2 si t_r > 8 h (Res. 315/2013 art. 6)
+    (5a) P          = 2 · max(desp(r, d), desp(r', d))                   piernas del corredor (con las vacías)
+         h_r        = t_r / k_r,  k_r = 2 si t_r > 8 h (Res. 315/2013 art. 6)   horas al volante por conductor y pierna
+         L_r        = max(1, ⌊ J_ef / h_r ⌋)                             piernas (indivisibles) por conductor y día
+         C_serv     = ⌈ k_r · P / L_r ⌉
     (5b) C_nom      = ⌈ C_serv / (1 − a) · 7 / (7 − s) ⌉,                s = 1 (día de descanso, art. 161 CST)
 Calibración con train: f(r) (últimos meses de train), cap(c) (máximo observado recortado al rango del Decreto 1079/2015)
-y ρ* = Σ f·D/cap_ef ÷ Σ despachos ORIGEN. Cada prueba lleva sus cuentas en el comentario. Ninguna usa internet.
+y ρ* = Σ f·D/cap_ef ÷ Σ despachos ORIGEN, en la misma ventana que f. Cada prueba lleva sus cuentas en el comentario. Ninguna usa internet.
 """
 
 from __future__ import annotations
@@ -106,24 +109,47 @@ def test_tripulacion_solo_con_recorrido_estrictamente_mayor_al_umbral():
     assert op.tripulacion(4, umbral_h=8) == 1
 
 
-def test_conductores_en_servicio_cuentan_horas_de_conduccion():
-    # (5a) ida 5 + regreso 8 = 13 piernas de 4 h con k = 1: 13 · 4 = 52 conductor-horas / 7 = 7,43 → 8
-    assert op.conductores_servicio(5, 8, 4, 1, 7) == 8
-    # k = 2 y t = 10: 2 · 13 · 10 = 260 / 7 = 37,14 → 38
-    assert op.conductores_servicio(5, 8, 10, 2, 7) == 38
+def test_piernas_cuentan_las_vacias_de_reposicion():
+    # P = 2 · max(n, n'): 2 · max(5, 8) = 16 (no 5 + 8 = 13); un sentido vacío: 2 · max(0, 8) = 16; 0 y 0 → 0
+    assert op.piernas_dia(5, 8) == 16
+    assert op.piernas_dia(0, 8) == 16
+    assert op.piernas_dia(0, 0) == 0
+
+
+def test_piernas_por_conductor_indivisibles():
+    # L = max(1, ⌊ J_ef / (t / k) ⌋) con J_ef = 7:
+    assert op.piernas_por_conductor(10, 2, 7) == 1    # Bogotá–Cali: h = 10/2 = 5;  ⌊7/5⌋ = ⌊1,4⌋ = 1
+    assert op.piernas_por_conductor(4, 1, 7) == 1     # Bogotá–Sogamoso: ⌊7/4⌋ = ⌊1,75⌋ = 1 (no 1,75 «continuas»)
+    assert op.piernas_por_conductor(1.5, 1, 7) == 4   # Pasto–Ipiales: ⌊7/1,5⌋ = ⌊4,67⌋ = 4
+    assert op.piernas_por_conductor(2, 1, 7) == 3     # ⌊7/2⌋ = ⌊3,5⌋ = 3
+    assert op.piernas_por_conductor(7.5, 1, 7) == 1   # h = 7,5 > J_ef = 7 (pero ≤ 8 h): ⌊0,93⌋ = 0 → mínimo 1
+
+
+def test_piernas_por_conductor_toleran_ruido_de_coma_flotante():
+    # 0,3 / 0,1 = 3 exacto, pero en coma flotante da 2,9999999999999996; sin tolerancia ⌊·⌋ = 2.
+    assert 0.3 / 0.1 < 3
+    assert op.piernas_por_conductor(0.1, 1, 0.3) == 3
+
+
+def test_conductores_en_servicio_por_piernas():
+    # (5a) C_serv = ⌈ k · 2 · max(n, n') / L ⌉ con J_ef = 7 y despachos 5 y 8 (P = 16):
+    assert op.conductores_servicio(5, 8, 10, 2, 7) == 32   # Bogotá–Cali: k = 2, L = 1 → ⌈2 · 16 / 1⌉ = 32
+    assert op.conductores_servicio(5, 8, 4, 1, 7) == 16    # Bogotá–Sogamoso: L = 1 → ⌈16 / 1⌉ = 16
+    assert op.conductores_servicio(5, 8, 1.5, 1, 7) == 4   # Pasto–Ipiales: L = 4 → ⌈16 / 4⌉ = 4
+    assert op.conductores_servicio(5, 7, 1.5, 1, 7) == 4   # P = 14, L = 4 → ⌈3,5⌉ = 4
+    assert op.conductores_servicio(0, 8, 4, 1, 7) == 16    # un sentido vacío: las 8 piernas vacías también se manejan
     assert op.conductores_servicio(0, 0, 4, 1, 7) == 0
 
 
 def test_contraejemplo_del_verificador_un_despacho_por_sentido():
-    # 1 despacho por sentido, T = 4 h (t = 2 h), H = 18: la ec. (5) anterior daba ⌈1 · 18 / 7 / 0,91⌉ = 3 conductores.
-    # (5a): ⌈1 · (1 + 1) · 2 / 7⌉ = ⌈0,571⌉ = 1 conductor en servicio (basta uno: 4 h de conducción ≤ 7 h).
+    # 1 despacho por sentido, T = 4 h (t = 2 h), H = 18: la ec. (5) original daba ⌈1 · 18 / 7 / 0,91⌉ = 3 conductores.
+    # (5a): P = 2 · max(1, 1) = 2; L = ⌊7/2⌋ = 3 → ⌈2 / 3⌉ = 1 conductor en servicio (4 h de conducción ≤ 7 h).
     assert op.conductores_servicio(1, 1, 2, 1, 7) == 1
 
 
 def test_conductores_en_servicio_toleran_ruido_de_coma_flotante():
-    # 3 · 0,1 / 0,3 = 1 exacto, pero en coma flotante da 1,0000000000000002; sin tolerancia ⌈·⌉ = 2.
-    assert 1 * 3 * 0.1 / 0.3 > 1
-    assert op.conductores_servicio(3, 0, 0.1, 1, 0.3) == 1
+    # P = 2 · 3 = 6; L = ⌊0,3 / 0,1⌋ = 3 con tolerancia (2 sin ella) → ⌈6 / 3⌉ = 2 (sin tolerancia ⌈6/2⌉ = 3).
+    assert op.conductores_servicio(3, 0, 0.1, 1, 0.3) == 2
 
 
 def test_conductores_de_nomina_con_ausentismo_y_descanso_semanal():
@@ -169,7 +195,7 @@ def test_dimensionar_caso_a_mano_ida_y_regreso():
     # A-B: cap_ef = 1·30 = 30; útiles 24; 100/24 = 4,17 → 5 despachos
     # B-A: cap_ef = 0,5·30 + 0,5·18 = 24; útiles 19,2; 150/19,2 = 7,81 → 8 despachos
     # vueltas = 18/9 = 2; vehículos del corredor = ⌈max(5, 8)/2⌉ = 4 en las dos filas
-    # k = 1 (4 h ≤ 8 h); C_serv = ⌈1 · (5 + 8) · 4 / 7⌉ = ⌈7,43⌉ = 8; C_nom = ⌈8 / 0,91 · 7/6⌉ = ⌈10,26⌉ = 11
+    # k = 1 (4 h ≤ 8 h); P = 2 · max(5, 8) = 16; L = ⌊7/4⌋ = 1 → C_serv = 16; C_nom = ⌈16 / 0,91 · 7/6⌉ = ⌈20,51⌉ = 21
     out = op.dimensionar(_ida_y_regreso(), _params()).set_index("ruta_id")
     assert out.loc["A-B", "capacidad_efectiva"] == pytest.approx(30.0)
     assert out.loc["B-A", "capacidad_efectiva"] == pytest.approx(24.0)
@@ -178,8 +204,10 @@ def test_dimensionar_caso_a_mano_ida_y_regreso():
     assert list(out["vueltas"]) == pytest.approx([2.0, 2.0])
     assert list(out["vehiculos"]) == [4, 4]
     assert list(out["tripulacion"]) == [1, 1]
-    assert list(out["conductores_servicio"]) == [8, 8]
-    assert list(out["conductores"]) == [11, 11]
+    assert list(out["piernas"]) == [16, 16]
+    assert list(out["piernas_por_conductor"]) == [1, 1]
+    assert list(out["conductores_servicio"]) == [16, 16]
+    assert list(out["conductores"]) == [21, 21]
     # la flota es del corredor (no se suma dos veces): misma etiqueta en las dos filas
     assert out.loc["A-B", "corredor"] == out.loc["B-A", "corredor"]
 
@@ -187,7 +215,7 @@ def test_dimensionar_caso_a_mano_ida_y_regreso():
 def test_dimensionar_segundo_conductor_por_norma_en_recorridos_largos():
     # t = 10 h > 8 h → k = 2 (Res. 315/2013 art. 6), sin bandera. T = 22 h, H = 18 → v = 18/22 = 0,818
     # despachos 5 y 8 (como arriba) → veh = ⌈8 / 0,818⌉ = ⌈9,78⌉ = 10
-    # C_serv = ⌈2 · 13 · 10 / 7⌉ = ⌈37,14⌉ = 38; C_nom = ⌈38 / 0,91 · 7/6⌉ = ⌈48,72⌉ = 49
+    # h = 10/2 = 5; L = ⌊7/5⌋ = 1; C_serv = ⌈2 · 16 / 1⌉ = 32; C_nom = ⌈32 / 0,91 · 7/6⌉ = ⌈41,03⌉ = 42
     p = _params()
     for r in ("A-B", "B-A"):
         p["por_ruta"][r].update(tiempo_recorrido_h=10.0, tiempo_ciclo_h=22.0)
@@ -195,8 +223,21 @@ def test_dimensionar_segundo_conductor_por_norma_en_recorridos_largos():
     assert list(out["vueltas"]) == pytest.approx([18 / 22, 18 / 22])
     assert list(out["vehiculos"]) == [10, 10]
     assert list(out["tripulacion"]) == [2, 2]
-    assert list(out["conductores_servicio"]) == [38, 38]
-    assert list(out["conductores"]) == [49, 49]
+    assert list(out["conductores_servicio"]) == [32, 32]
+    assert list(out["conductores"]) == [42, 42]
+
+
+def test_dimensionar_corredor_corto_varias_piernas_por_conductor():
+    # Pasto–Ipiales: t = 1,5, T = 3,5; despachos 5 y 8 → P = 16; L = ⌊7/1,5⌋ = 4 → C_serv = 4;
+    # C_nom = ⌈4 / 0,91 · 7/6⌉ = ⌈5,13⌉ = 6. Vueltas 18/3,5 = 5,14 → veh = ⌈8 / 5,14⌉ = ⌈1,56⌉ = 2.
+    p = _params()
+    for r in ("A-B", "B-A"):
+        p["por_ruta"][r].update(tiempo_recorrido_h=1.5, tiempo_ciclo_h=3.5)
+    out = op.dimensionar(_ida_y_regreso(), p)
+    assert list(out["vehiculos"]) == [2, 2]
+    assert list(out["piernas_por_conductor"]) == [4, 4]
+    assert list(out["conductores_servicio"]) == [4, 4]
+    assert list(out["conductores"]) == [6, 6]
 
 
 def test_conductores_no_dependen_de_las_horas_de_operacion():
@@ -207,7 +248,7 @@ def test_conductores_no_dependen_de_las_horas_de_operacion():
         out = op.dimensionar(_ida_y_regreso(), _params(horas_operacion_h=h))
         conductores.add((int(out["conductores_servicio"].iloc[0]), int(out["conductores"].iloc[0])))
         vehiculos.append(int(out["vehiculos"].iloc[0]))
-    assert conductores == {(8, 11)}
+    assert conductores == {(16, 21)}
     assert vehiculos == [8, 4, 3]
 
 
@@ -234,11 +275,12 @@ def test_dimensionar_demanda_cero_da_cero():
 
 def test_dimensionar_un_sentido_vacio_igual_necesita_flota():
     # A-B con 0 pasajeros y B-A con 150: los vehículos que vuelven de B deben haber ido; veh = ⌈max(0, 8)/2⌉ = 4.
-    # Conductores: solo hay 8 piernas cargadas → C_serv = ⌈8 · 4 / 7⌉ = ⌈4,57⌉ = 5 (las piernas vacías de reposición
-    # no están en desp(r, d); ver riesgo en el reporte).
+    # Conductores: 8 piernas cargadas B→A + 8 vacías A→B de reposición = P = 2 · max(0, 8) = 16; L = 1 → C_serv = 16
+    # (con desp + desp' serían solo 8 piernas).
     out = op.dimensionar(_ida_y_regreso(0, 150), _params())
     assert list(out["vehiculos"]) == [4, 4]
-    assert list(out["conductores_servicio"]) == [5, 5]
+    assert list(out["piernas"]) == [16, 16]
+    assert list(out["conductores_servicio"]) == [16, 16]
 
 
 def test_flota_monotona_en_la_demanda():
@@ -360,7 +402,7 @@ def test_flota_por_corredor_cuenta_cada_corredor_una_vez():
     assert fila["corredor"] == "A-B | B-A"
     assert (fila["ruta_ida"], fila["ruta_regreso"]) == ("A-B", "B-A")
     assert (fila["despachos_ida"], fila["despachos_regreso"]) == (5, 8)
-    assert (fila["vehiculos"], fila["conductores_servicio"], fila["conductores"]) == (4, 8, 11)
+    assert (fila["vehiculos"], fila["conductores_servicio"], fila["conductores"]) == (4, 16, 21)
     # sumar la tabla por ruta daría el doble: 8 vehículos-día; la del corredor da los 4 reales
     assert tabla["vehiculos"].sum() == 2 * corr["vehiculos"].sum() == 8
 
@@ -646,9 +688,11 @@ def test_yaml_sin_banderas_opcionales_ni_fraccion_escrita_a_mano(cfg_operacion):
 
 
 def test_yaml_sin_anclas_ni_alias():
-    texto = CONFIG.read_text(encoding="utf-8")
-    sin_comentarios = "\n".join(linea.split("#", 1)[0] for linea in texto.splitlines())
-    assert "&" not in sin_comentarios and "*" not in sin_comentarios
+    # Eventos del parser: un ancla (&x) deja `anchor` en el nodo y un alias (*x) es un AliasEvent.
+    eventos = list(yaml.parse(CONFIG.read_text(encoding="utf-8")))
+    assert not [e for e in eventos if isinstance(e, yaml.AliasEvent) or getattr(e, "anchor", None)]
+    # la prueba detecta un ancla si la hubiera
+    assert any(getattr(e, "anchor", None) for e in yaml.parse("a: &x {b: 1}\nc: *x\n"))
 
 
 def test_valores_de_uso_son_escalares_y_aceptan_el_set_del_nucleo(cfg_operacion):
@@ -706,6 +750,29 @@ def test_calibracion_con_los_datos_reales(cfg_operacion, calibracion):
     assert all(0 < f <= 1 for f in calibracion["fraccion"].values())
     # el régimen reciente de 11001-15759 (tránsito alto desde nov-2022) baja f frente a todo el train (0,417)
     assert calibracion["fraccion"]["11001-15759"] < 0.35
+
+
+def test_rho_estrella_usa_la_misma_ventana_que_f(calibracion):
+    # [DECIDIDO, Camila, 26-nov, CA-3c] ρ* con los (r, d) de train dentro de la ventana de f (2022-11-01..2022-12-31),
+    # recalculado aquí por separado: Σ f·D/cap_ef ÷ Σ despachos ORIGEN de esos mismos días.
+    ini, fin = (pd.Timestamp(x) for x in calibracion["ventana_fraccion"])
+    dem = calibracion["demanda_train"]
+    dem = dem[(dem["fecha"] >= ini) & (dem["fecha"] <= fin)]
+    assert dem["fecha"].min() == ini and dem["fecha"].max() == fin
+    obs = dem.merge(calibracion["despachos_origen_train"], on=["ruta_id", "fecha"], how="left")["despachos"].fillna(0)
+    f, cap = calibracion["fraccion"], calibracion["capacidad_efectiva"]
+    num = sum(f[r] * d / cap[r] for r, d in zip(dem["ruta_id"], dem["demanda"], strict=True))
+    assert calibracion["ocupacion_calibrada"] == pytest.approx(num / obs.sum(), rel=1e-12)
+    # y difiere de la de todo el train (diagnóstico), que mezcla regímenes con la f reciente
+    assert abs(calibracion["ocupacion_calibrada"] - calibracion["ocupacion_calibrada_todo_train"]) > 0.01
+
+
+def test_notas_del_yaml_declaran_las_limitaciones(cfg_operacion):
+    g = cfg_operacion["meta"]["globales"]
+    assert "por ruta" in g["ocupacion_objetivo"]["nota"]                      # desajuste por ruta de ρ global
+    assert "relevo" in g["jornada_efectiva_h"]["nota"]                        # supuesto de (5a)
+    assert "disposición del empleador" in g["jornada_efectiva_h"]["nota"]     # la pausa no es tiempo a disposición
+    assert "cota baja" in cfg_operacion["meta"]["por_clase"]["BUS"]["capacidad_pasajeros"]["nota"]
 
 
 def test_fin_de_entrenamiento_propuesto_no_pasa_de_2023_01_01(cfg_operacion):
@@ -782,6 +849,7 @@ def test_main_corre_sin_red_y_escribe_el_ejemplo_marcado(tmp_path, monkeypatch, 
     resumen = yaml.safe_load((tmp_path / "resumen.json").read_text(encoding="utf-8"))
     assert resumen["parametros"]["globales"]["ocupacion_objetivo"]["valor"] == 0.8
     assert 0 < resumen["calibracion"]["ocupacion_calibrada"] <= 1
-    assert set(resumen["calibracion"]["reproduccion_despachos_train"]) == {*cfg["operacion"]["por_ruta"], "total"}
+    for clave in ("reproduccion_despachos_calibracion", "reproduccion_despachos_train"):
+        assert set(resumen["calibracion"][clave]) == {*cfg["operacion"]["por_ruta"], "total"}
     for v in resumen["maximo_diario_por_corredor"].values():
         assert {"vehiculos", "conductores_servicio", "conductores"} == set(v)

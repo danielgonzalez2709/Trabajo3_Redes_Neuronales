@@ -17,7 +17,7 @@
     "figura_o_tabla": "efectos_calendario.csv",
     "resultado": "festivo: 47 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,81 y 1,13 según ruta (promedio ponderado 0,95); puente: 101 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,95 y 1,11 según ruta (promedio ponderado 1,02)",
     "veredicto": "pendiente",
-    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361)"
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 7478d74ae318fd20157395212fc589777f59c0f646533e785518d5264baecec6)"
   },
   {
     "id": "H-M1-3",
@@ -27,7 +27,7 @@
     "figura_o_tabla": "efectos_calendario.csv",
     "resultado": "vacaciones_escolares (por ciudad de origen de cada ruta): 231 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,04 y 1,27 según ruta (promedio ponderado 1,15)",
     "veredicto": "pendiente",
-    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361)"
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 7478d74ae318fd20157395212fc589777f59c0f646533e785518d5264baecec6)"
   },
   {
     "id": "H-M1-4",
@@ -37,7 +37,7 @@
     "figura_o_tabla": "efectos_calendario.csv",
     "resultado": "semana_santa: 14 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,09 y 1,42 según ruta (promedio ponderado 1,27)",
     "veredicto": "pendiente",
-    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361)"
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 7478d74ae318fd20157395212fc589777f59c0f646533e785518d5264baecec6)"
   },
   {
     "id": "H-M1-5",

@@ -205,3 +205,73 @@ def test_parquet_se_escribe(tmp_path):
     cal.main(["--salida", str(ruta)])
     out = pd.read_parquet(ruta)
     assert len(out) == 1461 and "vacaciones_escolares_52356" in out.columns
+
+
+# --- columna «conocible desde» (regla 0.9): fecha de expedición del acto que fija el valor de cada día --------------------
+DIVIPOLAS = ("11001", "76001", "15759", "52001", "52356")
+# Días cuyo acto se expidió DESPUÉS del propio día (documentado en data/fuentes.md): Res. 0064 de Pasto (2021-01-15) para el
+# receso desde el 4-ene-2021 y Res. 00023 de Ipiales (2021-01-14) desde el 4-ene-2021. Ningún pronóstico pudo conocerlos.
+EXCEPCIONES_POSTERIORES = {
+    "52001": (date(2021, 1, 4), date(2021, 1, 14)),
+    "52356": (date(2021, 1, 4), date(2021, 1, 13)),
+}
+
+
+def test_conocible_desde_columnas_y_tipos(df):
+    for d in DIVIPOLAS:
+        c = f"vacaciones_escolares_{d}_conocible_desde"
+        assert c in df.columns, c
+        assert str(df[c].dtype) == "datetime64[ns]", c
+    assert "vacaciones_escolares_conocible_desde" in df.columns  # Bogotá, junto a vacaciones_escolares
+    assert (df["vacaciones_escolares_conocible_desde"].fillna(pd.Timestamp(0)) ==
+            df["vacaciones_escolares_11001_conocible_desde"].fillna(pd.Timestamp(0))).all()
+    assert len(df) == 1461
+
+
+def test_conocible_desde_pasto_res_2706(df):
+    c = "vacaciones_escolares_52001_conocible_desde"
+    for iso in ("2022-01-03", "2022-01-04", "2022-01-06"):
+        r = fila(df, iso)
+        assert r["vacaciones_escolares_52001"] == True  # noqa: E712
+        assert r[c] == pd.Timestamp("2021-12-07")  # Res. 2706 de 2021
+    # un día de 2023 (Res. 3085 del 2022-11-02) y uno de Bogotá (Res. 2204 del 2021-10-29)
+    assert fila(df, "2023-07-12")[c] == pd.Timestamp("2022-11-02")
+    assert fila(df, "2022-01-12")["vacaciones_escolares_11001_conocible_desde"] == pd.Timestamp("2021-10-29")
+
+
+def test_conocible_desde_es_nulo_si_el_valor_es_nulo(df):
+    for d in DIVIPOLAS:
+        v, c = df[f"vacaciones_escolares_{d}"], df[f"vacaciones_escolares_{d}_conocible_desde"]
+        assert (v.isna() == c.isna()).all(), d
+    assert pd.isna(fila(df, "2024-01-01")["vacaciones_escolares_52001_conocible_desde"])
+
+
+def test_conocible_desde_no_posterior_al_dia_salvo_excepciones_documentadas(df):
+    fechas = pd.to_datetime(df["fecha"])
+    for d in DIVIPOLAS:
+        c = df[f"vacaciones_escolares_{d}_conocible_desde"]
+        tarde = c.notna() & (c > fechas)
+        if d in EXCEPCIONES_POSTERIORES:
+            ini, fin = (pd.Timestamp(x) for x in EXCEPCIONES_POSTERIORES[d])
+            assert set(fechas[tarde]) == set(pd.date_range(ini, fin)), d
+        else:
+            assert not tarde.any(), d
+
+
+def test_conocible_desde_sin_fecha_de_acto_queda_nulo():
+    ciudad = {"cobertura": ["2024-01-01", "2024-01-05"],
+              "bloques": [{"rangos": [["2024-01-02", "2024-01-03"]]},  # sin fecha_acto: TODO(dato-faltante)
+                          {"fecha_acto": "2023-10-01", "rangos": [["2024-01-04", "2024-01-04"]]}]}
+    fechas = pd.Series([date(2024, 1, i) for i in range(1, 6)])
+    valor = cal._vacaciones(fechas, ciudad)
+    out = cal._conocible_desde(fechas, ciudad, valor)
+    assert [None if pd.isna(x) else x.date().isoformat() for x in out] == [None, None, None, "2023-10-01", "2023-10-01"]
+
+
+def test_conocible_desde_dia_sin_receso_usa_el_bloque_vigente():
+    ciudad = {"cobertura": ["2024-01-01", "2024-01-10"],
+              "bloques": [{"fecha_acto": "2023-10-01", "rangos": [["2024-01-01", "2024-01-02"], ["2024-01-06", "2024-01-06"]]},
+                          {"fecha_acto": "2023-11-01", "rangos": [["2024-01-08", "2024-01-09"]]}]}
+    fechas = pd.Series([date(2024, 1, i) for i in range(1, 11)])
+    out = cal._conocible_desde(fechas, ciudad, cal._vacaciones(fechas, ciudad))
+    assert [x.date().isoformat() for x in out] == ["2023-10-01"] * 7 + ["2023-11-01"] * 3

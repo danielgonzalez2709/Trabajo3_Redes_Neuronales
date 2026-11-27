@@ -6,7 +6,9 @@ Salida: ``data/processed/m1/calendario.parquet``, una fila por ``fecha`` (sin hu
 
 Columnas: ``fecha`` (date), ``dia_semana`` (0 = lunes), ``festivo``, ``festivo_nombre``, ``festivo_trasladado``, ``puente``,
 ``semana_santa``, ``jueves_viernes_santo``, ``vacaciones_escolares_<DIVIPOLA>`` (11001, 76001, 15759, 52001, 52356;
-booleano anulable), ``vacaciones_escolares`` (= la de Bogotá, 11001, por compatibilidad con §5.2) y ``fin_de_anio``.
+booleano anulable), ``vacaciones_escolares`` (= la de Bogotá, 11001, por compatibilidad con §5.2), ``fin_de_anio`` y, por
+cada columna de vacaciones, ``<columna>_conocible_desde`` (datetime64, anulable): fecha de expedición del acto original que
+fija el valor de ese día (regla 0.9; ver abajo).
 
 Reglas (fuentes y supuestos en ``data/fuentes.md``, sección «Calendario exógeno de M1»):
   * Festivos: Ley 51 de 1983. Fijos sin traslado: 1-ene, 1-may, 20-jul, 7-ago, 8-dic, 25-dic, Jueves y Viernes Santo.
@@ -19,6 +21,13 @@ Reglas (fuentes y supuestos en ``data/fuentes.md``, sección «Calendario exóge
   * Vacaciones: rangos de receso del yaml (versión original de cada calendario). Dentro de la ``cobertura`` de la ciudad
     lo que no es receso es falso; fuera de ella, o en los ``vacios`` del yaml (días que ningún acto cubre), es nulo
     (sin fuente, no se imputa).
+  * ``<vacaciones>_conocible_desde``: ``fecha_acto`` (versión original) del bloque del yaml que fija el valor del día: el
+    bloque cuyos rangos contienen el día (receso) o, si no es receso, el bloque vigente (el de inicio más reciente <= día).
+    Nulo si el valor es nulo o si el bloque no trae ``fecha_acto`` (TODO(dato-faltante); no se inventa). Un modelo debe
+    anular la variable de vacaciones del día objetivo cuando origen < conocible_desde. Excepciones documentadas en las que el
+    acto es posterior al propio día: Pasto 2021-01-04..14 y Ipiales 2021-01-04..13 (fuera del periodo de test).
+  * Festivos: la Ley 51 de 1983 es anterior a todo el periodo, así que son conocibles siempre y no llevan columna.
+    ``fin_de_anio`` y ``puente`` son reglas fijas (supuestos del equipo), también conocibles siempre.
 """
 from __future__ import annotations
 
@@ -106,6 +115,25 @@ def _vacaciones(fechas: pd.Series, ciudad: dict) -> pd.Series:
     return pd.Series([valor(d) for d in fechas], index=fechas.index, dtype="boolean")
 
 
+def _conocible_desde(fechas: pd.Series, ciudad: dict, valor: pd.Series) -> pd.Series:
+    """Fecha de expedición del acto original que fija el valor de cada día (nulo si el valor es nulo o falta ``fecha_acto``)."""
+    bloques = []
+    for b in ciudad["bloques"]:
+        rangos = [(date.fromisoformat(a), date.fromisoformat(z)) for a, z in b["rangos"]]
+        acto = pd.Timestamp(b["fecha_acto"]) if b.get("fecha_acto") else pd.NaT  # TODO(dato-faltante) si no hay fecha
+        bloques.append((min(a for a, _ in rangos), rangos, acto))
+
+    def acto_de(d: date):
+        for _, rangos, acto in bloques:
+            if any(a <= d <= z for a, z in rangos):
+                return acto
+        vigentes = [(ini, acto) for ini, _, acto in bloques if ini <= d]
+        return max(vigentes, key=lambda x: x[0])[1] if vigentes else pd.NaT
+
+    vals = [pd.NaT if pd.isna(v) else acto_de(d) for d, v in zip(fechas, valor)]
+    return pd.Series(pd.to_datetime(vals), index=fechas.index, dtype="datetime64[ns]")
+
+
 def construir_calendario(fuentes: dict | Path | str | None = None, inicio: str | None = None, fin: str | None = None) -> pd.DataFrame:
     if not isinstance(fuentes, dict):
         fuentes = cargar_fuentes(fuentes)
@@ -149,14 +177,18 @@ def construir_calendario(fuentes: dict | Path | str | None = None, inicio: str |
     m2, d2 = (int(x) for x in sup["fin_de_anio"]["fin_mes_dia"].split("-"))
     df["fin_de_anio"] = [(d.month, d.day) >= (m1, d1) or (d.month, d.day) <= (m2, d2) for d in fechas]
 
-    cols = {}
+    cols, conocibles = {}, {}
     for ciudad in fuentes["ciudades"].values():
-        cols[f"vacaciones_escolares_{ciudad['divipola']}"] = _vacaciones(df["fecha"], ciudad)
-    for k, v in cols.items():
+        k = f"vacaciones_escolares_{ciudad['divipola']}"
+        cols[k] = _vacaciones(df["fecha"], ciudad)
+        conocibles[f"{k}_conocible_desde"] = _conocible_desde(df["fecha"], ciudad, cols[k])
+    for k, v in {**cols, **conocibles}.items():
         df[k] = v
     df["vacaciones_escolares"] = df["vacaciones_escolares_11001"]  # Bogotá, compatibilidad §5.2
-    orden = ["fecha", "dia_semana", "festivo", "festivo_nombre", "festivo_trasladado", "puente", "semana_santa",
-             "jueves_viernes_santo", "vacaciones_escolares"] + list(cols) + ["fin_de_anio"]
+    df["vacaciones_escolares_conocible_desde"] = df["vacaciones_escolares_11001_conocible_desde"]
+    orden = (["fecha", "dia_semana", "festivo", "festivo_nombre", "festivo_trasladado", "puente", "semana_santa",
+              "jueves_viernes_santo", "vacaciones_escolares", "vacaciones_escolares_conocible_desde"]
+             + list(cols) + list(conocibles) + ["fin_de_anio"])
     return df[orden]
 
 
@@ -174,6 +206,9 @@ def main(argv: list[str] | None = None) -> pd.DataFrame:
     print(f"{salida}: {len(df)} filas, {df['fecha'].min()} .. {df['fecha'].max()}")
     for c in df.columns:
         if c in ("fecha", "dia_semana", "festivo_nombre"):
+            continue
+        if c.endswith("_conocible_desde"):
+            print(f"  {c}: {df[c].min().date()} .. {df[c].max().date()}  nulos={int(df[c].isna().sum())}")
             continue
         print(f"  {c}: verdadero={int((df[c] == True).sum())}  nulos={int(df[c].isna().sum())}")  # noqa: E712
     print(f"  festivo_nombre: no nulos={int(df['festivo_nombre'].notna().sum())}")
