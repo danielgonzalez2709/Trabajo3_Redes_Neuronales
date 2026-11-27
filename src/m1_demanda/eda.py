@@ -20,6 +20,7 @@ bloque se usan `PARAMETROS_POR_DEFECTO`): ver ese diccionario.
 from __future__ import annotations
 
 import copy
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +44,12 @@ PARAMETROS_POR_DEFECTO: dict[str, Any] = {
     "microbus": {"ruta_id": "11001-76001", "clase": "MICROBUS", "anio": 2023},
     "asimetria_clases": {"rutas": ["52001-52356", "52356-52001"]},
 }
+
+# MSTL: ventana del suavizador estacional de cada periodo (7, 365). Con el valor por defecto de statsmodels (11 y 15) el
+# componente anual sigue el ruido día a día (2-3 puntos por día del año) y el residuo queda casi en cero; una ventana
+# mayor que el número de ciclos y grado 0 lo vuelve periódico (el mismo perfil anual en todos los años).
+VENTANAS_MSTL = (11, 100001)
+GRADO_ESTACIONAL_MSTL = 0
 
 REGLAS = ("despachos_sin_pasajeros", "caida_robusta", "pico_robusto", "pasajeros_por_despacho_bajo")
 DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
@@ -318,6 +325,11 @@ def descomposicion(diaria: pd.DataFrame, inicio: str, periodos: tuple[int, int] 
       2021-06-01 deberían ser 0).
     - Los días `anomalo` se dejan tal cual; el STL interno es robusto (`robust=True`) y los pondera menos.
     - Se exigen al menos dos ciclos del periodo más largo (`2 × 365 = 730` observaciones).
+    - El componente anual es PERIÓDICO (`VENTANAS_MSTL`, grado 0): con la ventana por defecto de statsmodels el residuo
+      se anulaba porque el componente seguía el ruido. Aun así hay ~2,6 ciclos anuales: cada día del año se estima con
+      2-3 puntos, así que la «fuerza anual» sale sesgada hacia arriba (con ruido blanco y sin ciclo anual, ~0,4) y la
+      tendencia (ventana > 365 por exigencia de STL) no recoge la recuperación de 2021. No leer `fuerza_anual` ni `anual`
+      como estacionalidad confirmada; la evidencia directa es el perfil mensual de años completos y su consistencia.
 
     Devuelve (componentes por ruta y día, resumen por ruta). Observado = tendencia + semanal + anual + residuo.
     """
@@ -344,7 +356,10 @@ def descomposicion(diaria: pd.DataFrame, inicio: str, periodos: tuple[int, int] 
         sin = g["sin_registro"].to_numpy()
         y[sin] = np.nan
         y = y.interpolate(limit_direction="both")
-        res = MSTL(y, periods=list(periodos), iterate=2, stl_kwargs={"robust": True}).fit()
+        orden = sorted(range(len(periodos)), key=lambda i: periodos[i])  # ventanas en el orden de `periodos`
+        ventanas = [VENTANAS_MSTL[orden.index(i)] for i in range(len(periodos))]
+        res = MSTL(y, periods=list(periodos), windows=ventanas, iterate=2,
+                   stl_kwargs={"robust": True, "seasonal_deg": GRADO_ESTACIONAL_MSTL}).fit()
         seas = res.seasonal
         sem = seas[f"seasonal_{7}"].to_numpy()
         anu = seas[f"seasonal_{365}"].to_numpy()
@@ -445,7 +460,7 @@ def calcular_hallazgos(res: dict, p: dict) -> dict:
     sel = cl[(cl["ruta_id"] == cm["ruta_id"]) & (cl["clase_vehiculo"] == cm["clase"])].sort_values("anio")
     h["microbus"] = (
         {"disponible": True, "ruta_id": cm["ruta_id"], "clase": cm["clase"],
-         "pct_por_anio": {int(a): _py(v) for a, v in zip(sel["anio"], sel["pct"])}}
+         "pct_por_anio": {str(int(a)): _py(v) for a, v in zip(sel["anio"], sel["pct"])}}
         if len(sel)
         else {"disponible": False, "motivo": f"no hay {cm['clase']} en {cm['ruta_id']}"}
     )
@@ -458,6 +473,17 @@ def calcular_hallazgos(res: dict, p: dict) -> dict:
         if len(sub)
         else {"disponible": False, "motivo": f"no hay datos de {ca}"}
     )
+    # consistencia del perfil mensual entre los dos primeros años completos (evidencia de un ciclo anual repetible)
+    pm = res["perfil_mensual"]
+    comp = pm[pm["anio_completo"]]
+    anios = sorted(comp["anio"].unique())
+    cons: dict[str, Any] = {"anios": [int(a) for a in anios[:2]], "corr_por_ruta": {}}
+    if len(anios) >= 2:
+        for ruta, g in comp.groupby("ruta_id"):
+            a = g[g["anio"] == anios[0]].set_index("mes")["razon_vs_media_anual"]
+            b = g[g["anio"] == anios[1]].set_index("mes")["razon_vs_media_anual"]
+            cons["corr_por_ruta"][ruta] = _py(float(np.corrcoef(a.reindex(range(1, 13)), b.reindex(range(1, 13)))[0, 1]))
+    h["consistencia_anual"] = cons
     # escala entre rutas y entre sentidos (media diaria de junio-diciembre del último año completo)
     ten = res["tendencia"]
     ult = int(ten["anio"].max())
@@ -544,7 +570,9 @@ def _resultado_calendario(res: dict, nombre: str) -> tuple[str, str]:
         )
     if vacias:
         partes.append(f"sin días marcados o sin vecinos suficientes en: {', '.join(vacias)}")
-    return "; ".join(partes), "results/data/m1/eda/efectos_calendario.csv"
+    sha = res.get("calendario_sha256")
+    origen = f"data/processed/m1/calendario.parquet (CA-1, sha256 {sha})" if sha else "data/processed/m1/calendario.parquet (CA-1)"
+    return "; ".join(partes), "results/data/m1/eda/efectos_calendario.csv sobre " + origen
 
 
 def construir_hipotesis(res: dict) -> list[dict]:
@@ -580,7 +608,10 @@ def construir_hipotesis(res: dict) -> list[dict]:
         h5 = (
             f"Media diaria del mes / media diaria del año (años completos {', '.join(map(str, anios))}, promedio de años): "
             f"diciembre entre {_n(por_mes[12].min())} y {_n(por_mes[12].max())}; enero entre {_n(por_mes[1].min())} y "
-            f"{_n(por_mes[1].max())} según ruta. Sin separar tendencia, ni días concretos (calendario de CA-1)."
+            f"{_n(por_mes[1].max())} según ruta. Correlación del perfil mensual entre {hall['consistencia_anual']['anios'][0]} y "
+            f"{hall['consistencia_anual']['anios'][1]} por ruta: "
+            + ", ".join(f"{k} {_n(v)}" for k, v in hall["consistencia_anual"]["corr_por_ruta"].items())
+            + ". La tendencia no está separada (dos años completos)."
         )
     else:
         h5 = "no hay años completos para comparar diciembre y enero"
@@ -715,7 +746,8 @@ def construir_implicaciones(res: dict) -> dict:
             "decision": "Ventanas de rezagos múltiplos de 7 días (mínimo 28) y una variante de 365 para la estacionalidad anual; "
                         "el horizonte de 30 días obliga a pronosticar directo o recursivo sin covariables observadas.",
             "base": f"Estacionalidad semanal con fuerza {_n(rs['fuerza_semanal'].min())}-{_n(rs['fuerza_semanal'].max())} (MSTL) "
-                    f"y anual con {_n(rs['fuerza_anual'].min())}-{_n(rs['fuerza_anual'].max())}, sobre {int(rs['observaciones'].min())} días.",
+                    f"y anual con {_n(rs['fuerza_anual'].min())}-{_n(rs['fuerza_anual'].max())}, sobre {int(rs['observaciones'].min())} días "
+                    "(~2,6 ciclos anuales: la fuerza anual queda sesgada hacia arriba con 2-3 puntos por día del año; ver `descomposicion`).",
             "estado": "[PROPUESTO]",
         },
         "variables_calendario": {
@@ -799,6 +831,8 @@ def main(cfg: dict) -> int:
     if calendario is None:
         print(f"m1-eda: {ruta_cal.as_posix()} no existe; hipótesis de calendario quedan pendientes ({FALTA_CALENDARIO})")
     res = calcular_resultados(diaria, detalle, marcas, calendario, p)
+    if calendario is not None:
+        res["calendario_sha256"] = hashlib.sha256(ruta_cal.read_bytes()).hexdigest()
     destino = escribir_resultados(res, sal.get("eda", CARPETA_SALIDA))
     print(f"m1-eda: {len(destino)} archivos en {Path(sal.get('eda', CARPETA_SALIDA)).as_posix()}")
     return 0

@@ -1,6 +1,6 @@
 """CA-1: calendario exógeno de M1 (núcleo §5.2). Las fechas esperadas se transcriben de las tablas de
 ``docs/investigacion/CA-1_fuentes_calendario.md`` §2 (18 festivos por año, 2021–2024), no del código bajo prueba."""
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 import pytest
@@ -105,9 +105,9 @@ def test_semana_santa(df, jueves, viernes, pascua):
     sub = df[df["semana_santa"]]["fecha"]
     # ventana del informe: lunes a domingo que termina en Pascua
     assert fila(df, pascua)["semana_santa"]
-    assert fila(df, (p - pd.Timedelta(days=6)).date().isoformat())["semana_santa"]
-    assert not fila(df, (p - pd.Timedelta(days=7)).date().isoformat())["semana_santa"]
-    assert not fila(df, (p + pd.Timedelta(days=1)).date().isoformat())["semana_santa"]
+    assert fila(df, (p - timedelta(days=6)).isoformat())["semana_santa"]
+    assert not fila(df, (p - timedelta(days=7)).isoformat())["semana_santa"]
+    assert not fila(df, (p + timedelta(days=1)).isoformat())["semana_santa"]
     assert len(sub) == 28 and int(df["jueves_viernes_santo"].sum()) == 8
 
 
@@ -144,7 +144,8 @@ def test_vacaciones_por_ciudad(df):
         assert fila(df, dentro)[c] is True or fila(df, dentro)[c] == True  # noqa: E712
         assert fila(df, fuera)[c] == False  # noqa: E712
     # Cali en receso, Bogotá no
-    assert fila(df, "2022-06-27")["vacaciones_escolares_76001"] and not fila(df, "2022-06-27")["vacaciones_escolares_11001"] is False or True
+    assert fila(df, "2022-06-27")["vacaciones_escolares_76001"] == True  # noqa: E712
+    assert fila(df, "2022-06-27")["vacaciones_escolares_11001"] == True  # noqa: E712
     assert fila(df, "2022-06-20")["vacaciones_escolares_76001"] == False  # noqa: E712
     # Pasto: desarrollo institucional cuenta como sin clases; Semana Santa 2022 no es receso en Pasto pero sí en Bogotá
     assert fila(df, "2022-01-20")["vacaciones_escolares_52001"] == True  # noqa: E712

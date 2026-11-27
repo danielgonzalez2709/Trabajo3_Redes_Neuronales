@@ -1,0 +1,102 @@
+[
+  {
+    "id": "H-M1-1",
+    "enunciado": "La demanda depende del día de la semana: el perfil semanal tiene una razón máximo/mínimo claramente mayor que 1 en las seis rutas, y esa estructura se repite cada siete días.",
+    "justificacion": "Viaje intermunicipal por trabajo, estudio y ocio concentra la demanda en ciertos días (supuesto a contrastar).",
+    "evidencia_esperada": "Razón máx/mín del perfil semanal > 1,2 en las seis rutas y fuerza de estacionalidad semanal alta; se refutaría con perfiles planos.",
+    "figura_o_tabla": "perfil_semanal.csv; descomposicion_resumen.csv; figuras m1_perfil_semanal.png y m1_descomposicion_*.png",
+    "resultado": "Desde 2021-06-01, razón día/media semanal por ruta: 11001-15759: pico viernes (1,29×), valle domingo (0,85×); 11001-76001: pico viernes (1,09×), valle martes (0,94×); 15759-11001: pico lunes (1,14×), valle miércoles (0,89×); 52001-52356: pico sábado (1,22×), valle domingo (0,88×); 52356-52001: pico viernes (1,12×), valle domingo (0,84×); 76001-11001: pico lunes (1,07×), valle miércoles (0,92×). Fuerza de la estacionalidad semanal (MSTL sobre log(1+y)) entre 0,13 y 0,66; razón máx/mín del ciclo semanal entre 1,19 y 1,48.",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/perfil_semanal.csv; results/data/m1/eda/descomposicion_resumen.csv"
+  },
+  {
+    "id": "H-M1-2",
+    "enunciado": "Los festivos y los puentes (festivo trasladado a lunes) aumentan la demanda de salida y retorno respecto del mismo día de la semana en días vecinos.",
+    "justificacion": "Los días de descanso prolongado concentran viajes; calendario conocible con meses de antelación (regla 0.9).",
+    "evidencia_esperada": "Razón mediana > 1 en días marcados, contra el mismo día de la semana ±42 días sin marca.",
+    "figura_o_tabla": "efectos_calendario.csv",
+    "resultado": "festivo: 47 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,81 y 1,13 según ruta (promedio ponderado 0,95); puente: 101 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,95 y 1,11 según ruta (promedio ponderado 1,02)",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 c581d33c1d875015bed7dca38cd3729ad83b72fb51f2224476f75c73286f9e1b)"
+  },
+  {
+    "id": "H-M1-3",
+    "enunciado": "Las vacaciones escolares elevan la demanda frente a los mismos días de la semana fuera de ellas.",
+    "justificacion": "Calendario escolar como determinante de viajes familiares (supuesto a contrastar).",
+    "evidencia_esperada": "Razón mediana > 1 en días de vacaciones escolares (ventana ±42 días).",
+    "figura_o_tabla": "efectos_calendario.csv",
+    "resultado": "vacaciones_escolares: 224 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,02 y 1,27 según ruta (promedio ponderado 1,16)",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 c581d33c1d875015bed7dca38cd3729ad83b72fb51f2224476f75c73286f9e1b)"
+  },
+  {
+    "id": "H-M1-4",
+    "enunciado": "Semana Santa modifica la demanda respecto del mismo día de la semana en semanas vecinas, con un patrón distinto entre días de la semana (salida y regreso).",
+    "justificacion": "Festividad móvil con puentes largos; su fecha cambia cada año, por eso se toma del calendario.",
+    "evidencia_esperada": "Razón mediana ≠ 1 en días de Semana Santa, con signos distintos por día.",
+    "figura_o_tabla": "efectos_calendario.csv",
+    "resultado": "semana_santa: 14 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,09 y 1,42 según ruta (promedio ponderado 1,27)",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 c581d33c1d875015bed7dca38cd3729ad83b72fb51f2224476f75c73286f9e1b)"
+  },
+  {
+    "id": "H-M1-5",
+    "enunciado": "Diciembre y enero tienen una demanda diaria superior a la media del año en las rutas con mayor tránsito de pasajeros, y esa temporada no se explica solo por la tendencia.",
+    "justificacion": "Fin de año como temporada alta (viajes de vacaciones y reuniones familiares); se mide por mes, sin calendario externo.",
+    "evidencia_esperada": "Razón mes/año > 1 en diciembre o enero en la mayoría de las rutas; refutada si todas quedan por debajo de 1.",
+    "figura_o_tabla": "perfil_mensual.csv; figura m1_perfil_mensual.png",
+    "resultado": "Media diaria del mes / media diaria del año (años completos 2022, 2023, promedio de años): diciembre entre 1,11 y 1,52; enero entre 0,88 y 1,16 según ruta. Correlación del perfil mensual entre 2022 y 2023 por ruta: 11001-15759 0,77, 11001-76001 0,66, 15759-11001 0,33, 52001-52356 -0,15, 52356-52001 0,26, 76001-11001 0,68. La tendencia no está separada (dos años completos).",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/perfil_mensual.csv"
+  },
+  {
+    "id": "H-M1-6",
+    "enunciado": "La demanda de 2021 a 2023 crece en todas las rutas respecto del año previo (recuperación posterior a la pandemia, medida como tendencia).",
+    "justificacion": "La caída de 2020 no está en los datos; solo se observa la tendencia 2021-2023, que mezcla recuperación y cambios de reporte (núcleo §5.1).",
+    "evidencia_esperada": "Variación positiva de la media de jun-dic 2022 vs 2021 y 2023 vs 2022 en las seis rutas.",
+    "figura_o_tabla": "tendencia_anual.csv; figuras m1_tendencia_anual.png y m1_series_rutas.png",
+    "resultado": "Variación de la media diaria entre ventanas equivalentes: jun-dic 2022 vs 2021: de 9,2 % a 71,0 % según ruta; jun-dic 2023 vs 2022: de -11,2 % a 51,5 % según ruta; ene-abr 2022 vs 2021: de 83,4 % a 125,8 %; ene-abr 2023 vs 2022: de -22,4 % a 61,0 %. 2020 no está en los datos.",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/tendencia_anual.csv"
+  },
+  {
+    "id": "H-M1-7",
+    "enunciado": "En las rutas desde y hacia Bogotá el tránsito (pasajeros que suben en terminales intermedias) pesa tanto como el origen; en Pasto-Ipiales casi no hay tránsito.",
+    "justificacion": "El conjunto registra pasajeros por terminal y tipo de despacho; la serie suma origen y tránsito (núcleo §5.1).",
+    "evidencia_esperada": "Proporción de tránsito entre 40 % y 70 % en los corredores de Bogotá y < 6 % en Pasto-Ipiales.",
+    "figura_o_tabla": "transito_por_ruta_anio.csv; figura m1_transito_origen.png",
+    "resultado": "Proporción de tránsito sobre el total por ruta y año: entre 0,0 % y 72,7 %; en 12 de 18 combinaciones ruta-año el tránsito supera al origen. Casi sin tránsito (< 6 %): 52001-52356, 52356-52001. Con tránsito > 0: 16 filas.",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/transito_por_ruta_anio.csv"
+  },
+  {
+    "id": "H-M1-8",
+    "enunciado": "La demanda de tránsito de Bogotá→Sogamoso cambia de régimen desde noviembre de 2022 (el origen no).",
+    "justificacion": "Auditoría de DA-3: salto del tránsito con despachos casi constantes; causa no verificada (¿cambio de reporte?).",
+    "evidencia_esperada": "Razón tránsito después/antes claramente mayor que 1 con razón de origen cercana a 1.",
+    "figura_o_tabla": "transito_mensual.csv; hallazgos.json; figura m1_transito_mensual.png",
+    "resultado": "11001-15759: tránsito/día 1352 (2022-05 a 2022-10) → 2735 (2022-12 a 2023-05), razón 2,02; origen/día 1020 → 1048 (razón 1,03); despachos de tránsito/día 223,6 → 228,3; MICROBUS en tránsito/día 35 → 298.",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/transito_mensual.csv; results/data/m1/eda/hallazgos.json"
+  },
+  {
+    "id": "H-M1-9",
+    "enunciado": "La composición por clase de vehículo cambia con el tiempo y entre sentidos: MICROBUS desaparece de Bogotá→Cali en 2023 y Pasto-Ipiales es asimétrica entre ida y regreso.",
+    "justificacion": "Afecta capacidad por clase y dimensionamiento de flota (CA-3); puede ser cambio de reporte.",
+    "evidencia_esperada": "Participación de MICROBUS = 0 en 2023 en 11001-76001; clases distintas en cada sentido de Pasto-Ipiales.",
+    "figura_o_tabla": "clases_por_ruta_anio.csv; figura m1_clases_rutas.png",
+    "resultado": "MICROBUS en 11001-76001, % de pasajeros por año: 2021: 11,9, 2022: 8,7, 2023: 0,0 | 52001-52356 (último año): MICROBUS 64,5 %, CAMPERO 32,6 %, BUS 2,5 %, AUTOMOVIL 0,4 % | 52356-52001 (último año): MICROBUS 61,1 %, CAMIONETA 31,4 %, BUS 5,7 %, AUTOMOVIL 1,9 %",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/clases_por_ruta_anio.csv"
+  },
+  {
+    "id": "H-M1-10",
+    "enunciado": "Las rutas difieren en escala entre sí y entre sentidos, así que un modelo único exige normalizar por ruta.",
+    "justificacion": "Volúmenes distintos por corredor y asimetría ida/regreso (Anexo, limitaciones).",
+    "evidencia_esperada": "Razón entre la mayor y la menor media diaria de las seis rutas claramente mayor que 1.",
+    "figura_o_tabla": "objetivo_por_ruta.csv; figura m1_series_rutas.png",
+    "resultado": "Media diaria jun-dic 2023 por ruta: 11001-15759: 4296; 11001-76001: 3617; 15759-11001: 4069; 52001-52356: 1702; 52356-52001: 1846; 76001-11001: 2991.",
+    "veredicto": "pendiente",
+    "evidencia": "results/data/m1/eda/objetivo_por_ruta.csv; results/data/m1/eda/tendencia_anual.csv"
+  }
+]

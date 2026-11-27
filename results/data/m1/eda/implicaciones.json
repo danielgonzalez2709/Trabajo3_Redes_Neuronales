@@ -1,0 +1,37 @@
+{
+  "ventana": {
+    "decision": "Ventanas de rezagos múltiplos de 7 días (mínimo 28) y una variante de 365 para la estacionalidad anual; el horizonte de 30 días obliga a pronosticar directo o recursivo sin covariables observadas.",
+    "base": "Estacionalidad semanal con fuerza 0,13-0,66 (MSTL) y anual con 0,41-0,84, sobre 944 días (~2,6 ciclos anuales: la fuerza anual queda sesgada hacia arriba con 2-3 puntos por día del año; ver `descomposicion`).",
+    "estado": "[PROPUESTO]"
+  },
+  "variables_calendario": {
+    "decision": "Día de la semana y mes por fecha; festivo, puente, Semana Santa y vacaciones escolares solo desde calendario.parquet (CA-1), conocibles 30 días antes.",
+    "base": "H-M1-1 y H-M1-5 se evalúan por fecha; H-M1-2, 3 y 4 dependen del calendario: evaluadas con calendario.parquet.",
+    "estado": "[PROPUESTO]"
+  },
+  "perdida_conteo": {
+    "decision": "Pérdida de conteo (Poisson o binomial negativa) o MAE sobre log1p; cuantil alto con pérdida pinball. Enmascarar `sin_registro` y `despachos_sin_pasajeros`.",
+    "base": "Variable entera ≥ 0 con media diaria entre 1426 y 3603 pasajeros; 84 ceros, de los cuales 82 son `sin_registro`.",
+    "estado": "[PROPUESTO]"
+  },
+  "particion": {
+    "decision": "Partición temporal con origen rodante desde 2021-06-01, último origen anclado al 2023-12-01 para que el test cubra el fin de año; escalas de normalización solo con train.",
+    "base": "Variación de la media jun-dic entre años de -11,2 % a 71,0 %: hay tendencia, así que ninguna partición aleatoria.",
+    "estado": "[PROPUESTO]"
+  },
+  "cambio_de_regimen": {
+    "decision": "Indicadora de régimen solo con datos de train o ventana reciente para el escalado; reportar el MASE de 11001-15759 con y sin el cambio.",
+    "base": "11001-15759 razón de tránsito 2,02 entre 2022-10 y 2022-12",
+    "estado": "[PROPUESTO]"
+  },
+  "mayo_2021": {
+    "decision": "Mantener la serie completa para el descriptivo con marcas; entrenar desde 2021-06-01 y no usar los ceros de mayo-2021 como demanda.",
+    "base": "82 días-ruta `sin_registro` (todos antes de 2021-06-01); la descomposición desde 2021-06-01 imputó 0 días.",
+    "estado": "[PROPUESTO]"
+  },
+  "transito": {
+    "decision": "Modelar la serie total (origen + tránsito) como define el núcleo §5.1, pero usar despachos de ORIGEN para flota; explorar tránsito y origen por separado como entrada auxiliar solo si se conoce 30 días antes.",
+    "base": "El tránsito supera al origen en 12 de 18 combinaciones ruta-año (pct_transito en transito_por_ruta_anio.csv).",
+    "estado": "[PROPUESTO]"
+  }
+}

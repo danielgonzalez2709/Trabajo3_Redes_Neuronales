@@ -1,0 +1,237 @@
+# M1 — operación: flota y conductores (CA-3; núcleo §5.4; spec de Camila §3.2–§3.3).
+# Uso: python run.py m1-operacion --config configs/m1/operacion.yaml --set operacion.ocupacion_objetivo=0.8 --set operacion.cuantil=0.9
+# Fórmula y ecuaciones (1)–(5): src/m1_demanda/operacion.py. Nada aleatorio; sin red.
+#
+# Diseño: `operacion` trae SOLO valores escalares (sobrescribibles con --set operacion.<clave>=v,
+# --set operacion.por_ruta.<ruta>.<clave>=v, --set operacion.por_clase.<CLASE>.capacidad_pasajeros=v);
+# `meta` repite la misma forma con {unidad, fuente | supuesto: true, nota}. La exportación a
+# app/public/model/m1/operacion.json (núcleo §5.4) es `parametros_contrato(cfg, composicion)`.
+# Spec de Camila §2: TODOS los valores van primero como `supuesto: true`. Las notas citan el informe
+# docs/investigacion/CA-2_normativa_operacion.md (AÚN SIN VERIFICAR por el cazador-alucinaciones).
+
+datos:
+  detalle: data/processed/m1/demanda_detalle.parquet
+  diaria: data/processed/m1/demanda_diaria.parquet
+  rutas: data/processed/m1/rutas.yaml
+  inicio_entrenamiento: "2021-06-01"   # núcleo §5.1 [DECIDIDO, Daniel, 24-nov]
+  # [PROPUESTO, CA-3] fin del train para la composición por clase y la capacidad observada (núcleo §5.4: solo train).
+  # Andrés aún no publica la partición (AN-1): reemplazar por su fin de train cuando exista (debe ser <= 2023-01-01).
+  fin_entrenamiento: "2022-12-31"
+
+composicion:
+  fuente: >-
+    Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de
+    transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet)
+
+capacidad_observada:
+  percentil: 0.99   # percentil de pasajeros/despacho por clase (ORIGEN, train) que justifica la capacidad supuesta
+
+ejemplo:
+  mes: "2022-12"    # demanda de EJEMPLO mientras no hay pronósticos (AN-5): mes de train con fin de año
+
+salida:
+  carpeta: results/data/m1/operacion
+
+operacion:
+  ocupacion_objetivo: 1.0
+  cuantil: 0.9
+  horas_operacion_h: 18
+  jornada_efectiva_h: 7
+  jornada_max_diaria_h: 8
+  ausentismo: 0.09
+  segundo_conductor_activo: 0
+  umbral_segundo_conductor_h: 8
+  dias_descanso_semana: 0
+  vueltas_fraccionarias: 0
+  costo_pasajero_sin_atender: 1.0
+  costo_vehiculo_dia_sobrante: 1.0
+  por_ruta:
+    11001-76001: {tiempo_ciclo_h: 22, tiempo_recorrido_h: 10, fraccion_demanda_en_origen: 0.327}
+    76001-11001: {tiempo_ciclo_h: 22, tiempo_recorrido_h: 10, fraccion_demanda_en_origen: 0.444}
+    11001-15759: {tiempo_ciclo_h: 9, tiempo_recorrido_h: 4, fraccion_demanda_en_origen: 0.417}
+    15759-11001: {tiempo_ciclo_h: 9, tiempo_recorrido_h: 4, fraccion_demanda_en_origen: 0.404}
+    52001-52356: {tiempo_ciclo_h: 3.5, tiempo_recorrido_h: 1.5, fraccion_demanda_en_origen: 0.983}
+    52356-52001: {tiempo_ciclo_h: 3.5, tiempo_recorrido_h: 1.5, fraccion_demanda_en_origen: 0.957}
+  # cap(c) = min(máx. del grupo, max(mín. del grupo, ⌈p99 de pasajeros/despacho ORIGEN en train⌉)); grupos del
+  # Decreto 171/2001 arts. 50–51 según CA-2 §2. tests/test_operacion_m1.py recalcula la regla con los datos.
+  por_clase:
+    AUTOMOVIL: {capacidad_pasajeros: 5}
+    BUS: {capacidad_pasajeros: 31}
+    BUSETA: {capacidad_pasajeros: 22}
+    CAMIONETA: {capacidad_pasajeros: 9}
+    CAMPERO: {capacidad_pasajeros: 9}
+    MICROBUS: {capacidad_pasajeros: 19}
+
+meta:
+  globales:
+    ocupacion_objetivo:
+      unidad: fracción de la capacidad
+      supuesto: true
+      nota: >-
+        Sin norma hallada (informe CA-2 §7). [DECIDIDO, Camila, 26-nov] ρ = 1: la capacidad por clase ya es la ocupación
+        observada (p99 de pasajeros por despacho de ORIGEN en train), así que no se descuenta otra vez. Se analiza por
+        sensibilidad.
+    cuantil:
+      unidad: cuantil del pronóstico
+      supuesto: true
+      nota: >-
+        Decisión de negocio (CA-2 §7), no norma. Debe ser uno de los cuantiles del arnés (núcleo §5.3: 0.5, 0.75, 0.9,
+        0.95). Se compara contra el punto en negocio 3 (Andrés).
+    horas_operacion_h:
+      unidad: horas por día
+      supuesto: true
+      nota: >-
+        Sin fuente oficial (CA-2 §4). Horas al día en que un vehículo puede estar operando; TODO(dato-faltante):
+        horario real de despachos de las terminales.
+    jornada_efectiva_h:
+      unidad: horas por conductor y día
+      supuesto: true
+      nota: >-
+        Horas efectivas de conducción con los descansos dentro de la jornada. No hay norma colombiana de horas de
+        conducción ni de pausas (CA-2 §1.6); Res. 315/2013 art. 6 solo pide «garantizar los descansos necesarios»
+        (CA-2 §1.3). Supuesto: 1 h de pausas dentro de la jornada máxima diaria.
+    jornada_max_diaria_h:
+      unidad: horas por día
+      supuesto: true
+      nota: >-
+        Candidata a `fuente`: Ley 2466 de 2025 art. 11 (art. 161 CST, 8 h diarias), según CA-2 §1.2 (texto leído vía
+        lector; TODO(cita) cotejar con Función Pública o Senado). Queda como supuesto hasta que el cazador verifique.
+    ausentismo:
+      unidad: fracción de los conductores
+      supuesto: true
+      nota: >-
+        Sin cifra oficial para conductores (CA-2 §5). Orden de magnitud del único dato hallado (9,18 %, Secretaría
+        Distrital de la Mujer 2025, no representativo según CA-2 §5). TODO(cita) opcional: encuesta ANDI-Cestla.
+    segundo_conductor_activo:
+      unidad: 0 = no, 1 = sí
+      supuesto: true
+      nota: >-
+        Regla de segundo conductor (ec. (5), k = 2 si el recorrido supera el umbral). DESACTIVADA por defecto para
+        reproducir la fórmula del Spec; Camila decide activarla (CA-2 §9.3).
+    umbral_segundo_conductor_h:
+      unidad: horas de recorrido entre origen y destino
+      supuesto: true
+      nota: >-
+        Candidata a `fuente`: Res. 315 de 2013 art. 6, «duración superior a ocho (8) horas de recorrido entre el lugar de
+        origen y el lugar de destino», según CA-2 §1.3. TODO(cita): descartar derogatoria por el Decreto 1079 de 2015 o
+        la Resolución 20223040045295 (CA-2 §8.5).
+    dias_descanso_semana:
+      unidad: días por conductor y semana
+      supuesto: true
+      nota: >-
+        Factor 7/(7 − s) de la ec. (5). 0 = no se modela (fórmula del Spec). El art. 161 CST exige «el día de descanso»
+        (CA-2 §1.1–§1.2, sin verificar): con s = 1 la plantilla sube en 7/6.
+    vueltas_fraccionarias:
+      unidad: 0 = no, 1 = sí
+      supuesto: true
+      nota: >-
+        Si el ciclo supera las horas de operación, 0 = una vuelta por vehículo y día (mínimo del Spec, subestima la
+        flota) y 1 = H / T_ciclo vueltas (un vehículo tarda más de un día). Desactivada por defecto.
+    costo_pasajero_sin_atender:
+      unidad: unidades relativas por pasajero
+      supuesto: true
+      nota: Decisión de negocio sin cifra oficial (CA-2 §5). Solo importa la razón con el costo de sobrar (negocio 3).
+    costo_vehiculo_dia_sobrante:
+      unidad: unidades relativas por vehículo-día
+      supuesto: true
+      nota: Decisión de negocio sin cifra oficial (CA-2 §5). Solo importa la razón con el costo de quedarse corto.
+  por_ruta:
+    11001-76001: &bogota_cali
+      tiempo_ciclo_h:
+        unidad: horas (ida + regreso + alistamiento)
+        supuesto: true
+        nota: >-
+          2 × 10 h de recorrido + 2 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante). Supera las
+          horas de operación: la ec. (3) da 1 vuelta y lo marca.
+      tiempo_recorrido_h:
+        unidad: horas por sentido
+        supuesto: true
+        nota: >-
+          Sin fuente oficial (CA-2 §4: INVÍAS no se pudo abrir). Medios y blogs citados en CA-2 §4 dan 9,5 a 13,5 h,
+          inconsistentes y NO citables; TODO(dato-faltante). Con > 8 h aplicaría la Res. 315/2013 art. 6.
+      fraccion_demanda_en_origen:
+        unidad: fracción de la demanda
+        supuesto: true
+        nota: >-
+          f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros que abordan en ORIGEN, estimada con train
+          (resumen.json, fraccion_pasajeros_origen_train, 2021-06-01..fin_entrenamiento; redondeada a 3 decimales). f = 1
+          (fórmula literal del Spec, todo el tránsito ocupa silla desde el origen) queda como cota alta en la sensibilidad.
+    76001-11001: *bogota_cali
+    11001-15759: &bogota_sogamoso
+      tiempo_ciclo_h:
+        unidad: horas (ida + regreso + alistamiento)
+        supuesto: true
+        nota: 2 × 4 h de recorrido + 1 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante).
+      tiempo_recorrido_h:
+        unidad: horas por sentido
+        supuesto: true
+        nota: Sin fuente oficial ni secundaria (CA-2 §4); TODO(dato-faltante).
+      fraccion_demanda_en_origen:
+        unidad: fracción de la demanda
+        supuesto: true
+        nota: >-
+          f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros en ORIGEN estimada con train
+          (resumen.json, fraccion_pasajeros_origen_train; 3 decimales). f = 1 queda como cota alta en la sensibilidad.
+    15759-11001: *bogota_sogamoso
+    52001-52356: &pasto_ipiales
+      tiempo_ciclo_h:
+        unidad: horas (ida + regreso + alistamiento)
+        supuesto: true
+        nota: 2 × 1,5 h de recorrido + 0,5 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante).
+      tiempo_recorrido_h:
+        unidad: horas por sentido
+        supuesto: true
+        nota: Sin fuente oficial ni secundaria (CA-2 §4); TODO(dato-faltante).
+      fraccion_demanda_en_origen:
+        unidad: fracción de la demanda
+        supuesto: true
+        nota: >-
+          f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros en ORIGEN estimada con train
+          (resumen.json, fraccion_pasajeros_origen_train; 3 decimales). f = 1 queda como cota alta en la sensibilidad.
+    52356-52001: *pasto_ipiales
+  # Percentiles medidos con `capacidad_observada` (ORIGEN, despachos > 0, 2021-06-01..2022-12-31; cada valor es el
+  # promedio de pasajeros por despacho de un día, no la ocupación de un vehículo). Se regeneran en
+  # results/data/m1/operacion/capacidad_observada.csv.
+  por_clase:
+    AUTOMOVIL:
+      capacidad_pasajeros:
+        unidad: pasajeros por vehículo
+        supuesto: true
+        nota: >-
+          Grupo A, «4 a 9 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2; TODO(cita) vigencia en el Decreto
+          1079/2015). p99 observado 5,00 (máx. 5,00; 1.035 días) → 5.
+    BUS:
+      capacidad_pasajeros:
+        unidad: pasajeros por vehículo
+        supuesto: true
+        nota: >-
+          Grupo C, «más de 19 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2; la norma no fija tope).
+          p99 observado 30,70 (máx. 40,00; 3.382 días) → 31. Subestima la capacidad física (promedio diario).
+    BUSETA:
+      capacidad_pasajeros:
+        unidad: pasajeros por vehículo
+        supuesto: true
+        nota: >-
+          Grupo C, «más de 19 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 21,85 (máx.
+          30,00; solo 166 días) → 22.
+    CAMIONETA:
+      capacidad_pasajeros:
+        unidad: pasajeros por vehículo
+        supuesto: true
+        nota: >-
+          Grupo A, «4 a 9 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 8,27 (máx. 9,00;
+          585 días) → 9.
+    CAMPERO:
+      capacidad_pasajeros:
+        unidad: pasajeros por vehículo
+        supuesto: true
+        nota: >-
+          Grupo A, «4 a 9 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 8,12 (máx. 8,15;
+          579 días) → 9.
+    MICROBUS:
+      capacidad_pasajeros:
+        unidad: pasajeros por vehículo
+        supuesto: true
+        nota: >-
+          Grupo B, «10 a 19 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 18,10 (máx.
+          18,66; 2.315 días) → 19.

@@ -1,0 +1,475 @@
+{
+  "aviso": "Demanda de EJEMPLO (EJEMPLO: observada en train, no es pronóstico); mes 2022-12.",
+  "ventana_train": [
+    "2021-06-01",
+    "2022-12-31"
+  ],
+  "fraccion_pasajeros_origen_train": {
+    "11001-15759": 0.41653049605815307,
+    "11001-76001": 0.32663679076378865,
+    "15759-11001": 0.40446871462358713,
+    "52001-52356": 0.9827421916357861,
+    "52356-52001": 0.9571281772489225,
+    "76001-11001": 0.444074551332358
+  },
+  "rutas_con_ciclo_mayor_que_horas": [
+    "11001-76001",
+    "76001-11001"
+  ],
+  "maximo_diario_por_corredor": {
+    "11001-15759 | 15759-11001": {
+      "vehiculos": 57,
+      "conductores": 162
+    },
+    "11001-76001 | 76001-11001": {
+      "vehiculos": 65,
+      "conductores": 184
+    },
+    "52001-52356 | 52356-52001": {
+      "vehiculos": 35,
+      "conductores": 99
+    }
+  },
+  "parametros": {
+    "globales": {
+      "ocupacion_objetivo": {
+        "valor": 1.0,
+        "unidad": "fracción de la capacidad",
+        "supuesto": true,
+        "nota": "Sin norma hallada (informe CA-2 §7). [DECIDIDO, Camila, 26-nov] ρ = 1: la capacidad por clase ya es la ocupación observada (p99 de pasajeros por despacho de ORIGEN en train), así que no se descuenta otra vez. Se analiza por sensibilidad."
+      },
+      "cuantil": {
+        "valor": 0.9,
+        "unidad": "cuantil del pronóstico",
+        "supuesto": true,
+        "nota": "Decisión de negocio (CA-2 §7), no norma. Debe ser uno de los cuantiles del arnés (núcleo §5.3: 0.5, 0.75, 0.9, 0.95). Se compara contra el punto en negocio 3 (Andrés)."
+      },
+      "horas_operacion_h": {
+        "valor": 18,
+        "unidad": "horas por día",
+        "supuesto": true,
+        "nota": "Sin fuente oficial (CA-2 §4). Horas al día en que un vehículo puede estar operando; TODO(dato-faltante): horario real de despachos de las terminales."
+      },
+      "jornada_efectiva_h": {
+        "valor": 7,
+        "unidad": "horas por conductor y día",
+        "supuesto": true,
+        "nota": "Horas efectivas de conducción con los descansos dentro de la jornada. No hay norma colombiana de horas de conducción ni de pausas (CA-2 §1.6); Res. 315/2013 art. 6 solo pide «garantizar los descansos necesarios» (CA-2 §1.3). Supuesto: 1 h de pausas dentro de la jornada máxima diaria."
+      },
+      "jornada_max_diaria_h": {
+        "valor": 8,
+        "unidad": "horas por día",
+        "supuesto": true,
+        "nota": "Candidata a `fuente`: Ley 2466 de 2025 art. 11 (art. 161 CST, 8 h diarias), según CA-2 §1.2 (texto leído vía lector; TODO(cita) cotejar con Función Pública o Senado). Queda como supuesto hasta que el cazador verifique."
+      },
+      "ausentismo": {
+        "valor": 0.09,
+        "unidad": "fracción de los conductores",
+        "supuesto": true,
+        "nota": "Sin cifra oficial para conductores (CA-2 §5). Orden de magnitud del único dato hallado (9,18 %, Secretaría Distrital de la Mujer 2025, no representativo según CA-2 §5). TODO(cita) opcional: encuesta ANDI-Cestla."
+      },
+      "segundo_conductor_activo": {
+        "valor": 0,
+        "unidad": "0 = no, 1 = sí",
+        "supuesto": true,
+        "nota": "Regla de segundo conductor (ec. (5), k = 2 si el recorrido supera el umbral). DESACTIVADA por defecto para reproducir la fórmula del Spec; Camila decide activarla (CA-2 §9.3)."
+      },
+      "umbral_segundo_conductor_h": {
+        "valor": 8,
+        "unidad": "horas de recorrido entre origen y destino",
+        "supuesto": true,
+        "nota": "Candidata a `fuente`: Res. 315 de 2013 art. 6, «duración superior a ocho (8) horas de recorrido entre el lugar de origen y el lugar de destino», según CA-2 §1.3. TODO(cita): descartar derogatoria por el Decreto 1079 de 2015 o la Resolución 20223040045295 (CA-2 §8.5)."
+      },
+      "dias_descanso_semana": {
+        "valor": 0,
+        "unidad": "días por conductor y semana",
+        "supuesto": true,
+        "nota": "Factor 7/(7 − s) de la ec. (5). 0 = no se modela (fórmula del Spec). El art. 161 CST exige «el día de descanso» (CA-2 §1.1–§1.2, sin verificar): con s = 1 la plantilla sube en 7/6."
+      },
+      "vueltas_fraccionarias": {
+        "valor": 0,
+        "unidad": "0 = no, 1 = sí",
+        "supuesto": true,
+        "nota": "Si el ciclo supera las horas de operación, 0 = una vuelta por vehículo y día (mínimo del Spec, subestima la flota) y 1 = H / T_ciclo vueltas (un vehículo tarda más de un día). Desactivada por defecto."
+      },
+      "costo_pasajero_sin_atender": {
+        "valor": 1.0,
+        "unidad": "unidades relativas por pasajero",
+        "supuesto": true,
+        "nota": "Decisión de negocio sin cifra oficial (CA-2 §5). Solo importa la razón con el costo de sobrar (negocio 3)."
+      },
+      "costo_vehiculo_dia_sobrante": {
+        "valor": 1.0,
+        "unidad": "unidades relativas por vehículo-día",
+        "supuesto": true,
+        "nota": "Decisión de negocio sin cifra oficial (CA-2 §5). Solo importa la razón con el costo de quedarse corto."
+      }
+    },
+    "por_ruta": {
+      "11001-76001": {
+        "tiempo_ciclo_h": {
+          "valor": 22,
+          "unidad": "horas (ida + regreso + alistamiento)",
+          "supuesto": true,
+          "nota": "2 × 10 h de recorrido + 2 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante). Supera las horas de operación: la ec. (3) da 1 vuelta y lo marca."
+        },
+        "tiempo_recorrido_h": {
+          "valor": 10,
+          "unidad": "horas por sentido",
+          "supuesto": true,
+          "nota": "Sin fuente oficial (CA-2 §4: INVÍAS no se pudo abrir). Medios y blogs citados en CA-2 §4 dan 9,5 a 13,5 h, inconsistentes y NO citables; TODO(dato-faltante). Con > 8 h aplicaría la Res. 315/2013 art. 6."
+        },
+        "fraccion_demanda_en_origen": {
+          "valor": 0.327,
+          "unidad": "fracción de la demanda",
+          "supuesto": true,
+          "nota": "f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros que abordan en ORIGEN, estimada con train (resumen.json, fraccion_pasajeros_origen_train, 2021-06-01..fin_entrenamiento; redondeada a 3 decimales). f = 1 (fórmula literal del Spec, todo el tránsito ocupa silla desde el origen) queda como cota alta en la sensibilidad."
+        }
+      },
+      "76001-11001": {
+        "tiempo_ciclo_h": {
+          "valor": 22,
+          "unidad": "horas (ida + regreso + alistamiento)",
+          "supuesto": true,
+          "nota": "2 × 10 h de recorrido + 2 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante). Supera las horas de operación: la ec. (3) da 1 vuelta y lo marca."
+        },
+        "tiempo_recorrido_h": {
+          "valor": 10,
+          "unidad": "horas por sentido",
+          "supuesto": true,
+          "nota": "Sin fuente oficial (CA-2 §4: INVÍAS no se pudo abrir). Medios y blogs citados en CA-2 §4 dan 9,5 a 13,5 h, inconsistentes y NO citables; TODO(dato-faltante). Con > 8 h aplicaría la Res. 315/2013 art. 6."
+        },
+        "fraccion_demanda_en_origen": {
+          "valor": 0.444,
+          "unidad": "fracción de la demanda",
+          "supuesto": true,
+          "nota": "f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros que abordan en ORIGEN, estimada con train (resumen.json, fraccion_pasajeros_origen_train, 2021-06-01..fin_entrenamiento; redondeada a 3 decimales). f = 1 (fórmula literal del Spec, todo el tránsito ocupa silla desde el origen) queda como cota alta en la sensibilidad."
+        }
+      },
+      "11001-15759": {
+        "tiempo_ciclo_h": {
+          "valor": 9,
+          "unidad": "horas (ida + regreso + alistamiento)",
+          "supuesto": true,
+          "nota": "2 × 4 h de recorrido + 1 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante)."
+        },
+        "tiempo_recorrido_h": {
+          "valor": 4,
+          "unidad": "horas por sentido",
+          "supuesto": true,
+          "nota": "Sin fuente oficial ni secundaria (CA-2 §4); TODO(dato-faltante)."
+        },
+        "fraccion_demanda_en_origen": {
+          "valor": 0.417,
+          "unidad": "fracción de la demanda",
+          "supuesto": true,
+          "nota": "f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros en ORIGEN estimada con train (resumen.json, fraccion_pasajeros_origen_train; 3 decimales). f = 1 queda como cota alta en la sensibilidad."
+        }
+      },
+      "15759-11001": {
+        "tiempo_ciclo_h": {
+          "valor": 9,
+          "unidad": "horas (ida + regreso + alistamiento)",
+          "supuesto": true,
+          "nota": "2 × 4 h de recorrido + 1 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante)."
+        },
+        "tiempo_recorrido_h": {
+          "valor": 4,
+          "unidad": "horas por sentido",
+          "supuesto": true,
+          "nota": "Sin fuente oficial ni secundaria (CA-2 §4); TODO(dato-faltante)."
+        },
+        "fraccion_demanda_en_origen": {
+          "valor": 0.404,
+          "unidad": "fracción de la demanda",
+          "supuesto": true,
+          "nota": "f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros en ORIGEN estimada con train (resumen.json, fraccion_pasajeros_origen_train; 3 decimales). f = 1 queda como cota alta en la sensibilidad."
+        }
+      },
+      "52001-52356": {
+        "tiempo_ciclo_h": {
+          "valor": 3.5,
+          "unidad": "horas (ida + regreso + alistamiento)",
+          "supuesto": true,
+          "nota": "2 × 1,5 h de recorrido + 0,5 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante)."
+        },
+        "tiempo_recorrido_h": {
+          "valor": 1.5,
+          "unidad": "horas por sentido",
+          "supuesto": true,
+          "nota": "Sin fuente oficial ni secundaria (CA-2 §4); TODO(dato-faltante)."
+        },
+        "fraccion_demanda_en_origen": {
+          "valor": 0.983,
+          "unidad": "fracción de la demanda",
+          "supuesto": true,
+          "nota": "f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros en ORIGEN estimada con train (resumen.json, fraccion_pasajeros_origen_train; 3 decimales). f = 1 queda como cota alta en la sensibilidad."
+        }
+      },
+      "52356-52001": {
+        "tiempo_ciclo_h": {
+          "valor": 3.5,
+          "unidad": "horas (ida + regreso + alistamiento)",
+          "supuesto": true,
+          "nota": "2 × 1,5 h de recorrido + 0,5 h de alistamiento. Sin fuente oficial (CA-2 §4); TODO(dato-faltante)."
+        },
+        "tiempo_recorrido_h": {
+          "valor": 1.5,
+          "unidad": "horas por sentido",
+          "supuesto": true,
+          "nota": "Sin fuente oficial ni secundaria (CA-2 §4); TODO(dato-faltante)."
+        },
+        "fraccion_demanda_en_origen": {
+          "valor": 0.957,
+          "unidad": "fracción de la demanda",
+          "supuesto": true,
+          "nota": "f(r) de la ec. (2) [DECIDIDO, Camila, 26-nov]: fracción de pasajeros en ORIGEN estimada con train (resumen.json, fraccion_pasajeros_origen_train; 3 decimales). f = 1 queda como cota alta en la sensibilidad."
+        }
+      }
+    },
+    "por_clase": {
+      "AUTOMOVIL": {
+        "capacidad_pasajeros": {
+          "valor": 5,
+          "unidad": "pasajeros por vehículo",
+          "supuesto": true,
+          "nota": "Grupo A, «4 a 9 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2; TODO(cita) vigencia en el Decreto 1079/2015). p99 observado 5,00 (máx. 5,00; 1.035 días) → 5."
+        }
+      },
+      "BUS": {
+        "capacidad_pasajeros": {
+          "valor": 31,
+          "unidad": "pasajeros por vehículo",
+          "supuesto": true,
+          "nota": "Grupo C, «más de 19 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2; la norma no fija tope). p99 observado 30,70 (máx. 40,00; 3.382 días) → 31. Subestima la capacidad física (promedio diario)."
+        }
+      },
+      "BUSETA": {
+        "capacidad_pasajeros": {
+          "valor": 22,
+          "unidad": "pasajeros por vehículo",
+          "supuesto": true,
+          "nota": "Grupo C, «más de 19 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 21,85 (máx. 30,00; solo 166 días) → 22."
+        }
+      },
+      "CAMIONETA": {
+        "capacidad_pasajeros": {
+          "valor": 9,
+          "unidad": "pasajeros por vehículo",
+          "supuesto": true,
+          "nota": "Grupo A, «4 a 9 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 8,27 (máx. 9,00; 585 días) → 9."
+        }
+      },
+      "CAMPERO": {
+        "capacidad_pasajeros": {
+          "valor": 9,
+          "unidad": "pasajeros por vehículo",
+          "supuesto": true,
+          "nota": "Grupo A, «4 a 9 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 8,12 (máx. 8,15; 579 días) → 9."
+        }
+      },
+      "MICROBUS": {
+        "capacidad_pasajeros": {
+          "valor": 19,
+          "unidad": "pasajeros por vehículo",
+          "supuesto": true,
+          "nota": "Grupo B, «10 a 19 pasajeros» (Decreto 171/2001 arts. 50–51, según CA-2 §2). p99 observado 18,10 (máx. 18,66; 2.315 días) → 19."
+        }
+      }
+    },
+    "composicion_clases": {
+      "11001-15759": {
+        "AUTOMOVIL": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUS": {
+          "valor": 0.7513103049812224,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUSETA": {
+          "valor": 0.0033703382719106377,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMIONETA": {
+          "valor": 1.37564827424924e-05,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMPERO": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "MICROBUS": {
+          "valor": 0.24530560026412446,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        }
+      },
+      "11001-76001": {
+        "AUTOMOVIL": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUS": {
+          "valor": 1.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUSETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMIONETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMPERO": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "MICROBUS": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        }
+      },
+      "15759-11001": {
+        "AUTOMOVIL": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUS": {
+          "valor": 0.7930831448139081,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUSETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMIONETA": {
+          "valor": 4.6484241842015554e-05,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMPERO": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "MICROBUS": {
+          "valor": 0.2068703709442499,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        }
+      },
+      "52001-52356": {
+        "AUTOMOVIL": {
+          "valor": 0.014101172081628107,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUS": {
+          "valor": 0.01804059133049361,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUSETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMIONETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMPERO": {
+          "valor": 0.4634455302207745,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "MICROBUS": {
+          "valor": 0.5044127063671038,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        }
+      },
+      "52356-52001": {
+        "AUTOMOVIL": {
+          "valor": 0.0714032122924862,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUS": {
+          "valor": 0.04244713634491671,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUSETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMIONETA": {
+          "valor": 0.40135194626297627,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMPERO": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "MICROBUS": {
+          "valor": 0.48479770509962083,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        }
+      },
+      "76001-11001": {
+        "AUTOMOVIL": {
+          "valor": 3.006433768264085e-05,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUS": {
+          "valor": 0.9999098069869521,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "BUSETA": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMIONETA": {
+          "valor": 6.01286753652817e-05,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "CAMPERO": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        },
+        "MICROBUS": {
+          "valor": 0.0,
+          "unidad": "fracción de los despachos de ORIGEN",
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); despachos de ORIGEN entre 2021-06-01 y 2022-12-31 (train)"
+        }
+      }
+    }
+  }
+}
