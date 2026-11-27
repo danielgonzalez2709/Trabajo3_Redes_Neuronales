@@ -19,11 +19,13 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
+from src.m1_demanda.eda_hipotesis import ANUAL, SEMANAL  # noqa: E402
 from src.viz import paleta  # noqa: E402
 from src.viz.estilo import aplicar_estilo, guardar_figura  # noqa: E402
 
-CARPETA_EDA = Path("results/data/m1/eda")
-CARPETA_FIGURAS = Path("results/figures/m1")
+RAIZ = Path(__file__).resolve().parents[2]
+CARPETA_EDA = RAIZ / "results" / "data" / "m1" / "eda"
+CARPETA_FIGURAS = RAIZ / "results" / "figures" / "m1"
 # Orden fijo de las seis rutas del periodo (rutas.yaml): el color depende de la ruta, no de la subtrama.
 RUTAS_FIJAS = ["11001-76001", "76001-11001", "11001-15759", "15759-11001", "52001-52356", "52356-52001"]
 NOMBRES = {
@@ -76,7 +78,7 @@ def _pie(fig, texto: str = FUENTE, y: float = -0.01) -> None:
 
 # ---------------------------------------------------------------------------------------------- figuras
 def fig_series(serie: pd.DataFrame, salida: Path) -> Path:
-    """Series diarias de las rutas, con mayo-2021 (`sin_registro`) sombreado y los días `anomalo` marcados."""
+    """Series diarias de las rutas, con los días `sin_registro` sombreados y los días `anomalo` marcados."""
     rutas = _rutas(serie)
     ncol = 2
     nfil = int(np.ceil(len(rutas) / ncol))
@@ -93,14 +95,24 @@ def fig_series(serie: pd.DataFrame, salida: Path) -> Path:
         ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
     handles = [
-        plt.Line2D([], [], color=paleta.EJE, lw=8, alpha=0.6, label="días sin registro (mayo de 2021)"),
+        plt.Line2D([], [], color=paleta.EJE, lw=8, alpha=0.6, label="días sin registro"),
         plt.Line2D([], [], color=paleta.CATEGORICA[7], marker="x", ls="", label="día marcado anómalo (descriptivo)"),
     ]
     fig.legend(handles=handles, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.02))
-    fig.suptitle("Demanda diaria de pasajeros por ruta, 2021-2023", y=1.06, fontsize=13)
+    fig.suptitle(f"Demanda diaria de pasajeros por ruta, {serie['fecha'].min().year}-{serie['fecha'].max().year}", y=1.06,
+                 fontsize=13)
     _pie(fig)
     fig.tight_layout()
     return guardar_figura(fig, salida / "m1_series_rutas.png")
+
+
+def _nota_anual(comp: pd.DataFrame) -> str:
+    """Advertencia del componente anual, con los ciclos y puntos por día calculados de la propia descomposición."""
+    n = comp.loc[comp["ruta_id"] == comp["ruta_id"].iloc[0], "fecha"].nunique()
+    ciclos = n / ANUAL
+    return (f"* Componente anual periódico estimado con ~{ciclos:.1f} ciclos ({n // ANUAL}-{-(-n // ANUAL)} puntos por día del año): "
+            f"no leerlo como estacionalidad confirmada; la tendencia (ventana > {ANUAL} d) no recoge la recuperación del primer año.\n"
+            ).replace(".", ",", 1)
 
 
 def fig_descomposicion(comp: pd.DataFrame, ruta: str, salida: Path) -> Path:
@@ -120,14 +132,14 @@ def fig_descomposicion(comp: pd.DataFrame, ruta: str, salida: Path) -> Path:
         if col != "observado_log1p" and col != "tendencia":
             ax.axhline(0, color=paleta.EJE, lw=0.8)
     axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
-    fig.suptitle(f"Descomposición MSTL (periodos 7 y 365) de {_nombre(ruta)}, desde 2021-06-01", y=0.995, fontsize=13)
-    _pie(fig, "* Componente anual periódico estimado con ~2,6 ciclos (2-3 puntos por día del año): no leerlo como estacionalidad confirmada; "
-              "la tendencia (ventana > 365 d) no recoge la recuperación de 2021.\n" + FUENTE)
+    inicio = g["fecha"].min().strftime("%Y-%m-%d")
+    fig.suptitle(f"Descomposición MSTL (periodos {SEMANAL} y {ANUAL}) de {_nombre(ruta)}, desde {inicio}", y=0.995, fontsize=13)
+    _pie(fig, _nota_anual(comp) + FUENTE)
     fig.tight_layout()
     return guardar_figura(fig, salida / f"m1_descomposicion_{ruta}.png")
 
 
-def fig_perfil_semanal(ps: pd.DataFrame, salida: Path) -> Path:
+def fig_perfil_semanal(ps: pd.DataFrame, salida: Path, inicio: str) -> Path:
     fig, ax = plt.subplots(figsize=(8.5, 4.6))
     for ruta in _rutas(ps):
         g = ps[ps["ruta_id"] == ruta].sort_values("dia_semana")
@@ -135,7 +147,7 @@ def fig_perfil_semanal(ps: pd.DataFrame, salida: Path) -> Path:
     ax.axhline(1.0, color=paleta.EJE, lw=1)
     ax.set_xticks(range(7), DIAS_CORTOS)
     ax.set_ylabel("media del día / media semanal")
-    ax.set_title("Perfil semanal de la demanda por ruta (desde 2021-06-01)")
+    ax.set_title(f"Perfil semanal de la demanda por ruta (desde {inicio})")
     ax.legend(ncol=2, fontsize=9)
     _pie(fig)
     return guardar_figura(fig, salida / "m1_perfil_semanal.png")
@@ -153,7 +165,7 @@ def fig_perfil_mensual(pm: pd.DataFrame, salida: Path) -> Path:
     ax.set_ylabel("media diaria del mes / media diaria del año")
     ax.set_title(f"Perfil mensual (promedio de los años completos: {', '.join(map(str, anios)) or 'ninguno'})")
     ax.legend(ncol=2, fontsize=9)
-    _pie(fig, "Dos años completos como máximo: la tendencia no está separada.\n" + FUENTE)
+    _pie(fig, f"{len(anios)} años completos: la tendencia no está separada.\n" + FUENTE)
     return guardar_figura(fig, salida / "m1_perfil_mensual.png")
 
 
@@ -167,7 +179,8 @@ def fig_tendencia(ten: pd.DataFrame, salida: Path) -> Path:
         ax.set_title(f"Media diaria, {titulo}")
         ax.set_ylabel("pasajeros por día")
     axes[0].legend(fontsize=8, ncol=2)
-    fig.suptitle("Tendencia 2021-2023 (proxy de pospandemia; 2020 no está en los datos)", y=1.02, fontsize=13)
+    anios = sorted(ten["anio"].unique())
+    fig.suptitle(f"Tendencia {anios[0]}-{anios[-1]} (proxy de pospandemia; 2020 no está en los datos)", y=1.02, fontsize=13)
     _pie(fig)
     fig.tight_layout()
     return guardar_figura(fig, salida / "m1_tendencia_anual.png")
@@ -213,13 +226,14 @@ def fig_transito_mensual(tm: pd.DataFrame, ruta: str, mes_ref: str | None, salid
 def fig_clases(cl: pd.DataFrame, salida: Path) -> Path:
     clases = sorted(cl.loc[cl["pct"] > 0, "clase_vehiculo"].unique())
     color_clase = {c: paleta.CATEGORICA[i % len(paleta.CATEGORICA)] for i, c in enumerate(clases)}
-    etiquetas = [(r, a) for r in _rutas(cl) for a in sorted(cl.loc[cl["ruta_id"] == r, "anio"].unique())]
+    etiquetas = []  # (ruta, año) en el orden de las barras
+    for ruta in _rutas(cl):
+        etiquetas += [(ruta, anio) for anio in sorted(cl.loc[cl["ruta_id"] == ruta, "anio"].unique())]
+    pct = cl.groupby(["ruta_id", "anio", "clase_vehiculo"])["pct"].sum()  # una sola pasada; falta = 0
     fig, ax = plt.subplots(figsize=(12, 4.8))
     base = np.zeros(len(etiquetas))
     for c in clases:
-        vals = np.array([
-            cl[(cl["ruta_id"] == r) & (cl["anio"] == a) & (cl["clase_vehiculo"] == c)]["pct"].sum() for r, a in etiquetas
-        ])
+        vals = np.array([pct.get((r, a, c), 0.0) for r, a in etiquetas])
         ax.bar(range(len(etiquetas)), vals, bottom=base, color=color_clase[c], label=c, width=0.8)
         base += vals
     ax.set_xticks(range(len(etiquetas)), [f"{_nombre(r)}\n{a}" for r, a in etiquetas], fontsize=6.5, rotation=90)
@@ -254,7 +268,7 @@ def generar(carpeta_eda: str | Path = CARPETA_EDA, salida: str | Path = CARPETA_
     rutas = [
         fig_series(serie, out),
         *[fig_descomposicion(comp, r, out) for r in _rutas(comp)],
-        fig_perfil_semanal(csv("perfil_semanal.csv"), out),
+        fig_perfil_semanal(csv("perfil_semanal.csv"), out, comp["fecha"].min().strftime("%Y-%m-%d")),
         fig_perfil_mensual(csv("perfil_mensual.csv"), out),
         fig_tendencia(csv("tendencia_anual.csv"), out),
         fig_transito_origen(csv("transito_por_ruta_anio.csv"), out),

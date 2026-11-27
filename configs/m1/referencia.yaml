@@ -1,0 +1,40 @@
+# M1 — modelos de referencia (CA-5; núcleo §5.3 y §6; spec de Camila §3.5).
+# Uso: python -m src.m1_demanda.referencia --config configs/m1/referencia.yaml --set regresion.alpha=10
+# (no hay subcomando en run.py). Nada aleatorio: no usa semillas. Sin red.
+
+datos:
+  diaria: data/processed/m1/demanda_diaria.parquet
+  calendario: data/processed/m1/calendario.parquet
+  inicio_entrenamiento: "2021-06-01"   # núcleo §5.1 [DECIDIDO, Daniel, 24-nov]; también para las ventanas (§5.3 regla 3)
+  # [PROPUESTO, CA-5] fin del train; igual que configs/m1/operacion.yaml. Alinear con la partición de AN-1 (Andrés).
+  fin_entrenamiento: "2022-12-31"
+
+rejilla:
+  # §5.3 regla 4: último origen = fin de la serie − 30 días; los demás cada `paso_dias` hacia atrás.
+  ultimo_origen: "2023-12-01"
+  # [PROPUESTO, CA-5] número de orígenes; 40 con paso 7 llega al 2023-03-03; ningún origen puede ser < fin_entrenamiento.
+  n_origenes: 40
+  paso_dias: 7
+  horizonte: 30
+  cuantiles: [0.5, 0.75, 0.9, 0.95]   # núcleo §5.3
+
+horizontes:
+  tramos: [[1, 7], [8, 14], [15, 30]]   # tramos del núcleo §5.3 (los cuantiles de error se estiman por tramo)
+
+modelos: [ingenuo_estacional, regresion_calendario]
+
+ingenuo_estacional:
+  # Si el mismo día de la semana de la última semana con dato no tiene dato (sin_registro), se retrocede otra semana, hasta
+  # este máximo de semanas extra; si no hay dato, se usa la media de la historia <= origen.
+  max_semanas_retroceso: 4
+
+regresion_calendario:
+  # Ridge con alpha fijo (sin búsqueda: n_configuraciones_busqueda = 0). alpha = 0 equivale a mínimos cuadrados ordinarios.
+  alpha: 1.0
+  ventana_corta: 7        # media de los últimos 7 días hasta el origen
+  ventana_larga: 28       # media de los últimos 28 días hasta el origen
+  semanas_mismo_dia: 4    # media del mismo día de la semana en las últimas 4 semanas con dato <= origen
+
+salida:
+  carpeta: results/data/m1
+  carpeta_referencia: results/data/m1/referencia

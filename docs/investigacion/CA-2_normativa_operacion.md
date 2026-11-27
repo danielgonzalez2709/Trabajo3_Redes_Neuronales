@@ -1,5 +1,27 @@
 # CA-2 (investigación) — Normativa y parámetros operativos de M1
 
+## Fe de erratas (verificación CA-2, 2026-11-26)
+
+Correcciones C-1 a C-9 de `docs/investigacion/CA-2_verificacion.md` (secciones 8 y 9). El texto original del informe se
+conserva sin cambios más abajo, como evidencia de la cacería de alucinaciones. Las correcciones C-7 a C-9 conciernen a
+`configs/m1/operacion.yaml` y a `src/m1_demanda/operacion.py` (las aplica otro agente).
+
+| # | Sección afectada | Dice | Corrección | Sustento |
+|---|---|---|---|---|
+| C-1 | §6 punto 1 | «en esa fecha (7-may-2024) regían 46 h» | Regían **47 h** (Ley 2101, art. 3; 46 h solo desde el 15-jul-2024). Contradice la tabla del propio §1.1 | CA-2_verificacion.md §8 H-a |
+| C-2 | §1.1 (tabla), §1.2 (Nota), §7 (fila de jornada diaria) | 48 h en 2021–2023 por «art. 161 CST según Ley 50/1990, art. 20»; 8 h/día antes de 2025 por la Ley 50/1990 | Ese texto fue sustituido por el art. 2 de la **Ley 2101 de 2021** (vigente desde el 15-jul-2021), que no trae tope diario. Las 48 h de 2021–2023 salen de la gradualidad del art. 3; el tope de 8 h/día en el art. 161 solo rige desde el 25-jun-2025 (Ley 2466, art. 11). Base legal 2021–2025: Ley 2101 (arts. 2–3), no la Ley 50 | CA-2_verificacion.md §1 y §8 H-b |
+| C-3 | §1.2 y §2 (cita de la Ley 2466) | «[título a cotejar]» y URL de normogramas | Título literal: «por medio de la cual se modifica parcialmente normas laborales y se adopta una Reforma Laboral para el trabajo decente y digno en Colombia» (Diario Oficial 53.160, 25-jun-2025). Fuentes: Senado y Función Pública | CA-2_verificacion.md §2 |
+| C-4 | §8 (`TODO(cita)` 1, 2, 3, 5, 6) | Abiertos | Cerrados con las fuentes de la verificación (Ley 2101 y cronograma, Ley 2466 completa, vigencia de la Res. 315/2013). El 4 (Decreto 1393/1970 art. 56: vigencia) sigue abierto; el 7 queda parcial (PESV sin cifras; circular de 2026 solo vía comunicado oficial) | CA-2_verificacion.md §1–§5 y §9 C-4 |
+| C-5 | §2 (rango de capacidad) | Decreto 171 de 2001, arts. 50–51 | Compilado en el **Decreto 1079 de 2015**, arts. 2.2.1.4.7.3 y 2.2.1.4.7.4 (la cita vigente; procedencia: Decreto 171/2001, arts. 50–51). La norma no dice si el límite incluye al conductor | CA-2_verificacion.md §6 |
+| C-6 | §6 punto 4 | El «16 de julio» lo usa «un diario» | También lo usó el MinTrabajo en su comunicado de 2023; el concepto jurídico del MinTrabajo y el comunicado de 2026 usan el 15 de julio | CA-2_verificacion.md §1 (matiz) |
+| C-7 | `configs/m1/operacion.yaml` | `supuesto: true` en la jornada diaria y el umbral de segundo conductor | Pasan a `fuente` con las citas de la tabla del §7 de la verificación (la aplica otro agente) | CA-2_verificacion.md §7 y §9 |
+| C-8 | coherencia, no alucinación | `segundo_conductor_activo = 0` con 10 h de recorrido Bogotá–Cali | La Res. 315/2013 art. 6 obliga a dos conductores (> 8 h); dejarlo en 0 es una cota baja | CA-2_verificacion.md §9 |
+| C-9 | coherencia, no alucinación | 7 h efectivas × 7 días sin descanso | 49 h/semana, por encima de cualquier máximo semanal 2021–2026 (48 → 42 h) | CA-2_verificacion.md §9 |
+
+Nota sobre H-a y H-b: son los candidatos a hallazgo de la verificación (§8 de `CA-2_verificacion.md`); aquí solo se corrige el informe.
+
+---------------------------------------------------------------------------------------------------
+
 Fecha de consulta de todo el informe: **2026-11-26**. Agente: investigador-fuentes (Sonnet). Prompt: `alucinaciones/prompts/CA-2a.md`.
 Cómo se verificó: «**leído en el PDF**» = abrí el documento oficial y leí su texto; «**vía lector**» = abrí la página oficial con un lector que
 resume (los fragmentos salen de su transcripción en segmentos cortos; hay que cotejar contra la URL antes de citar en el blog);

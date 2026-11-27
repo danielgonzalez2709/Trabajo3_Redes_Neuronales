@@ -1,11 +1,11 @@
 {
   "ventana": {
     "decision": "Ventanas de rezagos múltiplos de 7 días (mínimo 28) y una variante de 365 para la estacionalidad anual; el horizonte de 30 días obliga a pronosticar directo o recursivo sin covariables observadas.",
-    "base": "Estacionalidad semanal con fuerza 0,13-0,66 (MSTL) y anual con 0,41-0,84, sobre 944 días (~2,6 ciclos anuales: la fuerza anual queda sesgada hacia arriba con 2-3 puntos por día del año; ver `descomposicion`).",
+    "base": "Estacionalidad semanal con fuerza 0,13-0,66 (MSTL) y anual con 0,41-0,84, sobre 944 días (2,6 ciclos anuales: la fuerza anual queda sesgada hacia arriba con 2-3 puntos por día del año; ver `descomposicion`).",
     "estado": "[PROPUESTO]"
   },
   "variables_calendario": {
-    "decision": "Día de la semana y mes por fecha; festivo, puente, Semana Santa y vacaciones escolares solo desde calendario.parquet (CA-1), conocibles 30 días antes.",
+    "decision": "Día de la semana y mes por fecha; festivo, puente, Semana Santa, vacaciones escolares y fin_de_anio solo desde calendario.parquet (CA-1), conocibles 30 días antes.",
     "base": "H-M1-1 y H-M1-5 se evalúan por fecha; H-M1-2, 3 y 4 dependen del calendario: evaluadas con calendario.parquet.",
     "estado": "[PROPUESTO]"
   },

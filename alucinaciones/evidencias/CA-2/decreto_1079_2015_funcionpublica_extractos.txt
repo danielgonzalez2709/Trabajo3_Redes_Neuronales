@@ -1,0 +1,31 @@
+1337:ARTÍCULO 2.2.1.4.7.3. Racionalización. Con el objeto de posibilitar una eficiente racionalización en el uso de los equipos, la asignación de la clase de vehículo con la cual se prestará el servicio, se agrupará según su capacidad así:
+1338-- GRUPO A: 4 a 9 pasajeros
+1339-- GRUPO B: 10 a 19 pasajeros
+1340-- GRUPO C: más de 19 pasajeros
+1341-Para el cambio de Grupo de los vehículos autorizado en una ruta, se tendrán en cuenta las siguientes equivalencias:
+1342-Del Grupo C al Grupo B o del Grupo B al Grupo A, es decir en forma descendente, será de uno (1) a uno (1).
+1343-Del Grupo A al Grupo B o del Grupo B al Grupo C, es decir en forma ascendente, será de tres (3) a dos (2).
+1344-(Decreto 171 de 2001, artículo 50).
+1345-ARTÍCULO 2.2.1.4.7.4. Unificación automática. Las empresas podrán unificar la clase de vehículo autorizado en cada una de las rutas asignadas, de acuerdo con los Grupos antes señalados, así:
+1346-Automóvil-Campero-Camioneta Grupo A
+1347-Microbús-Vans Grupo B
+1348-Buseta-Bus Grupo C
+1349-PARÁGRAFO . Con el objeto de posibilitar una eficiente racionalización en el uso de los equipos vinculados, las empresas podrán despachar en los diferentes horarios, indistintamente cualquiera de las clases de vehículos que tiene autorizados.
+1350-(Decreto 171 de 2001, artículo 51).
+1351-SECCIÓN 8
+--
+8319:ARTÍCULO 3.1.1. Derogatoria Integral. Este Decreto regula íntegramente las materias contempladas en él. Por consiguiente, de conformidad con el artículo 3 de la Ley 153 de 1887, quedan derogadas todas las disposiciones de naturaleza reglamentaria relativas al Sector Transporte que versan sobre las mismas materias, con excepción, exclusivamente, de los siguientes asuntos:
+8320-1) No quedan cobijados por la derogatoria anterior los decretos relativos a la creación y conformación de comisiones intersectoriales, comisiones interinstitucionales, consejos, comités, sistemas administrativos y demás asuntos relacionados con la estructura, configuración y conformación de las entidades y organismos del sector administrativo.
+8321-2) Tampoco quedan cobijados por la derogatoria anterior los decretos que desarrollan leyes marco.
+8322-3) Igualmente, quedan excluidas de esta derogatoria las normas de naturaleza reglamentaria de este sector administrativo que, a la fecha de expedición del presente Decreto, se encuentren suspendidas por la Jurisdicción Contencioso Administrativa, las cuales serán compiladas en este Decreto, en caso de recuperar su eficacia jurídica.
+8323-4) En particular, se exceptúan de la derogatoria las siguientes normas reglamentarias: artículos 6, 7 y 9 del Decreto 198 de 2013, 10 y 11 del Decreto 1479 de 2014, los artículos no compilados aquí del Decreto 120 de 2010 y los decretos reglamentarios por los cuales se adoptan documentos Conpes.
+8324-Los actos administrativos expedidos con fundamento en las disposiciones compiladas en el presente Decreto mantendrán su vigencia y ejecutoriedad bajo el entendido de que sus fundamentos jurídicos permanecen en el presente Decreto compilatorio.
+8325-ARTÍCULO 3.1.2. Vigencia. El presente Decreto rige a partir de la fecha de su publicación en el Diario Oficial.
+8326-PUBLÍQUESE Y CÚMPLASE
+8327-Dado en Bogotá, D.C., a los 26 días del mes de mayo del año 2015
+8328-NATALIA ABELLO VIVES
+8329-LA MINISTRA DE TRANSPORTE
+8330-Volver Atrás
+8331-Vicepresidencia
+8332-MinJusticia
+8333-MinDefensa

@@ -17,7 +17,8 @@ Reglas (fuentes y supuestos en ``data/fuentes.md``, sección «Calendario exóge
   * ``semana_santa``: lunes a domingo que termina en el Domingo de Pascua (informe §1.1).
   * ``fin_de_anio`` (supuesto): del 15-dic al 15-ene, ambos inclusive.
   * Vacaciones: rangos de receso del yaml (versión original de cada calendario). Dentro de la ``cobertura`` de la ciudad
-    lo que no es receso es falso; fuera de ella es nulo (sin fuente, no se imputa).
+    lo que no es receso es falso; fuera de ella, o en los ``vacios`` del yaml (días que ningún acto cubre), es nulo
+    (sin fuente, no se imputa).
 """
 from __future__ import annotations
 
@@ -94,8 +95,11 @@ def _vacaciones(fechas: pd.Series, ciudad: dict) -> pd.Series:
                 receso.add(d)
                 d += timedelta(days=1)
 
+    # `vacios` (opcional): días dentro de la cobertura que ningún acto cubre (p. ej. 1-ene-2024 de Pasto e Ipiales) -> nulo
+    vacios = [(date.fromisoformat(a), date.fromisoformat(b)) for a, b in ciudad.get("vacios", [])]
+
     def valor(d: date):
-        if d < ini_c or d > fin_c:
+        if d < ini_c or d > fin_c or any(a <= d <= b for a, b in vacios):
             return pd.NA
         return d in receso
 

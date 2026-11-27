@@ -1,5 +1,22 @@
 # CA-1 — Fuentes primarias del calendario exógeno de M1 (2021-01-01 a 2024-12-31)
 
+## Fe de erratas (verificación CA-1, 2026-11-26)
+
+Correcciones tras la verificación adversarial (`docs/investigacion/CA-1_verificacion.md`). El texto original del informe se
+conserva sin cambios más abajo, como evidencia de la cacería de alucinaciones.
+
+| # | Sección afectada | Dice | Corrección | Sustento |
+|---|---|---|---|---|
+| 1 | §3.2 (Sogamoso 2022) y §6 | El segundo semestre «del 20 de junio al 4 de diciembre» es «contradictorio con el receso de julio: error del acto» | **No hay contradicción.** Los semestres son lapsos de calendario que incluyen recesos: (21 − 1) + (24 − 3 − 1) = 40 semanas lectivas, como dice el acto | CA-1_verificacion.md fila 3.9 y candidato C-1 |
+| 2 | §1 (Ley 51, «discrepancia entre espejos» 22-dic vs 6-dic) | Dos fechas de un mismo dato en espejos distintos | La copia de la Procuraduría trae ambas: 6-dic-1983 es el «Dada en» (firma del Congreso) y 22-dic-1983 la sanción; la ley rige desde la sanción (art. 4) | CA-1_verificacion.md fila 1.4 |
+| 3 | §5 punto 4 (Cali 2021) | Res. 0002 de 4-ene-2021 = «vacaciones docentes» | La Res. 06575 ajustó las vacaciones de los docentes; la **0002** convirtió la semana lectiva del 25 al 31 de enero de 2021 en semana de desarrollo institucional (sin clases). Sin efecto en el parquet | CA-1_verificacion.md fila 3.5 y candidato C-2 |
+| 4 | §3.3 (tabla ISO) | Omite un rango de Sogamoso | Falta `sogamoso,2022-01-17,2022-01-23` (está en el texto del Decreto 333 y en §3.2 del propio informe; el YAML ya lo trae) | CA-1_verificacion.md fila 4.2 y candidato C-3 |
+| 5 | §3 (Cali 2023) | Rangos del afiche tomados como coherentes | El afiche se contradice: el 30-ene-2023 es receso (p. 4) y primer día de clases (p. 3); las lectivas suman 39 semanas; la semana del 26-jun al 2-jul no tiene rótulo | CA-1_verificacion.md fila 3.6 |
+| 6 | §1 (ponente C-107/94 y C-568/93, `TODO(cita)`) | Sin ponente; C-568 sin abrir | C-107/94: M. P. Carlos Gaviria Díaz, 10-mar-1994 («estarse a lo resuelto» en la C-568). C-568/93: M. P. Fabio Morón Díaz, 9-dic-1993, arts. 1 y 2 exequibles | CA-1_verificacion.md fila 1.5 |
+| 7 | Frontera 1-ene-2024 (Pasto, Ipiales) | Queda `False` | Ningún acto lo cubre: es nulo (el código ahora lo hace con `vacios` en el YAML) | CA-1_verificacion.md §6 punto 5 |
+
+---------------------------------------------------------------------------------------------------
+
 Investigador-fuentes · fecha de consulta de todo el documento: **2026-11-26** · destinataria: Camila.
 Núcleo §5.2 (`festivo`, `puente`, `semana_santa`, `vacaciones_escolares`, `fin_de_anio`, `dia_semana`).
 Convención de confianza: **alta** = texto abierto y leído en la fuente oficial; **media** = fuente oficial leída por OCR o por

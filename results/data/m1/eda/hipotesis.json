@@ -15,19 +15,19 @@
     "justificacion": "Los días de descanso prolongado concentran viajes; calendario conocible con meses de antelación (regla 0.9).",
     "evidencia_esperada": "Razón mediana > 1 en días marcados, contra el mismo día de la semana ±42 días sin marca.",
     "figura_o_tabla": "efectos_calendario.csv",
-    "resultado": "festivo: 47 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,81 y 1,13 según ruta (promedio ponderado 0,95); puente: 101 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,95 y 1,11 según ruta (promedio ponderado 1,02)",
+    "resultado": "festivo: 47 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,81 y 1,13 según ruta (promedio ponderado 0,95); puente: 101 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 0,95 y 1,11 según ruta (promedio ponderado 1,02)",
     "veredicto": "pendiente",
-    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 c581d33c1d875015bed7dca38cd3729ad83b72fb51f2224476f75c73286f9e1b)"
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361)"
   },
   {
     "id": "H-M1-3",
-    "enunciado": "Las vacaciones escolares elevan la demanda frente a los mismos días de la semana fuera de ellas.",
-    "justificacion": "Calendario escolar como determinante de viajes familiares (supuesto a contrastar).",
-    "evidencia_esperada": "Razón mediana > 1 en días de vacaciones escolares (ventana ±42 días).",
+    "enunciado": "Las vacaciones escolares elevan la demanda frente a los mismos días de la semana fuera de ellas; cada ruta usa el calendario de su ciudad de origen.",
+    "justificacion": "Calendario escolar como determinante de viajes familiares (supuesto a contrastar); se usa la columna vacaciones_escolares_<DIVIPOLA de origen> de cada ruta (decisión de Camila, 26-nov).",
+    "evidencia_esperada": "Razón mediana > 1 en días de vacaciones escolares de la ciudad de origen (ventana ±42 días).",
     "figura_o_tabla": "efectos_calendario.csv",
-    "resultado": "vacaciones_escolares: 224 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,02 y 1,27 según ruta (promedio ponderado 1,16)",
+    "resultado": "vacaciones_escolares (por ciudad de origen de cada ruta): 231 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,04 y 1,27 según ruta (promedio ponderado 1,15)",
     "veredicto": "pendiente",
-    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 c581d33c1d875015bed7dca38cd3729ad83b72fb51f2224476f75c73286f9e1b)"
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361)"
   },
   {
     "id": "H-M1-4",
@@ -35,17 +35,17 @@
     "justificacion": "Festividad móvil con puentes largos; su fecha cambia cada año, por eso se toma del calendario.",
     "evidencia_esperada": "Razón mediana ≠ 1 en días de Semana Santa, con signos distintos por día.",
     "figura_o_tabla": "efectos_calendario.csv",
-    "resultado": "semana_santa: 14 días marcados por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,09 y 1,42 según ruta (promedio ponderado 1,27)",
+    "resultado": "semana_santa: 14 días marcados como máximo por ruta; razón mediana contra el mismo día de la semana ±42 días entre 1,09 y 1,42 según ruta (promedio ponderado 1,27)",
     "veredicto": "pendiente",
-    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 c581d33c1d875015bed7dca38cd3729ad83b72fb51f2224476f75c73286f9e1b)"
+    "evidencia": "results/data/m1/eda/efectos_calendario.csv sobre data/processed/m1/calendario.parquet (CA-1, sha256 97d2f17233ba26394e4e826a769168f1fb2a8c7c4864b9f776b87cc40f238361)"
   },
   {
     "id": "H-M1-5",
     "enunciado": "Diciembre y enero tienen una demanda diaria superior a la media del año en las rutas con mayor tránsito de pasajeros, y esa temporada no se explica solo por la tendencia.",
-    "justificacion": "Fin de año como temporada alta (viajes de vacaciones y reuniones familiares); se mide por mes, sin calendario externo.",
+    "justificacion": "Fin de año como temporada alta (viajes de vacaciones y reuniones familiares). Por decisión de Camila (26-nov) la hipótesis se mide solo con el perfil mensual (media del mes / media del año); el calendario ya existe y su columna fin_de_anio es la variable de fin de año que usan los modelos.",
     "evidencia_esperada": "Razón mes/año > 1 en diciembre o enero en la mayoría de las rutas; refutada si todas quedan por debajo de 1.",
     "figura_o_tabla": "perfil_mensual.csv; figura m1_perfil_mensual.png",
-    "resultado": "Media diaria del mes / media diaria del año (años completos 2022, 2023, promedio de años): diciembre entre 1,11 y 1,52; enero entre 0,88 y 1,16 según ruta. Correlación del perfil mensual entre 2022 y 2023 por ruta: 11001-15759 0,77, 11001-76001 0,66, 15759-11001 0,33, 52001-52356 -0,15, 52356-52001 0,26, 76001-11001 0,68. La tendencia no está separada (dos años completos).",
+    "resultado": "Media diaria del mes / media diaria del año (años completos 2022, 2023, promedio de años): diciembre entre 1,11 y 1,52; enero entre 0,88 y 1,16 según ruta. Correlación del perfil mensual entre 2022 y 2023 por ruta: 11001-15759 0,77, 11001-76001 0,66, 15759-11001 0,33, 52001-52356 -0,15, 52356-52001 0,26, 76001-11001 0,68. La tendencia no está separada (2 años completos).",
     "veredicto": "pendiente",
     "evidencia": "results/data/m1/eda/perfil_mensual.csv"
   },

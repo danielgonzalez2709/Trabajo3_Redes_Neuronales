@@ -1,4 +1,5 @@
 {
+  "avisos": [],
   "transito_vs_origen": {
     "descripcion": "Pasajeros de tránsito sobre el total (origen + tránsito) por ruta y año",
     "filas": [

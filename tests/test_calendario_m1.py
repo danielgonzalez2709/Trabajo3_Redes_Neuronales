@@ -172,6 +172,26 @@ def test_vacios_son_nulos(df):
     assert df["vacaciones_escolares_11001"].notna().all()
 
 
+def test_dia_fuera_de_todo_acto_es_nulo(df):
+    # CA-1 verificación: 1-ene-2024 de Pasto e Ipiales no está en ningún acto (el de 2023 acaba el 31-dic, el de 2024
+    # empieza el 2-ene) -> nulo por la regla de vacíos sin fuente; los días vecinos siguen con valor.
+    for d in ("52001", "52356"):
+        c = f"vacaciones_escolares_{d}"
+        assert pd.isna(fila(df, "2024-01-01")[c])
+        assert not pd.isna(fila(df, "2023-12-31")[c]) and not pd.isna(fila(df, "2024-01-02")[c])
+        assert df[c].isna().sum() == 4  # 1–3 ene 2021 y 1-ene-2024
+    for d in ("11001", "76001"):
+        assert not pd.isna(fila(df, "2024-01-01")[f"vacaciones_escolares_{d}"])
+
+
+def test_vacios_del_yaml_sobre_cobertura():
+    ciudad = {"cobertura": ["2024-01-01", "2024-01-05"], "vacios": [["2024-01-03", "2024-01-03"]],
+              "bloques": [{"rangos": [["2024-01-02", "2024-01-04"]]}]}
+    fechas = pd.Series([date(2024, 1, i) for i in range(1, 7)])
+    out = cal._vacaciones(fechas, ciudad)
+    assert [None if pd.isna(v) else bool(v) for v in out] == [False, True, None, True, False, None]
+
+
 def test_fuentes_yaml_trae_cita_por_bloque():
     fuentes = cal.cargar_fuentes()
     for ciudad in fuentes["ciudades"].values():

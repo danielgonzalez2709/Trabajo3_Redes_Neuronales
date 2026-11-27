@@ -2,7 +2,7 @@
 # Transcrito de docs/investigacion/CA-1_fuentes_calendario.md §3.1–§3.3 (investigador-fuentes, consulta 2026-11-26).
 # Versión ORIGINAL de cada calendario (la conocible 30 días antes, regla 0.9); las modificaciones posteriores solo se
 # documentan en data/fuentes.md. Cada rango es [inicio, fin] inclusive (ISO). Lo que no es receso dentro de `cobertura`
-# vale falso; fuera de `cobertura` vale nulo (sin fuente; no se imputa).
+# vale falso; fuera de `cobertura`, o dentro de `vacios` (días que ningún acto cubre), vale nulo (sin fuente; no se imputa).
 periodo: {inicio: "2021-01-01", fin: "2024-12-31"}   # núcleo §5.2 (todo el periodo + 30 días); sobrescribible por CLI
 consulta_por_defecto: "2026-11-26"
 supuestos:
@@ -42,7 +42,7 @@ ciudades:
       - {anio_lectivo: 2022, acto: "Resolución 4143.0.21.0.06395 de 2021 (art. 6), Secretaría de Educación de Cali", fecha_acto: "2021-10-29", url: "https://www.mineducacion.gov.co/1759/articles-408776_c_02.pdf", consulta: "2026-11-26", confianza: alta,
          rangos: [["2022-01-17","2022-01-23"],["2022-04-11","2022-04-17"],["2022-06-27","2022-07-24"],["2022-10-10","2022-10-16"],["2022-12-12","2023-01-15"]]}
       - {anio_lectivo: 2023, acto: "Resolución 4143.010.21.0.06455 de 2022 (modificada por la 4143.010.21.0.00011 del 2023-01-03); fechas del afiche oficial de la Secretaría de Educación", fecha_acto: "2022-10-25", url: "https://www.cali.gov.co/loader.php?lServicio=Tools2&lTipo=descargas&lFuncion=descargar&idFile=rvyjT8W7AGZJsabguutHhjpjalBaemg0PQ", consulta: "2026-11-26", confianza: media,
-         nota: "TODO(cita): la resolución no se obtuvo; el afiche podría ser la versión modificada. La fecha del acto es la citada en la Res. 06067/2023.",
+         nota: "TODO(cita): la resolución no se obtuvo; el afiche podría ser la versión modificada. La fecha del acto es la citada en la Res. 06067/2023. CONTRADICCIÓN INTERNA DEL AFICHE (verificación CA-1, fila 3.6): el 30-ene-2023 sale a la vez como último día de receso (p. 4) y como primer día de clases (p. 3: «30 de enero al 2 de abril»); las semanas lectivas suman 9+11+11+8 = 39; la semana del 26-jun al 2-jul no tiene rótulo. Se mantiene 2023-01-30 como receso (literal del cuadro de receso). DECISIÓN PENDIENTE de Camila.",
          rangos: [["2023-01-16","2023-01-30"],["2023-04-03","2023-04-09"],["2023-07-03","2023-07-23"],["2023-10-09","2023-10-15"],["2023-12-11","2024-01-14"]]}
       - {anio_lectivo: 2024, acto: "Resolución 4143.010.21.0.06067 de 2023 (art. 6), Secretaría de Educación de Cali", fecha_acto: "2023-10-31", url: "https://www.mineducacion.gov.co/1780/articles-419296_recurso_18.pdf", consulta: "2026-11-26", confianza: media-alta,
          rangos: [["2024-01-15","2024-01-28"],["2024-03-25","2024-03-31"],["2024-07-01","2024-07-21"],["2024-10-07","2024-10-13"],["2024-12-09","2025-01-12"]]}
@@ -55,7 +55,7 @@ ciudades:
          nota: "Clases inician el 25-ene-2021; la semana 18-24 ene es desarrollo institucional.",
          rangos: [["2021-01-18","2021-01-24"],["2021-03-29","2021-04-04"],["2021-06-21","2021-07-11"],["2021-10-11","2021-10-17"],["2021-12-06","2022-01-23"]]}
       - {anio_lectivo: 2022, acto: "Decreto 333 de 2021 (modificado parcialmente por el Decreto 026 del 2022-01-20, no obtenido)", fecha_acto: "2021-10-28", url: "https://www.mineducacion.gov.co/1759/articles-408776_PS_19.pdf", consulta: "2026-11-26", confianza: media,
-         nota: "El acto dice que el 2.º semestre va del 20-jun al 4-dic, contradictorio con el receso de julio; se toma la lista de receso. TODO(cita) Decreto 026/2022. La semana 17-23 ene 2022 está en el texto literal del Decreto 333.",
+         nota: "TODO(cita) Decreto 026/2022. Los semestres del acto son lapsos de calendario que incluyen recesos (20 + 20 = 40 semanas lectivas). La semana 17-23 ene 2022 está en el texto literal del Decreto 333.",
          rangos: [["2022-01-17","2022-01-23"],["2022-04-11","2022-04-17"],["2022-07-04","2022-07-24"],["2022-10-10","2022-10-16"],["2022-12-05","2023-01-15"]]}
       - {anio_lectivo: 2023, acto: "Decreto 419 de 2022, Alcaldía de Sogamoso", fecha_acto: "2022-10-11", url: "https://www.mineducacion.gov.co/1780/articles-413526_recurso_80.pdf", consulta: "2026-11-26", confianza: alta,
          rangos: [["2023-01-16","2023-01-22"],["2023-04-03","2023-04-09"],["2023-06-19","2023-07-09"],["2023-10-09","2023-10-15"],["2023-12-04","2024-01-14"]]}
@@ -63,6 +63,7 @@ ciudades:
     nombre: "Pasto"
     divipola: "52001"
     cobertura: ["2021-01-04", "2024-12-31"]   # 1–3 ene 2021: TODO(dato-faltante) Res. 1588/2020 no obtenida
+    vacios: [["2024-01-01", "2024-01-01"]]    # ningún acto cubre el 1-ene-2024 (CA-1 verificación, corrección 5)
     supuesto: "El acto de Pasto lista «Vacaciones» y «Desarrollo Institucional» (2024 rotula las vacaciones como «Receso Estudiantil»); se trata como sin clases todo lo que no es «Desarrollo Académico» (inferencia aritmética del informe §3.2, no literal: 23+10+7 = 40 semanas académicas en 2022 y 2023; en 2021 suma 39)."
     bloques:
       - {anio_lectivo: 2021, acto: "Resolución 0064 de 2021 (modifica la Res. 1588 del 2020-11-13, no obtenida), Secretaría de Educación de Pasto", fecha_acto: "2021-01-15", url: "https://www.mineducacion.gov.co/1759/articles-402903_V02_14.pdf", consulta: "2026-11-26", confianza: media,
@@ -74,12 +75,13 @@ ciudades:
       - {anio_lectivo: 2023, acto: "Resolución 3085 de 2022, Secretaría de Educación de Pasto", fecha_acto: "2022-11-02", url: "https://www.mineducacion.gov.co/1780/articles-413526_recurso_62.pdf", consulta: "2026-11-26", confianza: alta,
          rangos: [["2023-01-02","2023-01-29"],["2023-07-10","2023-07-30"],["2023-10-09","2023-10-15"],["2023-12-04","2023-12-31"]]}
       - {anio_lectivo: 2024, acto: "Resolución 3836 de 2023, Secretaría de Educación de Pasto", fecha_acto: "2023-10-23", url: "https://www.mineducacion.gov.co/1780/articles-419296_recurso_76.pdf", consulta: "2026-11-26", confianza: alta,
-         nota: "1-ene-2024 (festivo) queda fuera de los rangos del acto; se trata como no receso.",
+         nota: "1-ene-2024 (festivo) queda fuera de los rangos del acto y del de 2023 (acaba el 31-dic): ningún acto lo cubre, es nulo (ver `vacios`).",
          rangos: [["2024-01-02","2024-01-28"],["2024-07-08","2024-07-28"],["2024-10-07","2024-10-13"],["2024-12-02","2024-12-31"]]}
   ipiales:
     nombre: "Ipiales"
     divipola: "52356"
     cobertura: ["2021-01-04", "2024-12-31"]   # 1–3 ene 2021: TODO(dato-faltante) Res. 0916/2020 no obtenida
+    vacios: [["2024-01-01", "2024-01-01"]]    # ningún acto cubre el 1-ene-2024 (CA-1 verificación, corrección 5)
     bloques:
       - {anio_lectivo: 2021, acto: "Resolución 00023 de 2021 (art. 3; modifica la Res. 0916 del 2020-10-30, no obtenida), Secretaría de Educación de Ipiales", fecha_acto: "2021-01-14", url: "https://www.mineducacion.gov.co/1759/articles-402903_V02_07.pdf", consulta: "2026-11-26", confianza: media-alta,
          nota: "Emparejamiento de fechas por orden y duración (OCR). TODO(cita) Res. 0916/2020.",
@@ -90,5 +92,5 @@ ciudades:
          nota: "Receso de octubre el 16-22 (semana del festivo trasladado), no el 9-15.",
          rangos: [["2023-01-02","2023-01-29"],["2023-07-10","2023-07-30"],["2023-10-16","2023-10-22"],["2023-12-04","2023-12-31"]]}
       - {anio_lectivo: 2024, acto: "Resolución 2131 de 2023, Secretaría de Educación de Ipiales", fecha_acto: "2023-10-30", url: "https://www.mineducacion.gov.co/1780/articles-419296_recurso_58.pdf", consulta: "2026-11-26", confianza: media-alta,
-         nota: "1-ene-2024 (festivo) queda fuera de los rangos del acto; se trata como no receso.",
+         nota: "1-ene-2024 (festivo) queda fuera de los rangos del acto y del de 2023 (acaba el 31-dic): ningún acto lo cubre, es nulo (ver `vacios`).",
          rangos: [["2024-01-02","2024-01-28"],["2024-03-25","2024-03-31"],["2024-05-13","2024-05-19"],["2024-07-08","2024-07-21"],["2024-10-07","2024-10-13"],["2024-12-09","2024-12-29"]]}
