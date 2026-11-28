@@ -416,7 +416,8 @@ def cfg_sintetica(tmp: Path, extra=(), base: Path = CFG_DEMO) -> dict:
     proc = (tmp / "proc").as_posix()
     sets = [f"datos.carpeta={proc}", f"datos.resumen_particion={proc}/resumen.json",
             f"salida.carpeta={(tmp / 'res').as_posix()}", f"salida.modelos={(tmp / 'mod').as_posix()}",
-            "semillas.n=2", "busqueda.n_ensayos=2"]
+            "semillas.n=2", "busqueda.n_ensayos=2",
+            "modelos=[popularidad, mf_als, aleatorio]"]      # JJ-5 agregó la red a las configs; estas pruebas son de JJ-4
     return apply_overrides(load_config(base), [*sets, *extra])
 
 
@@ -1133,7 +1134,7 @@ def test_hiperparametros_desde_invalido_es_un_error_claro(tmp_path):
 def test_modelo_desconocido_es_un_error_claro(tmp_path):
     montar_sintetico(tmp_path / "proc")
     with pytest.raises(ValueError, match="desconocidos"):
-        experimento.main(cfg_sintetica(tmp_path, ["modelos=[popularidad, red]"]))
+        experimento.main(cfg_sintetica(tmp_path, ["modelos=[popularidad, no_registrado]"]))   # «red» existe desde JJ-5
 
 
 def test_la_familia_trae_objetivo_nombre_y_la_consola_lo_usa(tmp_path, capsys):

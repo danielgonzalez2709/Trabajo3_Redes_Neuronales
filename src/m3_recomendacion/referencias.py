@@ -382,9 +382,17 @@ def _fabrica_mf(cfg: dict) -> MFImplicitaALS:
                           tolerancia_degenerado=cfg["mf_als"]["tolerancia_degenerado"])
 
 
-# nombre → fábrica(cfg). El arnés recorre ``cfg["modelos"]``. JJ-5 solo agrega una entrada (p. ej. «red»).
+def _fabrica_red(cfg: dict) -> Recomendador:
+    """JJ-5: la red de dos torres (``red.fabrica_red``). Import tardío: así las referencias no cargan torch."""
+    from src.m3_recomendacion.red import fabrica_red
+
+    return fabrica_red(cfg)
+
+
+# nombre → fábrica(cfg). El arnés recorre ``cfg["modelos"]``.
 MODELOS: dict[str, Callable[[dict], Recomendador]] = {
     "popularidad": lambda cfg: Popularidad(),
     "mf_als": _fabrica_mf,
     "aleatorio": lambda cfg: Aleatorio(),
+    "red": _fabrica_red,
 }

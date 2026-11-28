@@ -132,10 +132,55 @@ Decisiones de las referencias (JJ-4) [DECIDIDO, Juan José, 27-nov]:
   El mejor λ (≈ 0,0021, ensayo 19) quedó cerca del borde inferior del rango (1e-3); **no se amplió**, porque los datos no tienen
   patrón (todos los modelos quedan al nivel del azar) y ampliar el rango no cambiaría esa conclusión.
 
-- Red: NCF o dos torres con variables de contenido del usuario (p. ej. preferencias) y del destino (p. ej. tipo, región)
-  [VERIFICAR cuáles existen]. Negativos muestreados uniformes o por popularidad, justificados; pérdida BCE o BPR derivada.
-- La torre de usuario debe poder recibir un **perfil nuevo armado con la lista de preferencias** (lo pide la app).
-- Búsqueda Optuna 20 ensayos [PROPUESTO]; 30 semillas.
+Decisiones de la red (JJ-5) [DECIDIDO, Juan José, 27-nov]. Medido antes de decidir (`data/processed/m3/`): en el catálogo
+`tipo`, `estado` y `mejor_epoca` son función de `lugar` (cada lugar tiene un solo valor de cada uno: la misma variable de 5
+categorías); los 999 usuarios tienen solo 3 combinaciones de preferencias; **345 destinos no tienen ninguna interacción en
+train** (y 205 de los 606 usuarios de prueba tienen un objetivo frío, D14).
+- **D15. Dos torres** (`nn.Module`, estilo del curso). Torre de destinos: `tipo` one-hot (5 columnas; no se agregan `lugar`,
+  `estado` ni `mejor_epoca` porque repetirían la misma información) más un embedding de `destino_id` opcional
+  (`modelo.usar_id_destino`) → MLP → (v_i, b_i): vector de dimensión d y sesgo del destino. **Ninguna popularidad** entra a la
+  red (ni el atributo `Popularity` de la fuente, ρ = −0,011 con las interacciones en H-M3-3, ni el conteo de train: el sesgo y el
+  embedding de id ya aprenden la frecuencia de train; D11 sigue igual). Torre de usuarios: las 5 preferencias one-hot
+  (+ demografía one-hot si `modelo.usar_demografia`) más un embedding de `usuario_id` opcional (`modelo.usar_id_usuario`) →
+  MLP con ReLU (el contrato de la app solo admite `relu` y `ninguna`, núcleo §5.8) → u de dimensión d. Puntaje = ⟨u, v_i⟩ + b_i.
+  Los embeddings de id se suman a la salida de su MLP; el índice 0 es «sin id» (vector nulo fijo): lo reciben un perfil nuevo,
+  los usuarios y destinos sin interacciones en train (calculado solo con train) y, con probabilidad `modelo.dropout_id`, cada
+  ejemplo de entrenamiento («dropout de id»). Así un perfil nuevo se evalúa solo con las preferencias (se exporta la MLP de
+  usuario tal cual, §3.0) y los 345 destinos sin train reciben puntaje por su tipo.
+- **D16. Pérdida:** las dos, con `perdida.tipo` ∈ {`bce`, `bpr`}, ambas sobre logits: BCE con negativos muestreados
+  (verosimilitud Bernoulli de «interactuó / no interactuó», σ(s)) y BPR (verosimilitud de que el positivo se prefiera al
+  negativo, σ(s⁺ − s⁻)). La final la decide la búsqueda.
+- **D17. Negativos:** uniformes sobre los destinos que el usuario no tiene en train, `modelo.negativos_por_positivo` por cada
+  positivo, re-muestreados en cada época con el generador sembrado. El muestreo por popularidad no aportaría: la concentración
+  observada es la del azar (H-M3-5: Gini por destino 0,383 frente a 0,386 bajo reparto uniforme, IC 95 % [0,370; 0,401]).
+- **D18. Dimensión:** d ∈ {4, 8, 16, 32} dentro de la búsqueda; se justifica con el resultado en validación, la relación
+  parámetros / interacciones de train (1 066) y la MF elegida (f = 4).
+- **D19. Entrenamiento:** Adam, weight decay (L2) y dropout; parada temprana por NDCG@5 en validación con paciencia de la config
+  (se guardan `epoca_parada` y la mejor época). Búsqueda Optuna de 20 ensayos (mismo presupuesto que la MF), objetivo NDCG@5 en
+  validación, espacio propio de la red en `configs/m3/hpo.yaml`. Configuración final entrenada solo con train (validación solo
+  para la parada temprana, D9), `base_seed + 0…29`, una evaluación en prueba. Determinismo de `src/comun/torch_utils.py`; CPU.
+- Implementación de JJ-5 [DECIDIDO, Juan José, 27-nov]: (a) la red lee sus hiperparámetros de los bloques de primer nivel
+  `modelo`, `perdida`, `entrenamiento` y `regularizacion` (las claves en vivo del núcleo §4.1); con
+  `red.hiperparametros_desde: hpo` el mejor ensayo se superpone a ellos, y la demo usa `config`. En
+  `experimento._presupuesto`, `hiperparametros_desde: config` gana a `busqueda.ejecutar_en_experimento` (reordenamiento de 3
+  líneas; cierra el menor N1 de JJ-4). (b) Guarda de fuga: la red entera va a una guarda nueva `AJUSTES_SIN_PRUEBA` (invariante
+  a prueba; validación solo para la parada temprana); sus piezas sin parada temprana (negativos, entrenamiento a épocas
+  fijas) van a `AJUSTES_SOLO_TRAIN`. (c) Las variables de contenido las lee `src/m3_recomendacion/contenido.py`, que solo abre
+  `destinos.parquet` y `usuarios.parquet` (los archivos de modelo no pueden abrir archivos; guardas en `test_fuga_m3.py`).
+- [DECIDIDO, Juan José, 27-nov] (antes [PROPUESTO] por el orquestador de JJ-5; no lo pide D15–D19): fijos `max_epocas` 100,
+  `paciencia` 10, `tam_lote` 256, `dropout_id` 0,2 y `usar_demografia` false; rangos del espacio de la red en `hpo.yaml`; guarda de
+  degeneración de la red (puntajes no finitos, rango por usuario < `red.tolerancia_degenerado` = 1e-6 por float32, o
+  max‖u‖·max‖v‖ bajo esa tolerancia; el arnés exige `degenerado`); diagnósticos de personalización del ranking que se reportan y
+  no declaran degenerada la corrida (`personalizacion` sobre la interacción doble centrada, `fraccion_varianza_interaccion`,
+  `listas_top10_distintas`, `fraccion_mismo_top1`, sobre los usuarios de validación); `capas_torre_usuario` y
+  `vector_usuario_sin_id` en `red.py` adelantan la exportación de JJ-7 (hoy solo las usan las pruebas).
+- Configuración final [DECIDIDO, Juan José, 27-nov]: `configs/m3/base.yaml` usa `hiperparametros_desde: config` para la red y la
+  MF, con los valores copiados exactos del mejor ensayo (red: 18; MF: 19), de modo que las claves en vivo del núcleo §4.1 cambian
+  el modelo también con `base.yaml`. Mientras la config sea exactamente el mejor ensayo de `hpo_ensayos.json` (misma partición),
+  `summary.json` reporta el presupuesto real de la búsqueda (20 ensayos y su tiempo; `hiperparametros_origen` = «config (igual al
+  mejor ensayo de hpo)», núcleo §6); si un `--set` la cambia, 1 configuración y 0 s. La demo sigue buscando la MF en vivo.
+- Las recomendaciones R-1 a R-19 del revisor-calidad (2.ª vuelta de JJ-5) no se aplican [DECIDIDO, Juan José, 27-nov]: quedan
+  como pendientes no bloqueantes.
 
 ### 3.3 Evaluación y negocio (JJ-6)
 Métricas @K para K ∈ {1, 3, 5, 10} [PROPUESTO], cobertura, Gini o HHI de las exposiciones, desempeño por grupo de actividad,
@@ -160,7 +205,7 @@ Lista cerrada el vie 27 a partir de las configs finales de todos. Cada ecuación
 | JJ-2 | Descriptivo M3 (plantilla §5.12) + caso de uso | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json`; figura de cola larga | ✅ 26-nov |
 | JJ-3 | Partición sin fuga | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m3.py` en verde | ✅ 26-nov |
 | JJ-4 | Popularidad + FC clásico + métricas @K | jue 26 | implementador (Sonnet) | verificador-matematico (Opus) | Métricas contra cálculo a mano | ✅ 27-nov |
-| JJ-5 | Red con contenido, negativos, pérdida, búsqueda, 30 semillas | jue 26–vie 27 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | `summary.json` completo | ⬜ |
+| JJ-5 | Red con contenido, negativos, pérdida, búsqueda, 30 semillas | jue 26–vie 27 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | `summary.json` completo | ✅ 27-nov |
 | JJ-6 | Negocio, 5 usuarios, embeddings 2D | sáb 28 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | Tablas y figuras mínimas de M3 | ⬜ |
 | JJ-7 | Exportación para la app + paridad | sáb 28, noche | implementador (Sonnet) | revisor-spec (Sonnet) | Top-K igual en Python y en los casos de paridad | ⬜ |
 | JJ-8 | Fundamentación matemática común | mié 25–dom 29 | redactor-tecnico (Sonnet) | verificador-matematico (Opus) | Cubre todo lo usado por los tres módulos | ⬜ |

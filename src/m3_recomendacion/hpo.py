@@ -18,6 +18,7 @@ misma huella de partición conserva las familias que no se corrieron; si la huel
 
 from __future__ import annotations
 
+import copy
 import time
 from pathlib import Path
 
@@ -73,7 +74,7 @@ def evaluar_configuracion(inter, catalogo, params: dict, cfg: dict) -> dict:
     tops = metricas.rankear_usuarios(modelo.puntuar(usuarios), usuarios, catalogo, cands, max(ks), make_rng(base_seed, 0))
     out: dict = {}
     for k in ks:
-        out[f"ndcg@{k}"] = float(np.mean([metricas.ndcg_en_k(tops[u][0], rel[u], k) for u in usuarios]))
+        out[f"ndcg@{k}"] = metricas.ndcg_medio(tops, rel, usuarios, k)
         out[f"recall@{k}"] = float(np.mean([metricas.recall_en_k(tops[u][0], rel[u], k) for u in usuarios]))
     out["valor"] = out[f"{objetivo}@{objetivo_k}"]
     out["n_usuarios"] = len(usuarios)
@@ -105,12 +106,19 @@ def _validar_espacio(espacio: dict) -> dict:
 
 
 def _sugerir(trial, nombre: str, spec: dict):
-    tipo, minimo, maximo, log = spec["tipo"], spec["min"], spec["max"], bool(spec.get("log", False))
+    """Un parámetro del espacio: ``entero`` / ``real`` (``min``, ``max``, ``log``) o ``categorico`` (``valores``, JJ-5)."""
+    tipo = spec["tipo"]
+    if tipo == "categorico":
+        valores = spec.get("valores")
+        if not isinstance(valores, list) or not valores:
+            raise ValueError(f"busqueda.espacio.{nombre}: el tipo 'categorico' necesita una lista no vacía `valores`")
+        return trial.suggest_categorical(nombre, valores)
+    if tipo not in ("entero", "real"):
+        raise ValueError(f"busqueda.espacio.{nombre}.tipo debe ser 'entero', 'real' o 'categorico'; se recibió {tipo!r}")
+    minimo, maximo, log = spec["min"], spec["max"], bool(spec.get("log", False))
     if tipo == "entero":
         return int(trial.suggest_int(nombre, int(minimo), int(maximo), log=log))
-    if tipo == "real":
-        return float(trial.suggest_float(nombre, float(minimo), float(maximo), log=log))
-    raise ValueError(f"busqueda.espacio.{nombre}.tipo debe ser 'entero' o 'real'; se recibió {tipo!r}")
+    return float(trial.suggest_float(nombre, float(minimo), float(maximo), log=log))
 
 
 def _correr_ensayos(cfg: dict, inter, catalogo) -> list[dict]:
@@ -172,7 +180,117 @@ def buscar_mf(cfg: dict, inter, catalogo) -> dict:
     return _familia(cfg, ensayos, cota, time.perf_counter() - inicio)
 
 
-BUSQUEDAS = {"mf_als": buscar_mf}        # nombre de familia → búsqueda (JJ-5 agrega la suya)
+# =========================================================================== búsqueda de la red (JJ-5; D18, D19)
+NOTA_DEGENERADOS_RED = ("Ensayo degenerado de la red: puntajes no finitos, puntajes de validación constantes por usuario o "
+                        "max‖u‖·max‖v_i‖ < red.tolerancia_degenerado (ver red.diagnostico_degeneracion); `motivo_degenerado` "
+                        "dice cuál. Se registra, cuenta en el presupuesto y nunca es el mejor.")
+
+
+def evaluar_configuracion_red(inter, catalogo, params: dict, cfg: dict) -> dict:
+    """Ajusta la red con ``params`` (claves con punto, encima de los bloques de la config) solo con train y parada temprana
+    con validación, y mide NDCG@K y Recall@K medios en validación (candidatos = catálogo − train). Igual que la MF: las filas
+    de prueba se descartan al entrar y el modelo y el desempate usan ``make_rng(base_seed, 0)`` (D9)."""
+    from src.m3_recomendacion.red import fabrica_red               # import tardío: la MF no necesita torch
+
+    objetivo, objetivo_k = _opciones(cfg)
+    if "split" not in inter.columns:
+        raise ValueError("evaluar_configuracion_red: ``inter`` debe traer la columna split (train / validacion / prueba)")
+    inter = inter[inter["split"] != particion.PRUEBA]
+    base_seed = cfg["semillas"]["base_seed"]
+    ks = sorted(set(metricas.normalizar_k(cfg["evaluacion"]["k"])) | {objetivo_k})
+    cfg_ensayo = copy.deepcopy(cfg)
+    cfg_ensayo["red"]["hiperparametros"] = dict(params)
+    cfg_ensayo["red"]["hiperparametros_desde"] = "ensayo"   # el ensayo manda a propósito: no es un reemplazo que avisar
+    modelo = fabrica_red(cfg_ensayo).ajustar(inter, catalogo, make_rng(base_seed, 0))
+    cands = particion.candidatos(inter, catalogo, particion.VALIDACION)
+    rel = particion.relevantes(inter, particion.VALIDACION)
+    usuarios = sorted(cands)
+    tops = metricas.rankear_usuarios(modelo.puntuar(usuarios), usuarios, catalogo, cands, max(ks), make_rng(base_seed, 0))
+    out: dict = {}
+    for k in ks:
+        out[f"ndcg@{k}"] = metricas.ndcg_medio(tops, rel, usuarios, k)
+        out[f"recall@{k}"] = float(np.mean([metricas.recall_en_k(tops[u][0], rel[u], k) for u in usuarios]))
+    out["valor"] = out[f"{objetivo}@{objetivo_k}"]
+    out["n_usuarios"] = len(usuarios)
+    d = modelo.diagnosticos()
+    out.update(degenerado=bool(d["degenerado"]), motivo_degenerado=d["motivo_degenerado"],
+               condiciones_degenerado=d["condiciones_degenerado"], mejor_epoca=d["mejor_epoca"],
+               epoca_parada=d["epoca_parada"], ndcg5_validacion_mejor=d["ndcg5_validacion_mejor"],
+               n_parametros=modelo.n_parametros())
+    return out
+
+
+def _validar_espacio_red(cfg: dict) -> dict:
+    """``red.busqueda.espacio`` de ``configs/m3/hpo.yaml``: claves con punto que existen en los bloques de la red."""
+    from src.m3_recomendacion.red import BLOQUES
+
+    espacio = cfg.get("red", {}).get("busqueda", {}).get("espacio")
+    if not espacio:
+        raise ValueError("falta red.busqueda.espacio (configs/m3/hpo.yaml) para la búsqueda de la red")
+    validas = {f"{b}.{k}" for b in BLOQUES for k in cfg[b]}
+    desconocidas = sorted(set(espacio) - validas)
+    if desconocidas:
+        raise ValueError(f"red.busqueda.espacio trae claves que no están en los bloques de la red: {desconocidas}")
+    return espacio
+
+
+def _correr_ensayos_red(cfg: dict, inter, catalogo, espacio: dict) -> list[dict]:
+    """``busqueda.n_ensayos`` ensayos de Optuna (TPE con ``busqueda.semilla_sampler``, en memoria) sobre el espacio de la red.
+    Un ensayo degenerado se registra y se poda (nunca puede ser el mejor)."""
+    import optuna
+
+    b = cfg["busqueda"]
+    optuna.logging.set_verbosity(optuna.logging.WARNING)
+    sampler = optuna.samplers.TPESampler(seed=validar_entero(b["semilla_sampler"], "busqueda.semilla_sampler"))
+    estudio = optuna.create_study(direction="maximize", sampler=sampler)
+    ensayos: list[dict] = []
+
+    def funcion(trial) -> float:
+        params = {n: _sugerir(trial, n, espacio[n]) for n in espacio}
+        t = time.perf_counter()
+        r = evaluar_configuracion_red(inter, catalogo, params, cfg)
+        ensayos.append({"numero": trial.number, "params": params, "valor": r["valor"], "tiempo_s": time.perf_counter() - t,
+                        "degenerado": r["degenerado"], "motivo_degenerado": r["motivo_degenerado"],
+                        "mejor_epoca": r["mejor_epoca"], "epoca_parada": r["epoca_parada"],
+                        "ndcg5_validacion_mejor": r["ndcg5_validacion_mejor"], "n_parametros": r["n_parametros"],
+                        **{k: v for k, v in r.items() if k.startswith(("ndcg@", "recall@"))}})
+        if r["degenerado"]:
+            raise optuna.TrialPruned()
+        return r["valor"]
+
+    estudio.optimize(funcion, n_trials=validar_entero(b["n_ensayos"], "busqueda.n_ensayos", minimo=1), show_progress_bar=False)
+    return sorted(ensayos, key=lambda e: e["numero"])
+
+
+def _familia_red(cfg: dict, ensayos: list[dict], tiempo_total_s: float) -> dict:
+    """Familia ``red`` lista para ``hpo_ensayos.json``; error claro si todos los ensayos fueron degenerados."""
+    validos = [e for e in ensayos if not e["degenerado"]]
+    if not validos:
+        raise ValueError(f"los {len(ensayos)} ensayos de la red quedaron degenerados; revisa red.busqueda.espacio")
+    mejor = max(validos, key=lambda e: (e["valor"], -e["numero"]))              # empate: el primero que apareció
+    objetivo, objetivo_k = _opciones(cfg)
+    b = cfg["busqueda"]
+    return {"n_ensayos": len(ensayos), "objetivo_nombre": f"{objetivo}@{objetivo_k}",
+            "objetivo": f"{objetivo}@{objetivo_k} medio en validación (candidatos = catálogo − train)",
+            "espacio": cfg.get("red", {}).get("busqueda", {}).get("espacio"), "sampler": "TPESampler",
+            "semilla_sampler": b["semilla_sampler"], "n_degenerados": len(ensayos) - len(validos),
+            "nota_degenerados": NOTA_DEGENERADOS_RED,
+            "nota_parada_temprana": ("Cada ensayo para por NDCG@5 de validación (paciencia de la config) y se evalúa con los "
+                                     "pesos de su mejor época: validación elige la época y los hiperparámetros (D9, D19)."),
+            "ensayos": ensayos, "mejor": {"numero": mejor["numero"], "params": mejor["params"], "valor": mejor["valor"]},
+            "tiempo_total_s": tiempo_total_s}
+
+
+def buscar_red(cfg: dict, inter, catalogo) -> dict:
+    """Corre la búsqueda de Optuna de la red y devuelve la familia ``red`` lista para ``hpo_ensayos.json``."""
+    _opciones(cfg)
+    espacio = _validar_espacio_red(cfg)
+    inicio = time.perf_counter()
+    ensayos = _correr_ensayos_red(cfg, inter, catalogo, espacio)
+    return _familia_red(cfg, ensayos, time.perf_counter() - inicio)
+
+
+BUSQUEDAS = {"mf_als": buscar_mf, "red": buscar_red}        # nombre de familia → búsqueda
 
 
 # =========================================================================== hpo_ensayos.json y comando

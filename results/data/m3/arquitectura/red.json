@@ -1,0 +1,114 @@
+{
+  "modelo": "red",
+  "capas": [
+    {
+      "torre": "usuario",
+      "nombre": "torre_usuario.mlp.0",
+      "tipo": "Linear",
+      "entrada": 5,
+      "salida": 64,
+      "activacion": "relu",
+      "dropout": 0.25122337342804407,
+      "parametros": 384
+    },
+    {
+      "torre": "usuario",
+      "nombre": "torre_usuario.mlp.3",
+      "tipo": "Linear",
+      "entrada": 64,
+      "salida": 32,
+      "activacion": "ninguna",
+      "dropout": null,
+      "parametros": 2080
+    },
+    {
+      "torre": "usuario",
+      "nombre": "torre_usuario.embedding",
+      "tipo": "Embedding",
+      "entrada": "índice de id 0..858 (0 = sin id, fila fija)",
+      "salida": 32,
+      "activacion": "ninguna",
+      "dropout": null,
+      "parametros": 27456,
+      "nota": "se suma a la salida de la MLP; la fila 0 (padding_idx) no cuenta"
+    },
+    {
+      "torre": "destino",
+      "nombre": "torre_destino.mlp.0",
+      "tipo": "Linear",
+      "entrada": 5,
+      "salida": 16,
+      "activacion": "relu",
+      "dropout": 0.25122337342804407,
+      "parametros": 96
+    },
+    {
+      "torre": "destino",
+      "nombre": "torre_destino.mlp.3",
+      "tipo": "Linear",
+      "entrada": 16,
+      "salida": 33,
+      "activacion": "ninguna",
+      "dropout": null,
+      "parametros": 561
+    },
+    {
+      "torre": "destino",
+      "nombre": "torre_destino.embedding",
+      "tipo": "Embedding",
+      "entrada": "índice de id 0..655 (0 = sin id, fila fija)",
+      "salida": 33,
+      "activacion": "ninguna",
+      "dropout": null,
+      "parametros": 21615,
+      "nota": "se suma a la salida de la MLP; la fila 0 (padding_idx) no cuenta"
+    }
+  ],
+  "total_parametros": 52192,
+  "entrada_usuario": [
+    "pref_adventure",
+    "pref_beaches",
+    "pref_city",
+    "pref_historical",
+    "pref_nature"
+  ],
+  "entrada_destino": [
+    "tipo=Adventure",
+    "tipo=Beach",
+    "tipo=City",
+    "tipo=Historical",
+    "tipo=Nature"
+  ],
+  "salida_usuario": "u ∈ R^32",
+  "salida_destino": "(v_i, b_i) ∈ R^32 × R",
+  "puntaje": "s_ui = ⟨u, v_i⟩ + b_i (logit)",
+  "hiperparametros": {
+    "modelo.dim_embedding": 32,
+    "modelo.capas_usuario": 1,
+    "modelo.unidades_usuario": 64,
+    "modelo.capas_destino": 1,
+    "modelo.unidades_destino": 16,
+    "modelo.usar_id_usuario": true,
+    "modelo.usar_id_destino": true,
+    "modelo.dropout_id": 0.2,
+    "modelo.negativos_por_positivo": 2,
+    "modelo.usar_demografia": false,
+    "perdida.tipo": "bce",
+    "entrenamiento.lr": 0.0007434215990914675,
+    "entrenamiento.max_epocas": 100,
+    "entrenamiento.paciencia": 10,
+    "entrenamiento.tam_lote": 256,
+    "regularizacion.weight_decay": 0.000359255347484978,
+    "regularizacion.dropout": 0.25122337342804407
+  },
+  "semilla": 0,
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}

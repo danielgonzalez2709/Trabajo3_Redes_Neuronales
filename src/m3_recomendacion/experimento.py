@@ -10,7 +10,11 @@ Punto de extensión (el arnés NO tiene casos especiales por nombre de modelo): 
 hiperparámetros, su función en ``hpo.BUSQUEDAS`` con el mismo nombre; luego lo nombra en ``cfg["modelos"]``.** Reglas únicas:
   - Un modelo CON búsqueda toma sus hiperparámetros, ``n_configuraciones_busqueda`` y ``tiempo_busqueda_s`` de
     ``familias.<nombre>`` de ``hpo_ensayos.json`` (o de la búsqueda corrida aquí si ``busqueda.ejecutar_en_experimento``); si su
-    bloque de la config trae ``hiperparametros_desde: config`` usa ``<nombre>.hiperparametros`` con presupuesto 1 y 0 s.
+    bloque de la config trae ``hiperparametros_desde: config`` (que gana a ``ejecutar_en_experimento``) usa los de la config y,
+    si son EXACTAMENTE el mejor ensayo de ``hpo_ensayos.json`` de la misma partición, reporta el presupuesto de esa búsqueda
+    (origen ``ORIGEN_CONFIG_HPO``); si no, 1 configuración y 0 s. La igualdad se mide solo sobre los hiperparámetros BUSCADOS
+    (las claves de ``mejor.params``): un ``--set`` sobre un fijo no buscado no resetea el presupuesto (``hpo_ensayos.json`` no
+    guarda los fijos).
     Un modelo SIN búsqueda tiene presupuesto 1 y 0 s. La fábrica lee ``cfg[nombre]["hiperparametros"]``.
   - Si ``modelo.diagnosticos()["degenerado"]`` es verdadero, el experimento se detiene con un error claro.
   - ``diagnosticos()`` se guarda por semilla y se resume entre semillas en ``summary.json``; ``guardar()`` se llama con la
@@ -47,7 +51,9 @@ GRUPOS = ("pocas", "muchas")
 METRICAS = ("precision", "recall", "ndcg", "acierto", "cobertura")
 ARCHIVO_HPO = hpo.ARCHIVO
 ORIGENES_HIPERPARAMETROS = ("hpo", "config")
-PRESUPUESTO_SIN_BUSQUEDA = {"hiperparametros": None, "n_configuraciones": 1, "tiempo_s": 0.0, "origen": "ninguno"}
+ORIGEN_CONFIG_HPO = "config (igual al mejor ensayo de hpo)"   # config = mejor ensayo: se reporta el presupuesto de la búsqueda
+_FALTA = object()
+PRESUPUESTO_SIN_BUSQUEDA ={"hiperparametros": None, "n_configuraciones": 1, "tiempo_s": 0.0, "origen": "ninguno"}
 
 
 # =========================================================================== datos y evidencia
@@ -129,6 +135,36 @@ def _leer_familia(nombre: str, ctx: dict) -> dict:
     return previo["familias"][nombre]
 
 
+def _valor_en_config(nombre: str, clave: str, cfg: dict):
+    """Valor efectivo de un hiperparámetro en la config: ``<nombre>.hiperparametros[clave]`` si está ahí; si no y la clave tiene
+    punto (la red: «modelo.dim_embedding»), el bloque de primer nivel. ``_FALTA`` si no existe."""
+    hp = cfg.get(nombre, {}).get("hiperparametros", {})
+    if clave in hp:
+        return hp[clave]
+    x = cfg
+    for parte in clave.split("."):
+        if not isinstance(x, dict) or parte not in x:
+            return _FALTA
+        x = x[parte]
+    return x if "." in clave else _FALTA
+
+
+def _presupuesto_config(nombre: str, cfg: dict, ctx: dict) -> dict:
+    """Origen «config». Si ``hpo_ensayos.json`` (misma partición) trae la familia y su mejor ensayo coincide EXACTAMENTE con los
+    valores efectivos de la config (decisión de Juan José, 27-nov: base.yaml copia el mejor ensayo), se reporta el presupuesto
+    real de esa búsqueda (núcleo §6); si no (o un --set en vivo cambió algo), 1 configuración y 0 s."""
+    hiper = dict(cfg[nombre]["hiperparametros"])
+    ruta = ctx["salida"] / ARCHIVO_HPO
+    if ruta.is_file():
+        previo = load_json(ruta)
+        familia = previo.get("familias", {}).get(nombre)
+        if familia and previo.get("evidencia", {}).get("particion_huella") == ctx["evidencia"]["particion_huella"]:
+            if all(_valor_en_config(nombre, k, cfg) == v for k, v in familia["mejor"]["params"].items()):
+                return {"hiperparametros": hiper, "n_configuraciones": int(familia["n_ensayos"]),
+                        "tiempo_s": float(familia["tiempo_total_s"]), "origen": ORIGEN_CONFIG_HPO}
+    return {"hiperparametros": hiper, "n_configuraciones": 1, "tiempo_s": 0.0, "origen": "config"}
+
+
 def _presupuesto(nombre: str, cfg: dict, ctx: dict) -> dict:
     """Hiperparámetros y presupuesto de búsqueda de un modelo (una sola regla para todos; ver el docstring del módulo)."""
     if nombre not in hpo.BUSQUEDAS:
@@ -138,13 +174,13 @@ def _presupuesto(nombre: str, cfg: dict, ctx: dict) -> dict:
     if origen not in ORIGENES_HIPERPARAMETROS:
         raise ValueError(f"{nombre}.hiperparametros_desde debe ser uno de {list(ORIGENES_HIPERPARAMETROS)}; "
                          f"se recibió {origen!r}")
+    if origen == "config":           # JJ-5: «config» gana a busqueda.ejecutar_en_experimento (no se corre ninguna búsqueda)
+        return _presupuesto_config(nombre, cfg, ctx)
     if cfg.get("busqueda", {}).get("ejecutar_en_experimento", False):
         familia = hpo.BUSQUEDAS[nombre](cfg, ctx["inter"], ctx["catalogo"])
         hpo.escribir_familia(ctx["salida"], ctx["evidencia"], nombre, familia)
-    elif origen == "hpo":
-        familia = _leer_familia(nombre, ctx)
     else:
-        return {"hiperparametros": dict(bloque["hiperparametros"]), "n_configuraciones": 1, "tiempo_s": 0.0, "origen": "config"}
+        familia = _leer_familia(nombre, ctx)
     return {"hiperparametros": dict(familia["mejor"]["params"]), "n_configuraciones": int(familia["n_ensayos"]),
             "tiempo_s": float(familia["tiempo_total_s"]), "origen": "hpo"}
 

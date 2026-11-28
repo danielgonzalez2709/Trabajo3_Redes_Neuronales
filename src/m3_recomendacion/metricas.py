@@ -148,6 +148,12 @@ def ndcg_en_k(top, relevantes, k: int) -> float:
     return dcg / idcg
 
 
+def ndcg_medio(tops: Mapping[int, tuple], relevantes: Mapping[int, set], usuarios: Sequence[int], k: int) -> float:
+    """NDCG@K medio sobre ``usuarios`` (en ese orden): (1/|U|) Σ_u NDCG@K(tops[u], relevantes[u]). Lo usan la parada
+    temprana de la red, su búsqueda y la de la MF (un solo cálculo)."""
+    return float(np.mean([ndcg_en_k(tops[u][0], relevantes[u], k) for u in usuarios]))
+
+
 def acierto_por_lugar_en_k(top, objetivo, lugar_de: Mapping[int, str], k: int) -> int:
     """1[∃ i ∈ L^K : lugar(i) = lugar(objetivo)] (con varios objetivos: el lugar de cualquiera de ellos).
 

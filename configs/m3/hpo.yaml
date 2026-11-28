@@ -1,6 +1,8 @@
-# M3 — búsqueda de hiperparámetros de la factorización de matrices por ALS (JJ-4; D13).
-# Uso: .venv\Scripts\python run.py m3-hpo --config configs/m3/hpo.yaml
-# Optuna (TPE, semilla fija, sin almacenamiento en disco), 20 ensayos (mismo presupuesto que la red de JJ-5, núcleo §6),
+# M3 — búsqueda de hiperparámetros de la factorización de matrices por ALS (JJ-4; D13) y de la red de dos torres (JJ-5; D19).
+# Uso: .venv\Scripts\python run.py m3-hpo --config configs/m3/hpo.yaml   (busca cada modelo de `modelos` con búsqueda registrada)
+# Las dos familias comparten n_ensayos, objetivo, objetivo_k y semilla_sampler del bloque `busqueda`; el espacio de la MF es
+# `busqueda.espacio` y el de la red, `red.busqueda.espacio` (al final de este archivo).
+# Optuna (TPE, semilla fija, sin almacenamiento en disco), 20 ensayos por familia (mismo presupuesto, núcleo §6),
 # objetivo NDCG@5 medio en VALIDACIÓN con candidatos = catálogo − train (D10); el modelo se ajusta solo con train y la
 # búsqueda NUNCA lee prueba (D9). En todos los ensayos el modelo y el desempate usan make_rng(base_seed, 0): solo cambian los
 # hiperparámetros. Escribe <salida.carpeta>/hpo_ensayos.json (si ya existe con la misma huella de partición conserva las
@@ -23,3 +25,23 @@ busqueda:
     regularizacion: {tipo: real, min: 1.0e-3, max: 5.0, log: true}      # λ
     alfa: {tipo: real, min: 1.0, max: 100.0, log: true}                  # α de la confianza c = 1 + α·r
     iteraciones: {tipo: entero, min: 5, max: 30, log: false}
+
+# Búsqueda de la red de dos torres (JJ-5; D18, D19): mismo sampler, semilla, número de ensayos (20, núcleo §6) y objetivo
+# (NDCG@5 en validación) que la MF, con su propio espacio. Cada ensayo entrena solo con train, para por NDCG@5 de validación y
+# se evalúa con los pesos de su mejor época; prueba se descarta al entrar. Las claves son las de los bloques de base.yaml.
+# Rangos [DECIDIDO, Juan José, 27-nov; elección nuestra, no de la literatura], salvo d ∈ {4, 8, 16, 32} (D18) y pérdida (D16).
+red:
+  busqueda:
+    espacio:
+      modelo.dim_embedding: {tipo: categorico, valores: [4, 8, 16, 32]}            # D18
+      entrenamiento.lr: {tipo: real, min: 1.0e-4, max: 1.0e-2, log: true}
+      regularizacion.weight_decay: {tipo: real, min: 1.0e-6, max: 1.0e-2, log: true}
+      regularizacion.dropout: {tipo: real, min: 0.0, max: 0.5}
+      modelo.capas_usuario: {tipo: categorico, valores: [0, 1, 2]}
+      modelo.unidades_usuario: {tipo: categorico, valores: [16, 32, 64]}
+      modelo.capas_destino: {tipo: categorico, valores: [0, 1, 2]}
+      modelo.unidades_destino: {tipo: categorico, valores: [16, 32, 64]}
+      modelo.negativos_por_positivo: {tipo: categorico, valores: [1, 2, 4, 8]}
+      perdida.tipo: {tipo: categorico, valores: [bce, bpr]}                       # D16
+      modelo.usar_id_destino: {tipo: categorico, valores: [true, false]}
+      modelo.usar_id_usuario: {tipo: categorico, valores: [true, false]}

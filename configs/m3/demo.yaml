@@ -1,7 +1,10 @@
-# M3 — demo en vivo (JJ-4): las tres referencias con pocas semillas y pocos ensayos; corre en < 2 min en CPU, sin red.
+# M3 — demo en vivo (JJ-4, JJ-5): los 4 modelos con pocas semillas; corre en < 2 min en CPU, sin internet.
 # Uso: .venv\Scripts\python run.py m3 --config configs/m3/demo.yaml [--set evaluacion.k=3] [--set semillas.n=2]
-# Corre primero la búsqueda de la MF (busqueda.n_ensayos ensayos con validación) y evalúa en prueba con su mejor
-# configuración. Escribe SOLO en results/data/m3_demo/ y models/m3_demo/ (ambos en .gitignore): no pisa lo versionado.
+#      [--set modelo.dim_embedding=8] [--set modelo.negativos_por_positivo=1] [--set perdida.tipo=bpr]
+# La MF corre primero su búsqueda (busqueda.n_ensayos ensayos con validación) y se evalúa con su mejor configuración; la red
+# usa los bloques de base.yaml (red.hiperparametros_desde: config, que gana a busqueda.ejecutar_en_experimento: la red no se
+# busca en vivo), así que las claves de la red cambian lo que deben con --set. Escribe SOLO en results/data/m3_demo/ y
+# models/m3_demo/ (ambos en .gitignore): no pisa lo versionado.
 hereda: hpo.yaml
 
 semillas:
@@ -14,3 +17,9 @@ busqueda:
 salida:
   carpeta: results/data/m3_demo
   modelos: models/m3_demo
+
+mf_als:
+  hiperparametros_desde: hpo                      # la demo sigue buscando la MF en vivo (busqueda.n_ensayos)
+
+red:
+  hiperparametros_desde: config

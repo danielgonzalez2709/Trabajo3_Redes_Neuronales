@@ -4,7 +4,7 @@
   "run_id": 26,
   "split_evaluado": "prueba",
   "n_usuarios_evaluados": 606,
-  "tiempo_s": 0.64776639995398,
+  "tiempo_s": 0.5471462000277825,
   "hiperparametros": {
     "factores": 4,
     "regularizacion": 0.002104317845122097,
