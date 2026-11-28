@@ -1,0 +1,165 @@
+
+## docs/investigacion/JO-1_fuentes_m2.md — 143 citas
+[NO ENCONTRADA] 15 November 2024
+[NO ENCONTRADA] Sahin Afridi, Arafat; Kafy, Arafath ; Nessa Moon, Ms. Nazmun; Shakil, Md.
+Shahriar (2024), 'Multi-Class Driver Behavior Image Dataset ', Mendeley Data, v1, http://doi.org/10.17632/mzb4b6dff3.1
+[NO ENCONTRADA] Sahin Afridi, Arafat
+[NO ENCONTRADA] Nessa Moon, Ms. Nazmun
+[NO ENCONTRADA] Afridi Arafat Sahin
+[NO ENCONTRADA] Kafy Arafath
+[NO ENCONTRADA] Moon Ms. Nazmun Nessa
+[NO ENCONTRADA] Shakil Md. Shahriar
+[ENCONTRADA en A(PMC)] Department of Computer
+Science and Engineering, Daffodil International University, Dhaka, Bangladesh
+[ENCONTRADA en A(PMC), C] Multi-class driver behavior dataset
+[NO ENCONTRADA] Zenodo 2025 10.5281/zenodo.14908802
+[NO ENCONTRADA] Afridi et al., 2024
+[ENCONTRADA en A(PMC), C] Multi-Class Driver Behavior Image Dataset
+[NO ENCONTRADA] Shakil, Shariear
+[NO ENCONTRADA] Shakil, Md. Shahriar
+[ENCONTRADA en M(licencia)] You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC B
+[ENCONTRADA en A(PMC), C] © 2025 The Author(s)
+[ENCONTRADA en A(PMC)] This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/)
+[ENCONTRADA en C] 2025 The Author(s). Published by Elsevier Inc
+[NO ENCONTRADA] The Dataset is intended for academic research and non-commercial use
+[NO ENCONTRADA] Recipient shall not attempt to identify or re-identify any individuals depicted in the Dataset
+[NO ENCONTRADA] Recipient shall not redistribute, sell, or otherwise share the Dataset with third parties without explicit written permission from DIU
+[NO ENCONTRADA] Recipient agrees to acknowledge DIU in any publications
+[NO ENCONTRADA] Recipient shall provide DIU with a copy of any proposed publication or presentation at least thirty (30) days prior to submission for review and comment
+[ENCONTRADA en M(desc), Z(desc)] Collected in Ashulia, Dhaka, Bangladesh, in October 2024
+[ENCONTRADA en A(PMC)] captured in Ashulia, Dhaka, Bangladesh
+[ENCONTRADA en A(PMC)] The photos were taken in Savar, Dhaka, Bangladesh
+[NO ENCONTRADA] Daffodil International University, Birulia. Zone: Savar, Dhaka-1216
+[ENCONTRADA en A(PMC)] Latitude: 23.5234° N, Longitude: 90.1915° E
+[ENCONTRADA en A(PMC), M(desc), Z(desc)] October 2024
+[ENCONTRADA en A(PMC)] Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours
+[ENCONTRADA en A(PMC)] using two separate personal cell phone cameras in both private vehicles and public buses
+[ENCONTRADA en A(PMC)] The dataset was collected using two smartphones: • iPhone 11: Equipped with a dual-lens camera system (12MP wi
+[ENCONTRADA en A(PMC)] • Moto Edge 50 Fusion: Features a 50MP primary lens and a 13MP ultra-wide lens
+[ENCONTRADA en M(desc), Z(desc)] The photos were taken using personal mobile phones
+[ENCONTRADA en M(desc), Z(desc)] within both private vehicles and public buses
+[ENCONTRADA en M(desc), Z(desc)] personal cars
+[ENCONTRADA en A(PMC), M(desc), Z(desc)] both private vehicles and public buses
+[ENCONTRADA en A(PMC)] The study involved 178 drivers aged 20–50 years
+[ENCONTRADA en A(PMC)] images were captured from multiple angles and under different lighting conditions, such as daylight, low light
+[ENCONTRADA en A(PMC)] Data collection was conducted across a variety of settings, including urban roads and highways
+[ENCONTRADA en A(PMC)] images were captured from multiple angles
+[ENCONTRADA en A(PMC)] Ethics Statement
+[ENCONTRADA en A(PMC)] all participants provided informed consent before data collection. To ensure privacy and confidentiality, no i
+[ENCONTRADA en A(PMC)] Each image was manually annotated into one of five behavior classes
+[ENCONTRADA en A(PMC)] High-Quality Annotations: Expert-validated labels ensure robust dataset reliability
+[ENCONTRADA en A(PMC)] Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steerin
+[ENCONTRADA en A(PMC)] The driver is using the phone in their hand or holding it to their ear while making a phone call
+[ENCONTRADA en A(PMC)] The driver is texting while driving, which significantly diverts their attention from the road
+[ENCONTRADA en A(PMC)] The driver is turning the car, requiring full attention to ensure the maneuver is performed safely
+[ENCONTRADA en A(PMC)] This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleepi
+[NO ENCONTRADA] Safe Driving, Turning, Talking on the Phone, Texting on the Phone, Others
+[ENCONTRADA en A(PMC)] Safe Driving, Turning, Texting, Talking Phone and Other
+[ENCONTRADA en A(PMC)] Safe Driving, Talking on the Phone, Texting, Turning, and Other Distracting Behaviors
+[ENCONTRADA en A(PMC)] Other Distractions
+[ENCONTRADA en M(desc), Z(desc)] I. Safe Driving: Images showing a driver who seems to be paying attention to the road, both hands on the wheel
+[ENCONTRADA en M(desc), Z(desc)] II. Turning: Photographs that show drivers changing direction during turns by moving their heads or full bodie
+[ENCONTRADA en M(desc), Z(desc)] III. Texting Phone: Pictures of drivers using their phones, whether it is to type messages or to interact with
+[ENCONTRADA en M(desc), Z(desc)] IV. Talking Phones: When drivers talk on their phones or hold them up to their ears while driving a vehicle
+[ENCONTRADA en M(desc), Z(desc)] V. Others: Contains any actions that go against safe driving practices, like drinking water or anything while 
+[NO ENCONTRADA] Otros comportamientos riesgosos
+[ENCONTRADA en M(desc), Z(desc)] other potentially risky behaviors, such as drowsy driving
+[ENCONTRADA en A(PMC)] Dataset statistics
+[NO ENCONTRADA] Safe Driving: 1679 images; Turning: 1343 images; Talking on the Phone: 1513 images; Texting on the Phone: 1561 images; Others: 1190 images
+[ENCONTRADA en A(PMC)] 7286 high-resolution images
+[ENCONTRADA en A(PMC)] Each image has a resolution of 400 × 600 pixels
+[NO ENCONTRADA] Type of data: JPEG
+[ENCONTRADA en M(desc), Z(desc)] high-resolution photos
+[ENCONTRADA en A(PMC)] Preprocessing steps
+[ENCONTRADA en A(PMC)] Noise Reduction: Impulse noise was removed using non-linear median filtering
+[ENCONTRADA en A(PMC)] Contrast Enhancement: Histogram equalization was used to adjust for irregular lighting and improve contrast
+[ENCONTRADA en A(PMC)] Image Resizing: All images were resized to a fixed dimension of 224 × 224 pixels to meet the input requirement
+[ENCONTRADA en A(PMC)] Data augmentation techniques
+[ENCONTRADA en A(PMC)] Online data augmentation techniques were applied during the training process
+[NO ENCONTRADA] Random Rotation (up to 15°) • Horizontal Flipping • Brightness Adjustment • Random Cropping. Augmentation was performed online to avoid introducing bias and to ensure that the dataset remains suitable for unbiased evaluation
+[ENCONTRADA en A(PMC)] Data Augmentation
+[ENCONTRADA en A(PMC)] Each class was saved in a separate folder. Data augmentation was used to increase the variability of the datas
+[ENCONTRADA en A(PMC)] Extended images were stored in the same folder as their corresponding original class to ensure that they inher
+[ENCONTRADA en A(PMC)] The expansion process significantly expanded the data set by providing each class with a set of unique image v
+[ENCONTRADA en A(PMC)] The expansion process significantly expanded the data set by providing each class with a set of unique image v
+[ENCONTRADA en A(PMC)] a confusion matrix for an augmented dataset
+[ENCONTRADA en A(PMC)] the top-left cell shows that 1450 instances of "Safe Driving" were correctly predicted as "Safe Driving," whil
+[ENCONTRADA en A(PMC)] in the same folder as their corresponding original class
+[ENCONTRADA en A(PMC)] Augmented images of Driver behavior detection dataset
+[NO ENCONTRADA] Value of the Data
+[ENCONTRADA en M(desc)] Because the images are unprocessed and unannotated, there is freedom in how machine learning applications pre-
+[ENCONTRADA en A(PMC)] Vehicle classification
+[ENCONTRADA en A(PMC)] includes variations in lighting, vehicle type, and driving conditions
+[ENCONTRADA en A(PMC)] Each class was saved in a separate folder
+[ENCONTRADA en M(desc), Z(desc)] they differ in terms of vehicle type and illumination
+[ENCONTRADA en A(PMC)] its geographic focus on Dhaka, Bangladesh, limits its global applicability
+[ENCONTRADA en A(PMC)] Behavioral Complexity
+[ENCONTRADA en A(PMC)] it does not yet include more nuanced actions such as drowsiness, aggressive driving, and reckless lane changes
+[ENCONTRADA en A(PMC)] Limited Sensor Modalities: The dataset primarily relies on smartphone cameras
+[ENCONTRADA en A(PMC)] The absence of depth sensors, infrared cameras, or multi-modal data sources
+[ENCONTRADA en A(PMC)] may limit its applicability in low-light conditions or drowsiness detection
+[NO ENCONTRADA] Value of the Data
+[ENCONTRADA en A(PMC)] Improving road safety
+[ENCONTRADA en A(PMC), M(desc), Z(desc)] Real-time monitoring
+[ENCONTRADA en A(PMC)] Machine learning and computer vision
+[ENCONTRADA en A(PMC)] train and evaluate deep learning models
+[ENCONTRADA en A(PMC)] CNNs such as VGG16, ResNet50, InceptionV3, and Xception
+[ENCONTRADA en A(PMC)] Public Safety
+[ENCONTRADA en A(PMC)] can be used to train and evaluate machine learning models for real-time driver behavior detection
+[ENCONTRADA en A(PMC)] mobile and edge devices
+[ENCONTRADA en A(PMC)] Repository name: Zenodo Data
+[ENCONTRADA en A(PMC)] 10.5281/zenodo.14908802
+[ENCONTRADA en M(desc), Z(desc)] the images are unprocessed and unannotated
+[ENCONTRADA en A(PMC)] Each image was manually annotated into one of five behavior classes
+[ENCONTRADA en A(PMC)] Expert-validated labels
+[ENCONTRADA en A(PMC)] 224 × 224 pixels
+[ENCONTRADA en A(PMC)] 400 × 600 pixels
+[ENCONTRADA en A(PMC)] Data Availability
+[ENCONTRADA en A(PMC)] Multi-Class Driver Behavior Image Dataset (Original data)
+[ENCONTRADA en A(PMC)] Augmentation was performed online
+[ENCONTRADA en A(PMC)] Extended images were stored in the same folder as their corresponding original class
+[ENCONTRADA en A(PMC)] The expansion process significantly expanded the data set
+[ENCONTRADA en A(PMC)] for an augmented dataset
+[ENCONTRADA en M(desc), Z(desc)] drowsy driving
+[ENCONTRADA en A(PMC)] does not yet include
+[NO ENCONTRADA] beber, voltear hacia atrás o somnolencia
+[ENCONTRADA en A(PMC)] talking to passengers
+[ENCONTRADA en M(desc), Z(desc)] talking with someone behind
+[NO ENCONTRADA] voltear hacia atrás
+[ENCONTRADA en A(PMC)] no identifiable or personal information was collected
+[NO ENCONTRADA] contains high-resolution images of drivers, some of which include visible faces
+[NO ENCONTRADA] shall not redistribute, sell, or otherwise share the Dataset with third parties without explicit written permission from DIU
+[ENCONTRADA en A(PMC)] in a controlled and safe manner
+[ENCONTRADA en A(PMC)] with the help of the drivers
+[ENCONTRADA en A(PMC)] naturalistic
+[ENCONTRADA en A(PMC)] Unlike staged datasets
+[NO ENCONTRADA] Afridi et al., 2024
+[NO ENCONTRADA] Shakil, Md. Shahriar
+[NO ENCONTRADA] Shakil, Shariear
+[NO ENCONTRADA] Moon, Ms. Nazmun Nessa
+[NO ENCONTRADA] Nessa Moon, Ms. Nazmun
+[NO ENCONTRADA] aumento previo
+[NO ENCONTRADA] originales sin procesar
+[ENCONTRADA en A(PMC)] Data Availability
+[NO ENCONTRADA] el conjunto contiene N imágenes originales
+
+## results/data/m2/eda/diccionario.json — 11 citas
+[ENCONTRADA en A(PMC)] This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleepi
+[ENCONTRADA en M(desc), Z(desc)] Contains any actions that go against safe driving practices, like drinking water or anything while driving, sl
+[ENCONTRADA en A(PMC)] Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steerin
+[ENCONTRADA en M(desc), Z(desc)] Images showing a driver who seems to be paying attention to the road, both hands on the wheel, and concentrate
+[ENCONTRADA en A(PMC)] The driver is using the phone in their hand or holding it to their ear while making a phone call
+[ENCONTRADA en M(desc), Z(desc)] When drivers talk on their phones or hold them up to their ears while driving a vehicle
+[ENCONTRADA en A(PMC)] The driver is texting while driving, which significantly diverts their attention from the road
+[ENCONTRADA en M(desc), Z(desc)] Pictures of drivers using their phones, whether it is to type messages or to interact with the screen
+[ENCONTRADA en A(PMC)] The driver is turning the car, requiring full attention to ensure the maneuver is performed safely
+[ENCONTRADA en M(desc), Z(desc)] Photographs that show drivers changing direction during turns by moving their heads or full bodies
+
+## results/data/m2/eda/ficha.json — 6 citas
+[NO ENCONTRADA] October 2024 (Data in Brief 60, 111529, Tabla de especificaciones; Mendeley, descripción). El artículo, §2, añade: «Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours per day.»
+[ENCONTRADA en A(PMC)] Each class was saved in a separate folder
+[ENCONTRADA en A(PMC)] Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours
+[ENCONTRADA en A(PMC), M(desc), Z(desc)] October 2024
+[ENCONTRADA en A(PMC)] Dataset statistics
+
+Resumen: 117 de 155 fragmentos encontrados literalmente en las fuentes primarias descargadas.

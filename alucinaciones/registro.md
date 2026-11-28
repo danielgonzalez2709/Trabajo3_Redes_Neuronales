@@ -307,3 +307,56 @@ evidencia no cuenta.
 - **Archivos:** `verificar_R4.py` → `verificar_R4_salida.txt` (35 OK, 1 MAL: la clave del Gini por lugar) y
   `cifras_blog.py` → `cifras_blog_salida.txt`, en `alucinaciones/evidencias/JJ-2/`. La clave mal citada del Gini por lugar
   y las cuatro frases que decían más que las cifras las corrigió la sesión principal en el blog (26-nov).
+
+### JO-1 (M2, conjunto de Mendeley y procesado 224×224) — cazador-alucinaciones (Opus), 2026-11-27
+Prompt: `alucinaciones/prompts/JO-1-revisiones.md` (sección «cazador-alucinaciones»). Evidencia en `alucinaciones/evidencias/JO-1/`;
+las fuentes primarias se descargaron el 2026-11-27 a `fuentes/` (XML de PMC12019831 por E-utilities, API pública de Mendeley
+del conjunto y de sus archivos, API de Zenodo 14908802, Crossref y el BibTeX oficial de ambos DOI vía doi.org).
+**Resultado: 0 afirmaciones incorrectas de IA; no se registra ningún candidato nuevo.** Dos imprecisiones menores, abajo.
+- **Cifras de los datos (recálculo independiente, sin importar `datos.py` ni `JO-1_inventario.py`):** `verificar_datos.py` →
+  `verificar_datos_salida.txt`, **39 de 39 iguales**: tamaño y SHA-256 del .zip; conteo por clase en el .zip (1 190 / 1 679 /
+  1 513 / 1 561 / 1 343 = 7 286) y legibles (1 184 / 1 679 / 1 513 / 1 561 / 1 339 = 7 276); los 10 ilegibles (mismos
+  archivos que `calidad.csv`, todos `UnidentifiedImageError`; 6 en `other_activities` y 4 en `turning`); extensiones, formatos y
+  modos; resoluciones más frecuentes sin y con EXIF (34 y 32 distintas; 640×480 = 6 629) y 0 imágenes de 400×600 en cualquier
+  orientación; distribución de Orientation (1: 318, 6: 112, 8: 1, sin etiqueta: 6 845; aplicadas 113); marca y modelo EXIF
+  (motorola edge 50 fusion 404, iPhone 11 32); alfa de los 200 PNG RGBA (200 totalmente opacos); las cuatro familias de
+  `fechas_medidas` (n, mínimo, máximo y meses); y los procesados versionados (7 276 filas de `indice.csv`, SHA-256 del índice y
+  huella global de las imágenes iguales a `procesado.json`, todas 224×224 RGB JPEG, `grupo_duplicado` y `split` vacíos).
+- **Citas textuales:** `verificar_citas.py` → `verificar_citas_salida.txt`: 117 de 155 fragmentos entre «» aparecen literalmente en
+  las fuentes descargadas. Los 38 restantes se revisaron uno a uno: (a) metadatos que están en el HTML de Mendeley (`citation_*`
+  y la «citation» del JSON-LD, verificados aparte), en la lista de autores del XML de PMC o en el JSON de Zenodo
+  («Shakil, Shariear»); (b) citas armadas desde viñetas o celdas de tabla (conteos de §2.1, «Type of data: JPEG», lista de
+  aumentos de §3.3, «Birulia.Zone»), cuyo contenido coincide; (c) frases en español del enunciado (Anexo, `SPEC.md` l. 649-650),
+  que coinciden; (d) las 6 citas del `DATA USE AGREEMENT.docx` de Zenodo: **NO VERIFICABLES** en esta sesión (Zenodo devolvió
+  403 «unusual traffic» a la descarga del .docx); (e) frases propias del informe entre comillas, no atribuidas a una fuente.
+- **Diccionario de clases:** las 10 definiciones de `diccionario.json` (5 del artículo, Tabla 1, y 5 de Mendeley) son subcadenas
+  literales de su fuente, y la marca `elidido` es correcta en las 10 (se cotejó el texto completo de cada celda y párrafo).
+- **Referencias y licencia:** autores, año, título, volumen y número de artículo coinciden con Crossref y con el BibTeX oficial
+  de doi.org (artículo: 2025, *Data in Brief* 60, 111529; conjunto: Mendeley Data, 2024, publicado el 2024-11-15 según la API).
+  La forma APA 7 de `ficha.json` y `data/fuentes.md` es correcta (apellidos según Crossref; «Ms.» es tratamiento y se omite).
+  Licencia del conjunto CC BY 4.0 (`data_licence` de la API de Mendeley, texto citado idéntico) y del artículo CC BY 4.0 (Crossref,
+  versión de registro, desde 2025-03-26). Fechas: PMC epub 2025-04-04; Zenodo 2025-02-25; tamaño del .zip de Zenodo
+  2 556 847 360 bytes (correcto en el informe).
+- **Preprocesado frente a la app (afirmación de la orquestadora en `JO-1b-curador-datos.md`, «coherente con el preprocesado fijo
+  de la app»): IMPRECISA, no incorrecta.** Coinciden estirar sin conservar proporción, interpolación bilineal tipo PIL y RGB
+  (`app/lib/imagen.ts`, `pesosBilineales`/`redimensionarBilineal`; `app/lib/contratos.ts`, `PreprocesadoM2`; `datos.py` l. 209 usa
+  `Image.resize(..., BILINEAR)` sin `draft`). La app **no** recomprime a JPEG: `experimento_jpeg85.py` →
+  `experimento_jpeg85_salida.txt` (292 imágenes, cada 25.ª id) mide entre el estirado sin recomprimir y el JPEG 85 versionado
+  |diferencia| media 2,74 niveles de 255 (mediana 2, p99 14, máximo 90) y un 55,7 % de los valores fuera de la tolerancia ±1 de la
+  paridad de la app; recodificar el estirado como JPEG 85 reproduce los bytes versionados en 292 de 292. Hay que declararlo: el
+  modelo se entrena con imágenes con artefactos JPEG y la app le pasa imágenes sin ellos. No se registra como candidato porque lo
+  que la frase afirma es cierto y lo omitido es un detalle; además, la frase está dentro de las «Decisiones de José», así que su
+  autoría (humano o IA) no es segura. Diferencias menores no medidas: la app aplica la orientación EXIF solo si el navegador la
+  aplica al decodificar, y en un PNG con transparencia ignora el alfa en lugar de componer sobre blanco (el procesado no lo
+  necesitó: todos los PNG son opacos).
+- **Localizadores imprecisos en `JO-1_fuentes_m2.md` (investigador-fuentes, Sonnet): IMPRECISA.** C-9 ubica «Unlike staged
+  datasets» en «§1/§4», pero está en §8 (Conclusion); «naturalistic» sí está en §1. El rótulo «Value of the Data» no existe como
+  título en el XML de PMC (las viñetas citadas están entre la tabla de especificaciones y §1; el texto coincide). El contenido de
+  las citas es correcto. Tampoco existe la numeración `[F-n]` en el archivo (estaba en el mensaje final del agente, no guardado), así
+  que la referencia «F-19» del prompt `JO-1b-curador-datos.md` no se puede rastrear; lo que dice (la fuente no etiqueta el tipo de
+  vehículo) sí está en §7. No se registran como candidatos.
+- **Discrepancias fuente frente a datos (hallazgos de datos, no alucinaciones):** «400 × 600» (artículo §2.1) frente a 0 imágenes
+  con esa resolución; «October 2024» y «30 days» frente a EXIF del 2024-09-30 al 2024-10-28 (324 de 431 en septiembre), 11
+  nombres `photo_` del 2024-09-14 y 183 nombres con fecha 2019-04-24; «unprocessed» (Mendeley) frente a un 91 % de imágenes
+  640×480 sin EXIF; el .zip de Zenodo pesa 3 521 bytes menos que el de Mendeley (los depósitos no son idénticos byte a byte;
+  contenido no comparado).
