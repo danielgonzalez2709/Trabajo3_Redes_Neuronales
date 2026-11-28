@@ -1,0 +1,6 @@
+lugar,tipo,n_destinos,n_interacciones,proporcion_interacciones,media_por_destino
+goa_beaches,Beach,200,380,0.19019019019019018,1.9
+jaipur_city,City,200,376,0.1881881881881882,1.88
+kerala_backwaters,Nature,200,412,0.2062062062062062,2.06
+leh_ladakh,Adventure,200,422,0.21121121121121122,2.11
+taj_mahal,Historical,200,408,0.2042042042042042,2.04

@@ -1,0 +1,2 @@
+usuarios de prueba: 606 · lugares: 5
+con otro id del mismo lugar en el historial conocido: observado 204 · esperado por azar 198.0

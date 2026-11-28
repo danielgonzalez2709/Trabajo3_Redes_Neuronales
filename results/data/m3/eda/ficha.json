@@ -1,0 +1,287 @@
+{
+  "fuente": "Travel Recommendation Dataset (Aman Mehra, Kaggle amanmehra23/travel-recommendation-dataset)",
+  "cita": "Mehra, A. (2024). Travel recommendation dataset (Versión 1) [Conjunto de datos]. Kaggle. https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset",
+  "url": "https://www.kaggle.com/datasets/amanmehra23/travel-recommendation-dataset",
+  "fecha_descarga": "2026-11-25",
+  "sha256": {
+    "Expanded_Destinations.csv": "5e311d3df9ebd626df28c90060b4804cfaeaee11012e1ffcfcc27c1817179766",
+    "Final_Updated_Expanded_Reviews.csv": "bd9a10fb063592418511fa05350862fc6e8e81d6ab087422992ce64a066aca48",
+    "Final_Updated_Expanded_UserHistory.csv": "df8a5b21e0c1f45ca9e48dfe98db83ae291a45ee0f8be800bd4274a81ac7307b",
+    "Final_Updated_Expanded_Users.csv": "a3c51b1583ed727fed42278af77bde007aeba2a71fc1fd17c477080e275aaeac",
+    "archive.zip": "117e3135b2fb8ff1ecb1e3a2d4b57315273f7954520567bbb5663af2912d004d"
+  },
+  "unidad_de_observacion": "Par (usuario, destino) con una interacción implícita: una reseña (Reviews) o una visita registrada (UserHistory); la calificación es un atributo, no el objetivo (D1).",
+  "n_registros": 1998,
+  "n_variables": 23,
+  "periodo": "Columnas con forma de fecha (AAAA-MM-DD): Final_Updated_Expanded_UserHistory.csv (VisitDate). VisitDate tiene 3 valores distintos (2024-01-01, 2024-02-15, 2024-03-20), función exacta de HistoryID mod 3; 666 de 999 filas son posteriores a la creación de la versión 1 en Kaggle (2024-01-23). Interpretación (D3): no es un periodo observado; solo descriptiva.",
+  "conteos": {
+    "usuarios_maestra": 999,
+    "destinos_maestra": 1000,
+    "lugares": 5,
+    "variables_por_archivo": {
+      "Expanded_Destinations.csv": 6,
+      "Final_Updated_Expanded_Reviews.csv": 5,
+      "Final_Updated_Expanded_UserHistory.csv": 5,
+      "Final_Updated_Expanded_Users.csv": 7
+    },
+    "interacciones": {
+      "resena": 999,
+      "historial": 999,
+      "union": 1998
+    },
+    "usuarios_que_aparecen": {
+      "resena": 624,
+      "historial": 642,
+      "union": 858
+    },
+    "destinos_que_aparecen": {
+      "resena": 651,
+      "historial": 638,
+      "union": 866
+    },
+    "escala_calificacion": {
+      "resena": {
+        "minimo": 1,
+        "maximo": 5,
+        "valores": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "frecuencias": {
+          "1": 198,
+          "2": 199,
+          "3": 185,
+          "4": 216,
+          "5": 201
+        }
+      },
+      "historial": {
+        "minimo": 1,
+        "maximo": 5,
+        "valores": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "frecuencias": {
+          "1": 206,
+          "2": 228,
+          "3": 201,
+          "4": 183,
+          "5": 181
+        }
+      },
+      "union": {
+        "minimo": 1,
+        "maximo": 5,
+        "valores": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "frecuencias": {
+          "1": 404,
+          "2": 427,
+          "3": 386,
+          "4": 399,
+          "5": 382
+        }
+      }
+    },
+    "densidad": {
+      "resena": {
+        "interacciones": 999,
+        "denominador_maestras": 999000,
+        "maestras": 0.001,
+        "denominador_los_que_aparecen": 406224,
+        "los_que_aparecen": 0.002459234314073024
+      },
+      "historial": {
+        "interacciones": 999,
+        "denominador_maestras": 999000,
+        "maestras": 0.001,
+        "denominador_los_que_aparecen": 409596,
+        "los_que_aparecen": 0.0024389886619986525
+      },
+      "union": {
+        "interacciones": 1998,
+        "denominador_maestras": 999000,
+        "maestras": 0.002,
+        "denominador_los_que_aparecen": 743028,
+        "los_que_aparecen": 0.00268899691532486
+      }
+    },
+    "usuarios_por_numero_de_interacciones": {
+      "resena": {
+        "0": 375,
+        "1": 355,
+        "2": 190,
+        "3": 58,
+        "4": 15,
+        "5+": 6
+      },
+      "historial": {
+        "0": 357,
+        "1": 384,
+        "2": 180,
+        "3": 60,
+        "4": 16,
+        "5+": 2
+      },
+      "union": {
+        "0": 141,
+        "1": 252,
+        "2": 280,
+        "3": 195,
+        "4": 79,
+        "5+": 52
+      }
+    },
+    "variables_de_contenido": {
+      "usuarios": {
+        "preferencias": {
+          "tipo": "texto",
+          "n_categorias": 3
+        },
+        "pref_adventure": {
+          "tipo": "booleano",
+          "n_categorias": 2
+        },
+        "pref_beaches": {
+          "tipo": "booleano",
+          "n_categorias": 2
+        },
+        "pref_city": {
+          "tipo": "booleano",
+          "n_categorias": 2
+        },
+        "pref_historical": {
+          "tipo": "booleano",
+          "n_categorias": 2
+        },
+        "pref_nature": {
+          "tipo": "booleano",
+          "n_categorias": 2
+        },
+        "genero": {
+          "tipo": "texto",
+          "n_categorias": 2
+        },
+        "n_adultos": {
+          "tipo": "entero",
+          "n_categorias": 2
+        },
+        "n_ninos": {
+          "tipo": "entero",
+          "n_categorias": 3
+        }
+      },
+      "destinos": {
+        "nombre": {
+          "tipo": "texto",
+          "n_categorias": 5
+        },
+        "lugar": {
+          "tipo": "texto",
+          "n_categorias": 5
+        },
+        "estado": {
+          "tipo": "texto",
+          "n_categorias": 5
+        },
+        "tipo": {
+          "tipo": "texto",
+          "n_categorias": 5
+        },
+        "mejor_epoca": {
+          "tipo": "texto",
+          "n_categorias": 5
+        },
+        "popularidad": {
+          "tipo": "decimal",
+          "minimo": 7.504499933755479,
+          "maximo": 9.499811031053753,
+          "n_valores_distintos": 1000
+        }
+      }
+    }
+  },
+  "real_o_sintetico": {
+    "citas_literales": {
+      "generado": "generated for educational and research purposes",
+      "diversidad_de_genero": "enriched with gender diversity",
+      "uso": "This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider. Remember to cite the source when using this dataset in your projects.",
+      "licencia": "CC0: Public Domain - The dataset is in the public domain and can be used without restrictions."
+    },
+    "palabra_synthetic_en_la_fuente": false,
+    "senales_medidas": {
+      "destinos": {
+        "ids": 1000,
+        "lugares": 5,
+        "ids_por_lugar": {
+          "goa_beaches": 200,
+          "jaipur_city": 200,
+          "kerala_backwaters": 200,
+          "leh_ladakh": 200,
+          "taj_mahal": 200
+        }
+      },
+      "resenas": {
+        "filas": 999,
+        "textos_distintos": 3,
+        "conteos_por_texto": [
+          333,
+          333,
+          333
+        ],
+        "asociacion_con_el_lugar_del_destino": {
+          "chi2": 3.6946448419085995,
+          "gl": 8,
+          "p": 0.8835697351602294,
+          "v_de_cramer": 0.04300199521588326
+        }
+      },
+      "visit_date": {
+        "filas": 999,
+        "valores_distintos": [
+          "2024-01-01",
+          "2024-02-15",
+          "2024-03-20"
+        ],
+        "fecha_creacion_version_1": "2024-01-23",
+        "filas_posteriores_a_la_version_1": 666
+      },
+      "usuarios": {
+        "ids": 999,
+        "nombres_distintos": 20,
+        "correos_nombre_en_minusculas_mas_dominio": 999,
+        "combinaciones_de_preferencias": 3
+      },
+      "periodicidad_con_el_id": {
+        "k_max_buscado": 10,
+        "nombre_de_destino": 5,
+        "review_text": 3,
+        "visit_date": 3,
+        "preferences": 3
+      }
+    },
+    "conclusion": "Datos generados, no observados: la fuente dice que el conjunto fue «generated» con fines educativos y de investigación (no usa la palabra «synthetic» ni dice con qué método) y las señales medidas en los datos (catálogo de lugares repetidos, textos de reseña plantilla, fechas periódicas y posteriores a la creación de la versión 1 en Kaggle, nombres repetidos, preferencias periódicas en el id) son compatibles con generación por programa. Las conclusiones valen para el método de recomendación, no para el comportamiento real de turistas."
+  },
+  "licencia": {
+    "campo_formal": [
+      "MIT"
+    ],
+    "en_la_descripcion": {
+      "license": "CC0: Public Domain - The dataset is in the public domain and can be used without restrictions.",
+      "usage": "This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider. Remember to cite the source when using this dataset in your projects."
+    },
+    "contradiccion": "Campo formal de licencia de Kaggle: «MIT». Sección «License» de la descripción: «CC0: Public Domain - The dataset is in the public domain and can be used without restrictions.». Sección «Usage»: «This dataset is free to use for non-commercial purposes. For commercial use, please contact the dataset provider. Remember to cite the source when using this dataset in your projects.». El campo formal no aparece en la sección «License»: las declaraciones son distintas."
+  }
+}

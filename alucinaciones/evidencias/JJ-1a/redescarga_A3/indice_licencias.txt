@@ -1,0 +1,3 @@
+licencia_mit|https://opensource.org/license/mit|200|2026-11-25T23:32:53Z
+licencia_cc0|https://creativecommons.org/publicdomain/zero/1.0/|200|2026-11-25T23:32:54Z
+Los textos completos de las licencias (MIT y CC0) no se versionan: se consultan en las URL indicadas arriba (indice de las consultas del 2026-11-25).

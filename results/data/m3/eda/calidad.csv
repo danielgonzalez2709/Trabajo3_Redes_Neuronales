@@ -1,0 +1,24 @@
+tabla,filas,duplicados_clave,columna,tipo,faltantes,pct_faltantes,unicos,ejemplo
+destinos,1000,0,destino_id,int64,0,0.0,1000,1
+destinos,1000,0,nombre,str,0,0.0,5,Taj Mahal
+destinos,1000,0,lugar,str,0,0.0,5,taj_mahal
+destinos,1000,0,estado,str,0,0.0,5,Uttar Pradesh
+destinos,1000,0,tipo,str,0,0.0,5,Historical
+destinos,1000,0,mejor_epoca,str,0,0.0,5,Nov-Feb
+destinos,1000,0,popularidad,float64,0,0.0,1000,8.691906258695031
+usuarios,999,0,usuario_id,int64,0,0.0,999,1
+usuarios,999,0,preferencias,str,0,0.0,3,"Beaches, Historical"
+usuarios,999,0,pref_adventure,bool,0,0.0,2,False
+usuarios,999,0,pref_beaches,bool,0,0.0,2,True
+usuarios,999,0,pref_city,bool,0,0.0,2,False
+usuarios,999,0,pref_historical,bool,0,0.0,2,True
+usuarios,999,0,pref_nature,bool,0,0.0,2,False
+usuarios,999,0,genero,str,0,0.0,2,Female
+usuarios,999,0,n_adultos,int64,0,0.0,2,1
+usuarios,999,0,n_ninos,int64,0,0.0,3,0
+interacciones,1998,0,usuario_id,int64,0,0.0,858,1
+interacciones,1998,0,destino_id,int64,0,0.0,866,467
+interacciones,1998,0,origen,str,0,0.0,2,historial
+interacciones,1998,0,id_origen,int64,0,0.0,999,876
+interacciones,1998,0,calificacion,int64,0,0.0,5,3
+interacciones,1998,0,fecha_visita,datetime64[ns],999,50.0,3,2024-03-20 00:00:00

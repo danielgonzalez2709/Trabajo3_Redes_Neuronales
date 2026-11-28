@@ -1,0 +1,98 @@
+{
+  "semilla": 2026,
+  "run_id": 0,
+  "semilla_efectiva": 2026,
+  "regla": "D3 (docs/spec/partes/juanjose.md §3.1): para cada usuario con n interacciones se ordenan sus interacciones por una clave U(0,1) independiente (permutación uniforme); si n >= 2, la primera va a prueba; si n >= 3, la segunda va a validación; el resto, a train (n = 1: solo train). Azar: make_rng(semilla, run_id), con las interacciones en orden canónico por (origen, id_origen).",
+  "clave_de_interaccion": [
+    "origen",
+    "id_origen"
+  ],
+  "splits": [
+    "train",
+    "validacion",
+    "prueba"
+  ],
+  "conteos": {
+    "interacciones": {
+      "train": 1066,
+      "validacion": 326,
+      "prueba": 606,
+      "total": 1998
+    },
+    "usuarios": {
+      "train": 858,
+      "validacion": 326,
+      "prueba": 606,
+      "con_interacciones": 858
+    },
+    "usuarios_maestros": 999,
+    "usuarios_sin_interacciones_no_evaluables": 141
+  },
+  "por_grupo_de_actividad": {
+    "umbral_pocas_max": 2,
+    "nota": "El grupo se define con el total de interacciones del usuario (train + validación + prueba): pocas = 1 a umbral_pocas_max, muchas = más que umbral_pocas_max. Solo estratifica este reporte y la evaluación por grupos (enunciado, M3 tarea 6); no es una variable de los modelos (D9).",
+    "pocas": {
+      "regla": "1 a 2 interacciones",
+      "n_usuarios": 532,
+      "usuarios_con_prueba": 280,
+      "usuarios_con_validacion": 0,
+      "usuarios_solo_train": 252,
+      "interacciones": {
+        "train": 532,
+        "validacion": 0,
+        "prueba": 280
+      }
+    },
+    "muchas": {
+      "regla": "3 o más interacciones",
+      "n_usuarios": 326,
+      "usuarios_con_prueba": 326,
+      "usuarios_con_validacion": 326,
+      "usuarios_solo_train": 0,
+      "interacciones": {
+        "train": 534,
+        "validacion": 326,
+        "prueba": 326
+      }
+    }
+  },
+  "diagnosticos": {
+    "nota": "Medidos sobre la partición para leer la evaluación; usan prueba y validación y por eso ningún modelo los usa como entrada (D9).",
+    "items_frios": {
+      "definicion": "Interacciones (y destinos distintos) del split cuyo destino no tiene ninguna interacción en train: su popularidad de train es 0 y un filtrado colaborativo no tiene señal para él.",
+      "prueba": {
+        "interacciones": 606,
+        "interacciones_con_destino_sin_train": 205,
+        "destinos_distintos": 463,
+        "destinos_distintos_sin_train": 158
+      },
+      "validacion": {
+        "interacciones": 326,
+        "interacciones_con_destino_sin_train": 111,
+        "destinos_distintos": 280,
+        "destinos_distintos_sin_train": 95
+      }
+    },
+    "mismo_lugar_en_historial_conocido": {
+      "definicion": "con_otro_id_del_mismo_lugar = usuarios evaluables del split con algún destino de su historial conocido (prueba: train ∪ validación; validación: train) del mismo lugar que su destino objetivo. Los 1000 ids del catálogo son 5 lugares (D2): con tan pocos lugares esa coincidencia es esperable por azar, y un modelo no sabe cuál de los lugares conocidos es el del objetivo; por eso todo «acierto por lugar» debe compararse con esperado_por_azar = Σ_u |lugares distintos del historial conocido de u| / n_lugares.",
+      "supuesto_esperado_por_azar": "El lugar del destino objetivo es uniforme sobre los n_lugares del catálogo e independiente del historial conocido; un objetivo por usuario (D3).",
+      "prueba": {
+        "usuarios": 606,
+        "con_otro_id_del_mismo_lugar": 204,
+        "n_lugares": 5,
+        "esperado_por_azar": 198.0
+      },
+      "validacion": {
+        "usuarios": 326,
+        "con_otro_id_del_mismo_lugar": 95,
+        "n_lugares": 5,
+        "esperado_por_azar": 95.8
+      }
+    }
+  },
+  "sha256": {
+    "interacciones_parquet": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+    "huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id)."
+  }
+}

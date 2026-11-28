@@ -1,0 +1,40 @@
+{
+ "respuestas": [
+  {
+   "url": "https://ejemplo.invalid/metadata",
+   "status": 200,
+   "cuerpo": {
+    "info": {
+     "title": "Conjunto Ficticio de Prueba",
+     "description": "### Title: Conjunto Ficticio de Prueba\n\n**Content**\n1. **Destinations**: Fictitious destinations, including type of destination (beach, mountain, historical site, etc.), popularity and best time to visit.\n\n2. **Users**: Fictitious profiles of users including their preferences. This fixture has been enriched with gender diversity.\n\n3. **Reviews**: Fictitious reviews and ratings for the destinations.\n\n4. **User History**: Fictitious records of past visits and ratings.\n\n**Acknowledgements**\nThis fixture was generated for educational and research purposes.\n\n### Usage\nFree to use for tests only.\n\n### License\nCC0: Public Domain - fixture text.",
+     "licenses": [
+      {
+       "name": "LICENCIA-PRUEBA"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "url": "https://ejemplo.invalid/list",
+   "status": 200,
+   "cuerpo": {
+    "datasetFiles": [
+     {"name": "Expanded_Destinations.csv", "description": "", "totalBytes": 1, "columns": []},
+     {"name": "Final_Updated_Expanded_Reviews.csv", "description": "", "totalBytes": 1, "columns": []},
+     {"name": "Final_Updated_Expanded_UserHistory.csv", "description": "", "totalBytes": 1, "columns": []},
+     {"name": "Final_Updated_Expanded_Users.csv", "description": "", "totalBytes": 1, "columns": []}
+    ]
+   }
+  },
+  {
+   "url": "https://ejemplo.invalid/view",
+   "status": 200,
+   "cuerpo": {
+    "versions": [
+     {"versionNumber": 1, "creationDate": "2024-01-23T17:07:26.487Z"}
+    ]
+   }
+  }
+ ]
+}
