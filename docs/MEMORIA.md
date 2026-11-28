@@ -138,7 +138,7 @@
 ## Bitácora (más reciente arriba)
 - 2026-11-28 · Daniel · PR #6, #10, #7 y #9 fusionados; conflictos de #7, #9 y #8 resueltos en sus ramas. Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
   CPU (fallaba el #8), `results/**` y `*.csv` byte a byte en `.gitattributes` (huellas SHA-256 en Windows) y `test_no_network`
-  ya no reescribe las figuras versionadas. En clones de Windows existentes: `git checkout -- results tests/fixtures`.
+  ya no reescribe las figuras versionadas. En clones de Windows existentes: borrar `results/` y `tests/fixtures/` y luego `git checkout -- results tests/fixtures`.
 - 2026-11-28 · José · JO-3 ✅: partición sin fuga de M2 (341 grupos, 70/15/15 por clase, huella `e0a6b55a…`, 0 pares cruzados), D1–D9 en `jose.md` §3.2; fuga residual por conductor declarada; 3 candidatos a la cacería.
 - 2026-11-27 · Juan José · JJ-4 ✅ (referencias @K; MF colapsada a X = Y = 0 detectada y corregida; D11–D14) y JJ-5 ✅ (red de
   dos torres, BCE/BPR, 20 ensayos y 30 semillas, al nivel del azar; D15–D19; [PROPUESTO] → [DECIDIDO]); 6 candidatos.
