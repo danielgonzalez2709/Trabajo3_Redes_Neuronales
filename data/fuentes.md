@@ -200,6 +200,32 @@ copia de la Res. 264/2020 (fin de año) del normograma de MinTransporte, con fec
 Cerrados por la verificación CA-1 (2026-11-26): sentencia C-568/1993 (M. P. Fabio Morón Díaz, 9-dic-1993, arts. 1 y 2 de la Ley 51 exequibles; https://www.corteconstitucional.gov.co/relatoria/1993/C-568-93.htm) y ponente de la C-107/1994 (Carlos Gaviria Díaz, 10-mar-1994, «estarse a lo resuelto» en la C-568;
 https://www.corteconstitucional.gov.co/relatoria/1994/C-107-94.htm). Detalle: `docs/investigacion/CA-1_verificacion.md`.
 
+## M2 — Clasificación de imágenes (comportamiento del conductor)
+
+### Conjunto principal
+| Dato | Valor |
+|---|---|
+| Conjunto | «Multi-Class Driver Behavior Image Dataset» (Mendeley Data), versión 1 |
+| DOI | 10.17632/mzb4b6dff3.1 (https://doi.org/10.17632/mzb4b6dff3.1) |
+| API pública consultada | https://data.mendeley.com/public-api/datasets/mzb4b6dff3/files?folder_id=root&version=1 (devuelve un único archivo; la API da `size` y `sha256_hash`, con los que el script verifica la descarga) |
+| Archivo | `Multi-Class Driver Behavior Image Dataset.zip` |
+| Tamaño | 2 556 850 881 bytes |
+| SHA-256 | `427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c` (igual al de la API y al medido localmente por `docs/investigacion/JO-1_inventario.py`) |
+| Fecha de descarga | 2026-11-27 (hora local de la máquina; la descarga terminó a las 22:11 locales del 27-nov; la segunda ejecución, que solo verificó, a las 2026-11-28 03:11 UTC) |
+| Descargó | José, vía `scripts/descargar_m2.py` (streaming; verifica tamaño y SHA-256 contra la API; no extrae el .zip) |
+| Ubicación | `data/raw/m2/` (no versionado; está en `.gitignore`) |
+| Licencia | **CC BY 4.0** según el campo de licencia de la página de Mendeley (versión 1); el artículo también es CC BY 4.0. Exige atribución, enlace a la licencia e indicar si se hicieron cambios (aquí: redimensionado a 224×224 y recompresión JPEG). **Contradicción sin resolver (C-6 de `docs/investigacion/JO-1_fuentes_m2.md`):** el depósito de Zenodo del mismo conjunto trae un `DATA USE AGREEMENT.docx` (plantilla con campos en blanco) que pide uso no comercial y no redistribuir sin permiso escrito de DIU; `TODO(dato-faltante)`: si aplica a quien descarga de Mendeley. Relevante porque `data/processed/m2/` versiona las imágenes procesadas (decisión de José) |
+| Autores | Afridi, A. S.; Kafy, A.; Moon, N. N.; Shakil, M. S. (Department of Computer Science and Engineering, Daffodil International University, Dhaka, Bangladesh, según el artículo). Ortografía distinta de los nombres entre Mendeley, el artículo y Zenodo (`JO-1_fuentes_m2.md` §1 y C-11) |
+| Cita (APA 7) | Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2024). *Multi-class driver behavior image dataset* (Version 1) [Data set]. Mendeley Data. https://doi.org/10.17632/mzb4b6dff3.1 |
+| Artículo del conjunto | Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time detection and road safety enhancement. *Data in Brief, 60*, Article 111529. https://doi.org/10.1016/j.dib.2025.111529 |
+
+### Cómo regenerar
+1. `.venv/bin/python scripts/descargar_m2.py` (con red; si el archivo ya existe con el SHA-256 correcto no lo vuelve a bajar).
+2. Sin red: `.venv/bin/python -I docs/investigacion/JO-1_inventario.py` (lee el .zip sin extraerlo; escribe
+   `docs/investigacion/JO-1_inventario_salida.txt`).
+3. Sin red: `.venv/bin/python run.py m2-datos --config configs/m2/datos.yaml` (lee el .zip sin extraerlo; escribe
+   `data/processed/m2/` y `results/data/m2/eda/`).
+
 ## M3 — Recomendación de destinos
 
 ### Conjunto principal

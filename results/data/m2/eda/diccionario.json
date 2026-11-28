@@ -1,0 +1,82 @@
+{
+  "nota": "Texto en inglés tal como aparece en la fuente. La correspondencia carpeta ↔ nombre de la Tabla 1 del artículo es por nombre (inferencia nuestra). Nada de estas definiciones es propio.",
+  "nota_variables": "La fuente no publica un diccionario de variables por imagen: solo describe las 5 clases (carpetas). TODO(dato-faltante): metadatos por imagen (docs/investigacion/JO-1_fuentes_m2.md §7).",
+  "clases": {
+    "other_activities": {
+      "carpeta": "other_activities",
+      "articulo": {
+        "nombre": "Others",
+        "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+        "elidido": true,
+        "texto": "This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleeping while driving."
+      },
+      "mendeley": {
+        "nombre": "V. Others",
+        "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+        "elidido": false,
+        "texto": "Contains any actions that go against safe driving practices, like drinking water or anything while driving, sleeping while driving, or talking with someone behind while driving."
+      }
+    },
+    "safe_driving": {
+      "carpeta": "safe_driving",
+      "articulo": {
+        "nombre": "Safe Driving",
+        "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+        "elidido": false,
+        "texto": "Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steering wheel while paying close attention to the road."
+      },
+      "mendeley": {
+        "nombre": "I. Safe Driving",
+        "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+        "elidido": true,
+        "texto": "Images showing a driver who seems to be paying attention to the road, both hands on the wheel, and concentrated or 1 hand on the steering wheel and other on the gear stick."
+      }
+    },
+    "talking_phone": {
+      "carpeta": "talking_phone",
+      "articulo": {
+        "nombre": "Talking phone",
+        "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+        "elidido": true,
+        "texto": "The driver is using the phone in their hand or holding it to their ear while making a phone call."
+      },
+      "mendeley": {
+        "nombre": "IV. Talking Phones",
+        "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+        "elidido": true,
+        "texto": "When drivers talk on their phones or hold them up to their ears while driving a vehicle."
+      }
+    },
+    "texting_phone": {
+      "carpeta": "texting_phone",
+      "articulo": {
+        "nombre": "Texting phone",
+        "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+        "elidido": false,
+        "texto": "The driver is texting while driving, which significantly diverts their attention from the road."
+      },
+      "mendeley": {
+        "nombre": "III. Texting Phone",
+        "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+        "elidido": true,
+        "texto": "Pictures of drivers using their phones, whether it is to type messages or to interact with the screen."
+      }
+    },
+    "turning": {
+      "carpeta": "turning",
+      "articulo": {
+        "nombre": "Turning",
+        "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+        "elidido": false,
+        "texto": "The driver is turning the car, requiring full attention to ensure the maneuver is performed safely."
+      },
+      "mendeley": {
+        "nombre": "II. Turning",
+        "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+        "elidido": true,
+        "texto": "Photographs that show drivers changing direction during turns by moving their heads or full bodies."
+      }
+    }
+  },
+  "diferencias_entre_fuentes": "Artículo y Mendeley describen las clases con palabras distintas y no coinciden en los ejemplos de «Others» (artículo: hablar con pasajeros, comer, beber, dormir; Mendeley: beber agua u otra cosa, dormir, hablar con alguien de atrás); ver docs/investigacion/JO-1_fuentes_m2.md §4 y C-5, C-8."
+}

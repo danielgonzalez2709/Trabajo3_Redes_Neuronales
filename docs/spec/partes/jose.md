@@ -53,10 +53,51 @@ Brief (DOI 10.1016/j.dib.2025.111529) con `investigador-fuentes`. Imágenes redi
 Plantilla común §5.12 completa; sección 4 con iluminación (brillo medio), ángulo y tipo de vehículo (si la fuente lo
 etiqueta [VERIFICAR]; si no, muestra anotada a mano y declarada).
 
-### 3.2 Partición sin fuga (JO-3) 🧠 [PROPUESTO]
+**[DECIDIDO, José, 27-nov] (JO-1).** Fuente medida: un .zip de Mendeley (SHA-256 `427fec9d…af41c8c`, 2 556 850 881 B) con 7 286
+imágenes en 5 carpetas (`other_activities`, `safe_driving`, `talking_phone`, `texting_phone`, `turning`); 10 ilegibles; la fuente
+**no** etiqueta tipo de vehículo, iluminación ni ángulo (`docs/investigacion/JO-1_fuentes_m2.md`, F-42). Decisiones:
+- D1. Se versionan las **7 276 imágenes legibles** procesadas en `data/processed/m2/imagenes/` (~112 MB): el Anexo exige los datos
+  procesados en el repositorio. Los 10 ilegibles se excluyen y se registran en `results/data/m2/eda/calidad.csv`.
+- D2. **224×224**, estirado, bilineal (PIL), RGB, **JPEG calidad 85**. La recompresión JPEG no existe en la app: diferencia
+  medida y declarada en `ficha.json` (`conteos.diferencias_con_app`) y en el blog (limitación).
+- D3. Se aplica la orientación EXIF antes de redimensionar (113 imágenes).
+- D4. `ancho`/`alto` de `indice.csv` = dimensiones **originales** tras EXIF; sin `tipo_vehiculo` (la fuente no lo trae).
+  Trazabilidad en `data/processed/m2/origen.csv`; huellas en `results/data/m2/eda/procesado.json`.
+- D5. Ids `m2_NNNNN` por posición en el .zip (con huecos para los ilegibles); `n_variables` = 2 (imagen y clase).
+- Pendiente de ética (JO-11): el `DATA USE AGREEMENT` del depósito en Zenodo prohíbe redistribuir y menciona rostros visibles,
+  frente a CC BY 4.0 en Mendeley (C-6 de `JO-1_fuentes_m2.md`).
+
+### 3.2 Partición sin fuga (JO-3) 🧠
 Hash perceptual (pHash/dHash) + similitud coseno de características de la red congelada → grafo de casi duplicados →
 componentes conexas = `grupo_duplicado`. Partición estratificada **por grupo** (70/15/15). Umbrales justificados con ejemplos
 visuales en la frontera. `test_fuga_m2.py`: ningún grupo en dos particiones y ningún par por debajo del umbral cruzado.
+
+**[DECIDIDO, José, 27-nov] (JO-3).** Motivo: el artículo declara imágenes aumentadas guardadas junto a las originales sin decir
+cuáles (F-36, C-4 de `JO-1_fuentes_m2.md`) y 178 conductores fotografiados durante 30 días (ráfagas casi iguales).
+- D1. pHash de 64 bits (`imagehash`) de cada imagen **y de su espejo horizontal** (el artículo menciona volteos); distancia de
+  Hamming = mínimo entre la imagen y el espejo de la otra. Se calcula sobre las 224×224 versionadas (reproducible sin el .zip).
+- D2. Características de **ResNet-18 ImageNet** (torchvision) congelada, vector GAP de 512, similitud coseno. Los pesos se bajan
+  una sola vez con un script que verifica su huella; los experimentos corren sin internet. Las características quedan en caché
+  (no versionada) y JO-4 las reutiliza.
+- D3. Arista si Hamming ≤ umbral **o** coseno ≥ umbral; grupos = componentes conexas. Umbrales en la config, propuestos con la
+  distribución y una figura de pares en la frontera, aprobados por José. Si un grupo supera el **15 %** de las imágenes se
+  detiene y se decide con José.
+- D4. 70/15/15 por grupo, estratificada por clase, semilla en la config, huella SHA-256 en `results/data/m2/particion/resumen.json`.
+  Casi duplicados de clases distintas no se corrigen: se registran como hallazgo de datos (misma escena, otra acción: el mismo
+  conductor segundos después; revisado a ojo en la figura de la frontera, no son etiquetas mal puestas).
+- D5. Limitación declarada: no se elimina la fuga por identidad del conductor (la fuente no trae id de conductor); va al blog.
+
+**[DECIDIDO, José, 28-nov] (JO-3, tras la figura de la frontera).**
+- D6. Umbrales `umbral_hamming` = 2 y `umbral_coseno` = 0,95: los más permisivos (los que agrupan más) que no superan la guarda del 15 % (con 4 / 0,94
+  el grupo mayor llega a 35,8 % / 28,6 % por encadenamiento). Los pares justo fuera siguen siendo el mismo conductor (D5).
+- D7. Estratificación por el **conteo de clases de cada grupo** (no por su clase mayoritaria), para que cada clase quede en 70/15/15.
+- D8. `particion.semilla` = 2026 (la misma de M3).
+- D9. (Tras auditor-fugas.) Arista adicional por **marca de tiempo de la cámara** (nombre original `IMG_AAAAMMDD_HHMMSSmmm` en
+  `origen.csv`, 404 fotos): dos fotos a ≤ 10 s se unen. Es metadato, no la clase. Se mantiene la guarda del 15 %. Lo que queda se
+  declara con cifras en el blog: ráfagas sin marca de tiempo por debajo de los umbrales y el mismo conductor en otra pose (D5);
+  la protección contra rotaciones y recortes del rango del artículo es empírica (búsqueda con variantes), no propia del criterio.
+  Ampliación (José, 28-nov): la misma regla de ≤ 10 s se aplica a los otros dos formatos de nombre con hora que registra JO-1
+  (`PATRONES_NOMBRE` de `datos.py`: 183 PNG `AAAA-MM-DDhh-mm-ss` y 11 `photo_AAAA-MM-DD_hh-mm-ss`, resolución de segundos).
 
 ### 3.3 Modelos (JO-4, JO-5, JO-6) [PROPUESTO]
 - Referencia: características de una red preentrenada **congelada** (en caché) + regresión logística multinomial (C con búsqueda
@@ -75,9 +116,9 @@ elegido según costo relativo (en `configs/m2/alertas.yaml`).
 ## 4. Tareas
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
-| JO-1 | Descarga, ficha y lectura del artículo | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json`; conteos por clase y resolución medidos | ⬜ |
+| JO-1 | Descarga, ficha y lectura del artículo | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json`; conteos por clase y resolución medidos | ✅ 27-nov |
 | JO-2 | Descriptivo M2 (plantilla §5.12) | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json` con clases difíciles | ⬜ |
-| JO-3 | Casi duplicados y partición por grupos (§3.2) | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m2.py` en verde; figura de pares en la frontera | ⬜ |
+| JO-3 | Casi duplicados y partición por grupos (§3.2) | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m2.py` en verde; figura de pares en la frontera | ✅ 28-nov |
 | JO-4 | Características congeladas + logística | jue 26 | implementador (Sonnet) | revisor-spec (Sonnet) | `summary.json` con presupuesto y parámetros | ⬜ |
 | JO-5 | CNN propia + ajuste fino + búsqueda | jue 26–vie 27 | implementador (Sonnet) | revisor-calidad (Haiku) | Parámetros desde config; `hpo_ensayos.json` | ⬜ |
 | JO-6 | 30 semillas (GPU) | vie 27–sáb 28 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | 30 archivos por red; dispositivo y tiempo registrados | ⬜ |

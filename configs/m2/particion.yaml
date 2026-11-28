@@ -1,0 +1,143 @@
+# M2 — partición sin fuga por grupos de casi duplicados (JO-3; docs/spec/partes/jose.md §3.2, D1–D5).
+# Uso: .venv/bin/python run.py m2-datos --config configs/m2/particion.yaml
+# Parte de las imágenes 224x224 ya procesadas (JO-1) y de indice.csv; no necesita el .zip. Orden de regeneración desde cero:
+#   1) run.py m2-datos --config configs/m2/datos.yaml       (deja grupo_duplicado y split vacíos)
+#   2) run.py m2-datos --config configs/m2/particion.yaml   (los llena; también puede correrse sola)
+#   3) run.py figures                                        (figura de la frontera, src/viz/figs_m2.py)
+# Sin red: los pesos se bajan UNA vez con scripts/descargar_pesos_m2.py a data/raw/m2/pesos/ (no versionado).
+# Todo parámetro vive aquí; src/m2_conduccion/{duplicados,particion}.py no fijan ninguno.
+
+etapa: particion                 # datos.main delega en particion.main
+
+entrada:
+  carpeta: data/processed/m2
+  indice: indice.csv             # columnas del núcleo §5.5; se reescribe con las mismas filas, columnas y orden
+  origen: origen.csv             # archivo_original: nombre original en el .zip (marca de tiempo de la cámara, D9)
+
+salida:
+  carpeta: results/data/m2/particion            # resumen.json, pares_cercanos.csv, frontera.csv
+  calidad: results/data/m2/eda/calidad.csv      # + filas casi_duplicado_entre_clases (D4)
+  procesado: results/data/m2/eda/procesado.json # se actualiza sha256_indice
+
+hash:                            # D1 [DECIDIDO, José, 27-nov]
+  tam_hash: 8                    # 8x8 = 64 bits
+  factor_alta_frecuencia: 4      # valor por omisión de imagehash.phash: imagen gris de 32x32 antes de la DCT
+  espejo: true                   # también el pHash del espejo horizontal (el artículo menciona volteos)
+
+caracteristicas:                 # D2 [DECIDIDO, José, 27-nov]
+  red: resnet18
+  pesos: data/raw/m2/pesos/resnet18-f37072fd.pth
+  # SHA-256 medido por scripts/descargar_pesos_m2.py el 27-nov (empieza por el prefijo f37072fd del nombre de torchvision).
+  sha256_pesos: f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec
+  # Normalización de ResNet18_Weights.IMAGENET1K_V1.transforms() (una prueba comprueba que coinciden).
+  media: [0.485, 0.456, 0.406]
+  desviacion: [0.229, 0.224, 0.225]
+  lote: 64
+  dispositivo: cpu               # la máquina de José no tiene GPU NVIDIA; en cpu los cosenos se repiten en la misma máquina y versiones
+  cache: data/processed/m2/cache/caracteristicas_resnet18.npz   # no versionada (.gitignore propio); la reutiliza JO-4
+
+grafo:                           # D3
+  # [DECIDIDO, José, 28-nov] D6 (ver textos.eleccion_umbrales)
+  umbral_hamming: 2
+  umbral_coseno: 0.95
+  fraccion_maxima_grupo: 0.15    # [DECIDIDO, José, 27-nov]: si un grupo supera el 15 % se detiene sin escribir
+  bloque: 1024                   # filas por bloque al comparar todos con todos: solo controla la memoria
+
+tiempo:                          # D9 [DECIDIDO, José, 28-nov] + ampliación a los otros dos formatos con hora (José, 28-nov)
+  # Arista entre fotos cuya marca de tiempo del nombre original difiere ≤ umbral_segundos (inclusivo). Cada patrón tiene
+  # grupos de ancho fijo: año, mes, día, hora, minuto, segundo y, si lo hay, milisegundos (6 o 7 grupos); la fecha se arma
+  # con enteros (no strptime, que acepta campos de ancho variable y fechas imposibles). Se usa el primer formato que coincide.
+  # A los patrones que no terminan en «$» se les exige que no siga otro dígito «(?!\d)» (así «…1323166650» no es una marca).
+  formatos:
+    - nombre: IMG_AAAAMMDD_HHMMSSmmm         # 404 fotos (medido); propio: el de JO-1 no captura los milisegundos
+      patron: '^IMG_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})(\d{3})(?!\d)'   # (?!\d): sin un dígito más
+    - nombre: AAAA-MM-DDhh-mm-ss             # 183 PNG (medido); resolución de segundos
+      patron_jo1: AAAA-MM-DDhh-mm-ss         # clave de PATRONES_NOMBRE en src/m2_conduccion/datos.py (sin duplicarlo)
+    - nombre: photo_AAAA-MM-DD_hh-mm-ss      # 11 fotos (medido); resolución de segundos
+      patron_jo1: photo_AAAA-MM-DD_hh-mm-ss
+  umbral_segundos: 10
+
+fuga_residual:                   # cifras de resumen.json (fuga_residual), recalculadas en cada corrida
+  coseno_bajo: 0.90              # se cuentan las imágenes de validación/prueba con vecino en train por debajo
+  intervalos_coseno: [[0.90, 0.95], [0.94, 0.95]]   # [a, b) del coseno al vecino más cercano en train
+  segundos_cercania: [10, 60]    # fotos con marca que tienen una de train a ≤ s segundos
+
+particion:                       # D4 [DECIDIDO, José, 27-nov] 70/15/15 por grupo; D7 [DECIDIDO, José, 28-nov] por conteo de clases
+  semilla: 2026                  # D8 [DECIDIDO, José, 28-nov]: la misma de M3
+  run_id: 0                      # semilla efectiva = semilla + run_id (src/comun/seeds.py)
+  proporciones: {train: 0.70, validacion: 0.15, prueba: 0.15}
+
+frontera:                        # figura de pares en la frontera (D3)
+  n_por_lado: 8
+  semilla: 2026                  # solo desempata qué pares se muestran cuando hay empate en la distancia
+  run_id: 0                      # generador = make_rng(semilla, run_id) (src/comun/seeds.py)
+  margen_hamming: 4              # se buscan pares «fuera» hasta τ_H + 4
+  margen_coseno: 0.05            # y hasta τ_c − 0,05
+
+barrido:                         # umbrales candidatos que se reportan en resumen.json (cada criterio por separado)
+  hamming: [0, 2, 4, 6, 8, 10, 12, 14]
+  coseno: [0.90, 0.92, 0.94, 0.95, 0.96, 0.97, 0.98]
+  cuantiles: [0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9]
+
+textos:
+  metodo: >-
+    pHash de 64 bits (imagehash) de cada imagen 224x224 versionada y de su espejo horizontal; d_H(a, b) = mín(H(a, b),
+    H(a, espejo(b)), H(espejo(a), b)). Vector GAP de 512 de ResNet-18 ImageNet congelada (eval, normalización de ImageNet)
+    y similitud coseno. Arista si d_H ≤ umbral_hamming, coseno ≥ umbral_coseno o marcas de tiempo del nombre original
+    a ≤ umbral_segundos (D9: IMG_AAAAMMDD_HHMMSSmmm, AAAA-MM-DDhh-mm-ss y photo_AAAA-MM-DD_hh-mm-ss); grupo_duplicado =
+    componente conexa (union-find). Partición 70/15/15 por grupo, estratificada por el conteo de clases de cada grupo (D7): con d_kc = p_k·N_c − n_kc,
+    cada grupo g (de mayor a menor tamaño, empates barajados con la semilla) va al split k* = argmax_k Σ_c v_gc·d_kc, el
+    que menos aumenta el error cuadrático total Σ_k Σ_c d_kc². Los pares entre clases distintas son la misma escena con otra
+    acción (el mismo conductor segundos después); no se corrigen (D4).
+  estado_umbrales: >-
+    [DECIDIDO, José, 28-nov] D6, aprobados con la figura de la frontera (D3).
+  eleccion_umbrales: >-
+    Sin etiquetas y antes de partir, con la distribución medida (distribucion_para_umbrales y barrido_umbrales de este
+    archivo) y la revisión visual de muestras de pares. (1) Hash: cada pHash tiene exactamente 32 unos (umbral en la mediana
+    de 64 coeficientes), así que d_H es siempre par (d_H = 64 − 2·|a∧b|); los candidatos son 0, 2, 4…. Con d_H ≤ 2 los
+    pares revisados son el mismo conductor en la misma escena; con d_H = 4 ya aparecen conductores distintos en el mismo
+    carro y la componente más grande salta por encima del 15 % (barrido_umbrales.hamming), así que τ_H = 2. (2) Coseno: el
+    coseno al vecino más cercano se concentra cerca de 1 (casi todas las fotos tienen otra casi igual); entre 0,95 y 0,94 la
+    componente más grande pasa de unos cientos a miles de imágenes (encadenamiento entre conductores parecidos en el mismo
+    carro), así que τ_c = 0,95 es el umbral más permisivo de la rejilla que queda por debajo de la guarda del 15 %. Un
+    umbral más permisivo protege más contra la fuga, pero junta conductores distintos y rompe la estratificación.
+  detalle_entre_clases: >-
+    pares con arista entre clases distintas: misma escena, otra acción (el mismo conductor segundos después; revisado a ojo
+    en la figura de la frontera, no son etiquetas mal puestas); no se corrigen (D4 de JO-3)
+  nota_procesado: >-
+    Actualizado por la partición de JO-3 (src/m2_conduccion/particion.py), que llena grupo_duplicado y split; volver a
+    correr m2-datos con configs/m2/datos.yaml los vacía.
+  nota_cache: >-
+    La caché de características no se versiona: la partición es un paso de datos, no la demo del módulo (la demo de menos
+    de 2 minutos es run.py m2, JO-10). JO-4 reutiliza esta caché. ultima_extraccion_sin_cache es el tiempo medido de la
+    última corrida que extrajo las características con la red (sin caché) y su dispositivo; esta_corrida es la corrida que
+    escribió este archivo.
+  nota_tiempo_camara: >-
+    pares_por_tiempo cuenta todos los pares a ≤ umbral_segundos; los que también cumplen hash o coseno llevan ese criterio
+    en pares_cercanos.csv y la diferencia en la columna segundos. Las marcas de formatos distintos se comparan en la misma
+    escala aunque no se sepa si sus cámaras comparten reloj.
+  nota_fuga_residual: >-
+    Cifras recalculadas en cada corrida sobre la partición escrita (no copiadas del auditor). Intervalos [a, b) del coseno
+    al vecino más cercano en train.
+  pie_figura_frontera: >-
+    d_H: Hamming del pHash de 64 bits con espejo; cos: coseno del GAP de ResNet-18 ImageNet congelada. Texto de color:
+    clases distintas. Umbrales decididos por José (D6, 28-nov).
+  limitacion_conductor: >-
+    La fuente no trae un identificador de conductor (178 conductores según el artículo). La partición separa por grupos los
+    pares con d_H ≤ umbral_hamming (incluido el espejo horizontal), con coseno ≥ umbral_coseno y las fotos con marca de tiempo
+    del nombre original a ≤ umbral_segundos (D9 y su ampliación: solo 598 de 7 276 fotos tienen marca: 404 IMG_, 183 PNG
+    y 11 photo_). NO separa: ráfagas sin marca de tiempo que
+    quedan por debajo de los umbrales (ver fuga_residual: más del 90 % de las imágenes de validación y de prueba
+    tienen en train un vecino con coseno entre 0,90 y 0,95), el mismo conductor en otra pose (D5) ni, por construcción, rotaciones o recortes:
+    estos solo se buscaron empíricamente. El desempeño en prueba puede sobrestimar el de conductores nuevos (va al blog).
+  fugas_descartadas: >-
+    Ningún grupo en dos splits y ningún par con arista (hash, coseno o marca de tiempo en cualquiera de los tres formatos de
+    nombre) entre splits: se comprueba antes de escribir y en tests/test_fuga_m2.py, que además recalcula el pHash de las
+    imágenes versionadas y las marcas de tiempo de origen.csv. Las marcas de formatos distintos se comparan en la misma escala
+    (no se sabe si las cámaras comparten reloj; unir de más solo agranda grupos); en estos datos los tres formatos caen en
+    días distintos y no hay pares entre formatos. El grafo no usa la clase ni el split y ninguna transformación se ajusta con los datos (pHash fijo, red
+    congelada con pesos de ImageNet). Los umbrales se eligieron con la distribución de distancias sin etiquetas, antes de
+    partir. Rotaciones y recortes del rango del artículo: búsqueda empírica del auditor-fugas (28-nov, sobre la partición
+    ANTERIOR a D9; alucinaciones/evidencias/JO-3/auditor-fugas/auditoria.json): con 9 variantes por imagen de prueba (±5,
+    ±10, ±15 grados, zoom 0,9 y 0,8, espejo), 1 variante llegó a coseno ≥ 0,95 con una imagen de train (0,9516, zoom 0,9) y
+    23 quedaron a d_H ≤ 2; no es una garantía del criterio.

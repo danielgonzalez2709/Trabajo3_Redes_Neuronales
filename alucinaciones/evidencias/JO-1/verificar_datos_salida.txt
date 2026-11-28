@@ -1,0 +1,62 @@
+# Recalculo independiente de JO-1 (M2)
+Python 3.12.13, Pillow 13.0.0, numpy 2.5.5
+
+## 1. Archivo .zip
+[IGUAL] tamano_bytes: recalculado=2556850881 | publicado=2556850881
+[IGUAL] sha256_zip: recalculado='427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c' | publicado='427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c'
+
+## 2. Conteos por clase
+[IGUAL] por_clase_en_zip: recalculado={'other_activities': 1190, 'safe_driving': 1679, 'talking_phone': 1513, 'texting_phone': 1561, 'turning': 1343} | publicado={'other_activities': 1190, 'safe_driving': 1679, 'talking_phone': 1513, 'texting_phone': 1561, 'turning': 1343}
+[IGUAL] total_en_zip: recalculado=7286 | publicado=7286
+[IGUAL] ilegibles: recalculado=10 | publicado=10
+[IGUAL] ilegibles_por_clase: recalculado={'other_activities': 6, 'turning': 4} | publicado={'other_activities': 6, 'turning': 4}
+[IGUAL] por_clase_legibles: recalculado={'other_activities': 1184, 'safe_driving': 1679, 'talking_phone': 1513, 'texting_phone': 1561, 'turning': 1339} | publicado={'other_activities': 1184, 'safe_driving': 1679, 'talking_phone': 1513, 'texting_phone': 1561, 'turning': 1339}
+[IGUAL] n_registros: recalculado=7276 | publicado=7276
+[IGUAL] archivos ilegibles (calidad.csv): recalculado=['Multi-Class Driver Behavior Image Dataset/other_activities/img_13318.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_13396.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_13541.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_13625.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_20398.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_22266.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_101434.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_62337.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_67523.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_70552.jpg'] | publicado=['Multi-Class Driver Behavior Image Dataset/other_activities/img_13318.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_13396.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_13541.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_13625.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_20398.jpg', 'Multi-Class Driver Behavior Image Dataset/other_activities/img_22266.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_101434.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_62337.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_67523.jpg', 'Multi-Class Driver Behavior Image Dataset/turning/img_70552.jpg']
+  tipos de error: Counter({'UnidentifiedImageError': 10})
+
+## 3. Formato, modo, extension
+[IGUAL] extensiones: recalculado={'.JPG': 32, '.jpg': 7054, '.png': 200} | publicado={'.JPG': 32, '.jpg': 7054, '.png': 200}
+[IGUAL] formatos: recalculado={'JPEG': 7076, 'PNG': 200} | publicado={'JPEG': 7076, 'PNG': 200}
+[IGUAL] modos: recalculado={'RGB': 7076, 'RGBA': 200} | publicado={'RGB': 7076, 'RGBA': 200}
+
+## 4. Resoluciones
+  top-10 sin EXIF (desempate por nombre): [['640x480', 6629], ['683x384', 183], ['3072x4096', 182], ['2460x3280', 135], ['4096x3072', 80], ['4032x3024', 32], ['720x1280', 8], ['1200x1200', 1], ['2371x3310', 1], ['2395x2938', 1]]
+  top-10 tras EXIF (desempate por nombre): [['640x480', 6629], ['3072x4096', 262], ['683x384', 183], ['2460x3280', 136], ['3024x4032', 32], ['720x1280', 8], ['1200x1200', 1], ['2371x3310', 1], ['2395x2938', 1], ['2462x2939', 1]]
+[IGUAL] top-6 sin EXIF: recalculado=[['640x480', 6629], ['683x384', 183], ['3072x4096', 182], ['2460x3280', 135], ['4096x3072', 80], ['4032x3024', 32]] | publicado=[['640x480', 6629], ['683x384', 183], ['3072x4096', 182], ['2460x3280', 135], ['4096x3072', 80], ['4032x3024', 32]]
+[IGUAL] top-6 tras EXIF: recalculado=[['640x480', 6629], ['3072x4096', 262], ['683x384', 183], ['2460x3280', 136], ['3024x4032', 32], ['720x1280', 8]] | publicado=[['640x480', 6629], ['3072x4096', 262], ['683x384', 183], ['2460x3280', 136], ['3024x4032', 32], ['720x1280', 8]]
+[IGUAL] distintas sin EXIF: recalculado=34 | publicado=34
+[IGUAL] distintas tras EXIF: recalculado=32 | publicado=32
+[IGUAL] cada par publicado sin EXIF existe con ese conteo: recalculado=True | publicado=True
+[IGUAL] cada par publicado tras EXIF existe con ese conteo: recalculado=True | publicado=True
+[IGUAL] imagenes 400x600 o 600x400: recalculado=0 | publicado=0
+
+## 5. EXIF
+[IGUAL] orientacion_distribucion: recalculado={'1': 318, '6': 112, '8': 1, 'sin_orientacion': 6845} | publicado={'1': 318, '6': 112, '8': 1, 'sin_orientacion': 6845}
+[IGUAL] orientacion_aplicada_por_valor: recalculado={'6': 112, '8': 1} | publicado={'6': 112, '8': 1}
+[IGUAL] orientacion_aplicada_n: recalculado=113 | publicado=113
+[IGUAL] marca: recalculado={'Apple': 32, 'motorola': 404} | publicado={'Apple': 32, 'motorola': 404}
+[IGUAL] modelo: recalculado={'iPhone 11': 32, 'motorola edge 50 fusion': 404} | publicado={'iPhone 11': 32, 'motorola edge 50 fusion': 404}
+
+## 6. PNG alfa
+[IGUAL] n_png: recalculado=200 | publicado=200
+[IGUAL] n_rgba: recalculado=200 | publicado=200
+[IGUAL] n_alfa_totalmente_opaco: recalculado=200 | publicado=200
+
+## 7. Fechas medidas
+[IGUAL] exif_datetime: recalculado={'n': 431, 'minimo': '2024-09-30 13:22:40', 'maximo': '2024-10-28 14:36:04', 'por_anio_mes': {'2024-09': 324, '2024-10': 107}} | publicado={'n': 431, 'minimo': '2024-09-30 13:22:40', 'maximo': '2024-10-28 14:36:04', 'por_anio_mes': {'2024-09': 324, '2024-10': 107}}
+[IGUAL] nombres AAAA-MM-DDhh-mm-ss: recalculado={'n': 183, 'minimo': '2019-04-24 16:01:33', 'maximo': '2019-04-24 17:31:59', 'por_anio_mes': {'2019-04': 183}} | publicado={'n': 183, 'minimo': '2019-04-24 16:01:33', 'maximo': '2019-04-24 17:31:59', 'por_anio_mes': {'2019-04': 183}}
+[IGUAL] nombres photo_AAAA-MM-DD_hh-mm-ss: recalculado={'n': 11, 'minimo': '2024-09-14 14:51:02', 'maximo': '2024-09-14 15:12:22', 'por_anio_mes': {'2024-09': 11}} | publicado={'n': 11, 'minimo': '2024-09-14 14:51:02', 'maximo': '2024-09-14 15:12:22', 'por_anio_mes': {'2024-09': 11}}
+[IGUAL] nombres IMG_AAAAMMDD_hhmmss: recalculado={'n': 404, 'minimo': '2024-09-30 13:22:37', 'maximo': '2024-10-28 14:34:32', 'por_anio_mes': {'2024-09': 329, '2024-10': 75}} | publicado={'n': 404, 'minimo': '2024-09-30 13:22:37', 'maximo': '2024-10-28 14:34:32', 'por_anio_mes': {'2024-09': 329, '2024-10': 75}}
+
+## 8. Procesados versionados
+[IGUAL] filas de indice.csv: recalculado=7276 | publicado=7276
+[IGUAL] sha256 indice.csv: recalculado='e3c3caa10e723003c2658a047fa844e8c8669539e33933d51aa3cb48d9d72d7a' | publicado='e3c3caa10e723003c2658a047fa844e8c8669539e33933d51aa3cb48d9d72d7a'
+[IGUAL] huella de imagenes procesadas: recalculado='97d8d51e2051aef039f3aceef52ce5ba9ee0d6811a7d918d60e431b98dfbfe2c' | publicado='97d8d51e2051aef039f3aceef52ce5ba9ee0d6811a7d918d60e431b98dfbfe2c'
+[IGUAL] tamanos procesados: recalculado={(224, 224): 7276} | publicado={(224, 224): 7276}
+[IGUAL] modos procesados: recalculado={'RGB': 7276} | publicado={'RGB': 7276}
+[IGUAL] formatos procesados: recalculado={'JPEG': 7276} | publicado={'JPEG': 7276}
+[IGUAL] clases en indice.csv: recalculado={'other_activities': 1184, 'safe_driving': 1679, 'talking_phone': 1513, 'texting_phone': 1561, 'turning': 1339} | publicado={'other_activities': 1184, 'safe_driving': 1679, 'talking_phone': 1513, 'texting_phone': 1561, 'turning': 1339}
+[IGUAL] grupo_duplicado y split vacios: recalculado=True | publicado=True
+
+## Resumen: 39 de 39 comprobaciones IGUALES

@@ -8,7 +8,7 @@ evidencia no cuenta.
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
 | M1 | | 1 candidato menor sin número (CA-3d, implementador-experto) | | | 1 candidato sin número (CA-6a, investigador-fuentes) |
-| M2 | | | | | |
+| M2 | | 1 candidato menor sin número (JO-1, orquestador) | 1 candidato sin número (JO-3a, implementador-experto) · 1 candidato menor sin número (JO-3c, orquestador) | | 1 candidato menor sin número (JO-3b, orquestador; sin prompt literal) |
 | M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) · 1 candidato sin número (JJ-4, orquestador + implementador: MF colapsada) · 1 candidato menor sin número (JJ-4, redactor) · 1 candidato menor sin número (JJ-5, orquestador + implementador-experto: personalización) | 1 candidato menor sin número (JJ-2, analista) · 1 candidato menor sin número (JJ-4, guarda 1e-8) · 1 candidato menor sin número (JJ-5, fracción en [0, 1]) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) · 1 candidato menor sin número (JJ-5, orquestador: destinos fríos) |
 | Común | | H-01 (candidato) | | | |
 
@@ -249,6 +249,89 @@ evidencia no cuenta.
 - **Estado:** candidato menor. El origen probable es la redacción de MEMORIA (documentador o sesión de JJ-2; no se buscó el
   prompt exacto); el prompt literal del eslabón de JJ-3 sí está guardado.
 
+### H-?? (JO-1) — «JPEG calidad 85 — coherente con el preprocesado fijo de la app»
+- **Módulo / categoría / quién lo encontró:** M2 / **Código** (coherencia entre el preprocesado de entrenamiento y el de la
+  app), menor / lo detectó el `cazador-alucinaciones` (Opus) en la revisión de JO-1. Dirige: José.
+- **1. Prompt literal:** `alucinaciones/prompts/JO-1b-curador-datos.md`, l. 18–19 (sesión principal, Opus 5.5 →
+  curador-datos, Sonnet), dentro del bloque «Decisiones de José»: «Resolución **224×224**, redimensionado **estirando** […] con
+  interpolación **bilineal** de PIL, RGB, JPEG calidad 85 — coherente con el preprocesado fijo de la app (spec de José §3.0)».
+  José eligió 224×224; el JPEG calidad 85 lo propuso la sesión principal y lo rotuló como decisión de José.
+- **2. Respuesta relevante de la IA:** el curador implementó la recompresión JPEG 85 en `src/m2_conduccion/datos.py` y versionó
+  las 7 276 imágenes así (commit `3531620`), sin declarar ninguna diferencia con la app.
+- **3. Cómo se sospechó:** se le pidió al cazador contrastar la frase con `app/lib/imagen.ts` y `app/lib/contratos.ts`: estirar,
+  bilineal y RGB coinciden, pero la app redimensiona la foto original **sin recompresión**. La afirmación es cierta en lo que
+  dice e incompleta en lo que calla.
+- **4. Evidencia:** `alucinaciones/evidencias/JO-1/experimento_jpeg85.py` → `experimento_jpeg85_salida.txt` (292 imágenes):
+  diferencia media 2,74 niveles de 255 (p99 14, máx. 90); 55,7 % de los valores fuera de la tolerancia ±1 de la paridad de la
+  app; recodificar a JPEG 85 reproduce los bytes versionados en 292 de 292.
+- **5. Corrección:** José decidió (27-nov) mantener JPEG 85 por tamaño del repositorio (~112 MB; sin pérdida serían varios
+  cientos) y **declarar** la diferencia: `configs/m2/datos.yaml` (`diferencias_con_app`), `results/data/m2/eda/ficha.json`
+  (`conteos.diferencias_con_app`) y una fila en `calidad.csv` (commit `86ca3eb`, prompt `JO-1c-curador-datos.md`). Va también a
+  la sección de limitaciones del blog de M2.
+- **6. Lección aprendida:** «coherente con X» hay que verificarlo paso a paso contra X, también en lo que se agrega. Una
+  decisión del orquestador escrita dentro de las «decisiones del humano» deja de revisarse, porque los subagentes no la
+  discuten.
+- **Estado:** candidato (José lo aprobó el 27-nov). Matiz para Andrés: no es una afirmación falsa sino una omisión con efecto
+  medido; la paridad ONNX↔PyTorch no se ve afectada (usa la misma entrada), solo la distribución de entrenamiento frente a la de
+  la app.
+
+### H-?? (JO-3a) — «la partición elimina las ráfagas casi iguales entre splits»
+- **Módulo / categoría / quién lo encontró:** M2 / **Datos del mundo real** / lo detectó el `auditor-fugas` (Opus) en la
+  auditoría de JO-3 (28-nov). Dirige: José.
+- **1. Prompt literal:** `alucinaciones/prompts/JO-3-implementador-experto.md` a `-3.md` (sesión principal, Opus 5.5 →
+  implementador-experto, Opus). El prompt pedía dejar escrita la limitación D5; no pedía afirmar nada sobre ráfagas.
+- **2. Respuesta relevante de la IA:** los textos `limitacion_conductor` y `fugas_descartadas` de `configs/m2/particion.yaml`
+  (copiados a `results/data/m2/particion/resumen.json`) afirmaban que la partición «elimina los casi duplicados (aumentos,
+  espejos, ráfagas casi iguales) entre splits».
+- **3. Cómo se sospechó:** el auditor leyó las marcas de tiempo de cámara que conservan los nombres originales en
+  `data/processed/m2/origen.csv` y buscó fotos tomadas segundos aparte en splits distintos.
+- **4. Evidencia:** `alucinaciones/evidencias/JO-3/auditor-fugas/` (`auditoria.json`, `pares_rafaga_10s.csv`, `auditoria_m2.py`,
+  `rafaga_*.jpg`): sobre la partición previa a D9, de 404 fotos `IMG_…`, 9 pares a ≤ 3 s y 129 a ≤ 10 s quedaban en splits
+  distintos (37 train–prueba), con coseno 0,85–0,949 y d_H ≥ 4; p. ej. m2_02926 / m2_02927, mismo conductor y pose a ~2 s.
+  Prueba `tests/test_fuga_m2_auditoria.py` (era xfail strict y fallaba con `assert 9 == 0`).
+- **5. Corrección:** D9 [DECIDIDO, José, 28-nov]: arista por marca de tiempo ≤ 10 s en los tres formatos de nombre (598 fotos);
+  0 ráfagas ≤ 10 s cruzan splits. Textos reescritos con lo que sí y lo que no se separa, y bloque `fuga_residual` con cifras.
+- **6. Lección aprendida:** una frase de «lo que la partición garantiza» es una afirmación empírica: hay que medirla con un
+  método independiente del criterio usado (aquí, el tiempo), no deducirla del criterio.
+- **Estado:** candidato. Falta confirmar en qué vuelta del implementador entró la frase (los archivos no estaban en git).
+
+### H-?? (JO-3b) — «2 / 0,95 son los umbrales más estrictos que no superan la guarda del 15 %»
+- **Módulo / categoría / quién lo encontró:** M2 / **Conceptos**, menor / lo detectó el `implementador-experto` (Opus) en la
+  2.ª vuelta de JO-3 (28-nov). Dirige: José.
+- **1. Prompt literal:** no hay prompt a un subagente: el error lo escribió la sesión principal (Opus 5.5) en su respuesta a
+  José y en `docs/spec/partes/jose.md` §3.2 D6. José aprobó D6 con esa redacción. Prompt que lo detectó:
+  `alucinaciones/prompts/JO-3-implementador-experto-2.md`.
+- **2. Respuesta relevante de la IA:** «Umbrales d_H ≤ 2 y coseno ≥ 0,95. Son los más estrictos posibles sin pasar la guarda
+  del 15 %» (respuesta a José) y en D6 «los más estrictos que no superan la guarda del 15 %».
+- **3. Cómo se sospechó:** el implementador notó que valores más estrictos (p. ej. 0 / 0,99) también pasan la guarda: lo que
+  la guarda limita es aflojar, no apretar.
+- **4. Evidencia:** `results/data/m2/particion/resumen.json`, `barrido_umbrales`: con d_H ≤ 2 el grupo mayor es 179 imágenes y
+  con ≤ 4 es 2 607 (35,8 %); con coseno 0,95 es 434 y con 0,94 es 2 082 (28,6 %). La guarda crece al aflojar.
+- **5. Corrección:** D6 dice ahora «los más permisivos (los que agrupan más) que no superan la guarda del 15 %». La decisión no
+  cambia. Se le informó a José.
+- **6. Lección aprendida:** «estricto» y «permisivo» se invierten según si el umbral es una distancia o una similitud y según
+  qué se quiere evitar. Conviene decir el efecto («agrupa más / menos») en lugar del adjetivo.
+- **Estado:** candidato menor. Matiz para Andrés: no hay prompt literal a un subagente (error del orquestador en el chat); la
+  evidencia es el diff de `jose.md` y el barrido. Puede no contar si se exige prompt literal.
+
+### H-?? (JO-3c) — «el auditor no encontró versiones rotadas o recortadas cruzando splits»
+- **Módulo / categoría / quién lo encontró:** M2 / **Datos del mundo real**, menor / lo detectó el `implementador-experto`
+  (Opus) en la 4.ª vuelta de JO-3 (28-nov). Dirige: José.
+- **1. Prompt literal:** `alucinaciones/prompts/JO-3-implementador-experto-4.md`, bloque A4 (sesión principal, Opus 5.5 →
+  implementador-experto): «rotaciones/recortes del rango del artículo no son propios del criterio: su ausencia entre splits se
+  comprobó empíricamente con variantes ±5/10/15°, zoom 0,9/0,8 y espejo». Lo mismo dijo la sesión principal a José en el chat.
+- **2. Respuesta relevante de la IA:** la sesión principal resumió así el informe del auditor, que en realidad decía «solo 1
+  variante supera 0,95 (máximo 0,9515, … una ráfaga de 6,5 s y no un aumento)».
+- **3. Cómo se sospechó:** el implementador cruzó la frase pedida con `auditoria.json` antes de escribirla y se negó a copiarla.
+- **4. Evidencia:** `alucinaciones/evidencias/JO-3/auditor-fugas/auditoria.json`: 1 variante (zoom 0,9; prueba m2_06070 frente a
+  train m2_06069) con coseno 0,9516 ≥ 0,95 y 23 variantes a d_H ≤ 2 de train, sobre la partición previa a D9.
+- **5. Corrección:** los textos de la config citan las cifras reales con su fuente y dicen que la búsqueda no es una garantía del
+  criterio. Tras D9 ese par quedó en el mismo grupo (g_00048, ambos en prueba). Se le informó a José.
+- **6. Lección aprendida:** al resumir el informe de un subagente para otro, el orquestador redondeó «casi ninguna, y la única es
+  otra cosa» a «ninguna». Pasar las cifras, no la conclusión.
+- **Estado:** candidato menor.
+
+
 ### H-?? (JJ-4) — La «mejor» factorización de la búsqueda era la solución trivial X = Y = 0
 - **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (con efecto en Código) / lo detectó el
   `verificador-matematico` (Opus) en R1 de JJ-4; lo confirmó la sesión principal con numpy. Dirige: Juan José.
@@ -449,3 +532,60 @@ evidencia no cuenta.
 - **Archivos:** `verificar_R4.py` → `verificar_R4_salida.txt` (35 OK, 1 MAL: la clave del Gini por lugar) y
   `cifras_blog.py` → `cifras_blog_salida.txt`, en `alucinaciones/evidencias/JJ-2/`. La clave mal citada del Gini por lugar
   y las cuatro frases que decían más que las cifras las corrigió la sesión principal en el blog (26-nov).
+
+### JO-1 (M2, conjunto de Mendeley y procesado 224×224) — cazador-alucinaciones (Opus), 2026-11-27
+Prompt: `alucinaciones/prompts/JO-1-revisiones.md` (sección «cazador-alucinaciones»). Evidencia en `alucinaciones/evidencias/JO-1/`;
+las fuentes primarias se descargaron el 2026-11-27 a `fuentes/` (XML de PMC12019831 por E-utilities, API pública de Mendeley
+del conjunto y de sus archivos, API de Zenodo 14908802, Crossref y el BibTeX oficial de ambos DOI vía doi.org).
+**Resultado: 0 afirmaciones incorrectas de IA; no se registra ningún candidato nuevo.** Dos imprecisiones menores, abajo.
+*Actualización (27-nov):* José decidió registrar la primera imprecisión («coherente con el preprocesado fijo de la app») como
+candidato menor: ver «H-?? (JO-1)» en Hallazgos.
+- **Cifras de los datos (recálculo independiente, sin importar `datos.py` ni `JO-1_inventario.py`):** `verificar_datos.py` →
+  `verificar_datos_salida.txt`, **39 de 39 iguales**: tamaño y SHA-256 del .zip; conteo por clase en el .zip (1 190 / 1 679 /
+  1 513 / 1 561 / 1 343 = 7 286) y legibles (1 184 / 1 679 / 1 513 / 1 561 / 1 339 = 7 276); los 10 ilegibles (mismos
+  archivos que `calidad.csv`, todos `UnidentifiedImageError`; 6 en `other_activities` y 4 en `turning`); extensiones, formatos y
+  modos; resoluciones más frecuentes sin y con EXIF (34 y 32 distintas; 640×480 = 6 629) y 0 imágenes de 400×600 en cualquier
+  orientación; distribución de Orientation (1: 318, 6: 112, 8: 1, sin etiqueta: 6 845; aplicadas 113); marca y modelo EXIF
+  (motorola edge 50 fusion 404, iPhone 11 32); alfa de los 200 PNG RGBA (200 totalmente opacos); las cuatro familias de
+  `fechas_medidas` (n, mínimo, máximo y meses); y los procesados versionados (7 276 filas de `indice.csv`, SHA-256 del índice y
+  huella global de las imágenes iguales a `procesado.json`, todas 224×224 RGB JPEG, `grupo_duplicado` y `split` vacíos).
+- **Citas textuales:** `verificar_citas.py` → `verificar_citas_salida.txt`: 117 de 155 fragmentos entre «» aparecen literalmente en
+  las fuentes descargadas. Los 38 restantes se revisaron uno a uno: (a) metadatos que están en el HTML de Mendeley (`citation_*`
+  y la «citation» del JSON-LD, verificados aparte), en la lista de autores del XML de PMC o en el JSON de Zenodo
+  («Shakil, Shariear»); (b) citas armadas desde viñetas o celdas de tabla (conteos de §2.1, «Type of data: JPEG», lista de
+  aumentos de §3.3, «Birulia.Zone»), cuyo contenido coincide; (c) frases en español del enunciado (Anexo, `SPEC.md` l. 649-650),
+  que coinciden; (d) las 6 citas del `DATA USE AGREEMENT.docx` de Zenodo: **NO VERIFICABLES** en esta sesión (Zenodo devolvió
+  403 «unusual traffic» a la descarga del .docx); (e) frases propias del informe entre comillas, no atribuidas a una fuente.
+- **Diccionario de clases:** las 10 definiciones de `diccionario.json` (5 del artículo, Tabla 1, y 5 de Mendeley) son subcadenas
+  literales de su fuente, y la marca `elidido` es correcta en las 10 (se cotejó el texto completo de cada celda y párrafo).
+- **Referencias y licencia:** autores, año, título, volumen y número de artículo coinciden con Crossref y con el BibTeX oficial
+  de doi.org (artículo: 2025, *Data in Brief* 60, 111529; conjunto: Mendeley Data, 2024, publicado el 2024-11-15 según la API).
+  La forma APA 7 de `ficha.json` y `data/fuentes.md` es correcta (apellidos según Crossref; «Ms.» es tratamiento y se omite).
+  Licencia del conjunto CC BY 4.0 (`data_licence` de la API de Mendeley, texto citado idéntico) y del artículo CC BY 4.0 (Crossref,
+  versión de registro, desde 2025-03-26). Fechas: PMC epub 2025-04-04; Zenodo 2025-02-25; tamaño del .zip de Zenodo
+  2 556 847 360 bytes (correcto en el informe).
+- **Preprocesado frente a la app (afirmación de la orquestadora en `JO-1b-curador-datos.md`, «coherente con el preprocesado fijo
+  de la app»): IMPRECISA, no incorrecta.** Coinciden estirar sin conservar proporción, interpolación bilineal tipo PIL y RGB
+  (`app/lib/imagen.ts`, `pesosBilineales`/`redimensionarBilineal`; `app/lib/contratos.ts`, `PreprocesadoM2`; `datos.py` l. 209 usa
+  `Image.resize(..., BILINEAR)` sin `draft`). La app **no** recomprime a JPEG: `experimento_jpeg85.py` →
+  `experimento_jpeg85_salida.txt` (292 imágenes, cada 25.ª id) mide entre el estirado sin recomprimir y el JPEG 85 versionado
+  |diferencia| media 2,74 niveles de 255 (mediana 2, p99 14, máximo 90) y un 55,7 % de los valores fuera de la tolerancia ±1 de la
+  paridad de la app; recodificar el estirado como JPEG 85 reproduce los bytes versionados en 292 de 292. Hay que declararlo: el
+  modelo se entrena con imágenes con artefactos JPEG y la app le pasa imágenes sin ellos. No se registra como candidato porque lo
+  que la frase afirma es cierto y lo omitido es un detalle; además, la frase está dentro de las «Decisiones de José», así que su
+  autoría (humano o IA) no es segura. Diferencias menores no medidas: la app aplica la orientación EXIF solo si el navegador la
+  aplica al decodificar, y en un PNG con transparencia ignora el alfa en lugar de componer sobre blanco (el procesado no lo
+  necesitó: todos los PNG son opacos).
+- **Localizadores imprecisos en `JO-1_fuentes_m2.md` (investigador-fuentes, Sonnet): IMPRECISA.** C-9 ubica «Unlike staged
+  datasets» en «§1/§4», pero está en §8 (Conclusion); «naturalistic» sí está en §1. El rótulo «Value of the Data» no existe como
+  título en el XML de PMC (las viñetas citadas están entre la tabla de especificaciones y §1; el texto coincide). El contenido de
+  las citas es correcto. Tampoco existe la numeración `[F-n]` en el archivo (estaba en el mensaje final del agente, no guardado), así
+  que la referencia «F-19» del prompt `JO-1b-curador-datos.md` no se puede rastrear; lo que dice (la fuente no etiqueta el tipo de
+  vehículo) sí está en §7. No se registran como candidatos.
+  *Actualización (sesión principal, 27-nov, tras JO-1c):* los localizadores se corrigieron y el archivo numera ahora `[F-1]`…`[F-44]`;
+  la afirmación del tipo de vehículo es **F-42** (commit `86ca3eb`).
+- **Discrepancias fuente frente a datos (hallazgos de datos, no alucinaciones):** «400 × 600» (artículo §2.1) frente a 0 imágenes
+  con esa resolución; «October 2024» y «30 days» frente a EXIF del 2024-09-30 al 2024-10-28 (324 de 431 en septiembre), 11
+  nombres `photo_` del 2024-09-14 y 183 nombres con fecha 2019-04-24; «unprocessed» (Mendeley) frente a un 91 % de imágenes
+  640×480 sin EXIF; el .zip de Zenodo pesa 3 521 bytes menos que el de Mendeley (los depósitos no son idénticos byte a byte;
+  contenido no comparado).

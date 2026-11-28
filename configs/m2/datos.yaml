@@ -1,0 +1,181 @@
+# M2 — datos procesados (JO-1, fase B) y secciones 1–2 de la plantilla común (núcleo §5.12).
+# Uso: .venv/bin/python run.py m2-datos --config configs/m2/datos.yaml
+# Sin red: lee el .zip de data/raw/m2/ sin extraerlo (descarga con scripts/descargar_m2.py; ver data/fuentes.md).
+# Todo parámetro del preprocesado vive aquí; src/m2_conduccion/datos.py no fija ninguno.
+# Cifras de referencia de la fase A: docs/investigacion/JO-1_inventario_salida.txt; textos de la fuente:
+# docs/investigacion/JO-1_fuentes_m2.md (los textos de este archivo se copian de allí y una prueba lo comprueba).
+
+entrada:
+  zip: data/raw/m2/Multi-Class Driver Behavior Image Dataset.zip   # no se versiona
+  sha256_esperado: 427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c
+  tamano_bytes_esperado: 2556850881
+  extensiones_imagen: [".jpg", ".jpeg", ".png"]    # se compara en minúsculas (el .zip trae 32 «.JPG»)
+  # Nombres exactos de las carpetas (decisión de José). La clase de una imagen es la carpeta que la contiene.
+  clases: [other_activities, safe_driving, talking_phone, texting_phone, turning]
+
+salida:
+  carpeta: data/processed/m2
+  imagenes: imagenes             # data/processed/m2/imagenes/<clase>/<id>.jpg
+  # núcleo §5.5 (sin tipo_vehiculo: la fuente no lo etiqueta). [DECIDIDO, José, 27-nov]: «ancho» y «alto» = dimensiones
+  # ORIGINALES de la foto tras la orientación EXIF (no el tamaño del archivo procesado, que es siempre «tamano»).
+  indice: indice.csv
+  origen: origen.csv
+  eda: results/data/m2/eda       # ficha.json, calidad.csv, diccionario.json, procesado.json
+
+preprocesado:
+  tamano: [224, 224]             # [ancho, alto]; coherente con el preprocesado fijo de la app (spec de José §3.0)
+  redimensionado: estirar        # sin conservar la proporción
+  interpolacion: bilineal        # PIL.Image.BILINEAR
+  modo: RGB
+  formato: JPEG
+  calidad_jpeg: 85               # [DECIDIDO, José, 27-nov]: se mantiene; la diferencia con la app está en «diferencias_con_app»
+  # [DECIDIDO, José, 27-nov]: aplicar la orientación EXIF antes de redimensionar.
+  aplicar_orientacion_exif: true
+  # Color del fondo si un PNG RGBA tuviera píxeles no opacos. En los 200 PNG reales el alfa es opaco en todos
+  # (medido el 27-nov), así que no se usa; se deja por si cambia la fuente.
+  fondo_alfa: [255, 255, 255]
+
+fuente:
+  nombre: Multi-Class Driver Behavior Image Dataset (Mendeley Data), versión 1
+  # Cita APA 7 del conjunto (docs/investigacion/JO-1_fuentes_m2.md §1; sigue al artículo y a Crossref).
+  cita: >-
+    Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2024). Multi-class driver behavior image dataset
+    (Version 1) [Data set]. Mendeley Data. https://doi.org/10.17632/mzb4b6dff3.1
+  url: https://doi.org/10.17632/mzb4b6dff3.1
+  fecha_descarga: "2026-11-27"                 # data/fuentes.md, entrada M2
+  unidad_de_observacion: >-
+    una fotografía de un conductor dentro de un vehículo (automóvil particular o bus público, según la fuente),
+    etiquetada con una de 5 clases de comportamiento; la clase es la carpeta que la contiene
+  # Variables por registro que trae la fuente: la imagen (píxeles) y la clase (carpeta). La fuente no etiqueta tipo de
+  # vehículo, iluminación ni ángulo (JO-1_fuentes_m2.md §7). [DECIDIDO, José, 27-nov]: n_variables = 2.
+  n_variables: 2
+  n_variables_justificacion: >-
+    2 = la imagen y la clase (carpeta). La fuente no trae metadatos por imagen: el artículo solo describe «Each class was
+    saved in a separate folder» (§3.3/§3.4) y no declara etiqueta de tipo de vehículo, iluminación ni ángulo
+    (docs/investigacion/JO-1_fuentes_m2.md §7). indice.csv tiene 7 columnas, pero id, archivo, ancho y alto los
+    calculamos nosotros y grupo_duplicado y split los llena JO-3. [DECIDIDO, José, 27-nov]
+  periodo:
+    rotulo: según el artículo
+    texto: >-
+      October 2024 (Data in Brief 60, 111529, Tabla de especificaciones; Mendeley, descripción). El artículo, §2, añade:
+      «Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours per
+      day.»
+    cita: Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time
+      detection and road safety enhancement. Data in Brief, 60, Article 111529. https://doi.org/10.1016/j.dib.2025.111529
+    nota: no hay una fecha por imagen declarada; las fechas medidas en el archivo (EXIF y nombres) van en conteos.fechas_medidas
+
+# [DECIDIDO, José, 27-nov]: JPEG calidad 85 se mantiene y se DECLARA su diferencia con la app. Cifras COPIADAS (no re-medidas)
+# de alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt (medidas por el cazador-alucinaciones con
+# experimento_jpeg85.py); una prueba comprueba que coinciden con ese archivo.
+diferencias_con_app:
+  decision: >-
+    [DECIDIDO, José, 27-nov] JPEG calidad 85 se mantiene y se declara la diferencia con la app.
+  descripcion: >-
+    La app redimensiona la foto original sin recompresión; el entrenamiento usa la imagen recomprimida en JPEG.
+  muestra_imagenes: 292
+  muestra_criterio: cada 25.ª id de indice.csv
+  valores_de_canal: 43954176
+  recodificar_reproduce_los_bytes_versionados: 292 de 292
+  diferencia_absoluta_media_niveles: 2.741     # |redimensionado sin recomprimir - JPEG 85| por valor de canal, de 255
+  mediana: 2
+  p95: 9
+  p99: 14
+  maximo: 90
+  fraccion_fuera_de_mas_menos_1: 0.5572        # tolerancia ±1 de la paridad de la app
+  mae_por_imagen: {minimo: 2.193, mediana: 2.680, maximo: 4.514}
+  evidencia: alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt
+
+# Conteos que declaran los autores (artículo, §2.1 «Dataset statistics»; JO-1_fuentes_m2.md §5). La correspondencia
+# «Others» ↔ other_activities (y las demás) es por nombre: inferencia nuestra, no dicha por la fuente.
+declarado:
+  fuente: "Afridi et al. (2025), Data in Brief 60, 111529, §2.1 «Dataset statistics»"
+  total: 7286
+  por_clase:
+    safe_driving: 1679
+    turning: 1343
+    talking_phone: 1513
+    texting_phone: 1561
+    other_activities: 1190
+  resolucion: [400, 600]          # «Each image has a resolution of 400 × 600 pixels» (§2.1)
+  texto_resolucion: "Each image has a resolution of 400 × 600 pixels"
+
+# Definiciones de los autores, copiadas de docs/investigacion/JO-1_fuentes_m2.md §4. «elidido: true» = la fase A transcribió
+# solo el comienzo de la definición (el documento de la fase A marca el resto con «…»); no se completa de memoria.
+diccionario:
+  nota: >-
+    Texto en inglés tal como aparece en la fuente. La correspondencia carpeta ↔ nombre de la Tabla 1 del artículo es por
+    nombre (inferencia nuestra). Nada de estas definiciones es propio.
+  clases:
+    safe_driving:
+      articulo:
+        nombre: Safe Driving
+        fuente: "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1"
+        elidido: false
+        texto: >-
+          Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steering
+          wheel while paying close attention to the road.
+      mendeley:
+        nombre: "I. Safe Driving"
+        fuente: "Mendeley Data, versión 1, descripción del conjunto"
+        elidido: true
+        texto: >-
+          Images showing a driver who seems to be paying attention to the road, both hands on the wheel, and concentrated
+          or 1 hand on the steering wheel and other on the gear stick.
+    turning:
+      articulo:
+        nombre: Turning
+        fuente: "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1"
+        elidido: false
+        texto: >-
+          The driver is turning the car, requiring full attention to ensure the maneuver is performed safely.
+      mendeley:
+        nombre: "II. Turning"
+        fuente: "Mendeley Data, versión 1, descripción del conjunto"
+        elidido: true
+        texto: >-
+          Photographs that show drivers changing direction during turns by moving their heads or full bodies.
+    texting_phone:
+      articulo:
+        nombre: Texting phone
+        fuente: "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1"
+        elidido: false
+        texto: >-
+          The driver is texting while driving, which significantly diverts their attention from the road.
+      mendeley:
+        nombre: "III. Texting Phone"
+        fuente: "Mendeley Data, versión 1, descripción del conjunto"
+        elidido: true
+        texto: >-
+          Pictures of drivers using their phones, whether it is to type messages or to interact with the screen.
+    talking_phone:
+      articulo:
+        nombre: Talking phone
+        fuente: "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1"
+        elidido: true
+        texto: >-
+          The driver is using the phone in their hand or holding it to their ear while making a phone call.
+      mendeley:
+        nombre: "IV. Talking Phones"
+        fuente: "Mendeley Data, versión 1, descripción del conjunto"
+        elidido: true
+        texto: >-
+          When drivers talk on their phones or hold them up to their ears while driving a vehicle.
+    other_activities:
+      articulo:
+        nombre: Others
+        fuente: "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1"
+        elidido: true
+        texto: >-
+          This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleeping
+          while driving.
+      mendeley:
+        nombre: "V. Others"
+        fuente: "Mendeley Data, versión 1, descripción del conjunto"
+        elidido: false
+        texto: >-
+          Contains any actions that go against safe driving practices, like drinking water or anything while driving,
+          sleeping while driving, or talking with someone behind while driving.
+  diferencias_entre_fuentes: >-
+    Artículo y Mendeley describen las clases con palabras distintas y no coinciden en los ejemplos de «Others» (artículo:
+    hablar con pasajeros, comer, beber, dormir; Mendeley: beber agua u otra cosa, dormir, hablar con alguien de atrás);
+    ver docs/investigacion/JO-1_fuentes_m2.md §4 y C-5, C-8.

@@ -6,32 +6,18 @@
 - Daniel en `main`: DA-1 infraestructura (PR #1); DA-2/3/4 series reales de M1 en `data/processed/m1/` (6 series,
   2021–2023, marcas de anómalos; `run.py m1-datos` desde `data/raw/m1/`, PR #2); DA-5 app en https://trabajo3-redes-neuronales.vercel.app/
   (Vercel, Root Directory `app`, producción desde `main`; contratos en `app/lib/contratos.ts`); DA-5c/DA-7/DA-11 (PR #5).
-- JJ-1 (datos de M3) en `main` (PR #6, 27-nov): `run.py m3-datos` construye `data/processed/m3/*.parquet` y
-  `results/data/m3/eda/` desde `data/raw/m3/` (Kaggle `amanmehra23/travel-recommendation-dataset`, no versionado). 999 usuarios,
-  1 000 destinos (5 lugares), 1 998 interacciones (999 reseñas + 999 historial), densidad 0,20 %. Rótulo de fecha: «creación de
-  la versión 1 en Kaggle (2024-01-23)». Investigación: `docs/investigacion/JJ-1_fuentes_m3.md`.
-- JJ-2 (descriptivo de M3 + caso de uso) en `main` (PR #6, 27-nov): `run.py m3-eda` e `hipotesis.json` (9 hipótesis:
-  H-M3-1 y H-M3-4 no concluyentes, H-M3-2/3/5/6 refutadas, H-M3-7/8/9 pendientes para JJ-10); `run.py figures` genera 4 figuras
-  en `blog/docs/figures/m3/`; blog 07 con caso de uso. Las interacciones se parecen a un reparto uniforme al azar.
-- JJ-3 (partición sin fuga de M3) en `main` (PR #6, 27-nov): `split` ∈ {train, validacion, prueba} en `interacciones.parquet`
-  (semilla 2026; huella `b35cd70b…58e8b8` en `results/data/m3/particion/resumen.json`). 1 066 / 326 / 606; 858 usuarios con
-  interacciones, 141 no evaluables. `src/m3_recomendacion/particion.py`; `tests/test_fuga_m3.py` (53 pruebas; SIN FUGA).
-- JJ-4 (referencias + @K de M3) en PR #9 (con JJ-5): `run.py m3-hpo` (Optuna TPE, 20 ensayos, NDCG@5 en validación;
-  mejor ensayo 19: f = 4, λ ≈ 0,0021, α ≈ 1,485, 9 barridos; 0 degenerados) y `run.py m3 --config configs/m3/base.yaml`
-  (popularidad, MF-ALS y aleatorio; 30 semillas). Demo `configs/m3/demo.yaml` (< 2 min; `results/data/m3_demo/`).
-  Recall@10: popularidad 0,0069, MF 0,0105, aleatorio 0,0096, esperado 0,0100 (diferencias menores que el error estándar de 606 usuarios);
-  cobertura@10: 0,025 / 0,101 / 0,997. Blog 07: «Métricas de evaluación» y «Modelos de referencia».
-- JJ-5 (red de dos torres de M3) en PR #9 (con JJ-4): `m3-hpo` busca MF y red (20 ensayos cada una);
-  red: mejor ensayo 18, NDCG@5 de validación 0,0067; d = 32, MLP 64 (usuario) y 16 (destino), 2 negativos, BCE, lr ≈ 7,4e-4,
-  weight decay ≈ 3,6e-4, dropout ≈ 0,25 (copiados a `base.yaml`). Red en prueba: NDCG@5 0,0026 ± 0,0010, Recall@10 0,0098 ± 0,0034
-  (azar 0,0030 y 0,0100), cobertura@10 0,028, 52 192 parámetros; al nivel del azar. Archivos: `src/m3_recomendacion/{red,contenido}.py`,
-  `tests/test_red_m3.py`; 4 figuras comunes (`red_arquitectura`, `red_curvas`, `busqueda_m3`, `cajas_m3`); blog 07 «Red neuronal de dos torres».
-  Revisado por verificador-matematico (4.ª vuelta), auditor-fugas (SIN FUGA; 20/20 mutantes muertos), revisor-spec y revisor-calidad.
-- CA-1..CA-4 ✅ y CA-5 🟨 de M1 en `main` (PR #7, 28-nov). CA-3 (flota y conductores): `run.py m1-operacion` escribe
-  `results/data/m1/operacion/` (incluida `nomina_semanal.csv`); m_r por ruta (por corredor como sensibilidad,
-  `calibracion.multiplicador`). Revisado por revisor-spec, verificador-matematico y revisor-calidad (2.ª vuelta), más R1/R2/R8/R10.
-- Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
-- Entrega: mar 1-dic-2026 (hora por confirmar).
+- M3 en `main` (Juan José): JJ-1..JJ-3 (PR #6: datos de Kaggle `amanmehra23/travel-recommendation-dataset`, 999 usuarios,
+  1 000 destinos en 5 lugares, 1 998 interacciones; descriptivo con 9 hipótesis; partición 1 066 / 326 / 606, huella `b35cd70b…`,
+  SIN FUGA) y JJ-4/JJ-5 (PR #9: popularidad, MF-ALS, aleatorio y red de dos torres; 20 ensayos y 30 semillas; todos al nivel
+  del azar, p. ej. Recall@10 ≈ 0,010 frente a 0,0100 esperado; métricas también por lugar). Demo `configs/m3/demo.yaml` (< 2 min).
+  Detalle en `juanjose.md` y `results/data/m3/summary.json`.
+- M1 en `main` (Camila, PR #7): CA-1..CA-4 ✅ y CA-5 🟨. CA-3: `run.py m1-operacion` escribe `results/data/m1/operacion/`
+  (incl. `nomina_semanal.csv`); m_r por ruta (por corredor como sensibilidad, `calibracion.multiplicador`).
+- M2 en PR #8 (José): JO-1 (`run.py m2-datos`, Mendeley con SHA-256; 7 276 imágenes 224×224 versionadas, 10 ilegibles) y
+  JO-3 (`configs/m2/particion.yaml`: pHash con espejo d_H ≤ 2, ResNet-18 coseno ≥ 0,95 o ráfaga ≤ 10 s → 341 grupos; 5 095 /
+  1 091 / 1 090 estratificado; 0 pares cruzan; huella `e0a6b55a…`). Fuga residual por conductor declarada en `resumen.json`
+  (`fuga_residual`). Pesos y caché no versionados (`scripts/descargar_pesos_m2.py`). Detalle en `jose.md` §3.1–§3.2.
+- Adelantado: blog 01, 03, 08, 11 y 13; guion del video (`video/guion.md`, 2:30). Entrega: mar 1-dic-2026 (hora por confirmar).
 
 ## Decisiones vigentes
 - Git: solo Daniel fusiona a `main` por PR; cada quien en `dev/<nombre>`; push permitido a otras ramas, nunca a `main`.
@@ -62,6 +48,14 @@
   todos los modelos, con su huella en la `evidencia`; HPO y parada temprana con validación, modelos finales solo con train y
   una evaluación en prueba; toda estadística de interacciones solo con train (`popularidad_train`); candidatos = catálogo
   menos historial conocido (prueba: train ∪ validación; validación: train); clave de una interacción = `(origen, id_origen)`.
+- M2 [DECIDIDO, José, 27-nov; `docs/spec/partes/jose.md` §3.1]: D1 se versionan las 7 276 imágenes legibles en
+  `data/processed/m2/imagenes/` (~112 MB) y los 10 ilegibles se excluyen y registran en `calidad.csv`; D2 224×224 estirado,
+  bilineal (PIL), RGB, JPEG calidad 85 (la app no recomprime: diferencia declarada en `ficha.json`); D3 orientación EXIF antes de
+  redimensionar (113 imágenes); D4 `ancho`/`alto` originales tras EXIF, sin `tipo_vehiculo` (la fuente no lo trae), trazabilidad en
+  `origen.csv`; D5 ids `m2_NNNNN` por posición en el .zip y `n_variables` = 2.
+- M2 [DECIDIDO, José, 27–28-nov; `jose.md` §3.2] JO-3 (D1–D9): pHash 64 bits con espejo (d_H ≤ 2) o ResNet-18 ImageNet congelada (coseno ≥ 0,95),
+  umbrales = los más permisivos que no superan la guarda del 15 %; arista por marca de tiempo ≤ 10 s (D9); estratificación por conteo de clases del
+  grupo; semilla 2026; pares entre clases = misma escena, otra acción (no se corrigen); fuga por conductor declarada (D5, sin id de conductor).
 - M3 [DECIDIDO, Juan José, 27-nov; `juanjose.md` §3.2–§3.3, D11–D14]: referencias = popularidad de train (empates al azar), MF
   implícita por ALS (Hu, Koren y Volinsky, 2008 [VERIFICAR en JJ-9]) y aleatorio con esperado analítico; Recall@K = acierto@K y
   Precision@K = acierto@K/K (1 relevante por usuario); cobertura /1 000; Gini y HHI de exposiciones; acierto por lugar solo
@@ -91,20 +85,20 @@
   `calendario.parquet` `c29dc412…ae2fb9` (antes `7478d74a…baecec6`). Reentrenar o reevaluar lo que lo use.
 - M3: la demo en vivo con otra semilla debe redirigir las salidas a `results/data/m3_demo/` (orden en `configs/m3/datos.yaml`);
   sin redirigir se pisan archivos versionados.
+- M2: el artículo declara 400×600 y «October 2024», pero lo medido es 640×480 en el 91 % y fechas de 2019 y septiembre de 2024
+  (hallazgos de datos para el blog de M2). El entrenamiento de M2 usa JPEG 85 y la app no recomprime (diferencia declarada).
+- M2: la máquina de José no tiene GPU NVIDIA (afecta JO-6).
+- M2 (JO-3): `m2-datos` con `datos.yaml` vacía `grupo_duplicado` y `split`; correr después la partición con `particion.yaml`.
 - M3/JJ-5: la red se agrega con una entrada en `referencias.MODELOS`, una en `hpo.BUSQUEDAS` y un bloque `<nombre>:` en la config,
   sin tocar `experimento.py`; su `diagnosticos()` debe traer `degenerado`; el bloque `busqueda:` es de la MF y la red tiene el suyo.
-- M3, PR de JJ-4 y JJ-5 (juntos): incluir `results/data/m3/*` (incl. `curvas/`, `arquitectura/`, `semillas/red_seed*.json`),
-  `models/m3/*` (incl. `red.{pt,json}`) y las 4 figuras nuevas; las pruebas y `run.py figures` los leen. `base.yaml` usa
-  `hiperparametros_desde: config` (red y MF = mejor ensayo; las claves en vivo cambian el modelo; `summary.json` reporta los 20
-  ensayos mientras sea el mejor ensayo; si se repite `m3-hpo`, volver a copiarlo: lo vigilan pruebas). Máquina de Juan José:
-  ~0,8 GB libres; un solo proceso con torch a la vez.
-
+- M3: `base.yaml` usa `hiperparametros_desde: config` (mejor ensayo); si se repite `m3-hpo`, volver a copiarlo (lo vigilan
+  pruebas). Máquina de Juan José: ~0,8 GB libres; un solo proceso con torch a la vez.
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
 2. GPU para las 30 semillas de M2.
 3. Daniel: DA-11 (notebook 00), DA-6/DA-7/DA-8 cuando lleguen las exportaciones reales (sáb 28), grabación del video.
 4. Juan José:
-   - PR de JJ-4 + JJ-5 (ver Avisos; JJ-1 a JJ-3 ya en `main`, PR #6). Confirmar columnas de `interacciones.parquet` frente a §5.7 (`fecha_visita`, `id_origen`,
+   - Confirmar columnas de `interacciones.parquet` frente a §5.7 (`fecha_visita`, `id_origen`,
      `origen`); si se confirman, PR dedicado al núcleo.
    - Decidir lo [PROPUESTO]: JJ-2 (umbral, efectos mínimos, `en_el_limite`); JJ-3 (diagnósticos, guardas, nombre de la semilla);
      JJ-4 (rangos, tope λ = 5,0, tolerancia 1e-8, semilla del sampler 2026, `n_parametros` = 1 000 conteos, respaldo MF 16/0,1/10/10,
@@ -118,6 +112,7 @@
    - JJ-5, no bloqueante (Juan José: no se aplican por ahora): R-1 a R-19 del revisor-calidad, 2.ª vuelta (`juanjose.md` §3.2).
    - JJ-9: verificar Bergsma (2013), Romano et al. (2006), Hu et al. (2008; DOI 10.1109/ICDM.2008.22 según el verificador),
      Rendle et al. (2009; BPR, `TODO(cita)`) y la cifra de páginas; `torch.optim.Adam` a la bibliografía si JJ-8 la cita.
+5. José: JO-1 y JO-3 en PR #8; JO-2 (descriptivo de M2) como siguiente tarea (el blog de M2 reporta la fuga residual con las cifras de `fuga_residual`); ética (C-6: acuerdo de uso de Zenodo frente a CC BY 4.0 de Mendeley, rostros visibles) para JO-11; GPU para JO-6.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
@@ -133,17 +128,23 @@
   - JJ-5 (3): «personalización = desviación entre usuarios de s_ui» (Matemáticas; origen en el prompt del orquestador Opus);
     «la fracción es 0 si S es constante / está en [0, 1]» en punto flotante (Código, menor); «los fríos quedan por debajo de los
     destinos con train» (Conceptos, menor).
-  - Ver `alucinaciones/registro.md`.
+- Candidatos de M2 (sin número; evidencia en `alucinaciones/evidencias/JO-<n>/`):
+  - JO-1 (Código, menor; orquestador Opus): «coherente con el preprocesado fijo de la app» omitía la recompresión JPEG.
+  - JO-3 (3): «la partición elimina las ráfagas casi iguales entre splits» (Datos del mundo real; implementador-experto Opus; lo detectó auditor-fugas); «2 / 0,95 son los umbrales más estrictos que no superan la guarda del 15 %» (Conceptos, menor; orquestador Opus, sin prompt literal); «el auditor no encontró versiones rotadas o recortadas cruzando splits» (Datos del mundo real, menor; orquestador Opus → implementador-experto); evidencia en `alucinaciones/evidencias/JO-3/`.
+- Ver `alucinaciones/registro.md`.
 - Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
-- 2026-11-28 · Daniel · PR #6, #10 y #7 fusionados; conflictos de #9 y #8 resueltos en sus ramas. Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
+- 2026-11-28 · Daniel · PR #6, #10, #7 y #9 fusionados; conflictos de #7, #9 y #8 resueltos en sus ramas. Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
   CPU (fallaba el #8), `results/**` y `*.csv` byte a byte en `.gitattributes` (huellas SHA-256 en Windows) y `test_no_network`
-  ya no reescribe las figuras versionadas. En clones de Windows existentes: `git checkout -- results tests/fixtures`.
+  ya no reescribe las figuras versionadas. En clones de Windows existentes: borrar `results/` y `tests/fixtures/` y luego `git checkout -- results tests/fixtures`.
+- 2026-11-28 · José · JO-3 ✅: partición sin fuga de M2 (341 grupos, 70/15/15 por clase, huella `e0a6b55a…`, 0 pares cruzados), D1–D9 en `jose.md` §3.2; fuga residual por conductor declarada; 3 candidatos a la cacería.
 - 2026-11-27 · Juan José · JJ-4 ✅ (referencias @K; MF colapsada a X = Y = 0 detectada y corregida; D11–D14) y JJ-5 ✅ (red de
   dos torres, BCE/BPR, 20 ensayos y 30 semillas, al nivel del azar; D15–D19; [PROPUESTO] → [DECIDIDO]); 6 candidatos.
 - 2026-11-27 · Camila · CA-1, CA-2, CA-3 (CA-3d/e: tripulación, m_r por ruta, nómina N\*) y CA-4 ✅; CA-5 🟨 (falta arnés AN-1);
   CA-6/CA-6a (horizonte, temporada alta, costos y marco legal) y CA-1c (`fin_de_anio` desde el 10-dic); 2 candidatos.
+- 2026-11-27 · José · JO-1 ✅: descarga verificada (SHA-256), 7 276 imágenes 224×224 versionadas, ficha/calidad/diccionario de M2,
+  D1–D5 en `jose.md` §3.1; 1 candidato a la cacería.
 - 2026-11-23..26 · Spec v0.1–v0.7; Daniel DA-1..DA-5c, DA-7 (CAM) y DA-11 (PR #1–#5); Juan José JJ-1..JJ-3 (PR #6, 27-nov).
   Detalle en `git log` y en la sección Estado.

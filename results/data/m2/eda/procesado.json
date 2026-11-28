@@ -1,0 +1,179 @@
+{
+  "n_imagenes": 7276,
+  "sha256_indice": "7d5fe2cf4c8741b431012f2b1cc84288cca85a1309ff896cecd2e562352e639e",
+  "sha256_imagenes": "97d8d51e2051aef039f3aceef52ce5ba9ee0d6811a7d918d60e431b98dfbfe2c",
+  "definicion_huella_imagenes": "SHA-256 de la concatenación de los bytes de cada JPEG procesado, en orden de id (el mismo orden de indice.csv)",
+  "python": "3.12.13",
+  "pillow": "13.0.0",
+  "config": {
+    "entrada": {
+      "zip": "data/raw/m2/Multi-Class Driver Behavior Image Dataset.zip",
+      "sha256_esperado": "427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c",
+      "tamano_bytes_esperado": 2556850881,
+      "extensiones_imagen": [
+        ".jpg",
+        ".jpeg",
+        ".png"
+      ],
+      "clases": [
+        "other_activities",
+        "safe_driving",
+        "talking_phone",
+        "texting_phone",
+        "turning"
+      ]
+    },
+    "salida": {
+      "carpeta": "data/processed/m2",
+      "imagenes": "imagenes",
+      "indice": "indice.csv",
+      "origen": "origen.csv",
+      "eda": "results/data/m2/eda"
+    },
+    "preprocesado": {
+      "tamano": [
+        224,
+        224
+      ],
+      "redimensionado": "estirar",
+      "interpolacion": "bilineal",
+      "modo": "RGB",
+      "formato": "JPEG",
+      "calidad_jpeg": 85,
+      "aplicar_orientacion_exif": true,
+      "fondo_alfa": [
+        255,
+        255,
+        255
+      ]
+    },
+    "fuente": {
+      "nombre": "Multi-Class Driver Behavior Image Dataset (Mendeley Data), versión 1",
+      "cita": "Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2024). Multi-class driver behavior image dataset (Version 1) [Data set]. Mendeley Data. https://doi.org/10.17632/mzb4b6dff3.1",
+      "url": "https://doi.org/10.17632/mzb4b6dff3.1",
+      "fecha_descarga": "2026-11-27",
+      "unidad_de_observacion": "una fotografía de un conductor dentro de un vehículo (automóvil particular o bus público, según la fuente), etiquetada con una de 5 clases de comportamiento; la clase es la carpeta que la contiene",
+      "n_variables": 2,
+      "n_variables_justificacion": "2 = la imagen y la clase (carpeta). La fuente no trae metadatos por imagen: el artículo solo describe «Each class was saved in a separate folder» (§3.3/§3.4) y no declara etiqueta de tipo de vehículo, iluminación ni ángulo (docs/investigacion/JO-1_fuentes_m2.md §7). indice.csv tiene 7 columnas, pero id, archivo, ancho y alto los calculamos nosotros y grupo_duplicado y split los llena JO-3. [DECIDIDO, José, 27-nov]",
+      "periodo": {
+        "rotulo": "según el artículo",
+        "texto": "October 2024 (Data in Brief 60, 111529, Tabla de especificaciones; Mendeley, descripción). El artículo, §2, añade: «Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours per day.»",
+        "cita": "Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time detection and road safety enhancement. Data in Brief, 60, Article 111529. https://doi.org/10.1016/j.dib.2025.111529",
+        "nota": "no hay una fecha por imagen declarada; las fechas medidas en el archivo (EXIF y nombres) van en conteos.fechas_medidas"
+      }
+    },
+    "diferencias_con_app": {
+      "decision": "[DECIDIDO, José, 27-nov] JPEG calidad 85 se mantiene y se declara la diferencia con la app.",
+      "descripcion": "La app redimensiona la foto original sin recompresión; el entrenamiento usa la imagen recomprimida en JPEG.",
+      "muestra_imagenes": 292,
+      "muestra_criterio": "cada 25.ª id de indice.csv",
+      "valores_de_canal": 43954176,
+      "recodificar_reproduce_los_bytes_versionados": "292 de 292",
+      "diferencia_absoluta_media_niveles": 2.741,
+      "mediana": 2,
+      "p95": 9,
+      "p99": 14,
+      "maximo": 90,
+      "fraccion_fuera_de_mas_menos_1": 0.5572,
+      "mae_por_imagen": {
+        "minimo": 2.193,
+        "mediana": 2.68,
+        "maximo": 4.514
+      },
+      "evidencia": "alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt"
+    },
+    "declarado": {
+      "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, §2.1 «Dataset statistics»",
+      "total": 7286,
+      "por_clase": {
+        "safe_driving": 1679,
+        "turning": 1343,
+        "talking_phone": 1513,
+        "texting_phone": 1561,
+        "other_activities": 1190
+      },
+      "resolucion": [
+        400,
+        600
+      ],
+      "texto_resolucion": "Each image has a resolution of 400 × 600 pixels"
+    },
+    "diccionario": {
+      "nota": "Texto en inglés tal como aparece en la fuente. La correspondencia carpeta ↔ nombre de la Tabla 1 del artículo es por nombre (inferencia nuestra). Nada de estas definiciones es propio.",
+      "clases": {
+        "safe_driving": {
+          "articulo": {
+            "nombre": "Safe Driving",
+            "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+            "elidido": false,
+            "texto": "Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steering wheel while paying close attention to the road."
+          },
+          "mendeley": {
+            "nombre": "I. Safe Driving",
+            "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+            "elidido": true,
+            "texto": "Images showing a driver who seems to be paying attention to the road, both hands on the wheel, and concentrated or 1 hand on the steering wheel and other on the gear stick."
+          }
+        },
+        "turning": {
+          "articulo": {
+            "nombre": "Turning",
+            "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+            "elidido": false,
+            "texto": "The driver is turning the car, requiring full attention to ensure the maneuver is performed safely."
+          },
+          "mendeley": {
+            "nombre": "II. Turning",
+            "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+            "elidido": true,
+            "texto": "Photographs that show drivers changing direction during turns by moving their heads or full bodies."
+          }
+        },
+        "texting_phone": {
+          "articulo": {
+            "nombre": "Texting phone",
+            "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+            "elidido": false,
+            "texto": "The driver is texting while driving, which significantly diverts their attention from the road."
+          },
+          "mendeley": {
+            "nombre": "III. Texting Phone",
+            "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+            "elidido": true,
+            "texto": "Pictures of drivers using their phones, whether it is to type messages or to interact with the screen."
+          }
+        },
+        "talking_phone": {
+          "articulo": {
+            "nombre": "Talking phone",
+            "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+            "elidido": true,
+            "texto": "The driver is using the phone in their hand or holding it to their ear while making a phone call."
+          },
+          "mendeley": {
+            "nombre": "IV. Talking Phones",
+            "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+            "elidido": true,
+            "texto": "When drivers talk on their phones or hold them up to their ears while driving a vehicle."
+          }
+        },
+        "other_activities": {
+          "articulo": {
+            "nombre": "Others",
+            "fuente": "Afridi et al. (2025), Data in Brief 60, 111529, Tabla 1",
+            "elidido": true,
+            "texto": "This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleeping while driving."
+          },
+          "mendeley": {
+            "nombre": "V. Others",
+            "fuente": "Mendeley Data, versión 1, descripción del conjunto",
+            "elidido": false,
+            "texto": "Contains any actions that go against safe driving practices, like drinking water or anything while driving, sleeping while driving, or talking with someone behind while driving."
+          }
+        }
+      },
+      "diferencias_entre_fuentes": "Artículo y Mendeley describen las clases con palabras distintas y no coinciden en los ejemplos de «Others» (artículo: hablar con pasajeros, comer, beber, dormir; Mendeley: beber agua u otra cosa, dormir, hablar con alguien de atrás); ver docs/investigacion/JO-1_fuentes_m2.md §4 y C-5, C-8."
+    }
+  },
+  "sha256_indice_nota": "Actualizado por la partición de JO-3 (src/m2_conduccion/particion.py), que llena grupo_duplicado y split; volver a correr m2-datos con configs/m2/datos.yaml los vacía."
+}

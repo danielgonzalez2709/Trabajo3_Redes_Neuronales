@@ -1,0 +1,33 @@
+categoria,elemento,valor,detalle
+ilegible,Multi-Class Driver Behavior Image Dataset/other_activities/img_13318.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 41375; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_00261 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/other_activities/img_13396.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 43719; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_00266 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/other_activities/img_13541.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 39889; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_00283 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/other_activities/img_13625.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 41815; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_00290 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/other_activities/img_20398.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 40099; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_00847 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/other_activities/img_22266.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 43061; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_00988 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/turning/img_101434.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 49581; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_06131 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/turning/img_62337.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 51288; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_06535 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/turning/img_67523.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 45275; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_06626 (no se reutiliza)
+ilegible,Multi-Class Driver Behavior Image Dataset/turning/img_70552.jpg,UnidentifiedImageError,cannot identify image file <_io.BytesIO object>; bytes 40563; primeros 12 bytes (hex) 000000000000000000000000; id reservado m2_06685 (no se reutiliza)
+orientacion_aplicada,6,112,"ejemplos (id): m2_00124, m2_00125"
+orientacion_aplicada,8,1,ejemplos (id): m2_00076
+png_alfa,png_rgba,200,PNG 200; alfa opaco 200; no opaco 0; convert('RGB') sin pérdida: el alfa es totalmente opaco en todas
+declarado_vs_medido,total,7276,declarado 7286; medido en el .zip 7286; legibles 7276; diferencia (legibles - declarado) -10
+declarado_vs_medido,safe_driving,1679,declarado 1679; medido en el .zip 1679; legibles 1679; diferencia (legibles - declarado) 0
+declarado_vs_medido,turning,1339,declarado 1343; medido en el .zip 1343; legibles 1339; diferencia (legibles - declarado) -4
+declarado_vs_medido,talking_phone,1513,declarado 1513; medido en el .zip 1513; legibles 1513; diferencia (legibles - declarado) 0
+declarado_vs_medido,texting_phone,1561,declarado 1561; medido en el .zip 1561; legibles 1561; diferencia (legibles - declarado) 0
+declarado_vs_medido,other_activities,1184,declarado 1190; medido en el .zip 1190; legibles 1184; diferencia (legibles - declarado) -6
+declarado_vs_medido,resolucion,0,declarada 400x600; imágenes con esa resolución 0 (en cualquier orientación 0); la más frecuente medida es 640x480 con 6629 imágenes; 32 resoluciones distintas
+diferencia_con_app,jpeg85_vs_sin_recomprimir,2.741,"La app redimensiona la foto original sin recompresión; el entrenamiento usa la imagen recomprimida en JPEG. Muestra de 292 imágenes (cada 25.ª id de indice.csv): |diferencia| media 2,741 niveles de 255; mediana 2, p95 9, p99 14, máximo 90; 55,7 % de los valores fuera de ±1. Cifras copiadas de alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt"
+casi_duplicado_entre_clases,total,17952,"pares con arista entre clases distintas: misma escena, otra acción (el mismo conductor segundos después; revisado a ojo en la figura de la frontera, no son etiquetas mal puestas); no se corrigen (D4 de JO-3); lista completa en results/data/m2/particion/pares_cercanos.csv (filas con clase_a distinta de clase_b)"
+casi_duplicado_entre_clases,other_activities|safe_driving,1870,por criterio: ambos 27; coseno 1690; hamming 116; tiempo 37; ejemplo m2_00005|m2_01191
+casi_duplicado_entre_clases,other_activities|talking_phone,1027,por criterio: ambos 8; coseno 883; hamming 112; tiempo 24; ejemplo m2_00003|m2_02872
+casi_duplicado_entre_clases,other_activities|texting_phone,943,por criterio: ambos 2; coseno 866; hamming 59; tiempo 16; ejemplo m2_00001|m2_04383
+casi_duplicado_entre_clases,other_activities|turning,391,por criterio: ambos 7; coseno 349; hamming 5; tiempo 30; ejemplo m2_00001|m2_05944
+casi_duplicado_entre_clases,safe_driving|talking_phone,2475,por criterio: ambos 121; coseno 1767; hamming 583; tiempo 4; ejemplo m2_01195|m2_02875
+casi_duplicado_entre_clases,safe_driving|texting_phone,4445,por criterio: ambos 214; coseno 3564; hamming 665; tiempo 2; ejemplo m2_01191|m2_04383
+casi_duplicado_entre_clases,safe_driving|turning,267,por criterio: ambos 22; coseno 150; hamming 30; tiempo 65; ejemplo m2_01191|m2_05944
+casi_duplicado_entre_clases,talking_phone|texting_phone,5895,por criterio: ambos 228; coseno 5056; hamming 579; tiempo 32; ejemplo m2_02878|m2_04389
+casi_duplicado_entre_clases,talking_phone|turning,422,por criterio: ambos 5; coseno 317; hamming 97; tiempo 3; ejemplo m2_02875|m2_05959
+casi_duplicado_entre_clases,texting_phone|turning,217,por criterio: coseno 210; hamming 7; ejemplo m2_04383|m2_05944

@@ -1,0 +1,7 @@
+# JPEG 85 frente al estirado bilineal sin recomprimir (lo que calcula la app)
+Muestra: 292 imagenes (cada 25.a id de indice.csv), 43954176 valores de canal
+Recodificar R como JPEG 85 reproduce los bytes versionados: 292 de 292
+|R - J| medio por valor de canal: 2.741 niveles (de 255)
+|R - J| mediana / p95 / p99 / maximo: 2 / 9 / 14 / 90
+Fraccion de valores con |R - J| > 1 (fuera de la tolerancia +-1 de la paridad de la app): 0.5572
+MAE por imagen: min 2.193 / mediana 2.680 / max 4.514

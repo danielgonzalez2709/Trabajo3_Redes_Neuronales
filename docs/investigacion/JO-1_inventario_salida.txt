@@ -1,0 +1,283 @@
+# JO-1 fase A — inventario medido del .zip de M2
+Archivo: data/raw/m2/Multi-Class Driver Behavior Image Dataset.zip
+Python 3.12.13, Pillow 13.0.0, numpy 2.5.5
+
+## A2.1 Archivo
+Tamaño del .zip: 2556850881 bytes
+SHA-256 del .zip: 427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c
+Entradas del .zip: 7292 (6 directorios, 7286 archivos)
+Entradas con barra invertida en el nombre (se normalizan a '/' solo para agrupar): 0
+Entradas con ruta absoluta o '..' (no se extrae nada; solo se cuentan): 0
+Miembros-archivo contados (incluidos los de .zip anidados, excluidos los propios .zip anidados): 7286
+.zip anidados: 0
+Miembros que no son imágenes (por extensión): 0
+Extensiones de todos los miembros (tal cual, distingue mayúsculas): {'.JPG': 32, '.jpg': 7054, '.png': 200}
+
+## A2.2 Estructura de carpetas
+Árbol (carpeta: imágenes directas / imágenes en total dentro):
+  Multi-Class Driver Behavior Image Dataset/  0 / 7286
+    other_activities/  1190 / 1190
+    safe_driving/  1679 / 1679
+    talking_phone/  1513 / 1513
+    texting_phone/  1561 / 1561
+    turning/  1343 / 1343
+Profundidad máxima de carpetas con imágenes: 2
+Carpetas inmediatas de las imágenes (candidatas a clase, tal cual): ['other_activities', 'safe_driving', 'talking_phone', 'texting_phone', 'turning']
+  Nombres de carpeta en el nivel 1: ['Multi-Class Driver Behavior Image Dataset']
+  Nombres de carpeta en el nivel 2: ['other_activities', 'safe_driving', 'talking_phone', 'texting_phone', 'turning']
+Nota: este script no interpreta los nombres de carpeta; si alguno corresponde a una partición previa u otra división, hay que leerlo en el árbol de arriba.
+
+## A2.3 Conteos
+Total de imágenes (por extensión): 7286
+Imágenes por carpeta inmediata (clase candidata):
+  other_activities: 1190 (16.33 %)
+  safe_driving: 1679 (23.04 %)
+  talking_phone: 1513 (20.77 %)
+  texting_phone: 1561 (21.42 %)
+  turning: 1343 (18.43 %)
+Razón máx/mín entre carpetas inmediatas: 1.4109 (máx 1679, mín 1190)
+
+## A2.4 Formato y resolución
+### Clase other_activities  (archivos 1190, decodificados 1184)
+  Extensiones: {'.png': 65, '.jpg': 1113, '.JPG': 12}
+  Formato real PIL: {'PNG': 65, 'JPEG': 1119}
+  Extensión que no coincide con el formato real: 0 
+  Modos: {'RGBA': 65, 'RGB': 1119}
+  Resoluciones distintas (ancho x alto): 16
+    640x480: 972 (82.09 %)
+    3072x4096: 61 (5.15 %)
+    683x384: 60 (5.07 %)
+    2460x3280: 39 (3.29 %)
+    4096x3072: 29 (2.45 %)
+    4032x3024: 12 (1.01 %)
+    720x1280: 2 (0.17 %)
+    3280x2460: 1 (0.08 %)
+    2565x3707: 1 (0.08 %)
+    3120x4160: 1 (0.08 %)
+    622x888: 1 (0.08 %)
+    628x916: 1 (0.08 %)
+    624x867: 1 (0.08 %)
+    623x842: 1 (0.08 %)
+    622x931: 1 (0.08 %)
+    1200x1200: 1 (0.08 %)
+  Orientación: {'horizontal': 1074, 'vertical': 109, 'cuadrada': 1}
+  Ancho: mín 622 / mediana 640 / máx 4096
+  Alto: mín 384 / mediana 480 / máx 4160
+  Bytes: mín 30615 / mediana 42990 / máx 9065932
+  Con algún EXIF: 144 de 1184
+    Make: presente en 144; valores distintos 2; más frecuentes [('motorola', 132), ('Apple', 12)]
+    Model: presente en 144; valores distintos 2; más frecuentes [('motorola edge 50 fusion', 132), ('iPhone 11', 12)]
+    Orientation: presente en 143; valores distintos 3; más frecuentes [('1', 101), ('6', 41), ('8', 1)]
+    DateTime: presente en 143; valores distintos 142 (no se listan)
+### Clase safe_driving  (archivos 1679, decodificados 1679)
+  Extensiones: {'.png': 35, '.jpg': 1635, '.JPG': 9}
+  Formato real PIL: {'PNG': 35, 'JPEG': 1644}
+  Extensión que no coincide con el formato real: 0 
+  Modos: {'RGBA': 35, 'RGB': 1644}
+  Resoluciones distintas (ancho x alto): 23
+    640x480: 1531 (91.19 %)
+    3072x4096: 44 (2.62 %)
+    2460x3280: 32 (1.91 %)
+    683x384: 24 (1.43 %)
+    4096x3072: 17 (1.01 %)
+    4032x3024: 9 (0.54 %)
+    720x1280: 6 (0.36 %)
+    2371x3310: 1 (0.06 %)
+    2462x2939: 1 (0.06 %)
+    2519x2738: 1 (0.06 %)
+    619x894: 1 (0.06 %)
+    622x783: 1 (0.06 %)
+    621x794: 1 (0.06 %)
+    623x856: 1 (0.06 %)
+    624x818: 1 (0.06 %)
+    629x863: 1 (0.06 %)
+    625x824: 1 (0.06 %)
+    616x900: 1 (0.06 %)
+    618x918: 1 (0.06 %)
+    614x952: 1 (0.06 %)
+    611x964: 1 (0.06 %)
+    576x720: 1 (0.06 %)
+    953x1280: 1 (0.06 %)
+  Orientación: {'horizontal': 1581, 'vertical': 98}
+  Ancho: mín 576 / mediana 640 / máx 4096
+  Alto: mín 384 / mediana 480 / máx 4096
+  Bytes: mín 26720 / mediana 41695 / máx 8444440
+  Con algún EXIF: 105 de 1679
+    Make: presente en 105; valores distintos 2; más frecuentes [('motorola', 96), ('Apple', 9)]
+    Model: presente en 105; valores distintos 2; más frecuentes [('motorola edge 50 fusion', 96), ('iPhone 11', 9)]
+    Orientation: presente en 102; valores distintos 2; más frecuentes [('1', 76), ('6', 26)]
+    DateTime: presente en 102; valores distintos 102 (no se listan)
+### Clase talking_phone  (archivos 1513, decodificados 1513)
+  Extensiones: {'.png': 24, '.jpg': 1484, '.JPG': 5}
+  Formato real PIL: {'PNG': 24, 'JPEG': 1489}
+  Extensión que no coincide con el formato real: 0 
+  Modos: {'RGBA': 24, 'RGB': 1489}
+  Resoluciones distintas (ancho x alto): 6
+    640x480: 1434 (94.78 %)
+    683x384: 24 (1.59 %)
+    3072x4096: 21 (1.39 %)
+    2460x3280: 18 (1.19 %)
+    4096x3072: 11 (0.73 %)
+    4032x3024: 5 (0.33 %)
+  Orientación: {'horizontal': 1474, 'vertical': 39}
+  Ancho: mín 640 / mediana 640 / máx 4096
+  Alto: mín 384 / mediana 480 / máx 4096
+  Bytes: mín 25047 / mediana 41935 / máx 8583488
+  Con algún EXIF: 55 de 1513
+    Make: presente en 55; valores distintos 2; más frecuentes [('motorola', 50), ('Apple', 5)]
+    Model: presente en 55; valores distintos 2; más frecuentes [('motorola edge 50 fusion', 50), ('iPhone 11', 5)]
+    Orientation: presente en 55; valores distintos 2; más frecuentes [('1', 39), ('6', 16)]
+    DateTime: presente en 55; valores distintos 54 (no se listan)
+### Clase texting_phone  (archivos 1561, decodificados 1561)
+  Extensiones: {'.png': 14, '.jpg': 1547}
+  Formato real PIL: {'PNG': 14, 'JPEG': 1547}
+  Extensión que no coincide con el formato real: 0 
+  Modos: {'RGBA': 14, 'RGB': 1547}
+  Resoluciones distintas (ancho x alto): 5
+    640x480: 1505 (96.41 %)
+    3072x4096: 17 (1.09 %)
+    2460x3280: 16 (1.02 %)
+    683x384: 14 (0.90 %)
+    4096x3072: 9 (0.58 %)
+  Orientación: {'horizontal': 1528, 'vertical': 33}
+  Ancho: mín 640 / mediana 640 / máx 4096
+  Alto: mín 384 / mediana 480 / máx 4096
+  Bytes: mín 25557 / mediana 42344 / máx 8498024
+  Con algún EXIF: 42 de 1561
+    Make: presente en 42; valores distintos 1; más frecuentes [('motorola', 42)]
+    Model: presente en 42; valores distintos 1; más frecuentes [('motorola edge 50 fusion', 42)]
+    Orientation: presente en 42; valores distintos 2; más frecuentes [('1', 33), ('6', 9)]
+    DateTime: presente en 42; valores distintos 42 (no se listan)
+### Clase turning  (archivos 1343, decodificados 1339)
+  Extensiones: {'.png': 62, '.jpg': 1275, '.JPG': 6}
+  Formato real PIL: {'PNG': 62, 'JPEG': 1277}
+  Extensión que no coincide con el formato real: 0 
+  Modos: {'RGBA': 62, 'RGB': 1277}
+  Resoluciones distintas (ancho x alto): 8
+    640x480: 1187 (88.65 %)
+    683x384: 61 (4.56 %)
+    3072x4096: 39 (2.91 %)
+    2460x3280: 30 (2.24 %)
+    4096x3072: 14 (1.05 %)
+    4032x3024: 6 (0.45 %)
+    2395x2938: 1 (0.07 %)
+    625x820: 1 (0.07 %)
+  Orientación: {'horizontal': 1268, 'vertical': 71}
+  Ancho: mín 625 / mediana 640 / máx 4096
+  Alto: mín 384 / mediana 480 / máx 4096
+  Bytes: mín 27301 / mediana 43716 / máx 8512030
+  Con algún EXIF: 90 de 1339
+    Make: presente en 90; valores distintos 2; más frecuentes [('motorola', 84), ('Apple', 6)]
+    Model: presente en 90; valores distintos 2; más frecuentes [('motorola edge 50 fusion', 84), ('iPhone 11', 6)]
+    Orientation: presente en 89; valores distintos 2; más frecuentes [('1', 69), ('6', 20)]
+    DateTime: presente en 89; valores distintos 89 (no se listan)
+### Global
+  Resoluciones distintas en todo el conjunto: 34
+    640x480: 6629 (91.11 %)
+    683x384: 183 (2.52 %)
+    3072x4096: 182 (2.50 %)
+    2460x3280: 135 (1.86 %)
+    4096x3072: 80 (1.10 %)
+    4032x3024: 32 (0.44 %)
+    720x1280: 8 (0.11 %)
+    3280x2460: 1 (0.01 %)
+    2565x3707: 1 (0.01 %)
+    3120x4160: 1 (0.01 %)
+    622x888: 1 (0.01 %)
+    628x916: 1 (0.01 %)
+    624x867: 1 (0.01 %)
+    623x842: 1 (0.01 %)
+    622x931: 1 (0.01 %)
+    1200x1200: 1 (0.01 %)
+    2371x3310: 1 (0.01 %)
+    2462x2939: 1 (0.01 %)
+    2519x2738: 1 (0.01 %)
+    619x894: 1 (0.01 %)
+    622x783: 1 (0.01 %)
+    621x794: 1 (0.01 %)
+    623x856: 1 (0.01 %)
+    624x818: 1 (0.01 %)
+    629x863: 1 (0.01 %)
+    625x824: 1 (0.01 %)
+    616x900: 1 (0.01 %)
+    618x918: 1 (0.01 %)
+    614x952: 1 (0.01 %)
+    611x964: 1 (0.01 %)
+    576x720: 1 (0.01 %)
+    953x1280: 1 (0.01 %)
+    2395x2938: 1 (0.01 %)
+    625x820: 1 (0.01 %)
+  Modos: {'RGBA': 200, 'RGB': 7076}
+  Formato real PIL: {'PNG': 200, 'JPEG': 7076}
+
+## A2.5 Archivos corruptos
+Imágenes que PIL no abre o no decodifica por completo (open + load, advertencias como error): 10
+  Multi-Class Driver Behavior Image Dataset/other_activities/img_13318.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 41375; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/other_activities/img_13396.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 43719; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/other_activities/img_13541.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 39889; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/other_activities/img_13625.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 41815; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/other_activities/img_20398.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 40099; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/other_activities/img_22266.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 43061; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/turning/img_101434.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 49581; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/turning/img_62337.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 51288; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/turning/img_67523.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 45275; primeros 12 bytes (hex) 000000000000000000000000
+  Multi-Class Driver Behavior Image Dataset/turning/img_70552.jpg: UnidentifiedImageError: cannot identify image file <_io.BytesIO object>; bytes 40563; primeros 12 bytes (hex) 000000000000000000000000
+Imágenes con error al leer EXIF (no invalida la imagen): 0
+
+## A2.6 Duplicados exactos
+Mismo SHA-256 del archivo: 0 grupos; archivos que sobran (total - únicos): 0; archivos implicados: 0; grupos que cruzan carpetas inmediatas: 0
+  Tamaños de grupo (n archivos: n grupos): {}
+  Grupos dentro de una sola carpeta inmediata, por carpeta: {}
+Mismos píxeles decodificados: 0 grupos; archivos que sobran (total - únicos): 0; archivos implicados: 0; grupos que cruzan carpetas inmediatas: 0
+  Tamaños de grupo (n archivos: n grupos): {}
+  Grupos dentro de una sola carpeta inmediata, por carpeta: {}
+Grupos de píxeles idénticos cuyos archivos difieren en bytes: 0
+
+## A2.7 Nombres de archivo
+Expresiones regulares (re.IGNORECASE, sobre el nombre de archivo sin carpeta); conteo por clase:
+  patrón (regex) | other_activities | safe_driving | talking_phone | texting_phone | turning | total
+  aug  [aug] | 0 | 0 | 0 | 0 | 0 | 0
+  flip  [flip] | 0 | 0 | 0 | 0 | 0 | 0
+  rot  [rot] | 0 | 0 | 0 | 0 | 0 | 0
+  copy|copia  [copy|copia] | 0 | 0 | 0 | 0 | 0 | 0
+  (n) al final del nombre  [\(\d+\)\s*(\.[^.]+)?$] | 2 | 4 | 0 | 0 | 0 | 6
+  _n al final del nombre  [_\d+(\.[^.]+)?$] | 995 | 1551 | 1439 | 1505 | 1198 | 6688
+  solo dígitos  [^\d+\.[^.]+$] | 0 | 0 | 0 | 0 | 0 | 0
+  contiene dígitos  [\d] | 1190 | 1679 | 1513 | 1561 | 1343 | 7286
+  espacios  [\s] | 2 | 4 | 0 | 0 | 0 | 6
+  guion bajo  [_] | 1130 | 1655 | 1489 | 1547 | 1282 | 7103
+  guion  [-] | 63 | 32 | 24 | 14 | 61 | 194
+  extensión con mayúsculas (comparación exacta) | 12 | 9 | 5 | 0 | 6 | 32
+Plantillas de nombre (dígitos -> '#', sin extensión); más frecuentes por clase:
+  other_activities: 9 plantillas distintas; [('img_#', 978), ('IMG_#_#_HDR_AE', 102), ('#-#-#-#-#', 60), ('IMG_#_#_HDR', 28), ('IMG_#', 12), ('Screenshot_#', 5), ('IMG_#_#_BURST#_COVER', 2), ('photo_#-#-#_#-#-# (#)', 2)]
+  safe_driving: 8 plantillas distintas; [('img_#', 1531), ('IMG_#_#_HDR_AE', 79), ('#-#-#-#-#', 24), ('IMG_#_#_HDR', 17), ('Screenshot_#', 11), ('IMG_#', 9), ('photo_#-#-#_#-#-# (#)', 4), ('photo_#-#-#_#-#-#', 4)]
+  talking_phone: 5 plantillas distintas; [('img_#', 1434), ('IMG_#_#_HDR_AE', 39), ('#-#-#-#-#', 24), ('IMG_#_#_HDR', 11), ('IMG_#', 5)]
+  texting_phone: 4 plantillas distintas; [('img_#', 1505), ('IMG_#_#_HDR_AE', 33), ('#-#-#-#-#', 14), ('IMG_#_#_HDR', 9)]
+  turning: 6 plantillas distintas; [('img_#', 1191), ('IMG_#_#_HDR_AE', 70), ('#-#-#-#-#', 61), ('IMG_#_#_HDR', 14), ('IMG_#', 6), ('Screenshot_#', 1)]
+Plantillas distintas en todo el conjunto: 9; más frecuentes: [('img_#', 6639), ('IMG_#_#_HDR_AE', 323), ('#-#-#-#-#', 183), ('IMG_#_#_HDR', 79), ('IMG_#', 32), ('Screenshot_#', 17), ('photo_#-#-#_#-#-# (#)', 6), ('photo_#-#-#_#-#-#', 5)]
+Ejemplos de nombres (primeros 3 por clase, orden del zip):
+  other_activities: ['2019-04-2416-05-13.png', '2019-04-2416-06-20.png', '2019-04-2416-06-37.png']
+  safe_driving: ['2019-04-2416-18-07.png', '2019-04-2416-18-11.png', '2019-04-2416-18-23.png']
+  talking_phone: ['2019-04-2416-10-08.png', '2019-04-2416-10-10.png', '2019-04-2416-10-22.png']
+  texting_phone: ['2019-04-2416-09-25.png', '2019-04-2416-09-30.png', '2019-04-2416-09-33.png']
+  turning: ['2019-04-2416-01-33.png', '2019-04-2416-01-44.png', '2019-04-2416-01-57.png']
+Nombres de archivo repetidos en carpetas distintas: 0 nombres distintos; 0 archivos implicados
+
+## A2.8 Resumen final
+| Medida | Valor |
+|---|---|
+| Total de imágenes | 7286 |
+| Imágenes en «other_activities» | 1190 (16.33 %) |
+| Imágenes en «safe_driving» | 1679 (23.04 %) |
+| Imágenes en «talking_phone» | 1513 (20.77 %) |
+| Imágenes en «texting_phone» | 1561 (21.42 %) |
+| Imágenes en «turning» | 1343 (18.43 %) |
+| Resoluciones más frecuentes | ['640x480: 6629', '683x384: 183', '3072x4096: 182', '2460x3280: 135', '4096x3072: 80'] |
+| Resoluciones distintas | 34 |
+| Corruptos | 10 |
+| Duplicados exactos de archivo | 0 grupos, 0 archivos sobran |
+| Duplicados exactos de píxeles | 0 grupos, 0 archivos sobran |
+| Grupos de archivo que cruzan clases | 0 |
+| Grupos de píxeles que cruzan clases | 0 |
+| .zip anidados | 0 |
+| Miembros que no son imágenes | 0 |
