@@ -8,7 +8,7 @@ evidencia no cuenta.
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
 | M1 | | | | | |
-| M2 | | 1 candidato menor sin número (JO-1, orquestador) | | | |
+| M2 | | 1 candidato menor sin número (JO-1, orquestador) | 1 candidato sin número (JO-3a, implementador-experto) · 1 candidato menor sin número (JO-3c, orquestador) | | 1 candidato menor sin número (JO-3b, orquestador; sin prompt literal) |
 | M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
 | Común | | H-01 (candidato) | | | |
 
@@ -274,6 +274,62 @@ evidencia no cuenta.
 - **Estado:** candidato (José lo aprobó el 27-nov). Matiz para Andrés: no es una afirmación falsa sino una omisión con efecto
   medido; la paridad ONNX↔PyTorch no se ve afectada (usa la misma entrada), solo la distribución de entrenamiento frente a la de
   la app.
+
+### H-?? (JO-3a) — «la partición elimina las ráfagas casi iguales entre splits»
+- **Módulo / categoría / quién lo encontró:** M2 / **Datos del mundo real** / lo detectó el `auditor-fugas` (Opus) en la
+  auditoría de JO-3 (28-nov). Dirige: José.
+- **1. Prompt literal:** `alucinaciones/prompts/JO-3-implementador-experto.md` a `-3.md` (sesión principal, Opus 5.5 →
+  implementador-experto, Opus). El prompt pedía dejar escrita la limitación D5; no pedía afirmar nada sobre ráfagas.
+- **2. Respuesta relevante de la IA:** los textos `limitacion_conductor` y `fugas_descartadas` de `configs/m2/particion.yaml`
+  (copiados a `results/data/m2/particion/resumen.json`) afirmaban que la partición «elimina los casi duplicados (aumentos,
+  espejos, ráfagas casi iguales) entre splits».
+- **3. Cómo se sospechó:** el auditor leyó las marcas de tiempo de cámara que conservan los nombres originales en
+  `data/processed/m2/origen.csv` y buscó fotos tomadas segundos aparte en splits distintos.
+- **4. Evidencia:** `alucinaciones/evidencias/JO-3/auditor-fugas/` (`auditoria.json`, `pares_rafaga_10s.csv`, `auditoria_m2.py`,
+  `rafaga_*.jpg`): sobre la partición previa a D9, de 404 fotos `IMG_…`, 9 pares a ≤ 3 s y 129 a ≤ 10 s quedaban en splits
+  distintos (37 train–prueba), con coseno 0,85–0,949 y d_H ≥ 4; p. ej. m2_02926 / m2_02927, mismo conductor y pose a ~2 s.
+  Prueba `tests/test_fuga_m2_auditoria.py` (era xfail strict y fallaba con `assert 9 == 0`).
+- **5. Corrección:** D9 [DECIDIDO, José, 28-nov]: arista por marca de tiempo ≤ 10 s en los tres formatos de nombre (598 fotos);
+  0 ráfagas ≤ 10 s cruzan splits. Textos reescritos con lo que sí y lo que no se separa, y bloque `fuga_residual` con cifras.
+- **6. Lección aprendida:** una frase de «lo que la partición garantiza» es una afirmación empírica: hay que medirla con un
+  método independiente del criterio usado (aquí, el tiempo), no deducirla del criterio.
+- **Estado:** candidato. Falta confirmar en qué vuelta del implementador entró la frase (los archivos no estaban en git).
+
+### H-?? (JO-3b) — «2 / 0,95 son los umbrales más estrictos que no superan la guarda del 15 %»
+- **Módulo / categoría / quién lo encontró:** M2 / **Conceptos**, menor / lo detectó el `implementador-experto` (Opus) en la
+  2.ª vuelta de JO-3 (28-nov). Dirige: José.
+- **1. Prompt literal:** no hay prompt a un subagente: el error lo escribió la sesión principal (Opus 5.5) en su respuesta a
+  José y en `docs/spec/partes/jose.md` §3.2 D6. José aprobó D6 con esa redacción. Prompt que lo detectó:
+  `alucinaciones/prompts/JO-3-implementador-experto-2.md`.
+- **2. Respuesta relevante de la IA:** «Umbrales d_H ≤ 2 y coseno ≥ 0,95. Son los más estrictos posibles sin pasar la guarda
+  del 15 %» (respuesta a José) y en D6 «los más estrictos que no superan la guarda del 15 %».
+- **3. Cómo se sospechó:** el implementador notó que valores más estrictos (p. ej. 0 / 0,99) también pasan la guarda: lo que
+  la guarda limita es aflojar, no apretar.
+- **4. Evidencia:** `results/data/m2/particion/resumen.json`, `barrido_umbrales`: con d_H ≤ 2 el grupo mayor es 179 imágenes y
+  con ≤ 4 es 2 607 (35,8 %); con coseno 0,95 es 434 y con 0,94 es 2 082 (28,6 %). La guarda crece al aflojar.
+- **5. Corrección:** D6 dice ahora «los más permisivos (los que agrupan más) que no superan la guarda del 15 %». La decisión no
+  cambia. Se le informó a José.
+- **6. Lección aprendida:** «estricto» y «permisivo» se invierten según si el umbral es una distancia o una similitud y según
+  qué se quiere evitar. Conviene decir el efecto («agrupa más / menos») en lugar del adjetivo.
+- **Estado:** candidato menor. Matiz para Andrés: no hay prompt literal a un subagente (error del orquestador en el chat); la
+  evidencia es el diff de `jose.md` y el barrido. Puede no contar si se exige prompt literal.
+
+### H-?? (JO-3c) — «el auditor no encontró versiones rotadas o recortadas cruzando splits»
+- **Módulo / categoría / quién lo encontró:** M2 / **Datos del mundo real**, menor / lo detectó el `implementador-experto`
+  (Opus) en la 4.ª vuelta de JO-3 (28-nov). Dirige: José.
+- **1. Prompt literal:** `alucinaciones/prompts/JO-3-implementador-experto-4.md`, bloque A4 (sesión principal, Opus 5.5 →
+  implementador-experto): «rotaciones/recortes del rango del artículo no son propios del criterio: su ausencia entre splits se
+  comprobó empíricamente con variantes ±5/10/15°, zoom 0,9/0,8 y espejo». Lo mismo dijo la sesión principal a José en el chat.
+- **2. Respuesta relevante de la IA:** la sesión principal resumió así el informe del auditor, que en realidad decía «solo 1
+  variante supera 0,95 (máximo 0,9515, … una ráfaga de 6,5 s y no un aumento)».
+- **3. Cómo se sospechó:** el implementador cruzó la frase pedida con `auditoria.json` antes de escribirla y se negó a copiarla.
+- **4. Evidencia:** `alucinaciones/evidencias/JO-3/auditor-fugas/auditoria.json`: 1 variante (zoom 0,9; prueba m2_06070 frente a
+  train m2_06069) con coseno 0,9516 ≥ 0,95 y 23 variantes a d_H ≤ 2 de train, sobre la partición previa a D9.
+- **5. Corrección:** los textos de la config citan las cifras reales con su fuente y dicen que la búsqueda no es una garantía del
+  criterio. Tras D9 ese par quedó en el mismo grupo (g_00048, ambos en prueba). Se le informó a José.
+- **6. Lección aprendida:** al resumir el informe de un subagente para otro, el orquestador redondeó «casi ninguna, y la única es
+  otra cosa» a «ninguna». Pasar las cifras, no la conclusión.
+- **Estado:** candidato menor.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto
