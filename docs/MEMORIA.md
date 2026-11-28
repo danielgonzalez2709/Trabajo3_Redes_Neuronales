@@ -109,6 +109,9 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-28 · Daniel · PR #6 fusionado (JJ-1..JJ-3). Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
+  CPU (fallaba el #8), `results/**` y `*.csv` byte a byte en `.gitattributes` (huellas SHA-256 en Windows) y `test_no_network`
+  ya no reescribe las figuras versionadas. En clones de Windows existentes: `git checkout -- results tests/fixtures`.
 - 2026-11-27 · Camila · Verificación de CA-6a (cazador): marco legal confirmado, omisión de la Res. 264/2020 y del art.
   2.2.1.6.3.5, fe de erratas en el informe; candidato H-?? (CA-6a, Conceptos); CA-1c (`fin_de_anio` desde el 10-dic) despachado.
 - 2026-11-27 · Camila · CA-6: decisiones de horizonte y temporada alta; espera AN-5; CA-6a (costos y marco legal de
