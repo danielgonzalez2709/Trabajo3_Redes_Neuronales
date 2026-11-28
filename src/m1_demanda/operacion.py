@@ -5,58 +5,86 @@ Las ecuaciones van en el mismo orden que el blog; cada una tiene su caso a mano 
 
     (1) cap_ef(r)  = Σ_c π(r, c) · cap(c)
             π(r, c): participación de la clase c en los despachos de ORIGEN de r en train (los de tránsito repiten el
-            mismo vehículo en otra terminal, núcleo §5.1). cap(c): capacidad física SUPUESTA = máximo observado de
-            pasajeros por despacho ORIGEN en train, recortado al rango del Decreto 1079/2015 arts. 2.2.1.4.7.3–4.
+            mismo vehículo en otra terminal, núcleo §5.1). cap(c): capacidad física SUPUESTA (ver calibración).
             Caso: 0,75 · 30 + 0,25 · 18 = 27.
-    (2) desp(r, d) = ⌈ f(r) · D(r, d) / (cap_ef(r) · ρ) ⌉
+    (2) desp(r, d) = ⌈ f(r) · D(r, d) / (cap_ef(r) · ρ_r) ⌉,     ρ_r = min(1, ρ · m_r)
             D: demanda (punto o cuantil) en pasajeros/día de la serie (ORIGEN + tránsito, núcleo §5.1).
-            f(r) = Σ pasajeros ORIGEN / Σ pasajeros (ORIGEN + TRÁNSITO) en los últimos `calibracion.meses_fraccion`
-            meses de train: la parte de D que sube en la terminal de origen y ocupa silla desde la salida.
-            ρ ∈ (0, 1]: ocupación objetivo; por defecto ρ* (calibrada en train, abajo).
-            Caso: f = 1, 100 / (27 · 0,8) = 4,63 → 5.
+            f(r): parte de D que sube en la terminal de origen y ocupa silla desde la salida (calibrada).
+            ρ ∈ (0, 1]: ocupación objetivo, UN escalar (control de la app y `--set`); por defecto ρ* (calibrada).
+            m_r > 0: multiplicador de ocupación POR RUTA (calibrado al ejecutar, no se escribe a mano) [DECIDIDO, Camila,
+            26-nov, CA-3d, O1]. El tope 1 impide planear por encima de la capacidad cuando ρ · m_r > 1 (p. ej. --set 0,8).
+            Caso: f = 1, m = 1, 100 / (27 · 0,8) = 4,63 → 5;  m = 0,5: 100 / (30 · 0,4) = 8,33 → 9.
     (3) v(r)       = H / T_ciclo(r)
             H: horas de operación al día; T_ciclo = ida + regreso + alistamiento. Es una fracción, sin piso ni mínimo:
             con T_ciclo > H un vehículo cierra menos de un ciclo por día (18 / 22 = 0,818).
     (4) veh(r, d)  = ⌈ max(desp(r, d), desp(r', d)) / v(r) ⌉
             Cada vuelta es una ida Y un regreso: el sentido más cargado manda. Es la flota del CORREDOR: las filas de r
             y r' dan el mismo número y NO se suman (usar `flota_por_corredor`). Caso: ⌈max(5, 8) / 2⌉ = 4.
-    (5') conductores por piernas, también por corredor y día [DECIDIDO, Camila, 26-nov, CA-3c]:
-        (5a) P_r    = 2 · max(desp(r, d), desp(r', d))
+    (5a) conductores en servicio por piernas, por corredor y día [DECIDIDO, Camila, 26-nov, CA-3c y CA-3d]:
+             P_r    = 2 · max(desp(r, d), desp(r', d))
                  piernas del corredor: cada vehículo de (4) hace ida y regreso, así que se cuentan también las piernas
                  VACÍAS de reposición del sentido menos cargado. Caso: 2 · max(5, 8) = 16 (no 5 + 8 = 13).
-             h_r    = t_r / k_r,   k_r = 2 si t_r > 8 h (Res. 315/2013 art. 6, segundo conductor), si no 1
+             k_r    = max(k_norma(t_r), ⌈ t_r / J_ef ⌉),   k_norma = 2 si t_r > 8 h (Res. 315/2013 art. 6), si no 1
+                 conductores a bordo (CA-3d, E1). El segundo término asegura h_r ≤ J_ef: sin él, t = 7,5 h daba k = 1 y un
+                 conductor manejaba 7,5 h > J_ef = 7 h (7,5 · 6 = 45 h/semana > 42). Casos con J_ef = 7: t = 10 → 2;
+                 t = 4 → 1; t = 1,5 → 1; t = 7,5 → 2; t = 8 → 2 y t = 8,01 → 2 (sin salto en el umbral de la norma).
+             h_r    = t_r / k_r ≤ J_ef
                  horas al volante de cada conductor en una pierna. SUPUESTO: el relevo que descansa a bordo no consume
-                 jornada. Se exige h_r ≤ jornada máxima diaria.
-             L_r    = max(1, ⌊ J_ef / h_r ⌋)
+                 jornada.
+             L_r    = ⌊ J_ef / h_r ⌋ ≥ 1
                  piernas por conductor y día; las piernas son INDIVISIBLES (nadie entrega el bus a mitad de camino).
+                 L_r ≥ 1 se sigue de h_r ≤ J_ef (se comprueba como aserción, sin max(1, ·)).
                  Casos con J_ef = 7: Bogotá–Cali h = 5 → 1; Bogotá–Sogamoso h = 4 → 1; Pasto–Ipiales h = 1,5 → 4.
              C_serv = ⌈ k_r · P_r / L_r ⌉
                  Cuenta conducción, no disponibilidad del vehículo: no depende de H. El alistamiento NO se cuenta como
                  trabajo del conductor: es el tiempo del vehículo en terminal entre piernas, que en este supuesto
                  coincide con su descanso; la hora que separa J_ef = 7 de la jornada de 8 h cubre pausas y tareas en
                  terminal. Caso: ⌈1 · 16 / 1⌉ = 16; Bogotá–Cali ⌈2 · 16 / 1⌉ = 32.
-        (5b) C_nom  = ⌈ C_serv / (1 − a) · 7 / (7 − s) ⌉
-            a: ausentismo ∈ [0, 1); s = 1 día de descanso semanal (art. 161 CST). Se exige J_ef · (7 − s) ≤ jornada
-            máxima semanal. `conductores` (= nómina) es la columna que pide §5.4. Caso: ⌈16 / 0,91 · 7/6⌉ = ⌈20,51⌉ = 21.
+    (5b) nómina (a: ausentismo ∈ [0, 1); s = 1 día de descanso semanal, art. 161 CST; se exige J_ef · (7 − s) ≤ jornada
+         máxima semanal):
+             diaria   C_nom(d) = ⌈ C_serv(d) / (1 − a) · 7 / (7 − s) ⌉
+                 columna `conductores` del contrato §5.4 (no cambia). Equivale a suponer que el día d se repite los 7 días
+                 de la semana. Caso: ⌈16 / 0,91 · 7/6⌉ = ⌈20,51⌉ = 21.
+             semanal  N*(w)    = ⌈ max( max_{d∈w} C_serv(d), Σ_{d∈w} C_serv(d) / (7 − s) ) / (1 − a) ⌉
+                 por corredor y semana w (lunes a domingo) [DECIDIDO, Camila, 26-nov, CA-3d, O3]. Es la MENOR nómina con
+                 la que hay turnos que cubren cada día y dan s días libres a cada conductor: hace falta N ≥ C_serv(d) cada
+                 día y N · (7 − s) ≥ Σ_d C_serv(d); y basta (asignación envolvente de McNaughton de los huecos libres).
+                 Caso: C_serv = [10, 10, 10, 10, 10, 10, 0], a = 0 → max(10, 60/6 = 10) = 10 (la diaria da 12).
+                 Semanas incompletas (al borde del periodo o con días sin registro): se calcula con los días que hay y es
+                 una COTA INFERIOR (los días que faltan solo pueden subir el máximo y la suma).
 
-Calibración con train (nada posterior a `datos.fin_entrenamiento`, núcleo §5.4):
-    ρ* = Σ_{r,d} f(r) · D(r, d) / cap_ef(r)  ÷  Σ_{r,d} despachos ORIGEN observados(r, d)
-         sobre los días de la MISMA ventana que f (últimos `calibracion.meses_fraccion` meses de train) con registro en
-         los dos sentidos del corredor [DECIDIDO, Camila, 26-nov, CA-3c]. Con ρ = ρ*, el modelo sin techo reproduce en
-         agregado los despachos observados de esa ventana; por ruta no (un solo ρ global: ver resumen.json).
-         Caso: (0,5 · 400 / 20 + 1 · 50 / 10) / (20 + 5) = 15 / 25 = 0,6.
+Calibración con train (nada posterior a `datos.fin_entrenamiento`, núcleo §5.4). Ventana W = últimos
+`calibracion.meses_fraccion` meses de train, días con registro en los dos sentidos del corredor:
+    f(r)  = Σ_W pasajeros ORIGEN(r) / Σ_W pasajeros (ORIGEN + TRÁNSITO)(r)
+    cap(c) = min(máx. del grupo, max(mín. del grupo, ⌈máximo de pasajeros por despacho ORIGEN en train⌉)), grupos del
+             Decreto 1079/2015 arts. 2.2.1.4.7.3–4 (está en el YAML; una prueba la recalcula).
+    ρ*    = Σ_{r, d∈W} f(r) · D(r, d) / cap_ef(r)  ÷  Σ_{r, d∈W} despachos ORIGEN observados(r, d)
+            [DECIDIDO, Camila, 26-nov, CA-3c]. Caso: (0,5 · 400 / 20 + 1 · 50 / 10) / (20 + 5) = 15 / 25 = 0,6.
+    ρ_r^obs = Σ_{d∈W} f(r) · D(r, d) / cap_ef(r)  ÷  Σ_{d∈W} despachos ORIGEN observados(r, d)       (misma cuenta, por ruta)
+    m_r   = ρ_r^obs / ρ*                                                       [DECIDIDO, Camila, 26-nov, CA-3d, O1]
+            Como Σ_d f · D ≈ pasajeros ORIGEN de r en W, ρ_r^obs = pax_ORIGEN / (cap_ef · desp_obs). Con ρ = ρ* cada
+            ruta reproduce sus despachos ORIGEN de W (antes del techo) y Σ_r obs_r · m_r = Σ_r obs_r.
+            Caso: ρ_R1 = 10/20 = 0,5, ρ_R2 = 5/5 = 1 → m = 0,833 y 1,667.
+            POR RUTA y no por corredor: (4) y (5a) ya toman max(desp_r, desp_r') y cuentan las piernas vacías de
+            reposición, así que cada sentido debe reproducir SUS despachos; con un m por corredor el sentido cargado
+            hereda la baja ocupación del otro (11001-15759 ρ^obs = 0,28 y 15759-11001 0,39): fuera de ventana un m por
+            corredor dio 128 % y 133 % (cálculo exploratorio de CA-3d, no se guarda) frente a 172 % y 103 % por ruta
+            (resumen.json, validacion_fuera_de_ventana).
+Validación fuera de ventana (`calibracion.validacion`): se recalibra TODO (π, cap, f, ρ*, m_r) solo con fecha ≤ fin de la
+ventana `calibrar` y se mide la reproducción de despachos ORIGEN en la ventana `probar`, con ρ global y con ρ · m_r.
 
-Redondeo: ⌈x⌉ se calcula como ceil(x − ε) con ε = 1e-9, igual que la app (dimensionar.ts), para que el ruido de coma
-flotante (p. ej. 56,7 / (27 · 0,7) = 3,0000000000000004) no agregue un despacho.
+Redondeo: ⌈x⌉ se calcula como ceil(x − ε) y ⌊x⌋ como floor(x + ε) con ε = 1e-9, igual que la app (dimensionar.ts), para
+que el ruido de coma flotante (p. ej. 56,7 / (27 · 0,7) = 3,0000000000000004) no agregue un despacho.
 Costos (`costo_pasajero_sin_atender`, `costo_vehiculo_dia_sobrante`): §5.4 los exige y los usa negocio 3; `dimensionar`
 no los usa.
 """
 
 from __future__ import annotations
 
+import copy
 import math
 import time
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import date
 from pathlib import Path
 
@@ -90,7 +118,7 @@ def _piso(x: float) -> int:
     return int(math.floor(x + EPS))
 
 
-# ------------------------------------------------------------------------------------------ ecuaciones (1)–(5')
+# ------------------------------------------------------------------------------------------ ecuaciones (1)–(5b)
 
 def capacidad_efectiva(composicion: Mapping[str, float], capacidades: Mapping[str, float]) -> float:
     """(1) cap_ef = Σ_c π(c) · cap(c). Clases en orden alfabético (mismo orden que la app)."""
@@ -100,8 +128,13 @@ def capacidad_efectiva(composicion: Mapping[str, float], capacidades: Mapping[st
     return float(sum(composicion[c] * capacidades[c] for c in sorted(composicion)))
 
 
+def ocupacion_ruta(ocupacion: float, multiplicador: float) -> float:
+    """(2) ρ_r = min(1, ρ · m_r): ocupación objetivo de la ruta; nunca por encima de la capacidad."""
+    return min(1.0, ocupacion * multiplicador)
+
+
 def despachos_dia(demanda: float, cap_ef: float, ocupacion: float, fraccion_origen: float) -> int:
-    """(2) desp = ⌈ f · D / (cap_ef · ρ) ⌉."""
+    """(2) desp = ⌈ f · D / (cap_ef · ρ_r) ⌉ (`ocupacion` = ρ_r de la ruta)."""
     return max(0, _techo(fraccion_origen * demanda / (cap_ef * ocupacion)))
 
 
@@ -115,10 +148,15 @@ def vehiculos_dia(desp_ida: int, desp_regreso: int, vueltas: float) -> int:
     return max(0, _techo(max(desp_ida, desp_regreso) / vueltas))
 
 
-def tripulacion(recorrido_h: float, umbral_h: float) -> int:
-    """k = 2 si el recorrido de un sentido es ESTRICTAMENTE mayor que el umbral (Res. 315/2013 art. 6: «duración
+def tripulacion_norma(recorrido_h: float, umbral_h: float) -> int:
+    """k_norma = 2 si el recorrido de un sentido es ESTRICTAMENTE mayor que el umbral (Res. 315/2013 art. 6: «duración
     superior a ocho (8) horas de recorrido»); si no, 1."""
     return 2 if recorrido_h > umbral_h else 1
+
+
+def tripulacion(recorrido_h: float, umbral_h: float, jornada_efectiva: float) -> int:
+    """(5a) k = max(k_norma(t), ⌈ t / J_ef ⌉): conductores a bordo, para que nadie maneje más de J_ef en una pierna."""
+    return max(tripulacion_norma(recorrido_h, umbral_h), _techo(recorrido_h / jornada_efectiva))
 
 
 def piernas_dia(desp_ida: int, desp_regreso: int) -> int:
@@ -127,8 +165,13 @@ def piernas_dia(desp_ida: int, desp_regreso: int) -> int:
 
 
 def piernas_por_conductor(recorrido_h: float, k: int, jornada_efectiva: float) -> int:
-    """(5a) L = max(1, ⌊ J_ef / (t / k) ⌋): piernas indivisibles que un conductor maneja en un día."""
-    return max(1, _piso(jornada_efectiva / (recorrido_h / k)))
+    """(5a) L = ⌊ J_ef / h ⌋ con h = t / k: piernas indivisibles que un conductor maneja en un día. Con k de `tripulacion`
+    h ≤ J_ef y L ≥ 1; con otro k que deje h > J_ef, error (antes se escondía con max(1, ·))."""
+    horas = recorrido_h / k
+    if horas > jornada_efectiva + EPS:
+        raise ValueError(f"tiempo_recorrido_h / k = {recorrido_h:g} / {k} = {horas:g} h supera jornada_efectiva_h = "
+                         f"{jornada_efectiva:g} h: un conductor no cubre la pierna (use k = tripulacion(...))")
+    return _piso(jornada_efectiva / horas)
 
 
 def conductores_servicio(desp_ida: int, desp_regreso: int, recorrido_h: float, k: int, jornada_efectiva: float) -> int:
@@ -137,8 +180,19 @@ def conductores_servicio(desp_ida: int, desp_regreso: int, recorrido_h: float, k
 
 
 def conductores_nomina(c_serv: int, ausentismo: float, dias_descanso_semana: int) -> int:
-    """(5b) C_nom = ⌈ C_serv / (1 − a) · 7 / (7 − s) ⌉."""
+    """(5b) diaria: C_nom = ⌈ C_serv / (1 − a) · 7 / (7 − s) ⌉."""
     return max(0, _techo(c_serv / (1 - ausentismo) * DIAS_SEMANA / (DIAS_SEMANA - dias_descanso_semana)))
+
+
+def nomina_semanal_minima(c_serv: Sequence[int], ausentismo: float, dias_descanso_semana: int) -> int:
+    """(5b) semanal: N* = ⌈ max(max_d C_serv, Σ_d C_serv / (7 − s)) / (1 − a) ⌉ para los días de UNA semana (≤ 7).
+    Con menos de 7 días (semana incompleta) es una cota inferior."""
+    if len(c_serv) > DIAS_SEMANA:
+        raise ValueError(f"una semana tiene a lo sumo {DIAS_SEMANA} días (llegaron {len(c_serv)})")
+    if not c_serv:
+        return 0
+    necesidad = max(max(c_serv), sum(c_serv) / (DIAS_SEMANA - dias_descanso_semana))
+    return max(0, _techo(necesidad / (1 - ausentismo)))
 
 
 # --------------------------------------------------------------------------------------------- validación
@@ -180,13 +234,14 @@ def _validar_ruta(ruta: str, p: dict, params: dict) -> None:
     ciclo = _en(p["tiempo_ciclo_h"], f"por_ruta.{ruta}.tiempo_ciclo_h", 0, math.inf, lo_abierto=True)
     rec = _en(p["tiempo_recorrido_h"], f"por_ruta.{ruta}.tiempo_recorrido_h", 0, math.inf, lo_abierto=True)
     _en(p["fraccion_demanda_en_origen"], f"por_ruta.{ruta}.fraccion_demanda_en_origen", 0, 1, lo_abierto=True)
+    _en(p["multiplicador_ocupacion"], f"por_ruta.{ruta}.multiplicador_ocupacion", 0, math.inf, lo_abierto=True,
+        hi_abierto=True)
     if ciclo < 2 * rec:
         raise ValueError(f"por_ruta.{ruta}.tiempo_ciclo_h = {ciclo} < 2 · tiempo_recorrido_h = {2 * rec}: "
                          "el ciclo debe cubrir la ida y el regreso")
-    k = tripulacion(rec, g["umbral_segundo_conductor_h"])
-    if rec / k > g["jornada_max_diaria_h"] + EPS:
-        raise ValueError(f"por_ruta.{ruta}: tiempo_recorrido_h / k = {rec} / {k} = {rec / k:g} h supera "
-                         f"jornada_max_diaria_h = {g['jornada_max_diaria_h']:g} h: los conductores no cubren la pierna")
+    # Aserción (E1): con k = max(k_norma, ⌈t/J_ef⌉), h = t/k ≤ J_ef ≤ jornada_max_diaria_h; lanza error si no.
+    piernas_por_conductor(rec, tripulacion(rec, g["umbral_segundo_conductor_h"], g["jornada_efectiva_h"]),
+                          g["jornada_efectiva_h"])
     regreso = params["ruta_regreso"].get(ruta)
     if regreso in params["por_ruta"]:
         pr = params["por_ruta"][regreso]
@@ -248,7 +303,7 @@ def dimensionar(demanda: pd.DataFrame, params: dict) -> pd.DataFrame:
     (r', d), con r' = `params["ruta_regreso"][r]`: vehículos y conductores son del corredor y se repiten en las dos filas.
 
     `params` (valores ya resueltos): `globales` {clave: valor}, `por_ruta` {ruta: {tiempo_ciclo_h, tiempo_recorrido_h,
-    fraccion_demanda_en_origen}}, `por_clase` {clase: {capacidad_pasajeros}}, `composicion_clases` {ruta: {clase: π}} y
+    fraccion_demanda_en_origen, multiplicador_ocupacion}}, `por_clase` {clase: {capacidad_pasajeros}}, `composicion_clases` {ruta: {clase: π}} y
     `ruta_regreso` {ruta: ruta_regreso_id} (ver `parametros_desde_config`).
     """
     validar_parametros(params)
@@ -262,16 +317,19 @@ def dimensionar(demanda: pd.DataFrame, params: dict) -> pd.DataFrame:
     out["corredor"] = [" | ".join(sorted((r, regreso[r]))) for r in rutas]
     out["fraccion_origen"] = [por_ruta[r]["fraccion_demanda_en_origen"] for r in rutas]
     out["capacidad_efectiva"] = [capacidad_efectiva(params["composicion_clases"][r], capacidades) for r in rutas]
+    out["ocupacion_ruta"] = [ocupacion_ruta(g["ocupacion_objetivo"], por_ruta[r]["multiplicador_ocupacion"])  # ρ_r
+                             for r in rutas]
     out["despachos"] = [                                                                                     # (2)
-        despachos_dia(dem, cap, g["ocupacion_objetivo"], f)
-        for dem, cap, f in zip(out["demanda"], out["capacidad_efectiva"], out["fraccion_origen"], strict=True)
+        despachos_dia(dem, cap, rho, f)
+        for dem, cap, rho, f in zip(out["demanda"], out["capacidad_efectiva"], out["ocupacion_ruta"],
+                                    out["fraccion_origen"], strict=True)
     ]
     out["despachos_regreso"] = _despachos_del_regreso(out)
     out["vueltas"] = [vueltas_dia(g["horas_operacion_h"], por_ruta[r]["tiempo_ciclo_h"]) for r in rutas]      # (3)
     out["vehiculos"] = [vehiculos_dia(a, b, v) for a, b, v in                                                 # (4)
                         zip(out["despachos"], out["despachos_regreso"], out["vueltas"], strict=True)]
     recorrido = [por_ruta[r]["tiempo_recorrido_h"] for r in rutas]
-    out["tripulacion"] = [tripulacion(t, g["umbral_segundo_conductor_h"]) for t in recorrido]
+    out["tripulacion"] = [tripulacion(t, g["umbral_segundo_conductor_h"], g["jornada_efectiva_h"]) for t in recorrido]
     out["piernas"] = [piernas_dia(a, b) for a, b in zip(out["despachos"], out["despachos_regreso"], strict=True)]
     out["piernas_por_conductor"] = [piernas_por_conductor(t, k, g["jornada_efectiva_h"])
                                     for t, k in zip(recorrido, out["tripulacion"], strict=True)]
@@ -300,6 +358,25 @@ def flota_por_corredor(tabla: pd.DataFrame) -> pd.DataFrame:
                 "piernas": "piernas", "piernas_por_conductor": "piernas_por_conductor",
                 "conductores_servicio": "conductores_servicio", "conductores": "conductores"}
     return ida[list(columnas)].rename(columns=columnas).sort_values(["corredor", "fecha"]).reset_index(drop=True)
+
+
+def nomina_semanal(corredores: pd.DataFrame, ausentismo: float, dias_descanso_semana: int) -> pd.DataFrame:
+    """(5b) N* por corredor y semana (lunes a domingo) a partir de `flota_por_corredor`. `dias_con_datos` < 7 marca una
+    semana incompleta (borde del periodo o días sin registro): su N* es una cota inferior. `max_nomina_diaria` es el
+    máximo de la columna diaria `conductores` en la semana, para comparar."""
+    fecha = pd.to_datetime(corredores["fecha"])
+    t = corredores.assign(semana_inicio=(fecha - pd.to_timedelta(fecha.dt.day_of_week, unit="D")).dt.normalize())
+    filas = []
+    for (corredor, lunes), g in t.groupby(["corredor", "semana_inicio"], sort=True):
+        c = [int(x) for x in g["conductores_servicio"]]
+        filas.append({
+            "corredor": corredor, "semana_inicio": lunes, "semana_fin": lunes + pd.Timedelta(days=DIAS_SEMANA - 1),
+            "dias_con_datos": len(c), "semana_completa": len(c) == DIAS_SEMANA,
+            "max_conductores_servicio": max(c), "suma_conductores_servicio": sum(c),
+            "nomina_semanal": nomina_semanal_minima(c, ausentismo, dias_descanso_semana),
+            "max_nomina_diaria": int(g["conductores"].max()),
+        })
+    return pd.DataFrame(filas)
 
 
 # ------------------------------------------------------------------------- estimaciones con train (sin fuga)
@@ -385,6 +462,18 @@ def ocupacion_calibrada(demanda: pd.DataFrame, despachos_origen: pd.DataFrame, f
     return float(cargas_llenas / observados)
 
 
+def multiplicadores_ocupacion(demanda: pd.DataFrame, despachos_origen: pd.DataFrame, fraccion: Mapping[str, float],
+                              cap_ef: Mapping[str, float], rho: float) -> dict[str, float]:
+    """m_r = ρ_r^obs / ρ*, con ρ_r^obs = la cuenta de ρ* restringida a los días de la ruta r en `demanda`."""
+    out = {}
+    for ruta in sorted(demanda["ruta_id"].unique()):
+        try:
+            out[ruta] = ocupacion_calibrada(demanda[demanda["ruta_id"] == ruta], despachos_origen, fraccion, cap_ef) / rho
+        except ValueError as e:
+            raise ValueError(f"la ruta {ruta}: {e}; no se puede calcular multiplicador_ocupacion") from e
+    return out
+
+
 def reproduccion_despachos(tabla: pd.DataFrame, despachos_origen: pd.DataFrame) -> dict[str, dict]:
     """Despachos del modelo vs. despachos ORIGEN observados en los mismos (ruta_id, fecha): por ruta y total (%)."""
     obs = despachos_origen.rename(columns={"despachos": "observado"})
@@ -435,48 +524,111 @@ def leer_regresos(ruta_yaml: Path) -> dict[str, str]:
     return {r["ruta_id"]: r["ruta_regreso_id"] for r in rutas}
 
 
-def calibrar(cfg: dict, detalle: pd.DataFrame, diaria: pd.DataFrame, regresos: Mapping[str, str]) -> dict:
-    """Todo lo que se estima con train: π, f, capacidad observada, cap_ef y ρ* (más las tablas para reproducirlos).
-    f y ρ* usan la misma ventana: los últimos `calibracion.meses_fraccion` meses de train."""
-    datos = cfg["datos"]
-    inicio, fin = datos["inicio_entrenamiento"], datos["fin_entrenamiento"]
-    capacidades = {c: p["capacidad_pasajeros"] for c, p in cfg["operacion"]["por_clase"].items()}
+def _calibrar_en(detalle: pd.DataFrame, diaria: pd.DataFrame, regresos: Mapping[str, str], inicio, fin,
+                 ventana: tuple, capacidades: Mapping[str, float]) -> dict:
+    """π con [inicio, fin]; f, ρ* y m_r con `ventana` ⊆ [inicio, fin]. Nada posterior a `fin` entra (núcleo §5.4)."""
+    if not pd.Timestamp(inicio) <= pd.Timestamp(ventana[0]) <= pd.Timestamp(ventana[1]) <= pd.Timestamp(fin):
+        raise ValueError(f"la ventana de calibración {ventana} debe caber en [{inicio}, {fin}]")
     composicion = estimar_composicion(detalle, inicio, fin, list(capacidades))
-    ventana_f = ventana_reciente(inicio, fin, cfg["calibracion"]["meses_fraccion"])
-    fraccion = fraccion_pasajeros_origen(detalle, *ventana_f)
+    fraccion = fraccion_pasajeros_origen(detalle, *ventana)
     cap_ef = {r: capacidad_efectiva(comp, capacidades) for r, comp in composicion.items()}
-    demanda_train = demanda_observada(diaria, inicio, fin, regresos, inicio, fin)
-    desp_train = despachos_origen_diarios(detalle, inicio, fin)
+    demanda = demanda_observada(diaria, inicio, fin, regresos, inicio, fin)
+    observados = despachos_origen_diarios(detalle, inicio, fin)
+    demanda_w = _ventana(demanda, *ventana)
+    rho = ocupacion_calibrada(demanda_w, observados, fraccion, cap_ef)
     return {
         "composicion": composicion,
-        "ventana_fraccion": ventana_f,
+        "ventana_fraccion": tuple(pd.Timestamp(x).date() for x in ventana),
         "fraccion": fraccion,
-        "fraccion_todo_train": fraccion_pasajeros_origen(detalle, inicio, fin),  # diagnóstico
-        "capacidad_observada": capacidad_observada(detalle, inicio, fin),
         "capacidad_efectiva": cap_ef,
-        "ocupacion_calibrada": ocupacion_calibrada(_ventana(demanda_train, *ventana_f), desp_train, fraccion, cap_ef),
-        "ocupacion_calibrada_todo_train": ocupacion_calibrada(demanda_train, desp_train, fraccion, cap_ef),  # diagnóstico
-        "demanda_train": demanda_train,
-        "despachos_origen_train": desp_train,
+        "ocupacion_calibrada": rho,
+        "multiplicador_ocupacion": multiplicadores_ocupacion(demanda_w, observados, fraccion, cap_ef, rho),
+        "demanda_train": demanda,
+        "despachos_origen_train": observados,
     }
 
 
-def parametros_desde_config(cfg: dict, calibracion: dict, ruta_regreso: Mapping[str, str]) -> dict:
-    """Valores de `cfg["operacion"]` + lo calibrado con train, en el formato que recibe `dimensionar`."""
+def calibrar(cfg: dict, detalle: pd.DataFrame, diaria: pd.DataFrame, regresos: Mapping[str, str]) -> dict:
+    """Todo lo que se estima con train: π, f, capacidad observada, cap_ef, ρ* y m_r (más las tablas para reproducirlos).
+    f, ρ* y m_r usan la misma ventana: los últimos `calibracion.meses_fraccion` meses de train."""
+    datos = cfg["datos"]
+    inicio, fin = datos["inicio_entrenamiento"], datos["fin_entrenamiento"]
+    capacidades = {c: p["capacidad_pasajeros"] for c, p in cfg["operacion"]["por_clase"].items()}
+    ventana = ventana_reciente(inicio, fin, cfg["calibracion"]["meses_fraccion"])
+    cal = _calibrar_en(detalle, diaria, regresos, inicio, fin, ventana, capacidades)
+    cal.update({
+        "fraccion_todo_train": fraccion_pasajeros_origen(detalle, inicio, fin),  # diagnóstico
+        "capacidad_observada": capacidad_observada(detalle, inicio, fin),
+        "ocupacion_calibrada_todo_train": ocupacion_calibrada(cal["demanda_train"], cal["despachos_origen_train"],
+                                                              cal["fraccion"], cal["capacidad_efectiva"]),  # diagnóstico
+    })
+    return cal
+
+
+def parametros_desde_config(cfg: dict, calibracion: dict, ruta_regreso: Mapping[str, str],
+                            con_multiplicador: bool = True) -> dict:
+    """Valores de `cfg["operacion"]` + lo calibrado con train, en el formato que recibe `dimensionar`.
+    `con_multiplicador=False` usa m_r = 1 (un solo ρ global; solo para comparar)."""
     o = cfg["operacion"]
+    m = calibracion["multiplicador_ocupacion"]
     return {
         "globales": {k: v for k, v in o.items() if k not in GRUPOS},
-        "por_ruta": {r: {**p, "fraccion_demanda_en_origen": calibracion["fraccion"][r]} for r, p in o["por_ruta"].items()},
+        "por_ruta": {r: {**p, "fraccion_demanda_en_origen": calibracion["fraccion"][r],
+                         "multiplicador_ocupacion": m[r] if con_multiplicador else 1.0}
+                     for r, p in o["por_ruta"].items()},
         "por_clase": {c: dict(p) for c, p in o["por_clase"].items()},
         "composicion_clases": calibracion["composicion"],
         "ruta_regreso": dict(ruta_regreso),
     }
 
 
+def reproduccion_global_y_por_ruta(cfg: dict, calibracion: dict, regresos: Mapping[str, str], demanda: pd.DataFrame,
+                                   observados: pd.DataFrame) -> dict[str, dict]:
+    """Despachos ORIGEN reproducidos con ρ = ρ* de `calibracion`: un ρ global (m_r = 1) y ρ · m_r."""
+    cfg_rho = copy.deepcopy(cfg)
+    cfg_rho["operacion"]["ocupacion_objetivo"] = calibracion["ocupacion_calibrada"]
+    return {
+        f"reproduccion_rho_{nombre}": reproduccion_despachos(
+            dimensionar(demanda, parametros_desde_config(cfg_rho, calibracion, regresos, con_m)), observados)
+        for nombre, con_m in (("global", False), ("por_ruta", True))
+    }
+
+
+def validar_fuera_de_ventana(cfg: dict, detalle: pd.DataFrame, diaria: pd.DataFrame,
+                             regresos: Mapping[str, str]) -> dict:
+    """Recalibra π, cap, f, ρ* y m_r SOLO con fecha ≤ fin de `calibracion.validacion.calibrar` (cap con la regla del
+    Decreto 1079/2015 sobre esos datos, no la del YAML, que usa todo el train) y mide la reproducción de despachos ORIGEN
+    en `calibracion.validacion.probar`, con ρ global y con ρ · m_r."""
+    datos, v = cfg["datos"], cfg["calibracion"]["validacion"]
+    inicio, fin_train = pd.Timestamp(datos["inicio_entrenamiento"]), pd.Timestamp(datos["fin_entrenamiento"])
+    (c0, c1), (p0, p1) = ([pd.Timestamp(x) for x in v["calibrar"]], [pd.Timestamp(x) for x in v["probar"]])
+    if not inicio <= c0 <= c1 < p0 <= p1 <= fin_train:
+        raise ValueError(f"calibracion.validacion: se exige inicio_entrenamiento ≤ calibrar ≤ fin de calibrar < probar ≤ "
+                         f"fin_entrenamiento (llegó calibrar {v['calibrar']}, probar {v['probar']})")
+    obs = capacidad_observada(detalle, inicio, c1).set_index("clase_vehiculo")
+    faltan = sorted(set(cfg["operacion"]["por_clase"]) - set(obs.index))
+    if faltan:
+        raise ValueError(f"clases sin despachos ORIGEN hasta {c1.date()}: {faltan}; no se puede fijar su capacidad")
+    capacidades = {c: capacidad_supuesta(c, obs.loc[c, "maximo"]) for c in cfg["operacion"]["por_clase"]}
+    cal = _calibrar_en(detalle, diaria, regresos, inicio, c1, (c0, c1), capacidades)
+    cfg_v = copy.deepcopy(cfg)
+    for c, cap in capacidades.items():
+        cfg_v["operacion"]["por_clase"][c]["capacidad_pasajeros"] = cap
+    demanda_p = demanda_observada(diaria, p0, p1, regresos, inicio, fin_train)
+    return {
+        "ventana_calibracion": [c0.date().isoformat(), c1.date().isoformat()],
+        "ventana_prueba": [p0.date().isoformat(), p1.date().isoformat()],
+        "capacidades": capacidades,
+        **{k: cal[k] for k in ("composicion", "fraccion", "capacidad_efectiva", "ocupacion_calibrada",
+                               "multiplicador_ocupacion")},
+        **reproduccion_global_y_por_ruta(cfg_v, cal, regresos, demanda_p, despachos_origen_diarios(detalle, p0, p1)),
+    }
+
+
 def parametros_contrato(cfg: dict, calibracion: dict) -> dict:
     """Parámetros al formato `ParametrosOperacion` de la app (núcleo §5.4): {valor, unidad, fuente | supuesto, nota?}.
     Meta: `meta.globales.<clave>`, `meta.por_ruta.<clave>` (común a las rutas) y `meta.por_clase.<clase>.<clave>`.
-    Lo calibrado con train (f y composición) lleva `fuente` con el conjunto y la ventana usada."""
+    Lo calibrado con train (f, m_r y composición) lleva `fuente` con el conjunto y la ventana usada."""
     o, meta, datos = cfg["operacion"], cfg["meta"], cfg["datos"]
 
     def par(valor, m: dict) -> dict:
@@ -497,6 +649,12 @@ def parametros_contrato(cfg: dict, calibracion: dict) -> dict:
         por_ruta[r] = {k: par(v, meta["por_ruta"][k]) for k, v in p.items()}
         por_ruta[r]["fraccion_demanda_en_origen"] = {"valor": calibracion["fraccion"][r],
                                                      "unidad": "fracción de los pasajeros", "fuente": fuente_f}
+        por_ruta[r]["multiplicador_ocupacion"] = {
+            "valor": calibracion["multiplicador_ocupacion"][r], "unidad": "múltiplo de ocupacion_objetivo",
+            "fuente": (f"{fuente}; m_r = ρ_r observada / ρ* entre {ini_f.isoformat()} y {fin_f.isoformat()} (misma ventana "
+                       "que fraccion_demanda_en_origen)"),
+            "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2)).",
+        }
     return {
         "globales": {k: par(v, meta["globales"][k]) for k, v in o.items() if k not in GRUPOS},
         "por_ruta": por_ruta,
@@ -511,9 +669,11 @@ def parametros_contrato(cfg: dict, calibracion: dict) -> dict:
 
 # ------------------------------------------------------------------------------------------------------- main
 
-def _resumen(cfg: dict, calibracion: dict, corredores: pd.DataFrame, reproduccion: dict[str, dict]) -> dict:
+def _resumen(cfg: dict, calibracion: dict, corredores: pd.DataFrame, semanas: pd.DataFrame, reproduccion: dict,
+             validacion: dict) -> dict:
     datos = cfg["datos"]
     capacidades = cfg["operacion"]["por_clase"]
+    rho = cfg["operacion"]["ocupacion_objetivo"]
     obs = calibracion["capacidad_observada"].set_index("clase_vehiculo")
     return {
         "aviso": f"Demanda de EJEMPLO ({TIPO_EJEMPLO}); mes {cfg['ejemplo']['mes']}.",
@@ -528,10 +688,16 @@ def _resumen(cfg: dict, calibracion: dict, corredores: pd.DataFrame, reproduccio
             "capacidad_efectiva": calibracion["capacidad_efectiva"],
             "ocupacion_calibrada": calibracion["ocupacion_calibrada"],
             "ocupacion_calibrada_todo_train": calibracion["ocupacion_calibrada_todo_train"],
-            "ocupacion_usada": cfg["operacion"]["ocupacion_objetivo"],
-            "limitacion_rho_global": ("ρ es uno solo para las seis rutas: con ρ = ρ* el total de despachos ORIGEN de la "
-                                      "ventana de calibración se reproduce, pero cada ruta queda por encima o por debajo "
-                                      "(reproduccion_despachos_calibracion, % por ruta)."),
+            "ocupacion_usada": rho,
+            "multiplicador_ocupacion": calibracion["multiplicador_ocupacion"],
+            "ocupacion_por_ruta_usada": {r: ocupacion_ruta(rho, m) for r, m in calibracion["multiplicador_ocupacion"].items()},
+            "ocupacion_por_ruta_con_tope_1": sorted(r for r, m in calibracion["multiplicador_ocupacion"].items()
+                                                    if rho * m > 1),
+            "limitacion_rho_global": ("Con un solo ρ global (m_r = 1) el total de despachos ORIGEN de la ventana se "
+                                      "reproduce, pero cada ruta queda por encima o por debajo; m_r lo corrige por ruta "
+                                      "(reproduccion_dentro_de_ventana y validacion_fuera_de_ventana)."),
+            "reproduccion_dentro_de_ventana": reproduccion.pop("dentro_de_ventana"),
+            "validacion_fuera_de_ventana": validacion,
             **{f"reproduccion_despachos_{k}": v for k, v in reproduccion.items()},
         },
         "maximo_diario_por_corredor": {
@@ -539,15 +705,28 @@ def _resumen(cfg: dict, calibracion: dict, corredores: pd.DataFrame, reproduccio
                 "conductores": int(g["conductores"].max())}
             for c, g in corredores.groupby("corredor")
         },
+        "nomina_semanal_por_corredor": {
+            c: {"max_nomina_semanal": int(g["nomina_semanal"].max()),
+                "max_nomina_semanal_semanas_completas": (int(g.loc[g["semana_completa"], "nomina_semanal"].max())
+                                                         if g["semana_completa"].any() else None),
+                "max_nomina_diaria": int(g["max_nomina_diaria"].max()),
+                "semanas": int(len(g)), "semanas_completas": int(g["semana_completa"].sum())}
+            for c, g in semanas.groupby("corredor")
+        },
+        "nota_nomina_semanal": ("N* = ⌈max(max_d C_serv, Σ_d C_serv / (7 − s)) / (1 − a)⌉ por corredor y semana de lunes a "
+                                "domingo (nomina_semanal.csv). En semanas incompletas (dias_con_datos < 7: borde del mes "
+                                "o días sin registro) es una cota inferior."),
         "parametros": parametros_contrato(cfg, calibracion),
     }
 
 
-def escribir_salidas(carpeta: Path, tabla: pd.DataFrame, corredores: pd.DataFrame, calibracion: dict,
-                     resumen: dict) -> None:
+def escribir_salidas(carpeta: Path, tabla: pd.DataFrame, corredores: pd.DataFrame, semanas: pd.DataFrame,
+                     calibracion: dict, resumen: dict) -> None:
     carpeta.mkdir(parents=True, exist_ok=True)
     tabla.assign(fecha=tabla["fecha"].dt.date).to_csv(carpeta / "dimensionamiento_ejemplo.csv", index=False)
     corredores.assign(fecha=corredores["fecha"].dt.date).to_csv(carpeta / "flota_por_corredor.csv", index=False)
+    semanas.assign(semana_inicio=semanas["semana_inicio"].dt.date, semana_fin=semanas["semana_fin"].dt.date).to_csv(
+        carpeta / "nomina_semanal.csv", index=False)
     pd.DataFrame([(r, c, v) for r, cc in calibracion["composicion"].items() for c, v in cc.items()],
                  columns=["ruta_id", "clase_vehiculo", "participacion"]).to_csv(carpeta / "composicion_clases.csv",
                                                                                index=False)
@@ -572,28 +751,44 @@ def main(cfg: dict) -> int:
                               datos["fin_entrenamiento"])
     tabla = dimensionar(ejemplo, params)
     corredores = flota_por_corredor(tabla)
+    g = params["globales"]
+    semanas = nomina_semanal(corredores, g["ausentismo"], int(g["dias_descanso_semana"]))
     despachos_train = dimensionar(calibracion["demanda_train"], params)
     despachos_calibracion = _ventana(despachos_train, *calibracion["ventana_fraccion"])
     observados = calibracion["despachos_origen_train"]
     reproduccion = {"calibracion": reproduccion_despachos(despachos_calibracion, observados),
                     "train": reproduccion_despachos(despachos_train, observados),
-                    "ejemplo": reproduccion_despachos(tabla, observados)}
-    resumen = _resumen(cfg, calibracion, corredores, reproduccion)
+                    "ejemplo": reproduccion_despachos(tabla, observados),
+                    "dentro_de_ventana": reproduccion_global_y_por_ruta(
+                        cfg, calibracion, regresos, _ventana(calibracion["demanda_train"], *calibracion["ventana_fraccion"]),
+                        observados)}
+    validacion = validar_fuera_de_ventana(cfg, detalle, diaria, regresos)
+    resumen = _resumen(cfg, calibracion, corredores, semanas, reproduccion, validacion)
     carpeta = Path(cfg["salida"]["carpeta"])
-    escribir_salidas(carpeta, tabla, corredores, calibracion, resumen)
+    escribir_salidas(carpeta, tabla, corredores, semanas, calibracion, resumen)
 
     cal = resumen["calibracion"]
     print(f"\nρ* ({' a '.join(cal['ventana_fraccion'])}) = {cal['ocupacion_calibrada']:.4f}; "
           f"ρ usada = {cal['ocupacion_usada']}")
     print("f por ruta (" + " a ".join(cal["ventana_fraccion"]) + "): " +
           ", ".join(f"{r} {f:.3f}" for r, f in cal["fraccion_demanda_en_origen"].items()))
+    print("m_r por ruta: " + ", ".join(f"{r} {m:.3f}" for r, m in cal["multiplicador_ocupacion"].items()))
+    if cal["ocupacion_por_ruta_con_tope_1"]:
+        print(f"ρ · m_r > 1 → tope 1 en: {', '.join(cal['ocupacion_por_ruta_con_tope_1'])}")
     for clave, texto in (("calibracion", "ventana de calibración"), ("train", "todo el train")):
-        print(f"Despachos ORIGEN reproducidos ({texto}): " +
+        print(f"Despachos ORIGEN reproducidos con la ρ usada ({texto}): " +
               ", ".join(f"{r} {v['porcentaje']:.0f} %" for r, v in cal[f"reproduccion_despachos_{clave}"].items()))
-    print("\nMáximo diario por corredor (EJEMPLO):")
+    for nombre, bloque in (("dentro de ventana", cal["reproduccion_dentro_de_ventana"]),
+                           ("fuera de ventana", cal["validacion_fuera_de_ventana"])):
+        for variante in ("global", "por_ruta"):
+            print(f"Reproducción {nombre}, ρ* {variante}: " + ", ".join(
+                f"{r} {v['porcentaje']:.1f} %" for r, v in bloque[f"reproduccion_rho_{variante}"].items()))
+    print("\nMáximo diario por corredor (EJEMPLO) y nómina semanal N*:")
     for c, v in resumen["maximo_diario_por_corredor"].items():
+        n = resumen["nomina_semanal_por_corredor"][c]
         print(f"  {c}: {v['vehiculos']} vehículos, {v['conductores_servicio']} conductores en servicio, "
-              f"{v['conductores']} de nómina")
+              f"{v['conductores']} de nómina diaria; N* máx. {n['max_nomina_semanal']} "
+              f"({n['semanas_completas']}/{n['semanas']} semanas completas)")
     print(f"Escrito en {carpeta.as_posix()} ({time.perf_counter() - inicio_t:.1f} s)")
     return 0
 
@@ -603,6 +798,7 @@ __all__ = [
     "conductores_servicio", "demanda_ejemplo", "demanda_observada", "despachos_dia", "despachos_origen_diarios",
     "dimensionar", "escribir_salidas", "estimar_composicion", "flota_por_corredor", "fraccion_pasajeros_origen",
     "leer_regresos", "main", "ocupacion_calibrada", "parametros_contrato", "parametros_desde_config", "piernas_dia",
-    "piernas_por_conductor",
-    "reproduccion_despachos", "tripulacion", "vehiculos_dia", "ventana_reciente", "vueltas_dia",
+    "piernas_por_conductor", "multiplicadores_ocupacion", "nomina_semanal", "nomina_semanal_minima", "ocupacion_ruta",
+    "reproduccion_despachos", "reproduccion_global_y_por_ruta", "tripulacion", "tripulacion_norma",
+    "validar_fuera_de_ventana", "vehiculos_dia", "ventana_reciente", "vueltas_dia",
 ]

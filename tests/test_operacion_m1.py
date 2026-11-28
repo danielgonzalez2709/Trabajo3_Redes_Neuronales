@@ -1,21 +1,25 @@
-"""CA-3 (rondas 2–3, prompts CA-3b y CA-3c): `dimensionar()` y conductores (núcleo §5.4; spec de Camila §3.3). Casos hechos a mano.
+"""CA-3 (rondas 2–4, prompts CA-3b, CA-3c y CA-3d): `dimensionar()` y conductores (núcleo §5.4; spec de Camila §3.3).
 
 Fórmula [DECIDIDO, Camila, 26-nov]; r' = ruta de regreso de r (`rutas.yaml`), {r, r'} = corredor:
     (1)  cap_ef(r)  = Σ_c π(r, c) · cap(c)
-    (2)  desp(r, d) = ⌈ f(r) · D(r, d) / (cap_ef(r) · ρ) ⌉
+    (2)  desp(r, d) = ⌈ f(r) · D(r, d) / (cap_ef(r) · ρ_r) ⌉,  ρ_r = min(1, ρ · m_r)      (m_r: CA-3d, O1)
     (3)  v(r)       = H / T_ciclo(r)                                   (fracción, sin piso ni mínimo)
     (4)  veh(r, d)  = ⌈ max(desp(r, d), desp(r', d)) / v(r) ⌉
     (5a) P          = 2 · max(desp(r, d), desp(r', d))                   piernas del corredor (con las vacías)
-         h_r        = t_r / k_r,  k_r = 2 si t_r > 8 h (Res. 315/2013 art. 6)   horas al volante por conductor y pierna
-         L_r        = max(1, ⌊ J_ef / h_r ⌋)                             piernas (indivisibles) por conductor y día
+         k_r        = max(k_norma(t_r), ⌈ t_r / J_ef ⌉),  k_norma = 2 si t_r > 8 h (Res. 315/2013 art. 6)  (CA-3d, E1)
+         h_r        = t_r / k_r ≤ J_ef                                    horas al volante por conductor y pierna
+         L_r        = ⌊ J_ef / h_r ⌋ ≥ 1                                 piernas (indivisibles) por conductor y día
          C_serv     = ⌈ k_r · P / L_r ⌉
     (5b) C_nom      = ⌈ C_serv / (1 − a) · 7 / (7 − s) ⌉,                s = 1 (día de descanso, art. 161 CST)
-Calibración con train: f(r) (últimos meses de train), cap(c) (máximo observado recortado al rango del Decreto 1079/2015)
-y ρ* = Σ f·D/cap_ef ÷ Σ despachos ORIGEN, en la misma ventana que f. Cada prueba lleva sus cuentas en el comentario. Ninguna usa internet.
+         N*(semana) = ⌈ max(max_d C_serv, Σ_d C_serv / (7 − s)) / (1 − a) ⌉   nómina semanal factible (CA-3d, O3)
+Calibración con train: f(r) (últimos meses de train), cap(c) (máximo observado recortado al rango del Decreto 1079/2015),
+ρ* = Σ f·D/cap_ef ÷ Σ despachos ORIGEN y m_r = ρ_r_obs / ρ*, en la misma ventana que f. Cada prueba lleva sus cuentas en
+el comentario. Ninguna usa internet.
 """
 
 from __future__ import annotations
 
+import itertools
 import math
 import socket
 from datetime import date
@@ -101,12 +105,41 @@ def test_vehiculos_toleran_ruido_de_coma_flotante():
     assert op.vehiculos_dia(7, 0, v) == 1
 
 
-def test_tripulacion_solo_con_recorrido_estrictamente_mayor_al_umbral():
-    # Res. 315/2013 art. 6: «duración superior a ocho (8) horas de recorrido» → k = 2 solo si t > 8.
-    assert op.tripulacion(10, umbral_h=8) == 2
-    assert op.tripulacion(8.5, umbral_h=8) == 2
-    assert op.tripulacion(8, umbral_h=8) == 1     # 8 no es «superior a» 8
-    assert op.tripulacion(4, umbral_h=8) == 1
+def test_tripulacion_norma_solo_con_recorrido_estrictamente_mayor_al_umbral():
+    # Res. 315/2013 art. 6: «duración superior a ocho (8) horas de recorrido» → k_norma = 2 solo si t > 8.
+    assert op.tripulacion_norma(10, umbral_h=8) == 2
+    assert op.tripulacion_norma(8.5, umbral_h=8) == 2
+    assert op.tripulacion_norma(8, umbral_h=8) == 1     # 8 no es «superior a» 8
+    assert op.tripulacion_norma(4, umbral_h=8) == 1
+
+
+def test_tripulacion_es_el_maximo_entre_la_norma_y_la_jornada_efectiva():
+    # (E1) k = max(k_norma(t), ⌈t / J_ef⌉) con umbral 8 h y J_ef = 7 h:
+    assert op.tripulacion(10, 8, 7) == 2     # Bogotá–Cali: max(2, ⌈1,43⌉ = 2) = 2 (como antes)
+    assert op.tripulacion(4, 8, 7) == 1      # Bogotá–Sogamoso: max(1, ⌈0,57⌉ = 1) = 1 (como antes)
+    assert op.tripulacion(1.5, 8, 7) == 1    # Pasto–Ipiales: max(1, ⌈0,21⌉ = 1) = 1 (como antes)
+    # Contraejemplo del verificador: t = 7,5 ≤ 8 → k_norma = 1, pero un conductor manejaría 7,5 h > J_ef = 7 h
+    # (7,5 · 6 = 45 h/semana > 42). Ahora max(1, ⌈7,5/7⌉ = ⌈1,07⌉ = 2) = 2.
+    assert op.tripulacion(7.5, 8, 7) == 2
+    # Sin salto artificial en el umbral de la norma: t = 8 → max(1, ⌈1,14⌉ = 2) = 2; t = 8,01 → max(2, 2) = 2.
+    assert op.tripulacion(8, 8, 7) == op.tripulacion(8.01, 8, 7) == 2
+    assert op.tripulacion(7, 8, 7) == 1      # ⌈7/7⌉ = 1 exacto (tolerancia del techo): un conductor justo en J_ef
+    assert op.tripulacion(18, 8, 7) == 3     # max(2, ⌈2,57⌉ = 3) = 3: h = 6 ≤ 7 (antes: error)
+
+
+def test_horas_al_volante_nunca_superan_la_jornada_efectiva_ni_la_semanal():
+    # Invariante de E1 en una rejilla fina de t ∈ (0, 24] h: h = t/k ≤ J_ef, L = ⌊J_ef/h⌋ ≥ 1, y lo que maneja un conductor
+    # en un día (h · L) cabe en J_ef, así que en la semana h · L · (7 − s) ≤ J_ef · 6 = 42 h.
+    for j_ef in (7.0, 6.0):
+        for i in range(1, 2401):
+            t = i / 100
+            k = op.tripulacion(t, 8, j_ef)
+            h = t / k
+            n_piernas = op.piernas_por_conductor(t, k, j_ef)
+            assert h <= j_ef + 1e-9 and n_piernas >= 1, (t, j_ef)
+            assert h * n_piernas <= j_ef + 1e-9, (t, j_ef)
+            assert h * n_piernas * (7 - 1) <= 42 + 1e-9, (t, j_ef)
+            assert k >= op.tripulacion_norma(t, 8), t   # nunca menos tripulación de la que pide la norma
 
 
 def test_piernas_cuentan_las_vacias_de_reposicion():
@@ -117,12 +150,21 @@ def test_piernas_cuentan_las_vacias_de_reposicion():
 
 
 def test_piernas_por_conductor_indivisibles():
-    # L = max(1, ⌊ J_ef / (t / k) ⌋) con J_ef = 7:
+    # L = ⌊ J_ef / (t / k) ⌋ con J_ef = 7 (sin max(1, ·): con k de E1, h ≤ J_ef y L ≥ 1 siempre):
     assert op.piernas_por_conductor(10, 2, 7) == 1    # Bogotá–Cali: h = 10/2 = 5;  ⌊7/5⌋ = ⌊1,4⌋ = 1
     assert op.piernas_por_conductor(4, 1, 7) == 1     # Bogotá–Sogamoso: ⌊7/4⌋ = ⌊1,75⌋ = 1 (no 1,75 «continuas»)
     assert op.piernas_por_conductor(1.5, 1, 7) == 4   # Pasto–Ipiales: ⌊7/1,5⌋ = ⌊4,67⌋ = 4
     assert op.piernas_por_conductor(2, 1, 7) == 3     # ⌊7/2⌋ = ⌊3,5⌋ = 3
-    assert op.piernas_por_conductor(7.5, 1, 7) == 1   # h = 7,5 > J_ef = 7 (pero ≤ 8 h): ⌊0,93⌋ = 0 → mínimo 1
+    assert op.piernas_por_conductor(7.5, 2, 7) == 1   # t = 7,5 con k = 2 (E1): h = 3,75; ⌊1,87⌋ = 1
+
+
+def test_piernas_por_conductor_rechaza_pierna_mas_larga_que_la_jornada_efectiva():
+    # Antes: h = 7,5 > J_ef = 7 → ⌊0,93⌋ = 0 → max(1, 0) = 1 en silencio (7,5 · 6 = 45 h/semana > 42).
+    # Ahora es una aserción: con k de `tripulacion` nunca ocurre; si alguien pasa otro k, error claro.
+    with pytest.raises(ValueError, match="jornada_efectiva_h"):
+        op.piernas_por_conductor(7.5, 1, 7)
+    with pytest.raises(ValueError, match="jornada_efectiva_h"):
+        op.piernas_por_conductor(8, 1, 7)             # t = 8 con k = 1: 8 h > 7 h (la prueba vieja lo daba por válido)
 
 
 def test_piernas_por_conductor_toleran_ruido_de_coma_flotante():
@@ -162,6 +204,54 @@ def test_conductores_de_nomina_con_ausentismo_y_descanso_semanal():
     assert op.conductores_nomina(0, 0.09, 1) == 0
 
 
+def test_nomina_semanal_caso_a_mano():
+    # (O3) N* = ⌈ max(max_d C, Σ_d C / (7 − s)) / (1 − a) ⌉, s = 1:
+    # C = [10, 10, 10, 10, 10, 10, 0], a = 0: max = 10; 60 / 6 = 10 → N* = 10 (la diaria (5b) da ⌈10 · 7/6⌉ = 12).
+    assert op.nomina_semanal_minima([10, 10, 10, 10, 10, 10, 0], 0.0, 1) == 10
+    assert op.conductores_nomina(10, 0.0, 1) == 12
+    # 7 días de 10: 70 / 6 = 11,67 → 12 (aquí coincide con la diaria: la semana está llena)
+    assert op.nomina_semanal_minima([10] * 7, 0.0, 1) == 12
+    # pico de un día: max = 20 domina a 50 / 6 = 8,33 → 20 (todos trabajan ese día)
+    assert op.nomina_semanal_minima([20, 5, 5, 5, 5, 5, 5], 0.0, 1) == 20
+    # con ausentismo a = 0,09: 10 / 0,91 = 10,99 → 11
+    assert op.nomina_semanal_minima([10, 10, 10, 10, 10, 10, 0], 0.09, 1) == 11
+    # s = 2: 60 / 5 = 12 > 10 → 12
+    assert op.nomina_semanal_minima([10, 10, 10, 10, 10, 10, 0], 0.0, 2) == 12
+    assert op.nomina_semanal_minima([0] * 7, 0.09, 1) == 0
+    # semana incompleta (4 días con datos): se calcula con lo que hay → 40 / 6 = 6,67; max 10 → 10 (cota inferior)
+    assert op.nomina_semanal_minima([10, 10, 10, 10], 0.0, 1) == 10
+    with pytest.raises(ValueError, match="7"):
+        op.nomina_semanal_minima([1] * 8, 0.0, 1)
+
+
+def _cubre_con_descansos(c: tuple[int, ...], n: int, s: int) -> bool:
+    """Construye turnos para n conductores con s días libres cada uno (asignación «envolvente» de McNaughton: se reparten
+    los huecos libres N − C_d de cada día, en orden, entre los conductores 0, 1, …, n−1, 0, 1, …) y comprueba que cada
+    conductor descansa s días DISTINTOS y que cada día trabajan al menos C_d. Independiente de la fórmula de N*."""
+    if n < max(c):
+        return False
+    libres = [d for d in range(len(c)) for _ in range(n - c[d])]   # huecos libres, día por día
+    if len(libres) < n * s:
+        return False
+    descansos = [set() for _ in range(n)]
+    for i, dia in enumerate(libres[: n * s]):
+        descansos[i % n].add(dia)
+    trabajan = [sum(dia not in descansos[j] for j in range(n)) for dia in range(len(c))]
+    return all(len(dd) == s for dd in descansos) and all(t >= cd for t, cd in zip(trabajan, c, strict=True))
+
+
+def test_nomina_semanal_es_la_minima_factible_en_todas_las_semanas_pequenas():
+    # Invariante (a = 0): para TODAS las semanas con C_d ∈ {0, …, 3} (4^7 = 16.384 casos) y s ∈ {1, 2}, con N* hay turnos
+    # que dan a cada conductor s días libres y cubren cada día, y con N* − 1 no. N* ≤ nómina diaria (5b) con C = max_d C_d.
+    for s in (1, 2):
+        for c in itertools.product(range(4), repeat=7):
+            n = op.nomina_semanal_minima(list(c), 0.0, s)
+            assert _cubre_con_descansos(c, n, s), (c, s, n)
+            if n > 0:
+                assert not _cubre_con_descansos(c, n - 1, s), (c, s, n)
+            assert n <= op.conductores_nomina(max(c), 0.0, s)
+
+
 # -------------------------------------------------------------------------------------------- dimensionar()
 
 def _params(**globales) -> dict:
@@ -173,7 +263,8 @@ def _params(**globales) -> dict:
         "costo_pasajero_sin_atender": 1.0, "costo_vehiculo_dia_sobrante": 1.0,
     }
     g.update(globales)
-    ruta = {"tiempo_ciclo_h": 9.0, "tiempo_recorrido_h": 4.0, "fraccion_demanda_en_origen": 1.0}
+    ruta = {"tiempo_ciclo_h": 9.0, "tiempo_recorrido_h": 4.0, "fraccion_demanda_en_origen": 1.0,
+            "multiplicador_ocupacion": 1.0}
     return {
         "globales": g,
         "por_ruta": {"A-B": dict(ruta), "B-A": dict(ruta)},
@@ -225,6 +316,57 @@ def test_dimensionar_segundo_conductor_por_norma_en_recorridos_largos():
     assert list(out["tripulacion"]) == [2, 2]
     assert list(out["conductores_servicio"]) == [32, 32]
     assert list(out["conductores"]) == [42, 42]
+
+
+def test_dimensionar_ocupacion_por_ruta_con_multiplicador_y_tope_1():
+    # (O1) ρ_r = min(1, ρ · m_r), ρ = 0,8:
+    # A-B: m = 0,5 → ρ_r = 0,4; cap_ef 30 → 12 útiles; 100 / 12 = 8,33 → 9 despachos
+    # B-A: m = 1,5 → 0,8 · 1,5 = 1,2 → tope 1 (no se planea por encima de la capacidad); cap_ef 24; 150 / 24 = 6,25 → 7
+    # vehículos ⌈max(9, 7) / 2⌉ = ⌈4,5⌉ = 5
+    p = _params()
+    p["por_ruta"]["A-B"]["multiplicador_ocupacion"] = 0.5
+    p["por_ruta"]["B-A"]["multiplicador_ocupacion"] = 1.5
+    out = op.dimensionar(_ida_y_regreso(), p).set_index("ruta_id")
+    assert out.loc["A-B", "ocupacion_ruta"] == pytest.approx(0.4)
+    assert out.loc["B-A", "ocupacion_ruta"] == pytest.approx(1.0)
+    assert (out.loc["A-B", "despachos"], out.loc["B-A", "despachos"]) == (9, 7)
+    assert list(out["vehiculos"]) == [5, 5]
+    # con m = 1 en las dos (como _params) la ocupación por ruta es ρ: caso a mano de arriba sin cambios
+    assert list(op.dimensionar(_ida_y_regreso(), _params())["ocupacion_ruta"]) == pytest.approx([0.8, 0.8])
+
+
+@pytest.mark.parametrize("m", [0.0, -1.0, float("nan"), float("inf")])
+def test_multiplicador_de_ocupacion_fuera_de_rango_da_error(m):
+    p = _params()
+    p["por_ruta"]["A-B"]["multiplicador_ocupacion"] = m
+    with pytest.raises(ValueError, match="multiplicador_ocupacion"):
+        op.dimensionar(_ida_y_regreso(), p)
+
+
+def test_dimensionar_recorrido_de_7_5_h_lleva_dos_conductores():
+    # (E1) t = 7,5, T = 16, J_ef = 7: k = max(1, ⌈7,5/7⌉) = 2; h = 3,75; L = ⌊7/3,75⌋ = 1; despachos 5 y 8 → P = 16
+    # C_serv = ⌈2 · 16 / 1⌉ = 32 (antes k = 1, L = max(1, 0) = 1 → 16 conductores manejando 7,5 h: 45 h/semana).
+    p = _params()
+    for r in ("A-B", "B-A"):
+        p["por_ruta"][r].update(tiempo_recorrido_h=7.5, tiempo_ciclo_h=16.0)
+    out = op.dimensionar(_ida_y_regreso(), p)
+    assert list(out["tripulacion"]) == [2, 2]
+    assert list(out["piernas_por_conductor"]) == [1, 1]
+    assert list(out["conductores_servicio"]) == [32, 32]
+
+
+def test_dimensionar_sin_salto_entre_8_y_8_01_horas():
+    # t = 8 (k_norma = 1, pero ⌈8/7⌉ = 2) y t = 8,01 (k_norma = 2): mismo k = 2, mismo L = 1, mismos conductores.
+    # Mismo ciclo (18 h) para aislar el efecto del recorrido.
+    salidas = []
+    for t in (8.0, 8.01):
+        p = _params()
+        for r in ("A-B", "B-A"):
+            p["por_ruta"][r].update(tiempo_recorrido_h=t, tiempo_ciclo_h=18.0)
+        out = op.dimensionar(_ida_y_regreso(), p)
+        salidas.append(out[["tripulacion", "piernas_por_conductor", "conductores_servicio", "conductores"]])
+    pd.testing.assert_frame_equal(salidas[0], salidas[1])
+    assert list(salidas[0]["tripulacion"]) == [2, 2]
 
 
 def test_dimensionar_corredor_corto_varias_piernas_por_conductor():
@@ -340,17 +482,27 @@ def test_semana_justa_en_el_limite_es_valida():
     op.dimensionar(_ida_y_regreso(), _params(jornada_efectiva_h=6.0, dias_descanso_semana=2))
 
 
-def test_pierna_que_un_conductor_no_puede_cubrir_da_error():
-    # t = 18 h > 8 h → k = 2; t / k = 9 h > jornada máxima diaria (8 h): ni con dos conductores se cubre la pierna.
-    p = _params()
-    for r in ("A-B", "B-A"):
-        p["por_ruta"][r].update(tiempo_recorrido_h=18.0, tiempo_ciclo_h=40.0)
-    with pytest.raises(ValueError, match="jornada_max_diaria_h"):
-        op.dimensionar(_ida_y_regreso(), p)
-    # t = 8 h → k = 1 y t / k = 8 ≤ 8: válido (borde incluido)
-    for r in ("A-B", "B-A"):
-        p["por_ruta"][r].update(tiempo_recorrido_h=8.0, tiempo_ciclo_h=17.0)
-    op.dimensionar(_ida_y_regreso(), p)
+def test_tripulacion_cubre_cualquier_pierna_dentro_de_la_jornada_efectiva():
+    # Antes: t = 8 → k = 1, h = 8 ≤ jornada máxima diaria (8): «válido» aunque 8 > J_ef = 7 y 8 · 6 = 48 > 42 h/semana.
+    # Ahora (E1) la tripulación se ajusta: t = 8 → k = 2, h = 4; t = 18 → k = 3, h = 6 ≤ 7 (antes: error).
+    for t, ciclo, k, h in ((8.0, 17.0, 2, 4.0), (18.0, 40.0, 3, 6.0)):
+        p = _params()
+        for r in ("A-B", "B-A"):
+            p["por_ruta"][r].update(tiempo_recorrido_h=t, tiempo_ciclo_h=ciclo)
+        out = op.dimensionar(_ida_y_regreso(), p)
+        assert list(out["tripulacion"]) == [k, k]
+        assert t / k == pytest.approx(h) and h <= p["globales"]["jornada_efectiva_h"]
+
+
+def test_config_actual_no_cambia_tripulacion_ni_piernas(cfg_operacion):
+    # (E1) con t = 10, 4 y 1,5 h la regla nueva da el mismo k y L que la anterior (k_norma; max(1, ⌊J_ef/h⌋)).
+    g = cfg_operacion["operacion"]
+    for ruta, p in g["por_ruta"].items():
+        t = p["tiempo_recorrido_h"]
+        k_viejo = op.tripulacion_norma(t, g["umbral_segundo_conductor_h"])
+        l_viejo = max(1, math.floor(g["jornada_efectiva_h"] / (t / k_viejo) + 1e-9))
+        k = op.tripulacion(t, g["umbral_segundo_conductor_h"], g["jornada_efectiva_h"])
+        assert (k, op.piernas_por_conductor(t, k, g["jornada_efectiva_h"])) == (k_viejo, l_viejo), ruta
 
 
 def test_errores_de_ruta_clase_y_composicion():
@@ -405,6 +557,28 @@ def test_flota_por_corredor_cuenta_cada_corredor_una_vez():
     assert (fila["vehiculos"], fila["conductores_servicio"], fila["conductores"]) == (4, 16, 21)
     # sumar la tabla por ruta daría el doble: 8 vehículos-día; la del corredor da los 4 reales
     assert tabla["vehiculos"].sum() == 2 * corr["vehiculos"].sum() == 8
+
+
+def test_nomina_semanal_por_corredor_lunes_a_domingo():
+    # Corredor A-B | B-A del jueves 2022-12-01 al domingo 2022-12-11 (11 días). Demanda 100/150 → C_serv = 16 por día;
+    # demanda 0 → 0. Semana 1 (lun 28-nov..dom 4-dic): solo 4 días con datos (jue–dom) → incompleta;
+    # semana 2 (lun 5..dom 11): C = [16, 16, 16, 16, 16, 16, 0] → max 16; 96 / 6 = 16 → N* = ⌈16 / 0,91⌉ = ⌈17,58⌉ = 18
+    # (nómina diaria (5b) = 21). Semana 1: C = [16, 16, 16, 16]: max 16; 64/6 = 10,67 → ⌈16 / 0,91⌉ = 18 (cota inferior).
+    filas = []
+    for dia in pd.date_range("2022-12-01", "2022-12-11"):
+        cero = dia == pd.Timestamp("2022-12-11")
+        filas += [("A-B", dia, 0 if cero else 100), ("B-A", dia, 0 if cero else 150)]
+    corr = op.flota_por_corredor(op.dimensionar(_demanda(filas), _params()))
+    sem = op.nomina_semanal(corr, ausentismo=0.09, dias_descanso_semana=1).set_index("semana_inicio")
+    assert list(sem.index) == [pd.Timestamp("2022-11-28"), pd.Timestamp("2022-12-05")]
+    s1, s2 = sem.loc[pd.Timestamp("2022-11-28")], sem.loc[pd.Timestamp("2022-12-05")]
+    assert (s1["dias_con_datos"], bool(s1["semana_completa"])) == (4, False)
+    assert (s2["dias_con_datos"], bool(s2["semana_completa"])) == (7, True)
+    assert s2["semana_fin"] == pd.Timestamp("2022-12-11")
+    assert (s2["max_conductores_servicio"], s2["suma_conductores_servicio"]) == (16, 96)
+    assert s2["nomina_semanal"] == 18 and s2["max_nomina_diaria"] == 21
+    assert s1["nomina_semanal"] == 18
+    assert (sem["nomina_semanal"] <= sem["max_nomina_diaria"]).all()
 
 
 def test_flota_por_corredor_detecta_filas_inconsistentes():
@@ -555,6 +729,42 @@ def test_ocupacion_calibrada_reproduce_los_despachos_en_agregado():
     rho = op.ocupacion_calibrada(demanda, obs, f, cap)
     continuo = sum(f[r] * dem / (cap[r] * rho) for r, dem in zip(demanda["ruta_id"], demanda["demanda"], strict=True))
     assert continuo == pytest.approx(obs["despachos"].iloc[:3].sum())
+
+
+def test_multiplicadores_de_ocupacion_por_ruta_a_mano():
+    # Mismo caso que ρ*: R1 10 cargas llenas / 20 observados → ρ_R1 = 0,5; R2 5 / 5 → ρ_R2 = 1,0; ρ* = 15/25 = 0,6.
+    # m_r = ρ_r_obs / ρ*: m_R1 = 0,5 / 0,6 = 0,8333; m_R2 = 1 / 0,6 = 1,6667.
+    demanda = _demanda([("R1", "2022-12-01", 400), ("R2", "2022-12-01", 50)])
+    obs = _demanda([("R1", "2022-12-01", 20), ("R2", "2022-12-01", 5), ("R2", "2022-12-02", 99)]).rename(
+        columns={"demanda": "despachos"})
+    f, cap = {"R1": 0.5, "R2": 1.0}, {"R1": 20.0, "R2": 10.0}
+    m = op.multiplicadores_ocupacion(demanda, obs, f, cap, 0.6)
+    assert m == {"R1": pytest.approx(0.5 / 0.6), "R2": pytest.approx(1 / 0.6)}
+
+
+def test_multiplicadores_reproducen_cada_ruta():
+    # Invariante: con ρ_r = ρ* · m_r, Σ_d f·D / (cap_ef · ρ_r) = despachos observados de CADA ruta (antes del techo);
+    # con ρ* global solo el total coincide (R1: 15,5 / 0,6 · … ≠ 31).
+    demanda = _demanda([("R1", "2022-12-01", 400), ("R1", "2022-12-02", 260), ("R2", "2022-12-01", 50)])
+    obs = _demanda([("R1", "2022-12-01", 20), ("R1", "2022-12-02", 11), ("R2", "2022-12-01", 5)]).rename(
+        columns={"demanda": "despachos"})
+    f, cap = {"R1": 0.5, "R2": 1.0}, {"R1": 20.0, "R2": 10.0}
+    rho = op.ocupacion_calibrada(demanda, obs, f, cap)
+    m = op.multiplicadores_ocupacion(demanda, obs, f, cap, rho)
+    for r, observados in (("R1", 31), ("R2", 5)):
+        g = demanda[demanda["ruta_id"] == r]
+        continuo = sum(f[r] * d / (cap[r] * rho * m[r]) for d in g["demanda"])
+        assert continuo == pytest.approx(observados)
+    # Identidad: la media de m_r ponderada por despachos observados es 1, porque obs_r · ρ* · m_r = cargas_r y
+    # Σ_r cargas_r = ρ* · Σ_r obs_r  ⇒  Σ_r obs_r · m_r = Σ_r obs_r (31 · m_R1 + 5 · m_R2 = 36).
+    assert 31 * m["R1"] + 5 * m["R2"] == pytest.approx(36.0)
+
+
+def test_multiplicador_sin_despachos_observados_da_error_claro():
+    demanda = _demanda([("R1", "2022-12-01", 400), ("R2", "2022-12-01", 50)])
+    obs = _demanda([("R1", "2022-12-01", 20)]).rename(columns={"demanda": "despachos"})
+    with pytest.raises(ValueError, match="R2"):
+        op.multiplicadores_ocupacion(demanda, obs, {"R1": 0.5, "R2": 1.0}, {"R1": 20.0, "R2": 10.0}, 0.6)
 
 
 def test_reproduccion_de_despachos_por_ruta_y_total():
@@ -767,9 +977,90 @@ def test_rho_estrella_usa_la_misma_ventana_que_f(calibracion):
     assert abs(calibracion["ocupacion_calibrada"] - calibracion["ocupacion_calibrada_todo_train"]) > 0.01
 
 
+def test_multiplicadores_reales_reproducen_cada_ruta_en_la_ventana(cfg_operacion, calibracion):
+    # (O1) m_r se calcula al ejecutar (no está en el YAML) y, con ρ = ρ*, cada ruta reproduce sus despachos ORIGEN de la
+    # ventana de calibración: 100 % + el efecto del techo diario (≤ 1 despacho por ruta y día → < 2 % aquí).
+    assert set(calibracion["multiplicador_ocupacion"]) == set(cfg_operacion["operacion"]["por_ruta"])
+    assert all(m > 0 and math.isfinite(m) for m in calibracion["multiplicador_ocupacion"].values())
+    for p in cfg_operacion["operacion"]["por_ruta"].values():
+        assert "multiplicador_ocupacion" not in p
+    cfg = apply_overrides(cfg_operacion, [f"operacion.ocupacion_objetivo={calibracion['ocupacion_calibrada']}"])
+    params = op.parametros_desde_config(cfg, calibracion, op.leer_regresos(RUTAS))
+    tabla = op.dimensionar(op._ventana(calibracion["demanda_train"], *calibracion["ventana_fraccion"]), params)
+    rep = op.reproduccion_despachos(tabla, calibracion["despachos_origen_train"])
+    for r in cfg_operacion["operacion"]["por_ruta"]:
+        assert 100.0 <= rep[r]["porcentaje"] < 102.0, (r, rep[r])
+
+
+def _alterar_desde(detalle: pd.DataFrame, diaria: pd.DataFrame, desde: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Cambia TODO lo de fecha >= `desde` en los datos reales (pasajeros, despachos, clase y sin_registro)."""
+    det, dia = detalle.copy(), diaria.copy()
+    m = pd.to_datetime(det["fecha"]) >= pd.Timestamp(desde)
+    det.loc[m, "despachos"] = det.loc[m, "despachos"] * 7 + 3
+    det.loc[m, "pasajeros"] = det.loc[m, "pasajeros"] * 11 + 5
+    det.loc[m & (det["tipo_despacho"] == op.ORIGEN), "clase_vehiculo"] = "BUS"
+    m = pd.to_datetime(dia["fecha"]) >= pd.Timestamp(desde)
+    dia.loc[m, "pasajeros"] = dia.loc[m, "pasajeros"] * 13 + 1
+    dia.loc[m, "sin_registro"] = False
+    return det, dia
+
+
+def _calibrado(c: dict) -> dict:
+    claves = ("composicion", "fraccion", "capacidad_efectiva", "ocupacion_calibrada", "multiplicador_ocupacion")
+    return {k: c[k] for k in claves if k in c}
+
+
+def test_calibracion_real_no_cambia_con_datos_posteriores_al_fin_de_entrenamiento(cfg_operacion, calibracion):
+    # Fuga: alterar TODO lo posterior a fin_entrenamiento (2023) no mueve π, f, cap_ef, ρ* ni m_r.
+    det, dia = _alterar_desde(pd.read_parquet(DETALLE), pd.read_parquet(DIARIA), "2023-01-01")
+    otra = op.calibrar(cfg_operacion, det, dia, op.leer_regresos(RUTAS))
+    assert _calibrado(otra) == _calibrado(calibracion)
+
+
+@pytest.fixture(scope="module")
+def validacion(cfg_operacion) -> dict:
+    return op.validar_fuera_de_ventana(cfg_operacion, pd.read_parquet(DETALLE), pd.read_parquet(DIARIA),
+                                       op.leer_regresos(RUTAS))
+
+
+def test_ventanas_de_validacion_no_se_solapan_y_caben_en_train(cfg_operacion):
+    v = cfg_operacion["calibracion"]["validacion"]
+    cal, prueba = [pd.Timestamp(x) for x in v["calibrar"]], [pd.Timestamp(x) for x in v["probar"]]
+    assert cal[0] <= cal[1] < prueba[0] <= prueba[1] <= pd.Timestamp(cfg_operacion["datos"]["fin_entrenamiento"])
+    assert cal[0] >= pd.Timestamp(cfg_operacion["datos"]["inicio_entrenamiento"])
+
+
+def test_validacion_no_mira_la_ventana_de_prueba(cfg_operacion, validacion):
+    # Fuga en la validación: lo calibrado (π, cap, f, ρ*, m_r) solo puede usar fecha <= fin de la ventana de calibración.
+    # Se alteran todos los datos desde el inicio de la ventana de prueba (nov-2022) y nada calibrado cambia.
+    det, dia = _alterar_desde(pd.read_parquet(DETALLE), pd.read_parquet(DIARIA),
+                              cfg_operacion["calibracion"]["validacion"]["probar"][0])
+    otra = op.validar_fuera_de_ventana(cfg_operacion, det, dia, op.leer_regresos(RUTAS))
+    assert _calibrado(otra) == _calibrado(validacion)
+    assert otra["capacidades"] == validacion["capacidades"]
+    # y la reproducción sí cambia (la prueba mira la ventana de prueba de verdad)
+    assert otra["reproduccion_rho_por_ruta"] != validacion["reproduccion_rho_por_ruta"]
+
+
+def test_validacion_fuera_de_ventana_mejora_con_el_multiplicador(validacion):
+    # Calibrado en sep–oct 2022, probado en nov–dic 2022. Salvo 11001-15759 (cambio de régimen del tránsito desde el
+    # 8-nov-2022), ρ·m_r queda más cerca del 100 % que ρ global en cada ruta.
+    glob, por_ruta = validacion["reproduccion_rho_global"], validacion["reproduccion_rho_por_ruta"]
+    for r in glob:
+        if r in ("total", "11001-15759"):
+            continue
+        assert abs(por_ruta[r]["porcentaje"] - 100) < abs(glob[r]["porcentaje"] - 100), r
+        assert 95 <= por_ruta[r]["porcentaje"] <= 110, r
+    assert validacion["ventana_calibracion"] == ["2022-09-01", "2022-10-31"]
+    assert validacion["ventana_prueba"] == ["2022-11-01", "2022-12-31"]
+
+
 def test_notas_del_yaml_declaran_las_limitaciones(cfg_operacion):
     g = cfg_operacion["meta"]["globales"]
     assert "por ruta" in g["ocupacion_objetivo"]["nota"]                      # desajuste por ruta de ρ global
+    assert "censurada" in g["ocupacion_objetivo"]["nota"]                     # demanda censurada por la oferta
+    assert "diciembre" in g["ocupacion_objetivo"]["nota"]                     # ρ* incluye el pico de fin de año
+    assert "max(1" not in g["jornada_efectiva_h"]["nota"]                     # E1: ya no hay mínimo de 1 pierna
     assert "relevo" in g["jornada_efectiva_h"]["nota"]                        # supuesto de (5a)
     assert "disposición del empleador" in g["jornada_efectiva_h"]["nota"]     # la pausa no es tiempo a disposición
     assert "cota baja" in cfg_operacion["meta"]["por_clase"]["BUS"]["capacidad_pasajeros"]["nota"]
@@ -794,10 +1085,13 @@ def test_parametros_al_formato_del_contrato_de_la_app(cfg_operacion, calibracion
         assert isinstance(p["valor"], (int, float)) and not isinstance(p["valor"], bool)
         assert isinstance(p["unidad"], str)
         assert ("fuente" in p) != (p.get("supuesto") is True)
-    for ruta, pr in c["por_ruta"].items():  # f sale de los datos de train: fuente con la ventana reciente
+    for ruta, pr in c["por_ruta"].items():  # f y m_r salen de los datos de train: fuente con la ventana reciente
         f = pr["fraccion_demanda_en_origen"]
         assert f["valor"] == calibracion["fraccion"][ruta]
         assert "2022-11-01" in f["fuente"] and d["fin_entrenamiento"] in f["fuente"]
+        m = pr["multiplicador_ocupacion"]
+        assert m["valor"] == calibracion["multiplicador_ocupacion"][ruta]
+        assert "2022-11-01" in m["fuente"] and d["fin_entrenamiento"] in m["fuente"]
     for ruta, cl in c["composicion_clases"].items():
         assert set(cl) == set(c["por_clase"])
         assert sum(p["valor"] for p in cl.values()) == pytest.approx(1.0, abs=1e-9)
@@ -853,3 +1147,16 @@ def test_main_corre_sin_red_y_escribe_el_ejemplo_marcado(tmp_path, monkeypatch, 
         assert set(resumen["calibracion"][clave]) == {*cfg["operacion"]["por_ruta"], "total"}
     for v in resumen["maximo_diario_por_corredor"].values():
         assert {"vehiculos", "conductores_servicio", "conductores"} == set(v)
+    cal = resumen["calibracion"]
+    assert set(cal["multiplicador_ocupacion"]) == set(cfg["operacion"]["por_ruta"])
+    for clave in ("reproduccion_rho_global", "reproduccion_rho_por_ruta"):
+        assert set(cal["validacion_fuera_de_ventana"][clave]) == {*cfg["operacion"]["por_ruta"], "total"}
+    # (O3) nómina semanal: una fila por corredor y semana (lunes a domingo); nunca más que la nómina diaria máxima
+    sem = pd.read_csv(tmp_path / "nomina_semanal.csv", parse_dates=["semana_inicio", "semana_fin"])
+    assert not sem.duplicated(["corredor", "semana_inicio"]).any()
+    assert (sem["semana_inicio"].dt.day_of_week == 0).all() and (sem["semana_fin"].dt.day_of_week == 6).all()
+    assert sem["dias_con_datos"].between(1, 7).all()
+    assert (sem["semana_completa"] == (sem["dias_con_datos"] == 7)).all()
+    assert (sem["nomina_semanal"] <= sem["max_nomina_diaria"]).all()
+    assert sem.groupby("corredor")["dias_con_datos"].sum().mul(2).sum() == len(tabla)
+    assert set(resumen["nomina_semanal_por_corredor"]) == set(corr["corredor"])

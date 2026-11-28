@@ -1,5 +1,14 @@
 # Prompt CA-3d — implementador-experto (Opus, continuación del agente de CA-3b/CA-3c) — 2026-11-26 — orquesta: Camila
 
+> **Contexto para un agente nuevo (añadido 2026-11-27 al despachar; el agente de CA-3b/CA-3c ya no está activo).** Antes de
+> tocar nada lee: `docs/spec/partes/camila.md` §3.2 y §3.3; núcleo `docs/spec/SPEC.md` §5.4 (contrato de `conductores` y
+> flota) y la regla 0.9 de conocibilidad; los prompts previos `alucinaciones/prompts/CA-3b.md`, `CA-3c.md` y
+> `CA-3-verificacion-2.md` (qué se decidió y qué observó el verificador); y el estado actual de `src/m1_demanda/operacion.py`,
+> `configs/m1/operacion.yaml`, `tests/test_operacion_m1.py`. Toca solo esos archivos y `results/data/m1/operacion/`. Hay un
+> merge de `main` pendiente en el índice: **no ejecutes `git add`, `git stash`, `git commit`, `git merge` ni `git checkout`**.
+> Prohibido inventar valores normativos: usa los del YAML con su cita; si falta algo, `TODO(dato-faltante)` y repórtalo.
+
+
 La segunda verificación matemática de CA-3 dio APROBADO CON OBSERVACIONES. Camila decidió (26-nov) aplicar estas tres. Mismos
 archivos (`src/m1_demanda/operacion.py`, `configs/m1/operacion.yaml`, `tests/test_operacion_m1.py`, `results/data/m1/operacion/`).
 Prueba primero, con el caso a mano en el comentario. **Prohibido `git commit` / `git push`.**

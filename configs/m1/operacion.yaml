@@ -1,12 +1,13 @@
 # M1 — operación: flota y conductores (CA-3; núcleo §5.4; spec de Camila §3.2–§3.3).
 # Uso: python run.py m1-operacion --config configs/m1/operacion.yaml --set operacion.ocupacion_objetivo=0.8 --set operacion.cuantil=0.9
-# Fórmula y ecuaciones (1)–(5'): src/m1_demanda/operacion.py. Nada aleatorio; sin red.
+# Fórmula y ecuaciones (1)–(5b): src/m1_demanda/operacion.py. Nada aleatorio; sin red.
 #
 # Diseño: `operacion` trae SOLO valores escalares (sobrescribibles con --set operacion.<clave>=v,
 # --set operacion.por_ruta.<ruta>.<clave>=v, --set operacion.por_clase.<CLASE>.capacidad_pasajeros=v).
 # `meta` describe cada valor con {unidad, fuente | supuesto: true, nota}: `meta.globales.<clave>`,
 # `meta.por_ruta.<clave>` (común a las seis rutas) y `meta.por_clase.<CLASE>.<clave>`.
-# Lo que se calcula con train al ejecutar (composición por clase y fraccion_demanda_en_origen) NO se escribe aquí:
+# Lo que se calcula con train al ejecutar (composición por clase, fraccion_demanda_en_origen y multiplicador_ocupacion
+# m_r por ruta) NO se escribe aquí:
 # lleva `fuente` con la ventana usada en results/data/m1/operacion/resumen.json.
 # Normas: citas verificadas en docs/investigacion/CA-2_verificacion.md (§1–§3, §6 y §7), consultadas el 2026-11-26.
 
@@ -23,6 +24,11 @@ calibracion:
   # [PROPUESTO, Camila, 26-nov] f(r) se calcula con los últimos meses de train para captar el régimen reciente
   # (11001-15759: el tránsito sube desde el 8-nov-2022 y f cae de 0,417 a 0,31).
   meses_fraccion: 2
+  # [DECIDIDO, Camila, 26-nov, CA-3d] Validación fuera de ventana de ρ* y m_r: se recalibra todo (composición, capacidad,
+  # f, ρ*, m_r) solo con fecha <= calibrar[1] y se mide la reproducción de despachos ORIGEN en `probar` (ambas en train).
+  validacion:
+    calibrar: ["2022-09-01", "2022-10-31"]
+    probar: ["2022-11-01", "2022-12-31"]
   fuente_datos: >-
     Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de
     transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet)
@@ -71,11 +77,17 @@ meta:
         Sin norma hallada (CA-2). [DECIDIDO, Camila, 26-nov, CA-3c] Calibrada con train en la MISMA ventana que f
         (últimos calibracion.meses_fraccion meses de train, 2022-11-01..2022-12-31, días con registro): ρ* = Σ f·D/cap_ef
         ÷ Σ despachos ORIGEN observados = 0,6063 → 0,61 (con todo el train sería 0,5396); tests/test_operacion_m1.py la
-        recalcula con los datos. LIMITACIÓN: ρ es uno solo para las seis rutas; con ρ* el total de despachos ORIGEN de la
-        ventana se reproduce (100 %), pero no cada ruta: 11001-15759 46 %, 15759-11001 64 %, 11001-76001 106 %,
-        76001-11001 104 %, 52001-52356 134 %, 52356-52001 132 % (resumen.json, reproduccion_despachos_calibracion; por
-        ruta, el modelo pide menos despachos de los observados donde hay muchas salidas poco llenas y más donde van
-        llenas). Control de la app; se analiza por sensibilidad.
+        recalcula con los datos. Es UN escalar (control de la app y --set). [DECIDIDO, Camila, 26-nov, CA-3d] Cada ruta
+        usa ρ_r = min(1, ρ · m_r), con m_r = ρ_r observada / ρ* calibrado al ejecutar en la misma ventana (resumen.json,
+        multiplicador_ocupacion): con un solo ρ global el total se reproduce, con desajuste por ruta (en la ventana 11001-15759
+        46 %, 15759-11001 64 %, 52001-52356 134 %, 52356-52001 132 %); con ρ · m_r cada ruta queda en 100–101 %. Fuera de
+        ventana (calibrar sep–oct 2022, probar nov–dic 2022) ρ · m_r da 102–108 % en 5 de 6 rutas frente a 67–142 % con
+        ρ global; 11001-15759 queda en 172 % por su cambio de régimen (el tránsito sube desde el 8-nov-2022).
+        LIMITACIONES: (i) ρ* y m_r incluyen el pico de diciembre (fin de año) de la ventana, así que describen la
+        ocupación de temporada alta más que la de una semana normal; (ii) la demanda observada está censurada por la
+        oferta (solo se registran los pasajeros que consiguieron silla), así que ρ observada mide la carga media de los
+        despachos que salieron, no la ocupación que habría con más oferta; (iii) m_r supone que la relación entre rutas
+        se mantiene en el periodo que se planea. Se analiza por sensibilidad.
     cuantil:
       unidad: cuantil del pronóstico
       supuesto: true
@@ -97,9 +109,10 @@ meta:
         diaria de 8 h; la hora restante cubre pausas y tareas en terminal (el alistamiento no se cuenta como
         conducción). Con s = 1: 7 · 6 = 42 h ≤ jornada_max_semanal_h. LIMITACIÓN: eso cumple la jornada semanal solo
         si la hora de pausa NO es tiempo a disposición del empleador; si lo fuera, serían 8 · 6 = 48 h > 42 h.
-        SUPUESTO de la ec. (5a) [DECIDIDO, Camila, 26-nov, CA-3c]: con segundo conductor (k = 2) cada uno maneja
-        t / k horas por pierna y el relevo que descansa a bordo no consume jornada. Las piernas son indivisibles:
-        piernas por conductor y día = max(1, ⌊J_ef / (t / k)⌋).
+        SUPUESTO de la ec. (5a) [DECIDIDO, Camila, 26-nov, CA-3c]: con k conductores a bordo cada uno maneja t / k
+        horas por pierna y el relevo que descansa a bordo no consume jornada. [DECIDIDO, Camila, 26-nov, CA-3d]
+        k = max(k_norma, ⌈t / J_ef⌉), así que t / k ≤ J_ef siempre (con t = 7,5 h y k = 1 un conductor manejaría
+        7,5 · 6 = 45 h/semana > 42). Las piernas son indivisibles: piernas por conductor y día = ⌊J_ef / (t / k)⌋ ≥ 1.
     jornada_max_diaria_h:
       unidad: horas por día
       fuente: >-
@@ -135,14 +148,16 @@ meta:
         destino, deberán contar con un segundo conductor». Diario Oficial No. 48.697, 7-feb-2013.
       nota: >-
         Vigente: no derogada por la Res. 20223040045295/2022 (art. 9.2.1) ni afectada por el Decreto 1079/2015
-        (art. 3.1.1) (CA-2 verificación §3). Se aplica siempre: k = 2 si tiempo_recorrido_h > 8.
+        (art. 3.1.1) (CA-2 verificación §3). Se aplica siempre: k_norma = 2 si tiempo_recorrido_h > 8. La tripulación
+        usada es k = max(k_norma, ⌈t / jornada_efectiva_h⌉) (ec. (5a)): la norma es el mínimo, no el máximo.
     dias_descanso_semana:
       unidad: días por conductor y semana
       fuente: >-
         Congreso de la República de Colombia (2025). Ley 2466 de 2025, art. 11 (art. 161 CST): «La jornada máxima
         semanal podrá ser distribuida … de cinco (5) a seis (6) días a la semana, garantizando siempre el día de
         descanso…» (igual en la Ley 2101 de 2021, art. 2).
-      nota: Factor 7/(7 − s) de la ec. (5b). Debe ser ≥ 1.
+      nota: >-
+        Factor 7/(7 − s) de la nómina diaria (5b) y divisor (7 − s) de la nómina semanal N* (5b). Debe ser ≥ 1.
     costo_pasajero_sin_atender:
       unidad: unidades relativas por pasajero
       supuesto: true
