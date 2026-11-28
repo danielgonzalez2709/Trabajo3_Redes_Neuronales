@@ -1,6 +1,6 @@
 {
   "n_imagenes": 7276,
-  "sha256_indice": "e3c3caa10e723003c2658a047fa844e8c8669539e33933d51aa3cb48d9d72d7a",
+  "sha256_indice": "7d5fe2cf4c8741b431012f2b1cc84288cca85a1309ff896cecd2e562352e639e",
   "sha256_imagenes": "97d8d51e2051aef039f3aceef52ce5ba9ee0d6811a7d918d60e431b98dfbfe2c",
   "definicion_huella_imagenes": "SHA-256 de la concatenación de los bytes de cada JPEG procesado, en orden de id (el mismo orden de indice.csv)",
   "python": "3.12.13",
@@ -174,5 +174,6 @@
       },
       "diferencias_entre_fuentes": "Artículo y Mendeley describen las clases con palabras distintas y no coinciden en los ejemplos de «Others» (artículo: hablar con pasajeros, comer, beber, dormir; Mendeley: beber agua u otra cosa, dormir, hablar con alguien de atrás); ver docs/investigacion/JO-1_fuentes_m2.md §4 y C-5, C-8."
     }
-  }
+  },
+  "sha256_indice_nota": "Actualizado por la partición de JO-3 (src/m2_conduccion/particion.py), que llena grupo_duplicado y split; volver a correr m2-datos con configs/m2/datos.yaml los vacía."
 }

@@ -1,0 +1,516 @@
+{
+  "tarea": "JO-3 · partición sin fuga por grupos de casi duplicados (Anexo M2, tarea 3; jose.md §3.2)",
+  "metodo": "pHash de 64 bits (imagehash) de cada imagen 224x224 versionada y de su espejo horizontal; d_H(a, b) = mín(H(a, b), H(a, espejo(b)), H(espejo(a), b)). Vector GAP de 512 de ResNet-18 ImageNet congelada (eval, normalización de ImageNet) y similitud coseno. Arista si d_H ≤ umbral_hamming, coseno ≥ umbral_coseno o marcas de tiempo del nombre original a ≤ umbral_segundos (D9: IMG_AAAAMMDD_HHMMSSmmm, AAAA-MM-DDhh-mm-ss y photo_AAAA-MM-DD_hh-mm-ss); grupo_duplicado = componente conexa (union-find). Partición 70/15/15 por grupo, estratificada por el conteo de clases de cada grupo (D7): con d_kc = p_k·N_c − n_kc, cada grupo g (de mayor a menor tamaño, empates barajados con la semilla) va al split k* = argmax_k Σ_c v_gc·d_kc, el que menos aumenta el error cuadrático total Σ_k Σ_c d_kc². Los pares entre clases distintas son la misma escena con otra acción (el mismo conductor segundos después); no se corrigen (D4).",
+  "semilla": 2026,
+  "run_id": 0,
+  "semilla_efectiva": 2026,
+  "proporciones": {
+    "train": 0.7,
+    "validacion": 0.15,
+    "prueba": 0.15
+  },
+  "umbrales": {
+    "hamming": 2,
+    "coseno": 0.95,
+    "segundos": 10,
+    "fraccion_maxima_grupo": 0.15,
+    "estado": "[DECIDIDO, José, 28-nov] D6, aprobados con la figura de la frontera (D3).",
+    "como_se_eligieron": "Sin etiquetas y antes de partir, con la distribución medida (distribucion_para_umbrales y barrido_umbrales de este archivo) y la revisión visual de muestras de pares. (1) Hash: cada pHash tiene exactamente 32 unos (umbral en la mediana de 64 coeficientes), así que d_H es siempre par (d_H = 64 − 2·|a∧b|); los candidatos son 0, 2, 4…. Con d_H ≤ 2 los pares revisados son el mismo conductor en la misma escena; con d_H = 4 ya aparecen conductores distintos en el mismo carro y la componente más grande salta por encima del 15 % (barrido_umbrales.hamming), así que τ_H = 2. (2) Coseno: el coseno al vecino más cercano se concentra cerca de 1 (casi todas las fotos tienen otra casi igual); entre 0,95 y 0,94 la componente más grande pasa de unos cientos a miles de imágenes (encadenamiento entre conductores parecidos en el mismo carro), así que τ_c = 0,95 es el umbral más permisivo de la rejilla que queda por debajo de la guarda del 15 %. Un umbral más permisivo protege más contra la fuga, pero junta conductores distintos y rompe la estratificación."
+  },
+  "hash": {
+    "tam_hash": 8,
+    "factor_alta_frecuencia": 4,
+    "espejo": true
+  },
+  "n_imagenes": 7276,
+  "n_grupos": 341,
+  "distribucion_tamanos": {
+    "1": 176,
+    "2": 42,
+    "3": 16,
+    "4": 10,
+    "5": 4,
+    "6": 5,
+    "7": 4,
+    "8": 5,
+    "9": 8,
+    "10": 4,
+    "11": 1,
+    "12": 5,
+    "13": 5,
+    "14": 2,
+    "15": 2,
+    "16": 1,
+    "18": 1,
+    "19": 3,
+    "23": 1,
+    "24": 1,
+    "25": 2,
+    "28": 2,
+    "30": 1,
+    "31": 1,
+    "35": 1,
+    "37": 2,
+    "42": 2,
+    "44": 1,
+    "46": 1,
+    "47": 2,
+    "49": 1,
+    "55": 1,
+    "56": 1,
+    "59": 1,
+    "75": 1,
+    "86": 1,
+    "98": 1,
+    "127": 1,
+    "133": 1,
+    "136": 1,
+    "144": 1,
+    "146": 1,
+    "172": 1,
+    "177": 1,
+    "192": 1,
+    "199": 1,
+    "210": 1,
+    "217": 1,
+    "238": 1,
+    "240": 1,
+    "242": 1,
+    "245": 1,
+    "248": 1,
+    "256": 1,
+    "265": 1,
+    "266": 1,
+    "305": 1,
+    "359": 1,
+    "383": 1,
+    "444": 1
+  },
+  "imagenes_en_grupos_de_2_o_mas": 7100,
+  "grupo_mas_grande": {
+    "grupo": "g_00078",
+    "tamano": 444,
+    "fraccion": 0.06102253985706432,
+    "por_clase": {
+      "other_activities": 73,
+      "safe_driving": 119,
+      "talking_phone": 96,
+      "texting_phone": 109,
+      "turning": 47
+    }
+  },
+  "pares_por_criterio": {
+    "hamming": 3155,
+    "coseno": 72312,
+    "ambos": 14513,
+    "tiempo": 380,
+    "total": 90360
+  },
+  "tiempo_camara": {
+    "formatos": {
+      "IMG_AAAAMMDD_HHMMSSmmm": "^IMG_(\\d{4})(\\d{2})(\\d{2})_(\\d{2})(\\d{2})(\\d{2})(\\d{3})(?!\\d)",
+      "AAAA-MM-DDhh-mm-ss": "^(\\d{4})-(\\d{2})-(\\d{2})(\\d{2})-(\\d{2})-(\\d{2})\\.[^.]+$",
+      "photo_AAAA-MM-DD_hh-mm-ss": "^photo_(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2})-(\\d{2})-(\\d{2})(?!\\d)"
+    },
+    "fotos_con_marca": 598,
+    "fotos_con_marca_por_formato": {
+      "IMG_AAAAMMDD_HHMMSSmmm": 404,
+      "AAAA-MM-DDhh-mm-ss": 183,
+      "photo_AAAA-MM-DD_hh-mm-ss": 11
+    },
+    "pares_por_tiempo": 737,
+    "pares_solo_por_tiempo": 380,
+    "pares_por_tiempo_entre_formatos": 0,
+    "nota": "pares_por_tiempo cuenta todos los pares a ≤ umbral_segundos; los que también cumplen hash o coseno llevan ese criterio en pares_cercanos.csv y la diferencia en la columna segundos. Las marcas de formatos distintos se comparan en la misma escala aunque no se sepa si sus cámaras comparten reloj."
+  },
+  "fuga_residual": {
+    "validacion": {
+      "n": 1091,
+      "vecino_en_train_coseno_ge_umbral": 0,
+      "vecino_en_train_coseno_0_90_a_0_95": 1023,
+      "vecino_en_train_coseno_0_94_a_0_95": 143,
+      "vecino_en_train_coseno_lt_0_90": 68,
+      "mediana_coseno_vecino_en_train": 0.9277742888106464,
+      "maximo_coseno_vecino_en_train": 0.9498630426865065,
+      "minimo_hamming_al_train": 4,
+      "fotos_con_marca": 118,
+      "fotos_con_marca_por_formato": {
+        "IMG_AAAAMMDD_HHMMSSmmm": 108,
+        "AAAA-MM-DDhh-mm-ss": 8,
+        "photo_AAAA-MM-DD_hh-mm-ss": 2
+      },
+      "fotos_con_marca_y_una_de_train_a_le_10_s": 0,
+      "fotos_con_marca_y_una_de_train_a_le_60_s": 39
+    },
+    "prueba": {
+      "n": 1090,
+      "vecino_en_train_coseno_ge_umbral": 0,
+      "vecino_en_train_coseno_0_90_a_0_95": 1026,
+      "vecino_en_train_coseno_0_94_a_0_95": 142,
+      "vecino_en_train_coseno_lt_0_90": 64,
+      "mediana_coseno_vecino_en_train": 0.927297292825972,
+      "maximo_coseno_vecino_en_train": 0.9496889659843164,
+      "minimo_hamming_al_train": 4,
+      "fotos_con_marca": 155,
+      "fotos_con_marca_por_formato": {
+        "IMG_AAAAMMDD_HHMMSSmmm": 153,
+        "AAAA-MM-DDhh-mm-ss": 1,
+        "photo_AAAA-MM-DD_hh-mm-ss": 1
+      },
+      "fotos_con_marca_y_una_de_train_a_le_10_s": 0,
+      "fotos_con_marca_y_una_de_train_a_le_60_s": 75
+    },
+    "nota": "Cifras recalculadas en cada corrida sobre la partición escrita (no copiadas del auditor). Intervalos [a, b) del coseno al vecino más cercano en train."
+  },
+  "aristas_hash_por_la_simetrizacion": 0,
+  "pares_entre_clases": {
+    "total": 17952,
+    "por_par_de_clases": {
+      "other_activities|safe_driving": 1870,
+      "other_activities|talking_phone": 1027,
+      "other_activities|texting_phone": 943,
+      "other_activities|turning": 391,
+      "safe_driving|talking_phone": 2475,
+      "safe_driving|texting_phone": 4445,
+      "safe_driving|turning": 267,
+      "talking_phone|texting_phone": 5895,
+      "talking_phone|turning": 422,
+      "texting_phone|turning": 217
+    },
+    "donde": "results/data/m2/eda/calidad.csv (categoría casi_duplicado_entre_clases) y pares_cercanos.csv"
+  },
+  "grupos_con_clases_mezcladas": 80,
+  "pares_que_cruzan_splits": 0,
+  "grupos_en_varios_splits": 0,
+  "conteos_split": {
+    "train": 5095,
+    "validacion": 1091,
+    "prueba": 1090
+  },
+  "conteos_split_clase": {
+    "train": {
+      "other_activities": 829,
+      "safe_driving": 1175,
+      "talking_phone": 1059,
+      "texting_phone": 1095,
+      "turning": 937
+    },
+    "validacion": {
+      "other_activities": 178,
+      "safe_driving": 252,
+      "talking_phone": 227,
+      "texting_phone": 233,
+      "turning": 201
+    },
+    "prueba": {
+      "other_activities": 177,
+      "safe_driving": 252,
+      "talking_phone": 227,
+      "texting_phone": 233,
+      "turning": 201
+    }
+  },
+  "proporcion_split_por_clase": {
+    "other_activities": {
+      "train": 0.700168918918919,
+      "validacion": 0.15033783783783783,
+      "prueba": 0.14949324324324326
+    },
+    "safe_driving": {
+      "train": 0.6998213222156046,
+      "validacion": 0.15008933889219775,
+      "prueba": 0.15008933889219775
+    },
+    "talking_phone": {
+      "train": 0.6999339061467283,
+      "validacion": 0.15003304692663583,
+      "prueba": 0.15003304692663583
+    },
+    "texting_phone": {
+      "train": 0.7014734144778988,
+      "validacion": 0.1492632927610506,
+      "prueba": 0.1492632927610506
+    },
+    "turning": {
+      "train": 0.6997759522031367,
+      "validacion": 0.15011202389843167,
+      "prueba": 0.15011202389843167
+    }
+  },
+  "desviacion_maxima_por_clase_en_sigmas": 0.12703305342587873,
+  "definicion_desviacion": "máx_{c,k} |n_kc/N_c − p_k| / sqrt(p_k(1−p_k)/N_c): desviación de la proporción por clase en unidades de la desviación típica de una partición al azar por imagen",
+  "distribucion_para_umbrales": {
+    "vecino_mas_cercano_hamming": {
+      "cuantiles": {
+        "0.001": 0.0,
+        "0.01": 0.0,
+        "0.05": 0.0,
+        "0.1": 0.0,
+        "0.25": 0.0,
+        "0.5": 2.0,
+        "0.75": 4.0,
+        "0.9": 6.0
+      },
+      "conteo_por_distancia": {
+        "0": 1924,
+        "2": 2829,
+        "4": 1506,
+        "6": 561,
+        "8": 204,
+        "10": 92,
+        "12": 63,
+        "14": 44,
+        "16": 28,
+        "18": 20,
+        "20": 4,
+        "22": 1
+      }
+    },
+    "vecino_mas_cercano_coseno": {
+      "cuantiles": {
+        "0.001": 0.8763957711845742,
+        "0.01": 0.9267514742120225,
+        "0.05": 0.9510377605405441,
+        "0.1": 0.9595117282478303,
+        "0.25": 0.9715540459019056,
+        "0.5": 0.9805669932031096,
+        "0.75": 0.9869176733947415,
+        "0.9": 0.9908443521944521
+      },
+      "conteo_por_bin_0_01": {
+        "0.80": 1,
+        "0.82": 1,
+        "0.83": 1,
+        "0.84": 1,
+        "0.85": 1,
+        "0.87": 4,
+        "0.88": 5,
+        "0.90": 12,
+        "0.91": 21,
+        "0.92": 49,
+        "0.93": 66,
+        "0.94": 170,
+        "0.95": 423,
+        "0.96": 836,
+        "0.97": 1909,
+        "0.98": 2847,
+        "0.99": 929
+      }
+    },
+    "todos_los_pares_hamming": {
+      "0": 2753,
+      "2": 14915,
+      "4": 36400,
+      "6": 68561,
+      "8": 131845,
+      "10": 257756,
+      "12": 494735,
+      "14": 872957,
+      "16": 1337259,
+      "18": 1788238,
+      "20": 2229483,
+      "22": 2782542,
+      "24": 3533518,
+      "26": 4241518,
+      "28": 4105851,
+      "30": 2825322,
+      "32": 1289349,
+      "34": 375784,
+      "36": 69154,
+      "38": 8009,
+      "40": 468,
+      "42": 32,
+      "44": 1
+    },
+    "todos_los_pares_coseno_bin_0_01": {
+      "0.52": 1,
+      "0.53": 6,
+      "0.54": 17,
+      "0.55": 39,
+      "0.56": 94,
+      "0.57": 198,
+      "0.58": 406,
+      "0.59": 766,
+      "0.60": 1285,
+      "0.61": 2220,
+      "0.62": 3743,
+      "0.63": 6602,
+      "0.64": 11334,
+      "0.65": 20139,
+      "0.66": 35311,
+      "0.67": 59950,
+      "0.68": 95730,
+      "0.69": 138764,
+      "0.70": 187417,
+      "0.71": 235963,
+      "0.72": 281131,
+      "0.73": 324243,
+      "0.74": 374080,
+      "0.75": 431633,
+      "0.76": 508678,
+      "0.77": 626895,
+      "0.78": 809465,
+      "0.79": 1089319,
+      "0.80": 1484794,
+      "0.81": 1975219,
+      "0.82": 2487457,
+      "0.83": 2864221,
+      "0.84": 2937907,
+      "0.85": 2670822,
+      "0.86": 2168227,
+      "0.87": 1608672,
+      "0.88": 1115062,
+      "0.89": 737745,
+      "0.90": 455662,
+      "0.91": 278296,
+      "0.92": 177032,
+      "0.93": 110101,
+      "0.94": 62979,
+      "0.95": 35920,
+      "0.96": 23452,
+      "0.97": 16320,
+      "0.98": 9011,
+      "0.99": 2122
+    }
+  },
+  "barrido_umbrales": {
+    "hamming": {
+      "0": {
+        "pares": 2753,
+        "grupos": 6024,
+        "grupo_mas_grande": 20,
+        "imagenes_en_grupos_de_2_o_mas": 1924
+      },
+      "2": {
+        "pares": 17668,
+        "grupos": 3124,
+        "grupo_mas_grande": 179,
+        "imagenes_en_grupos_de_2_o_mas": 4753
+      },
+      "4": {
+        "pares": 54068,
+        "grupos": 1294,
+        "grupo_mas_grande": 2607,
+        "imagenes_en_grupos_de_2_o_mas": 6259
+      },
+      "6": {
+        "pares": 122629,
+        "grupos": 578,
+        "grupo_mas_grande": 3623,
+        "imagenes_en_grupos_de_2_o_mas": 6820
+      },
+      "8": {
+        "pares": 254474,
+        "grupos": 314,
+        "grupo_mas_grande": 3754,
+        "imagenes_en_grupos_de_2_o_mas": 7024
+      },
+      "10": {
+        "pares": 512230,
+        "grupos": 206,
+        "grupo_mas_grande": 6621,
+        "imagenes_en_grupos_de_2_o_mas": 7116
+      },
+      "12": {
+        "pares": 1006965,
+        "grupos": 132,
+        "grupo_mas_grande": 6771,
+        "imagenes_en_grupos_de_2_o_mas": 7179
+      },
+      "14": {
+        "pares": 1879922,
+        "grupos": 70,
+        "grupo_mas_grande": 7151,
+        "imagenes_en_grupos_de_2_o_mas": 7223
+      }
+    },
+    "coseno": {
+      "0.9": {
+        "pares": 1170895,
+        "grupos": 25,
+        "grupo_mas_grande": 6808,
+        "imagenes_en_grupos_de_2_o_mas": 7262
+      },
+      "0.92": {
+        "pares": 436937,
+        "grupos": 70,
+        "grupo_mas_grande": 6624,
+        "imagenes_en_grupos_de_2_o_mas": 7229
+      },
+      "0.94": {
+        "pares": 149804,
+        "grupos": 234,
+        "grupo_mas_grande": 2082,
+        "imagenes_en_grupos_de_2_o_mas": 7114
+      },
+      "0.95": {
+        "pares": 86825,
+        "grupos": 521,
+        "grupo_mas_grande": 434,
+        "imagenes_en_grupos_de_2_o_mas": 6944
+      },
+      "0.96": {
+        "pares": 50905,
+        "grupos": 1157,
+        "grupo_mas_grande": 231,
+        "imagenes_en_grupos_de_2_o_mas": 6521
+      },
+      "0.97": {
+        "pares": 27453,
+        "grupos": 2235,
+        "grupo_mas_grande": 110,
+        "imagenes_en_grupos_de_2_o_mas": 5685
+      },
+      "0.98": {
+        "pares": 11133,
+        "grupos": 4277,
+        "grupo_mas_grande": 94,
+        "imagenes_en_grupos_de_2_o_mas": 3776
+      }
+    }
+  },
+  "sha256_indice": "7d5fe2cf4c8741b431012f2b1cc84288cca85a1309ff896cecd2e562352e639e",
+  "huella_particion": "e0a6b55a0ac2f80964a4dc71a1b0df747c5073d78eb3907454c0f28487747370",
+  "definicion_huella_particion": "SHA-256 del texto 'id,grupo_duplicado,split\\n' seguido de una línea 'id,grupo_duplicado,split\\n' por imagen, ordenadas por id (UTF-8)",
+  "sha256_pares_cercanos": "c15ace91e2c8fa6b62e2b47ab92fcbed32d72f0bc7fda80a1b3ce16d35cb278a",
+  "huella_imagenes": "97d8d51e2051aef039f3aceef52ce5ba9ee0d6811a7d918d60e431b98dfbfe2c",
+  "sha256_pesos": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec",
+  "caracteristicas": {
+    "red": "resnet18",
+    "pesos": "data/raw/m2/pesos/resnet18-f37072fd.pth",
+    "dimension": 512,
+    "cache": "data/processed/m2/cache/caracteristicas_resnet18.npz",
+    "esta_corrida": {
+      "desde_cache": true,
+      "tiempo_s": 0.0,
+      "dispositivo": "cache"
+    },
+    "ultima_extraccion_sin_cache": {
+      "tiempo_caracteristicas_s": 176.3,
+      "tiempo_total_s": 206.4,
+      "dispositivo": "cpu",
+      "huella_imagenes": "97d8d51e2051aef039f3aceef52ce5ba9ee0d6811a7d918d60e431b98dfbfe2c",
+      "sha256_pesos": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec"
+    },
+    "nota": "La caché de características no se versiona: la partición es un paso de datos, no la demo del módulo (la demo de menos de 2 minutos es run.py m2, JO-10). JO-4 reutiliza esta caché. ultima_extraccion_sin_cache es el tiempo medido de la última corrida que extrajo las características con la red (sin caché) y su dispositivo; esta_corrida es la corrida que escribió este archivo."
+  },
+  "versiones": {
+    "python": "3.12.13",
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "pillow": "13.0.0",
+    "imagehash": "4.3.2",
+    "torch": "2.15.0+cu132",
+    "torchvision": "0.29.2+cu132"
+  },
+  "dispositivo": "cpu",
+  "tiempo_s": {
+    "hash": 6.6,
+    "caracteristicas": 0.0,
+    "grafo": 11.5,
+    "total": 24.8
+  },
+  "pie_figura_frontera": "d_H: Hamming del pHash de 64 bits con espejo; cos: coseno del GAP de ResNet-18 ImageNet congelada. Texto de color: clases distintas. Umbrales decididos por José (D6, 28-nov).",
+  "limitacion_conductor": "La fuente no trae un identificador de conductor (178 conductores según el artículo). La partición separa por grupos los pares con d_H ≤ umbral_hamming (incluido el espejo horizontal), con coseno ≥ umbral_coseno y las fotos con marca de tiempo del nombre original a ≤ umbral_segundos (D9 y su ampliación: solo 598 de 7 276 fotos tienen marca: 404 IMG_, 183 PNG y 11 photo_). NO separa: ráfagas sin marca de tiempo que quedan por debajo de los umbrales (ver fuga_residual: más del 90 % de las imágenes de validación y de prueba tienen en train un vecino con coseno entre 0,90 y 0,95), el mismo conductor en otra pose (D5) ni, por construcción, rotaciones o recortes: estos solo se buscaron empíricamente. El desempeño en prueba puede sobrestimar el de conductores nuevos (va al blog).",
+  "fugas_descartadas": "Ningún grupo en dos splits y ningún par con arista (hash, coseno o marca de tiempo en cualquiera de los tres formatos de nombre) entre splits: se comprueba antes de escribir y en tests/test_fuga_m2.py, que además recalcula el pHash de las imágenes versionadas y las marcas de tiempo de origen.csv. Las marcas de formatos distintos se comparan en la misma escala (no se sabe si las cámaras comparten reloj; unir de más solo agranda grupos); en estos datos los tres formatos caen en días distintos y no hay pares entre formatos. El grafo no usa la clase ni el split y ninguna transformación se ajusta con los datos (pHash fijo, red congelada con pesos de ImageNet). Los umbrales se eligieron con la distribución de distancias sin etiquetas, antes de partir. Rotaciones y recortes del rango del artículo: búsqueda empírica del auditor-fugas (28-nov, sobre la partición ANTERIOR a D9; alucinaciones/evidencias/JO-3/auditor-fugas/auditoria.json): con 9 variantes por imagen de prueba (±5, ±10, ±15 grados, zoom 0,9 y 0,8, espejo), 1 variante llegó a coseno ≥ 0,95 con una imagen de train (0,9516, zoom 0,9) y 23 quedaron a d_H ≤ 2; no es una garantía del criterio."
+}
