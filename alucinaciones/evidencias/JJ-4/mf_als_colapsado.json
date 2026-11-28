@@ -1,0 +1,64 @@
+{
+  "modelo": "mf_als",
+  "semilla": 0,
+  "hiperparametros": {
+    "factores": 8,
+    "regularizacion": 29.542164022050944,
+    "alfa": 1.248389782269395,
+    "iteraciones": 16,
+    "escala_inicial": 0.01
+  },
+  "forma_X": [
+    858,
+    8
+  ],
+  "forma_Y": [
+    1000,
+    8
+  ],
+  "nota": "mf_als.npz: X (usuarios con train × f), Y (destinos del catálogo × f), usuario_ids y destino_ids en el orden de las filas.",
+  "historial_perdida": [
+    2432.7931926333295,
+    2412.397961185803,
+    2396.9319304013443,
+    2396.7858236879606,
+    2396.783558897149,
+    2396.7835093195067,
+    2396.783507945505,
+    2396.7835079008582,
+    2396.7835078992407,
+    2396.7835078991775,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175,
+    2396.783507899175
+  ],
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}

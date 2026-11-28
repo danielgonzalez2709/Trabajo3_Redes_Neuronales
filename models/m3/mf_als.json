@@ -1,0 +1,50 @@
+{
+  "modelo": "mf_als",
+  "semilla": 0,
+  "hiperparametros": {
+    "factores": 4,
+    "regularizacion": 0.002104317845122097,
+    "alfa": 1.484941433731389,
+    "iteraciones": 9,
+    "escala_inicial": 0.01
+  },
+  "forma_X": [
+    858,
+    4
+  ],
+  "forma_Y": [
+    1000,
+    4
+  ],
+  "nota": "mf_als.npz: X (usuarios con train × f), Y (destinos del catálogo × f), usuario_ids y destino_ids en el orden de las filas.",
+  "historial_perdida": [
+    2648.931900814963,
+    2611.490869018453,
+    2587.4358520404403,
+    2566.1693218755877,
+    2550.427604548208,
+    2540.7290760474903,
+    2534.7876742294466,
+    2531.1797502958984,
+    2528.844913599135,
+    2527.292193751509,
+    2526.186411372355,
+    2525.388063607413,
+    2524.7818368079447,
+    2524.3210700936047,
+    2523.9562287139884,
+    2523.668629058555,
+    2523.433530356169,
+    2523.24261446841,
+    2523.0822417749328
+  ],
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}
