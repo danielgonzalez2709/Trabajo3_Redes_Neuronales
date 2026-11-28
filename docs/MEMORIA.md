@@ -31,6 +31,14 @@
   `data/processed/m2/{imagenes/,indice.csv,origen.csv}` y `results/data/m2/eda/{ficha.json,calidad.csv,diccionario.json,procesado.json}`.
   7 286 imágenes en el .zip, 10 ilegibles, 7 276 procesadas a 224×224. Fuentes: `docs/investigacion/JO-1_fuentes_m2.md`. Revisado por
   revisor-spec (aprobado con observaciones), revisor-calidad (aprobado en la 2.ª vuelta) y cazador-alucinaciones (39/39 cifras recalculadas).
+- JO-3 (partición sin fuga de M2) terminado en `dev/jose` el sáb 28, pendiente de PR (junto con JO-1): `run.py m2-datos --config configs/m2/particion.yaml`
+  llena `grupo_duplicado` y `split` de `data/processed/m2/indice.csv` y escribe `results/data/m2/particion/{resumen.json,pares_cercanos.csv,frontera.csv}`
+  y `blog/docs/figures/m2/frontera_duplicados.png`. Grupos = pHash con espejo (d_H ≤ 2) o ResNet-18 congelada (coseno ≥ 0,95) o marca de
+  tiempo ≤ 10 s (598 fotos): 341 grupos (mayor 444, 6,1 %); 5 095 / 1 091 / 1 090 (70/15/15 por clase); 0 pares cruzan splits; huella `e0a6b55a…747370`.
+  Pesos con `scripts/descargar_pesos_m2.py` a `data/raw/m2/pesos/`; caché en `data/processed/m2/cache/` (ambos no versionados). Fuga residual
+  declarada en `resumen.json` (`fuga_residual`): ~94 % de validación y prueba tiene en train un vecino a coseno 0,90–0,95 (mismo conductor, D5);
+  75 fotos de prueba tienen una de train a ≤ 60 s. Pruebas: `tests/test_fuga_m2.py`, `tests/test_fuga_m2_auditoria.py`, `tests/test_descargar_pesos_m2.py` (112).
+  Revisado por revisor-spec (aprobado con observaciones), revisor-calidad (3 vueltas, aplicadas) y auditor-fugas (fuga residual declarada; encontró las ráfagas → D9).
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -60,6 +68,12 @@
   bilineal (PIL), RGB, JPEG calidad 85 (la app no recomprime: diferencia declarada en `ficha.json`); D3 orientación EXIF antes de
   redimensionar (113 imágenes); D4 `ancho`/`alto` originales tras EXIF, sin `tipo_vehiculo` (la fuente no lo trae), trazabilidad en
   `origen.csv`; D5 ids `m2_NNNNN` por posición en el .zip y `n_variables` = 2.
+- M2 [DECIDIDO, José, 27–28-nov; `jose.md` §3.2] JO-3 (D1–D9): pHash 64 bits con espejo (d_H ≤ 2) o ResNet-18 ImageNet congelada (coseno ≥ 0,95),
+  umbrales = los más permisivos que no superan la guarda del 15 %; arista por marca de tiempo ≤ 10 s (D9); estratificación por conteo de clases del
+  grupo; semilla 2026; pares entre clases = misma escena, otra acción (no se corrigen); fuga por conductor declarada (D5, sin id de conductor).
+- M2 [DECIDIDO, José, 27–28-nov; `jose.md` §3.2] JO-3 (D1–D9): pHash 64 bits con espejo (d_H ≤ 2) o ResNet-18 ImageNet congelada (coseno ≥ 0,95),
+  umbrales = los más permisivos que no superan la guarda del 15 %; arista por marca de tiempo ≤ 10 s (D9); estratificación por conteo de clases del
+  grupo; semilla 2026; pares entre clases = misma escena, otra acción (no se corrigen); fuga por conductor declarada (D5, sin id de conductor).
 - [PROPUESTO por el analista, pendiente de Juan José] umbral de actividad pocas ≤ 2 / muchas ≥ 3; efectos mínimos y criterio de
   veredicto en `configs/m3/eda.yaml` (convención nuestra); emparejamiento léxico preferencia→tipo (Beaches→Beach, etc.); K = 5 por
   defecto y K ∈ {1, 3, 5, 10}; diagnósticos de `resumen.json` (destinos fríos, coincidencia de lugar con su esperado por azar),
@@ -79,6 +93,10 @@
   (hallazgos de datos para el blog de M2). El entrenamiento de M2 usa JPEG 85 y la app no recomprime (diferencia declarada).
 - M2: para que la CI pase, el PR de JO-1 debe incluir `data/processed/m2/`, `results/data/m2/eda/`, `configs/m2/datos.yaml` y
   `tests/fixtures/m2/`. La máquina de José no tiene GPU NVIDIA (afecta JO-6).
+- Daniel: `tests/test_no_network.py` corre `run.py figures` en la raíz y reescribe las figuras versionadas de M3; debería escribir en un
+  directorio temporal. Tras la suite: `git checkout -- blog/docs/figures/m3/`.
+- M2 (JO-3): `m2-datos` con `datos.yaml` vacía `grupo_duplicado` y `split`; correr después la partición con `particion.yaml`. El PR de JO-3
+  debe incluir `results/data/m2/particion/` y `configs/m2/particion.yaml` (las pruebas los leen).
 
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
@@ -91,7 +109,7 @@
    sobre los 141 usuarios sin interacciones (sin verdad de terreno: solo ejemplos; los usuarios nuevos de la pregunta de negocio 1
    se simulan en JJ-6 con usuarios de prueba); en JJ-4/JJ-5 registrar cada ajuste en `AJUSTES_SOLO_TRAIN` y copiar la huella a
    `evidencia`; reportar el acierto por lugar frente a su línea base del azar.
-5. José: PR de JO-1; ética (C-6: acuerdo de uso de Zenodo frente a CC BY 4.0 de Mendeley, rostros visibles) para JO-11; GPU para JO-6.
+5. José: PR de JO-1 y JO-3; JO-2 (descriptivo de M2) como siguiente tarea (el blog de M2 reporta la fuga residual con las cifras de `fuga_residual`); ética (C-6: acuerdo de uso de Zenodo frente a CC BY 4.0 de Mendeley, rostros visibles) para JO-11; GPU para JO-6.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
@@ -104,10 +122,12 @@
   frente a 198,0 por azar) y «los 3 valores de VisitDate son posteriores» (Datos del mundo real, menor; MEMORIA → orquestador →
   redactor Sonnet); evidencia en `alucinaciones/evidencias/JJ-3/`; 1 candidato de M2 de JO-1 (sin número, Código, menor; orquestador Opus): «coherente con el preprocesado fijo de la app» omitía la
   recompresión JPEG (evidencia en `alucinaciones/evidencias/JO-1/`); ver `alucinaciones/registro.md`.
+  3 candidatos de M2 de JO-3 (sin número): «la partición elimina las ráfagas casi iguales entre splits» (Datos del mundo real; implementador-experto Opus; lo detectó auditor-fugas); «2 / 0,95 son los umbrales más estrictos que no superan la guarda del 15 %» (Conceptos, menor; orquestador Opus, sin prompt literal); «el auditor no encontró versiones rotadas o recortadas cruzando splits» (Datos del mundo real, menor; orquestador Opus → implementador-experto); evidencia en `alucinaciones/evidencias/JO-3/`.
 - Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-28 · José · JO-3 ✅: partición sin fuga de M2 (341 grupos, 70/15/15 por clase, huella `e0a6b55a…`, 0 pares cruzados), D1–D9 en `jose.md` §3.2; fuga residual por conductor declarada; 3 candidatos a la cacería.
 - 2026-11-27 · José · JO-1 ✅: descarga verificada (SHA-256), 7 276 imágenes 224×224 versionadas, ficha/calidad/diccionario de M2,
   D1–D5 en `jose.md` §3.1; 1 candidato a la cacería.
 - 2026-11-26 · Juan José · JJ-3 ✅: partición sin fuga de M3 (1 066 / 326 / 606, semilla 2026, huella en `resumen.json`),
