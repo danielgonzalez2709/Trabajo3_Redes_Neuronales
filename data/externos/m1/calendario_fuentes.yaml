@@ -14,7 +14,7 @@ supuestos:
     copia: "alucinaciones/evidencias/CA-6/res_264_2020_mintransporte.pdf (escaneo firmado alojado en bogota.gov.co; OCR en .txt)"
     nota: >-
       Art. 8: «Del 10 de diciembre al 15 de enero del año siguiente.» (decisión de Camila, 27-nov); ambos extremos inclusive.
-      Límites: la copia es un escaneo firmado alojado en bogota.gov.co (URL exacta no registrada, TODO(dato-faltante)); la fecha
+      Límites: la copia es un escaneo firmado alojado en bogota.gov.co (https://bogota.gov.co/sites/default/files/inline-files/resolucion-264-de-2020.pdf; SHA-256 igual al de la copia, comprobado el 2026-11-27); la fecha
       exacta del acto no se lee en el OCR (TODO(cita): copia del normograma de MinTransporte con fecha y vigencia); la vigencia
       se infiere de que el Decreto 1048 de 2026 la cita. Conocibilidad (regla 0.9): el acto es de 2020 y los modelos
       entrenan desde 2021-06-01, así que es conocible siempre. No se agregan columnas para los demás periodos del art. 8.

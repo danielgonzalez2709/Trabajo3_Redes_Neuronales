@@ -75,6 +75,8 @@
   calibrado en train, tripulación k = max(k_norma, ⌈t/J_ef⌉), conductores por piernas y nómina semanal N\*; los parámetros
   por ruta llevan `multiplicador_ocupacion`. `app/lib/dimensionar.ts` sigue con la fórmula de juguete de DA-5: los casos de
   paridad (CA-8) fallarán hasta que DA-6 la actualice.
+- M1 calendario (Camila → Andrés, 27-nov): `fin_de_anio` empieza el 10-dic (Res. 264/2020); nuevo SHA-256 de
+  `calendario.parquet` `c29dc412…ae2fb9` (antes `7478d74a…baecec6`). Reentrenar o reevaluar lo que lo use.
 - M3: para que la CI pase, el PR de JJ-1 debe incluir `configs/m3/datos.yaml`, `docs/investigacion/JJ-1_kaggle_metadata.json`
   y `tests/fixtures/m3/` (las pruebas los leen). El PR debe incluir también `results/data/m3/particion/resumen.json`
   (las pruebas reales de `test_fuga_m3.py` lo leen).
