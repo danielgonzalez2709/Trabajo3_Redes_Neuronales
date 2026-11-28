@@ -16,7 +16,9 @@ entrada:
 salida:
   carpeta: data/processed/m2
   imagenes: imagenes             # data/processed/m2/imagenes/<clase>/<id>.jpg
-  indice: indice.csv             # núcleo §5.5 (sin tipo_vehiculo: la fuente no lo etiqueta)
+  # núcleo §5.5 (sin tipo_vehiculo: la fuente no lo etiqueta). [DECIDIDO, José, 27-nov]: «ancho» y «alto» = dimensiones
+  # ORIGINALES de la foto tras la orientación EXIF (no el tamaño del archivo procesado, que es siempre «tamano»).
+  indice: indice.csv
   origen: origen.csv
   eda: results/data/m2/eda       # ficha.json, calidad.csv, diccionario.json, procesado.json
 
@@ -26,8 +28,8 @@ preprocesado:
   interpolacion: bilineal        # PIL.Image.BILINEAR
   modo: RGB
   formato: JPEG
-  calidad_jpeg: 85
-  # [PROPUESTO por el orquestador, pendiente de José]: aplicar la orientación EXIF antes de redimensionar.
+  calidad_jpeg: 85               # [DECIDIDO, José, 27-nov]: se mantiene; la diferencia con la app está en «diferencias_con_app»
+  # [DECIDIDO, José, 27-nov]: aplicar la orientación EXIF antes de redimensionar.
   aplicar_orientacion_exif: true
   # Color del fondo si un PNG RGBA tuviera píxeles no opacos. En los 200 PNG reales el alfa es opaco en todos
   # (medido el 27-nov), así que no se usa; se deja por si cambia la fuente.
@@ -45,13 +47,13 @@ fuente:
     una fotografía de un conductor dentro de un vehículo (automóvil particular o bus público, según la fuente),
     etiquetada con una de 5 clases de comportamiento; la clase es la carpeta que la contiene
   # Variables por registro que trae la fuente: la imagen (píxeles) y la clase (carpeta). La fuente no etiqueta tipo de
-  # vehículo, iluminación ni ángulo (JO-1_fuentes_m2.md §7). [PROPUESTO]: n_variables = 2.
+  # vehículo, iluminación ni ángulo (JO-1_fuentes_m2.md §7). [DECIDIDO, José, 27-nov]: n_variables = 2.
   n_variables: 2
   n_variables_justificacion: >-
     2 = la imagen y la clase (carpeta). La fuente no trae metadatos por imagen: el artículo solo describe «Each class was
     saved in a separate folder» (§3.3/§3.4) y no declara etiqueta de tipo de vehículo, iluminación ni ángulo
     (docs/investigacion/JO-1_fuentes_m2.md §7). indice.csv tiene 7 columnas, pero id, archivo, ancho y alto los
-    calculamos nosotros y grupo_duplicado y split los llena JO-3. [PROPUESTO por el orquestador]
+    calculamos nosotros y grupo_duplicado y split los llena JO-3. [DECIDIDO, José, 27-nov]
   periodo:
     rotulo: según el artículo
     texto: >-
@@ -61,6 +63,27 @@ fuente:
     cita: Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time
       detection and road safety enhancement. Data in Brief, 60, Article 111529. https://doi.org/10.1016/j.dib.2025.111529
     nota: no hay una fecha por imagen declarada; las fechas medidas en el archivo (EXIF y nombres) van en conteos.fechas_medidas
+
+# [DECIDIDO, José, 27-nov]: JPEG calidad 85 se mantiene y se DECLARA su diferencia con la app. Cifras COPIADAS (no re-medidas)
+# de alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt (medidas por el cazador-alucinaciones con
+# experimento_jpeg85.py); una prueba comprueba que coinciden con ese archivo.
+diferencias_con_app:
+  decision: >-
+    [DECIDIDO, José, 27-nov] JPEG calidad 85 se mantiene y se declara la diferencia con la app.
+  descripcion: >-
+    La app redimensiona la foto original sin recompresión; el entrenamiento usa la imagen recomprimida en JPEG.
+  muestra_imagenes: 292
+  muestra_criterio: cada 25.ª id de indice.csv
+  valores_de_canal: 43954176
+  recodificar_reproduce_los_bytes_versionados: 292 de 292
+  diferencia_absoluta_media_niveles: 2.741     # |redimensionado sin recomprimir - JPEG 85| por valor de canal, de 255
+  mediana: 2
+  p95: 9
+  p99: 14
+  maximo: 90
+  fraccion_fuera_de_mas_menos_1: 0.5572        # tolerancia ±1 de la paridad de la app
+  mae_por_imagen: {minimo: 2.193, mediana: 2.680, maximo: 4.514}
+  evidencia: alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt
 
 # Conteos que declaran los autores (artículo, §2.1 «Dataset statistics»; JO-1_fuentes_m2.md §5). La correspondencia
 # «Others» ↔ other_activities (y las demás) es por nombre: inferencia nuestra, no dicha por la fuente.

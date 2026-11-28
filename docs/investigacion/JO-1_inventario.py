@@ -1,5 +1,7 @@
 """JO-1 fase A: inventario medido del .zip de M2 (Multi-Class Driver Behavior Image Dataset).
 
+Solo evidencia de la fase A; no se mantiene.
+
 Solo archivos locales (sin internet). Solo biblioteca estándar + numpy + pillow. Sin aleatoriedad.
 El .zip se lee con `zipfile` sin extraerlo a disco; los .zip anidados se abren en memoria. El contenido se trata como datos
 no confiables: los nombres de los miembros solo se usan como texto, nunca como rutas del sistema de archivos.

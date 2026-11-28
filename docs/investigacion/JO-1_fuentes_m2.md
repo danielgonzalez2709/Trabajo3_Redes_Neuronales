@@ -18,48 +18,48 @@ estructura de carpetas y tamaño del depósito de Mendeley). Verificar contra el
 
 ## 1. Referencias APA 7
 
-**Conjunto (Mendeley Data).** Autores, año, título y versión según la página de Mendeley (`citation_author`, `citation_publication_date`
+**Conjunto (Mendeley Data).** [F-1] Autores, año, título y versión según la página de Mendeley (`citation_author`, `citation_publication_date`
 = «15 November 2024», `citation_volume` = «1»):
 
 > Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2024). *Multi-class driver behavior image dataset* (Version 1) [Data set]. Mendeley Data. https://doi.org/10.17632/mzb4b6dff3.1
 
-Cita que ofrece la propia página («citation» del JSON-LD): «Sahin Afridi, Arafat; Kafy, Arafath ; Nessa Moon, Ms. Nazmun; Shakil, Md.
+[F-2] Cita que ofrece la propia página («citation» del JSON-LD): «Sahin Afridi, Arafat; Kafy, Arafath ; Nessa Moon, Ms. Nazmun; Shakil, Md.
 Shahriar (2024), 'Multi-Class Driver Behavior Image Dataset ', Mendeley Data, v1, http://doi.org/10.17632/mzb4b6dff3.1».
-Nota: Mendeley escribe «Sahin Afridi, Arafat» y «Nessa Moon, Ms. Nazmun» (con «Ms.» dentro del nombre); el artículo y Crossref escriben
+[F-3] Nota: Mendeley escribe «Sahin Afridi, Arafat» y «Nessa Moon, Ms. Nazmun» (con «Ms.» dentro del nombre); el artículo y Crossref escriben
 Afridi / Moon con apellido simple. La forma APA de arriba sigue el artículo y Crossref (`family` = Afridi, Kafy, Moon, Shakil). Decisión de formato de quien cite.
 
-**Artículo (Data in Brief).** Según Crossref (`volume` 60, `page` 111529, `published-print` 2025-06, `title`, 4 autores) y PMC:
+**Artículo (Data in Brief).** [F-4] Según Crossref (`volume` 60, `page` 111529, `published-print` 2025-06, `title`, 4 autores) y PMC:
 
 > Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time detection and road safety enhancement. *Data in Brief, 60*, Article 111529. https://doi.org/10.1016/j.dib.2025.111529
 
-Autores en PMC: «Afridi Arafat Sahin», «Kafy Arafath», «Moon Ms. Nazmun Nessa», «Shakil Md. Shahriar»; afiliación: «Department of Computer
+[F-5] Autores en PMC: «Afridi Arafat Sahin», «Kafy Arafath», «Moon Ms. Nazmun Nessa», «Shakil Md. Shahriar»; afiliación: «Department of Computer
 Science and Engineering, Daffodil International University, Dhaka, Bangladesh». El artículo cita su propio conjunto así (ref. 3 del artículo): «Multi-class driver behavior dataset … Zenodo 2025 10.5281/zenodo.14908802».
 
-**Verificación del «Afridi et al., 2024» del enunciado.** El primer autor es **Afridi** (confirmado en M, A y C). El año **2024** es el del
+**Verificación del «Afridi et al., 2024» del enunciado.** [F-6] El primer autor es **Afridi** (confirmado en M, A y C). El año **2024** es el del
 conjunto en Mendeley (publicado el 15-nov-2024); el **artículo es de 2025** (Crossref: 2025-06; PMC: publicado en línea el 2025-04-04). El
 enunciado cita el conjunto, no el artículo; si se cita el artículo, el año es 2025.
 
-**Registro de Zenodo (depósito que el artículo declara; no es el DOI que usa el enunciado).** Zenodo: título «Multi-Class Driver Behavior Image Dataset», DOI 10.5281/zenodo.14908802, publicado 2025-02-25, licencia `cc-by-4.0`,
+**Registro de Zenodo (depósito que el artículo declara; no es el DOI que usa el enunciado).** [F-7] Zenodo: título «Multi-Class Driver Behavior Image Dataset», DOI 10.5281/zenodo.14908802, publicado 2025-02-25, licencia `cc-by-4.0`,
 archivos: `Multi-Class Driver Behavior Image Dataset.zip` (2 556 847 360 bytes) y `DATA USE AGREEMENT.docx`. Los creadores listados difieren en la ortografía de uno de los nombres: «Shakil, Shariear» (Zenodo) frente a «Shakil, Md. Shahriar» (Mendeley y artículo).
 
 ## 2. Licencia y qué exige
 
-- **Conjunto (M):** campo de licencia «CC BY 4.0»; descripción de Mendeley de esa licencia: «You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.»
-- **Artículo (A y C):** «© 2025 The Author(s) … This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).» Crossref registra la licencia `creativecommons.org/licenses/by/4.0/` (versión de registro, desde 2025-03-26) y © «2025 The Author(s). Published by Elsevier Inc.».
-- **Zenodo (Z):** licencia `cc-by-4.0`. Pero el mismo depósito incluye `DATA USE AGREEMENT.docx` (ver contradicción C-6) con otras condiciones: «The Dataset is intended for academic research and non-commercial use»; «Recipient shall not attempt to identify or re-identify any individuals depicted in the Dataset»; «Recipient shall not redistribute, sell, or otherwise share the Dataset with third parties without explicit written permission from DIU»; «Recipient agrees to acknowledge DIU in any publications …» (§7a, con la cita de Mendeley arriba) y «Recipient shall provide DIU with a copy of any proposed publication or presentation at least thirty (30) days prior to submission for review and comment» (§7b). Es una plantilla con campos en blanco ([RECIPIENT ORGANIZATION]); `TODO(dato-faltante)`: si se aplica a quien descarga de Mendeley.
-- **Qué exige CC BY 4.0 en la práctica:** atribución (crédito apropiado), enlace a la licencia e indicar si se hicieron cambios (según la descripción de Mendeley citada arriba).
+- [F-8] **Conjunto (M):** campo de licencia «CC BY 4.0»; descripción de Mendeley de esa licencia: «You can share, copy and modify this dataset so long as you give appropriate credit, provide a link to the CC BY license, and indicate if changes were made, but you may not do so in a way that suggests the rights holder has endorsed you or your use of the dataset. Note that further permission may be required for any content within the dataset that is identified as belonging to a third party.»
+- [F-9] **Artículo (A y C):** «© 2025 The Author(s) … This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).» Crossref registra la licencia `creativecommons.org/licenses/by/4.0/` (versión de registro, desde 2025-03-26) y © «2025 The Author(s). Published by Elsevier Inc.».
+- [F-10] **Zenodo (Z):** licencia `cc-by-4.0`. Pero el mismo depósito incluye `DATA USE AGREEMENT.docx` (ver contradicción C-6) con otras condiciones: «The Dataset is intended for academic research and non-commercial use»; «Recipient shall not attempt to identify or re-identify any individuals depicted in the Dataset»; «Recipient shall not redistribute, sell, or otherwise share the Dataset with third parties without explicit written permission from DIU»; «Recipient agrees to acknowledge DIU in any publications …» (§7a, con la cita de Mendeley arriba) y «Recipient shall provide DIU with a copy of any proposed publication or presentation at least thirty (30) days prior to submission for review and comment» (§7b). Es una plantilla con campos en blanco ([RECIPIENT ORGANIZATION]); `TODO(dato-faltante)`: si se aplica a quien descarga de Mendeley.
+- [F-11] **Qué exige CC BY 4.0 en la práctica:** atribución (crédito apropiado), enlace a la licencia e indicar si se hicieron cambios (según la descripción de Mendeley citada arriba).
 
 ## 3. Cómo se recolectaron las imágenes (según las fuentes)
 
-- **Lugar.** M: «Collected in Ashulia, Dhaka, Bangladesh, in October 2024». A, §2: «captured in Ashulia, Dhaka, Bangladesh». A, Tabla de especificaciones: «The photos were taken in Savar, Dhaka, Bangladesh»; fuente de datos «Daffodil International University, Birulia. Zone: Savar, Dhaka-1216 … Latitude: 23.5234° N, Longitude: 90.1915° E».
-- **Periodo.** M y A (Tabla de especificaciones): «October 2024». A, §2: «Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours per day.»
-- **Dispositivos.** A, Tabla de especificaciones: «using two separate personal cell phone cameras in both private vehicles and public buses». A, §3.1: «The dataset was collected using two smartphones: • iPhone 11: Equipped with a dual-lens camera system (12MP wide-angle and 12MP ultra-wide-angle lenses) … • Moto Edge 50 Fusion: Features a 50MP primary lens and a 13MP ultra-wide lens …». M: «The photos were taken using personal mobile phones».
-- **Tipos de vehículo.** M: «within both private vehicles and public buses» / «personal cars». A: «both private vehicles and public buses». **Cuántos vehículos o buses: `TODO(dato-faltante)`** (no se declara).
-- **Participantes.** A, §2: «The study involved 178 drivers aged 20–50 years».
-- **Condiciones de iluminación.** A, §2: «images were captured from multiple angles and under different lighting conditions, such as daylight, low light, and nighttime»; «Data collection was conducted across a variety of settings, including urban roads and highways».
-- **Posición de la cámara.** `TODO(dato-faltante)`: ninguna fuente dice dónde se colocó la cámara dentro del vehículo. Solo: «images were captured from multiple angles» (A, §2).
-- **Consentimiento y ética.** A, «Ethics Statement»: «all participants provided informed consent before data collection. To ensure privacy and confidentiality, no identifiable or personal information was collected during image capture. With the help of the drivers, the photos were taken in a controlled and safe manner, with no one injured.» (Ver C-6 sobre rostros visibles.)
-- **Anotación.** A, §2: «Each image was manually annotated into one of five behavior classes»; A, §5: «High-Quality Annotations: Expert-validated labels ensure robust dataset reliability.» `TODO(dato-faltante)`: quién anotó, cuántos anotadores, acuerdo entre anotadores.
+- [F-12] **Lugar.** M: «Collected in Ashulia, Dhaka, Bangladesh, in October 2024». A, §2: «captured in Ashulia, Dhaka, Bangladesh». A, Tabla de especificaciones: «The photos were taken in Savar, Dhaka, Bangladesh»; fuente de datos «Daffodil International University, Birulia. Zone: Savar, Dhaka-1216 … Latitude: 23.5234° N, Longitude: 90.1915° E».
+- [F-13] **Periodo.** M y A (Tabla de especificaciones): «October 2024». A, §2: «Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours per day.»
+- [F-14] **Dispositivos.** A, Tabla de especificaciones: «using two separate personal cell phone cameras in both private vehicles and public buses». A, §3.1: «The dataset was collected using two smartphones: • iPhone 11: Equipped with a dual-lens camera system (12MP wide-angle and 12MP ultra-wide-angle lenses) … • Moto Edge 50 Fusion: Features a 50MP primary lens and a 13MP ultra-wide lens …». M: «The photos were taken using personal mobile phones».
+- [F-15] **Tipos de vehículo.** M: «within both private vehicles and public buses» / «personal cars». A: «both private vehicles and public buses». **Cuántos vehículos o buses: `TODO(dato-faltante)`** (no se declara).
+- [F-16] **Participantes.** A, §2: «The study involved 178 drivers aged 20–50 years».
+- [F-17] **Condiciones de iluminación.** A, §2: «images were captured from multiple angles and under different lighting conditions, such as daylight, low light, and nighttime»; «Data collection was conducted across a variety of settings, including urban roads and highways».
+- [F-18] **Posición de la cámara.** `TODO(dato-faltante)`: ninguna fuente dice dónde se colocó la cámara dentro del vehículo. Solo: «images were captured from multiple angles» (A, §2).
+- [F-19] **Consentimiento y ética.** A, «Ethics Statement»: «all participants provided informed consent before data collection. To ensure privacy and confidentiality, no identifiable or personal information was collected during image capture. With the help of the drivers, the photos were taken in a controlled and safe manner, with no one injured.» (Ver C-6 sobre rostros visibles.)
+- [F-20] **Anotación.** A, §2: «Each image was manually annotated into one of five behavior classes»; A, §5: «High-Quality Annotations: Expert-validated labels ensure robust dataset reliability.» `TODO(dato-faltante)`: quién anotó, cuántos anotadores, acuerdo entre anotadores.
 
 ## 4. Las clases (nombres y definiciones de los autores)
 
@@ -67,48 +67,48 @@ Artículo, Tabla 1 (nombres de la columna «Class Name» y su descripción):
 
 | Nombre en Tabla 1 | Descripción citada |
 |---|---|
-| Safe Driving | «Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steering wheel while paying close attention to the road.» |
-| Talking phone | «The driver is using the phone in their hand or holding it to their ear while making a phone call. …» |
-| Texting phone | «The driver is texting while driving, which significantly diverts their attention from the road.» |
-| Turning | «The driver is turning the car, requiring full attention to ensure the maneuver is performed safely.» |
-| Others | «This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleeping while driving. …» |
+| [F-21] Safe Driving | «Driving with complete focus, no distractions. The driver maintains good posture and a firm grip on the steering wheel while paying close attention to the road.» |
+| [F-22] Talking phone | «The driver is using the phone in their hand or holding it to their ear while making a phone call. …» |
+| [F-23] Texting phone | «The driver is texting while driving, which significantly diverts their attention from the road.» |
+| [F-24] Turning | «The driver is turning the car, requiring full attention to ensure the maneuver is performed safely.» |
+| [F-25] Others | «This category covers various distracting behaviors, such as talking to passengers, eating, drinking, or sleeping while driving. …» |
 
-Los nombres cambian según la sección del artículo: §2.1 usa «Safe Driving, Turning, Talking on the Phone, Texting on the Phone, Others»; §3.4 usa «Safe Driving, Turning, Texting, Talking Phone and Other»; el resumen usa «Safe Driving, Talking on the Phone, Texting, Turning, and Other Distracting Behaviors»; §3.3 usa «Other Distractions».
+[F-26] Los nombres cambian según la sección del artículo: §2.1 usa «Safe Driving, Turning, Talking on the Phone, Texting on the Phone, Others»; §3.4 usa «Safe Driving, Turning, Texting, Talking Phone and Other»; el resumen usa «Safe Driving, Talking on the Phone, Texting, Turning, and Other Distracting Behaviors»; §3.3 usa «Other Distractions».
 
-Mendeley (M), descripción: «I. Safe Driving: Images showing a driver who seems to be paying attention to the road, both hands on the wheel, and concentrated or 1 hand on the steering wheel and other on the gear stick. … II. Turning: Photographs that show drivers changing direction during turns by moving their heads or full bodies. … III. Texting Phone: Pictures of drivers using their phones, whether it is to type messages or to interact with the screen. … IV. Talking Phones: When drivers talk on their phones or hold them up to their ears while driving a vehicle. … V. Others: Contains any actions that go against safe driving practices, like drinking water or anything while driving, sleeping while driving, or talking with someone behind while driving.»
+[F-27] Mendeley (M), descripción: «I. Safe Driving: Images showing a driver who seems to be paying attention to the road, both hands on the wheel, and concentrated or 1 hand on the steering wheel and other on the gear stick. … II. Turning: Photographs that show drivers changing direction during turns by moving their heads or full bodies. … III. Texting Phone: Pictures of drivers using their phones, whether it is to type messages or to interact with the screen. … IV. Talking Phones: When drivers talk on their phones or hold them up to their ears while driving a vehicle. … V. Others: Contains any actions that go against safe driving practices, like drinking water or anything while driving, sleeping while driving, or talking with someone behind while driving.»
 
-**«Otros comportamientos riesgosos» (clase «Others»)** agrupa, según el artículo: hablar con pasajeros, comer, beber, dormir; según Mendeley: beber agua u otra cosa, dormir, hablar con alguien de atrás. M además dice en su resumen: «other potentially risky behaviors, such as drowsy driving».
+**«Otros comportamientos riesgosos» (clase «Others»)** [F-28] agrupa, según el artículo: hablar con pasajeros, comer, beber, dormir; según Mendeley: beber agua u otra cosa, dormir, hablar con alguien de atrás. M además dice en su resumen: «other potentially risky behaviors, such as drowsy driving».
 
 ## 5. Conteos que declaran los autores
 
-A, §2.1 «Dataset statistics»: «Safe Driving: 1679 images; Turning: 1343 images; Talking on the Phone: 1513 images; Texting on the Phone: 1561 images; Others: 1190 images». Total declarado: «7286 high-resolution images» (resumen y §2). La suma de las cinco clases es 1679 + 1343 + 1513 + 1561 + 1190 = 7286 (cálculo nuestro; coincide).
-Resolución declarada: A, §2.1: «Each image has a resolution of 400 × 600 pixels». Formato: A, Tabla de especificaciones, «Type of data: JPEG». M dice «high-resolution photos» sin cifras.
-- **Originales vs. aumentadas:** el artículo **no** dice si las 7286 son originales, aumentadas o mezcla; `TODO(dato-faltante)`. Ver §6 y C-2 a C-4.
-- **Por tipo de vehículo:** `TODO(dato-faltante)` (no hay conteos).
-- **Conteos de Mendeley:** `TODO(dato-faltante)` (la página no los da; la lista de archivos no se pudo leer).
+[F-29] A, §2.1 «Dataset statistics»: «Safe Driving: 1679 images; Turning: 1343 images; Talking on the Phone: 1513 images; Texting on the Phone: 1561 images; Others: 1190 images». Total declarado: «7286 high-resolution images» (resumen y §2). La suma de las cinco clases es 1679 + 1343 + 1513 + 1561 + 1190 = 7286 (cálculo nuestro; coincide).
+[F-30] Resolución declarada: A, §2.1: «Each image has a resolution of 400 × 600 pixels». Formato: A, Tabla de especificaciones, «Type of data: JPEG». M dice «high-resolution photos» sin cifras.
+- [F-31] **Originales vs. aumentadas:** el artículo **no** dice si las 7286 son originales, aumentadas o mezcla; `TODO(dato-faltante)`. Ver §6 y C-2 a C-4.
+- [F-32] **Por tipo de vehículo:** `TODO(dato-faltante)` (no hay conteos).
+- [F-33] **Conteos de Mendeley:** `TODO(dato-faltante)` (la página no los da; la lista de archivos no se pudo leer).
 
 ## 6. Preprocesamiento y aumento de datos
 
 Citas del artículo (A):
-- §3.2 «Preprocessing steps»: «Noise Reduction: Impulse noise was removed using non-linear median filtering»; «Contrast Enhancement: Histogram equalization was used to adjust for irregular lighting and improve contrast»; «Image Resizing: All images were resized to a fixed dimension of 224 × 224 pixels to meet the input requirements of deep learning models.»
-- §3.3 «Data augmentation techniques»: «Online data augmentation techniques were applied during the training process … Random Rotation (up to 15°) • Horizontal Flipping • Brightness Adjustment • Random Cropping. Augmentation was performed online to avoid introducing bias and to ensure that the dataset remains suitable for unbiased evaluation.»
-- §3.3 (párrafo «Data Augmentation») y §3.4: «Each class was saved in a separate folder. Data augmentation was used to increase the variability of the dataset by simulating various real-world scenarios using techniques such as rotating, flipping, zooming, brightness adjustment, and cropping. … Extended images were stored in the same folder as their corresponding original class to ensure that they inherited the correct labels without requiring additional manual intervention.»
-- §3.4: «The expansion process significantly expanded the data set by providing each class with a set of unique image variations.» Texto parecido en §3.1: «The expansion process significantly expanded the data set by providing each class with a set of unique image variations.»
-- Fig. 2 (texto): «a confusion matrix for an augmented dataset … the top-left cell shows that 1450 instances of "Safe Driving" were correctly predicted as "Safe Driving," while 30 instances were incorrectly predicted as "Turning."»
+- [F-34] §3.2 «Preprocessing steps»: «Noise Reduction: Impulse noise was removed using non-linear median filtering»; «Contrast Enhancement: Histogram equalization was used to adjust for irregular lighting and improve contrast»; «Image Resizing: All images were resized to a fixed dimension of 224 × 224 pixels to meet the input requirements of deep learning models.»
+- [F-35] §3.3 «Data augmentation techniques»: «Online data augmentation techniques were applied during the training process … Random Rotation (up to 15°) • Horizontal Flipping • Brightness Adjustment • Random Cropping. Augmentation was performed online to avoid introducing bias and to ensure that the dataset remains suitable for unbiased evaluation.»
+- [F-36] §3.3 (párrafo «Data Augmentation») y §3.4: «Each class was saved in a separate folder. Data augmentation was used to increase the variability of the dataset by simulating various real-world scenarios using techniques such as rotating, flipping, zooming, brightness adjustment, and cropping. … Extended images were stored in the same folder as their corresponding original class to ensure that they inherited the correct labels without requiring additional manual intervention.»
+- [F-37] §3.4: «The expansion process significantly expanded the data set by providing each class with a set of unique image variations.» Texto parecido en §3.1: «The expansion process significantly expanded the data set by providing each class with a set of unique image variations.»
+- [F-38] Fig. 2 (texto): «a confusion matrix for an augmented dataset … the top-left cell shows that 1450 instances of "Safe Driving" were correctly predicted as "Safe Driving," while 30 instances were incorrectly predicted as "Turning."»
 
-Lo que el artículo **no** da (`TODO(dato-faltante)`): cuántas variantes por imagen original; parámetros de zoom, brillo y recorte (solo «up to 15°» para la rotación); si las originales siguen en las carpetas junto con las aumentadas; **cómo identificar en los archivos cuáles imágenes son aumentadas y de qué original provienen** (solo dice que se guardan «in the same folder as their corresponding original class»; no describe nombres de archivo); número de imágenes aumentadas por clase (la Tabla 2 «Augmented images of Driver behavior detection dataset» es una imagen que no se leyó).
-**Partición propuesta por los autores:** ninguna encontrada en el texto (`TODO(dato-faltante)`); los autores no definen train/val/test. El artículo sí menciona CNN (VGG16, ResNet50, InceptionV3, Xception) como uso previsto (§ «Value of the Data», viñeta Machine learning).
+[F-39] Lo que el artículo **no** da (`TODO(dato-faltante)`): cuántas variantes por imagen original; parámetros de zoom, brillo y recorte (solo «up to 15°» para la rotación); si las originales siguen en las carpetas junto con las aumentadas; **cómo identificar en los archivos cuáles imágenes son aumentadas y de qué original provienen** (solo dice que se guardan «in the same folder as their corresponding original class»; no describe nombres de archivo); número de imágenes aumentadas por clase (la Tabla 2 «Augmented images of Driver behavior detection dataset» es una imagen que no se leyó).
+**Partición propuesta por los autores:** [F-40] ninguna encontrada en el texto (`TODO(dato-faltante)`); los autores no definen train/val/test. El artículo sí menciona CNN (VGG16, ResNet50, InceptionV3, Xception) como uso previsto (viñeta «Machine learning and computer vision» del párrafo sin título que sigue a la Tabla de especificaciones y empieza «The main significance of this dataset…» (en el XML de PMC no tiene encabezado)).
 
-Mendeley (M): «Because the images are unprocessed and unannotated, there is freedom in how machine learning applications pre-process them.»
+[F-41] Mendeley (M): «Because the images are unprocessed and unannotated, there is freedom in how machine learning applications pre-process them.»
 
 ## 7. Etiquetas de tipo de vehículo u otras variables
 
-El artículo menciona «Vehicle classification» entre las palabras clave y que el conjunto «includes variations in lighting, vehicle type, and driving conditions» (§2.1), pero **no dice que haya una etiqueta de tipo de vehículo, ni de iluminación ni de ángulo** en los archivos. Lo único que describe es la organización «Each class was saved in a separate folder» (§3.3/§3.4), o sea, solo la etiqueta de clase por carpeta. M: «they differ in terms of vehicle type and illumination». `TODO(dato-faltante)`: metadatos por imagen; confirmar al abrir el archivo descargado.
+[F-42] El artículo menciona «Vehicle classification» entre las palabras clave y que el conjunto «includes variations in lighting, vehicle type, and driving conditions» (§2.1), pero **no dice que haya una etiqueta de tipo de vehículo, ni de iluminación ni de ángulo** en los archivos. Lo único que describe es la organización «Each class was saved in a separate folder» (§3.3/§3.4), o sea, solo la etiqueta de clase por carpeta. M: «they differ in terms of vehicle type and illumination». `TODO(dato-faltante)`: metadatos por imagen; confirmar al abrir el archivo descargado.
 
 ## 8. Limitaciones declaradas y usos previstos
 
-- Limitaciones (A, §6): «its geographic focus on Dhaka, Bangladesh, limits its global applicability»; «Behavioral Complexity: … it does not yet include more nuanced actions such as drowsiness, aggressive driving, and reckless lane changes»; «Limited Sensor Modalities: The dataset primarily relies on smartphone cameras … The absence of depth sensors, infrared cameras, or multi-modal data sources … may limit its applicability in low-light conditions or drowsiness detection.»
-- Usos previstos (A, «Value of the Data»): «Improving road safety», «Real-time monitoring», «Machine learning and computer vision: … train and evaluate deep learning models … CNNs such as VGG16, ResNet50, InceptionV3, and Xception», «Public Safety». Resumen: «can be used to train and evaluate machine learning models for real-time driver behavior detection». Direcciones futuras (§7): modelos ligeros para «mobile and edge devices».
+- [F-43] Limitaciones (A, §6): «its geographic focus on Dhaka, Bangladesh, limits its global applicability»; «Behavioral Complexity: … it does not yet include more nuanced actions such as drowsiness, aggressive driving, and reckless lane changes»; «Limited Sensor Modalities: The dataset primarily relies on smartphone cameras … The absence of depth sensors, infrared cameras, or multi-modal data sources … may limit its applicability in low-light conditions or drowsiness detection.»
+- [F-44] Usos previstos (A, párrafo sin título que sigue a la Tabla de especificaciones y empieza «The main significance of this dataset…» (en el XML de PMC no tiene encabezado)): «Improving road safety», «Real-time monitoring», «Machine learning and computer vision: … train and evaluate deep learning models … CNNs such as VGG16, ResNet50, InceptionV3, and Xception», «Public Safety». Resumen: «can be used to train and evaluate machine learning models for real-time driver behavior detection». Direcciones futuras (§7): modelos ligeros para «mobile and edge devices».
 
 ## 9. Contradicciones y diferencias (sin resolver)
 
@@ -120,7 +120,7 @@ El artículo menciona «Vehicle classification» entre las palabras clave y que 
 - **C-6 Rostros, consentimiento y redistribución.** A, Ethics: «no identifiable or personal information was collected». El `DATA USE AGREEMENT.docx` de Zenodo dice que el conjunto «contains high-resolution images of drivers, some of which include visible faces», prohíbe re-identificar, y «shall not redistribute, sell, or otherwise share the Dataset with third parties without explicit written permission from DIU»; la licencia declarada es CC BY 4.0 (que sí permite compartir). Relevante para guardar imágenes en el repositorio (núcleo §5.5) y para el blog/la app. Decisión de uso: humano.
 - **C-7 Lugar.** «Ashulia» (M; A §2) frente a «Savar» y «Birulia» (A, Tabla de especificaciones). Son nombres de la misma zona de Dhaka según la propia tabla («Zone: Savar»), pero el artículo no lo aclara. `TODO(dato-faltante)`.
 - **C-8 Nombres de clase** distintos entre secciones del artículo y entre A y M (ver §4).
-- **C-9 «Controlada» vs. «real».** A, Ethics: fotos tomadas «in a controlled and safe manner» «with the help of the drivers»; A, §1/§4 insisten en «naturalistic» y «Unlike staged datasets». El artículo no explica si los comportamientos (p. ej. texting) fueron actuados.
+- **C-9 «Controlada» vs. «real».** A, Ethics: fotos tomadas «in a controlled and safe manner» «with the help of the drivers»; A, §1 («naturalistic driving scenarios»), §4 («Unlike simulated datasets») y §8, Conclusion («Unlike staged datasets») insisten en lo real frente a lo simulado. El artículo no explica si los comportamientos (p. ej. texting) fueron actuados.
 - **C-10 Año.** Enunciado «Afridi et al., 2024» frente al artículo, de 2025 (ver §1).
 - **C-11 Ortografía de autores:** «Shakil, Md. Shahriar» (M, A) frente a «Shakil, Shariear» (Zenodo); «Moon, Ms. Nazmun Nessa» (A) frente a «Nessa Moon, Ms. Nazmun» (M).
 

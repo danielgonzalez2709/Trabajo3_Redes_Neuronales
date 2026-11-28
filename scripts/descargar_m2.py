@@ -27,6 +27,8 @@ BLOQUE = 1024 * 1024
 
 
 def sha256(ruta: Path) -> str:
+    # copia deliberada de src.m2_conduccion.datos.sha256_archivo: este script no importa de ``src`` (lo prueba
+    # tests/test_descargar_m2.py: ambas dan el mismo resultado).
     h = hashlib.sha256()
     with open(ruta, "rb") as f:
         for bloque in iter(lambda: f.read(BLOQUE), b""):
@@ -34,9 +36,14 @@ def sha256(ruta: Path) -> str:
     return h.hexdigest()
 
 
+def _exigir_reintentos(reintentos: int) -> None:
+    if reintentos < 1:
+        raise ValueError(f"reintentos debe ser al menos 1 (recibido {reintentos})")
+
+
 def consultar_archivo(timeout: float, reintentos: int) -> dict:
     """Metadatos del .zip según la API: nombre, tamaño, SHA-256 y URL de descarga."""
-    ultimo: Exception | None = None
+    _exigir_reintentos(reintentos)
     for intento in range(1, reintentos + 1):
         try:
             r = requests.get(URL_API, timeout=timeout)
@@ -48,21 +55,19 @@ def consultar_archivo(timeout: float, reintentos: int) -> dict:
             cd = a["content_details"]
             return {"nombre": a["filename"], "tamano": int(cd["size"]), "sha256": cd["sha256_hash"].lower(),
                     "url": cd["download_url"]}
-        except (requests.RequestException, ValueError, KeyError) as e:
-            ultimo = e
-            if intento < reintentos:
-                time.sleep(5 * intento)
-    assert ultimo is not None
-    raise ultimo
+        except (requests.RequestException, ValueError, KeyError):
+            if intento == reintentos:
+                raise
+            time.sleep(5 * intento)
 
 
 def descargar(meta: dict, destino: Path, timeout: float, reintentos: int) -> Path:
+    _exigir_reintentos(reintentos)
     destino.parent.mkdir(parents=True, exist_ok=True)
     if destino.exists() and destino.stat().st_size == meta["tamano"] and sha256(destino) == meta["sha256"]:
         print(f"{destino.name} ya existe con el SHA-256 correcto: no se descarga")
         return destino
     tmp = destino.with_suffix(destino.suffix + ".part")
-    ultimo: Exception | None = None
     for intento in range(1, reintentos + 1):
         try:
             with requests.get(meta["url"], stream=True, timeout=timeout) as r:
@@ -72,7 +77,6 @@ def descargar(meta: dict, destino: Path, timeout: float, reintentos: int) -> Pat
                         f.write(bloque)
             break
         except requests.RequestException as e:
-            ultimo = e
             print(f"intento {intento} fallido: {type(e).__name__}: {str(e)[:150]}", file=sys.stderr)
             if intento == reintentos:
                 raise

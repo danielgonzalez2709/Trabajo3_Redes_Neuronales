@@ -77,7 +77,8 @@ def miembros() -> dict[str, bytes]:
     }
 
 
-def construir_zip(ruta: Path) -> Path:
+def construir_zip(ruta: Path, contenido: dict[str, bytes] | None = None) -> Path:
+    """Escribe el .zip; sin ``contenido`` usa ``miembros()`` (el fixture estándar). Con ``contenido`` arma zips de casos borde."""
     ruta = Path(ruta)
     ruta.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(ruta, "w", zipfile.ZIP_STORED) as z:
@@ -85,7 +86,7 @@ def construir_zip(ruta: Path) -> Path:
             info = zipfile.ZipInfo(carpeta, FECHA_FIJA)
             info.external_attr = 0o40755 << 16
             z.writestr(info, b"")
-        for nombre, datos in miembros().items():
+        for nombre, datos in (miembros() if contenido is None else contenido).items():
             info = zipfile.ZipInfo(f"{RAIZ_ZIP}/{nombre}", FECHA_FIJA)
             info.external_attr = 0o100644 << 16
             z.writestr(info, datos)

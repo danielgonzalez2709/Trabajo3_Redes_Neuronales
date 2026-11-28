@@ -19,3 +19,4 @@ declarado_vs_medido,talking_phone,1513,declarado 1513; medido en el .zip 1513; l
 declarado_vs_medido,texting_phone,1561,declarado 1561; medido en el .zip 1561; legibles 1561; diferencia (legibles - declarado) 0
 declarado_vs_medido,other_activities,1184,declarado 1190; medido en el .zip 1190; legibles 1184; diferencia (legibles - declarado) -6
 declarado_vs_medido,resolucion,0,declarada 400x600; imágenes con esa resolución 0 (en cualquier orientación 0); la más frecuente medida es 640x480 con 6629 imágenes; 32 resoluciones distintas
+diferencia_con_app,jpeg85_vs_sin_recomprimir,2.741,"La app redimensiona la foto original sin recompresión; el entrenamiento usa la imagen recomprimida en JPEG. Muestra de 292 imágenes (cada 25.ª id de indice.csv): |diferencia| media 2,741 niveles de 255; mediana 2, p95 9, p99 14, máximo 90; 55,7 % de los valores fuera de ±1. Cifras copiadas de alucinaciones/evidencias/JO-1/experimento_jpeg85_salida.txt"

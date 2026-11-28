@@ -10,13 +10,17 @@ Salida (núcleo §5.5 y §5.12):
 
 Decisiones [DECIDIDO, José] (``configs/m2/datos.yaml``): se versionan todas las imágenes legibles; 224x224, estirando, bilineal,
 RGB, JPEG calidad 85; los ilegibles se excluyen y se registran (no se reparan); la clase es el nombre exacto de la carpeta.
-Supuestos [PROPUESTO por el orquestador, pendientes de José]:
+Decisiones [DECIDIDO, José, 27-nov] (antes eran supuestos propuestos):
   * ``aplicar_orientacion_exif``: se aplica ``ImageOps.exif_transpose`` antes de redimensionar.
-  * ``ancho`` y ``alto`` de ``indice.csv`` son los ORIGINALES tras aplicar la orientación EXIF (no el tamaño de salida).
+  * ``ancho`` y ``alto`` de ``indice.csv`` (nombres del contrato §5.5) son las dimensiones ORIGINALES de la foto tras aplicar
+    la orientación EXIF y antes de redimensionar; NO son el tamaño del archivo procesado (ese es siempre ``tamano``, 224x224).
   * ``id`` = ``m2_NNNNN`` con NNNNN = posición (desde 1) en el orden (clase, nombre de archivo, ruta) de TODOS los miembros
     de imagen del .zip; un ilegible conserva su número y no se reutiliza, así los ids no dependen de qué se excluye.
   * ``n_variables`` = 2 (imagen y clase).
-``tipo_vehiculo`` (núcleo §5.5 «si la fuente lo trae») NO se incluye: la fuente no etiqueta tipo de vehículo (F-19 de
+  * JPEG calidad 85 se mantiene y se DECLARA la diferencia con la app: la app redimensiona la foto original sin recompresión y
+    el entrenamiento usa la imagen recomprimida; las cifras (copiadas, no re-medidas) están en ``diferencias_con_app``.
+  * ``origen.csv`` y ``procesado.json`` se conservan.
+``tipo_vehiculo`` (núcleo §5.5 «si la fuente lo trae») NO se incluye: la fuente no etiqueta tipo de vehículo (F-42 de
 docs/investigacion/JO-1_fuentes_m2.md). ``grupo_duplicado`` y ``split`` quedan vacías: las llena JO-3.
 
 Un PNG con canal alfa se compone sobre ``fondo_alfa`` solo si tiene píxeles no opacos; si es totalmente opaco, ``convert("RGB")``
@@ -35,6 +39,7 @@ import io
 import platform
 import re
 import shutil
+import struct
 import warnings
 import zipfile
 from collections import Counter
@@ -50,10 +55,13 @@ from src.comun.results import save_json
 
 COLUMNAS_INDICE = ["id", "archivo", "clase", "grupo_duplicado", "split", "ancho", "alto"]
 COLUMNAS_ORIGEN = ["id", "archivo_original", "sha256_original", "formato", "modo", "orientacion_exif"]
-COLUMNAS_CALIDAD = ["categoria", "elemento", "valor", "detalle"]
+COLUMNAS_HALLAZGOS = ["categoria", "elemento", "valor", "detalle"]   # calidad.csv: una fila por hallazgo
 INTERPOLACIONES = {"bilineal": Image.Resampling.BILINEAR}
 FORMATO_POR_EXTENSION = {".jpg": "JPEG", ".jpeg": "JPEG", ".png": "PNG"}
-ETIQUETA_EXIF_ORIENTACION, ETIQUETA_EXIF_MARCA, ETIQUETA_EXIF_MODELO, ETIQUETA_EXIF_FECHA = 0x0112, 0x010F, 0x0110, 0x0132
+ETIQUETAS_EXIF = {"orientacion": 0x0112, "marca": 0x010F, "modelo": 0x0110, "fecha": 0x0132}
+# Lo que Pillow puede lanzar al leer un EXIF dañado (struct.error: bloque truncado; SyntaxError: no es un EXIF válido;
+# Warning: las advertencias se tratan como error). Cualquier otra excepción no se traga aquí.
+ERRORES_DE_LECTURA_EXIF = (OSError, ValueError, TypeError, KeyError, SyntaxError, struct.error, Warning)
 ORIENTACIONES_QUE_CAMBIAN = range(2, 9)       # exif_transpose solo modifica la imagen con Orientation 2..8
 BYTES_INICIALES_ILEGIBLE = 12
 MAX_EJEMPLOS = 2
@@ -151,10 +159,9 @@ def _leer_exif(img: Image.Image) -> tuple[dict, bool]:
     """(orientación, marca, modelo, fecha) del EXIF; el segundo valor indica que no se pudo leer (no invalida la imagen)."""
     try:
         exif = img.getexif()
-        return {"orientacion": exif.get(ETIQUETA_EXIF_ORIENTACION), "marca": exif.get(ETIQUETA_EXIF_MARCA),
-                "modelo": exif.get(ETIQUETA_EXIF_MODELO), "fecha": exif.get(ETIQUETA_EXIF_FECHA)}, False
-    except Exception:
-        return {"orientacion": None, "marca": None, "modelo": None, "fecha": None}, True
+        return {campo: exif.get(etiqueta) for campo, etiqueta in ETIQUETAS_EXIF.items()}, False
+    except ERRORES_DE_LECTURA_EXIF:
+        return dict.fromkeys(ETIQUETAS_EXIF), True
 
 
 def _como_entero(valor) -> int | None:
@@ -169,6 +176,21 @@ def _como_texto(valor) -> str | None:
         return None
     texto = valor.decode("latin-1") if isinstance(valor, bytes) else str(valor)
     return texto.strip("\x00 ").strip() or None
+
+
+def _a_rgb(img: Image.Image, fondo: tuple) -> tuple[Image.Image, dict]:
+    """Pasa a RGB y mide el alfa. Compone sobre ``fondo`` solo si hay píxeles no opacos; si no, ``convert`` no pierde nada."""
+    if not (img.mode in ("RGBA", "LA", "PA") or "transparency" in img.info):
+        return img.convert("RGB"), {"tiene_alfa": False, "fraccion_no_opaca": 0.0}
+    rgba = img.convert("RGBA")
+    canal = np.asarray(rgba.getchannel("A"))
+    no_opacos = int((canal != 255).sum())
+    alfa = {"tiene_alfa": True, "fraccion_no_opaca": no_opacos / canal.size}
+    if not no_opacos:
+        return rgba.convert("RGB"), alfa
+    lienzo = Image.new("RGB", rgba.size, fondo)
+    lienzo.paste(rgba, mask=rgba.getchannel("A"))
+    return lienzo, alfa
 
 
 def procesar_imagen(datos: bytes, p: dict) -> dict:
@@ -192,20 +214,7 @@ def procesar_imagen(datos: bytes, p: dict) -> dict:
     if p["exif"]:
         img = ImageOps.exif_transpose(img)
     tam_original = img.size                    # ancho y alto del índice: originales, tras la orientación EXIF
-    alfa = {"tiene_alfa": False, "fraccion_no_opaca": 0.0}
-    if img.mode in ("RGBA", "LA", "PA") or "transparency" in img.info:
-        rgba = img.convert("RGBA")
-        canal = np.asarray(rgba.getchannel("A"))
-        no_opacos = int((canal != 255).sum())
-        alfa = {"tiene_alfa": True, "fraccion_no_opaca": no_opacos / canal.size}
-        if no_opacos:
-            lienzo = Image.new("RGB", rgba.size, p["fondo"])
-            lienzo.paste(rgba, mask=rgba.getchannel("A"))
-            img = lienzo
-        else:
-            img = rgba.convert("RGB")
-    else:
-        img = img.convert("RGB")
+    img, alfa = _a_rgb(img, p["fondo"])
     img = img.resize(p["tamano"], p["resample"])
     buf = io.BytesIO()
     img.save(buf, "JPEG", quality=p["calidad"])
@@ -271,24 +280,21 @@ def medir_fechas(legibles: list[dict]) -> dict:
                      "fecha por imagen; el patrón del nombre es una lectura nuestra de los nombres vistos en la fase A.")}
 
 
-def _diferencia(declarado: int, medido: int) -> int:
-    return medido - declarado
-
-
 def comparar_declarado(cfg: dict, por_clase_zip: Counter, por_clase_leg: Counter, total_zip: int, total_leg: int,
                        res_exif: Counter) -> dict:
     dec = cfg["declarado"]
     ancho, alto = dec["resolucion"]
+    # diferencia = medido - declarado (negativa: faltan imágenes respecto de lo que declaran los autores)
     por_clase = {c: {"declarado": n, "medido_en_zip": int(por_clase_zip.get(c, 0)),
                      "medido_legibles": int(por_clase_leg.get(c, 0)),
-                     "diferencia_zip": _diferencia(n, int(por_clase_zip.get(c, 0))),
-                     "diferencia_legibles": _diferencia(n, int(por_clase_leg.get(c, 0)))}
+                     "diferencia_zip": int(por_clase_zip.get(c, 0)) - n,
+                     "diferencia_legibles": int(por_clase_leg.get(c, 0)) - n}
                  for c, n in dec["por_clase"].items()}
     return {
         "fuente_de_lo_declarado": dec["fuente"],
         "total": {"declarado": dec["total"], "medido_en_zip": total_zip, "medido_legibles": total_leg,
-                  "diferencia_zip": _diferencia(dec["total"], total_zip),
-                  "diferencia_legibles": _diferencia(dec["total"], total_leg)},
+                  "diferencia_zip": total_zip - dec["total"],
+                  "diferencia_legibles": total_leg - dec["total"]},
         "por_clase": por_clase,
         "resolucion_declarada": f"{ancho}x{alto}",
         "texto_resolucion_declarada": dec["texto_resolucion"],
@@ -300,86 +306,116 @@ def comparar_declarado(cfg: dict, por_clase_zip: Counter, por_clase_leg: Counter
     }
 
 
-def construir_conteos(cfg: dict, miembros: list[dict], resultados: list[dict]) -> tuple[dict, list[dict]]:
+def _conteos_exif(aplicar: bool, legibles: list[dict]) -> dict:
+    orient = Counter(str(r["orientacion"]) if r["orientacion"] is not None else "sin_orientacion" for r in legibles)
+    aplicadas = [r for r in legibles if r["orientacion_aplicada"]]
+    por_valor = Counter(str(r["orientacion"]) for r in aplicadas)
+    ejemplos = {valor: [r["id"] for r in aplicadas if str(r["orientacion"]) == valor][:MAX_EJEMPLOS]
+                for valor in sorted(por_valor)}
+    return {
+        "aplicar_orientacion_exif": aplicar, "orientacion_distribucion": _dict_ordenado(orient),
+        "orientacion_aplicada_n": len(aplicadas), "orientacion_aplicada_por_valor": _dict_ordenado(por_valor),
+        "ejemplos_por_orientacion": ejemplos, "errores_de_lectura": sum(1 for r in legibles if r["exif_error"]),
+        "marca": _dict_ordenado(Counter(r["marca"] for r in legibles if r["marca"])),
+        "modelo": _dict_ordenado(Counter(r["modelo"] for r in legibles if r["modelo"])),
+    }
+
+
+def _conteos_alfa(fondo: list, legibles: list[dict]) -> dict:
+    alfa_r = [r for r in legibles if r["alfa"]["tiene_alfa"]]
+    no_opacos = [{"id": r["id"], "fraccion_pixeles_no_opacos": r["alfa"]["fraccion_no_opaca"]}
+                 for r in alfa_r if r["alfa"]["fraccion_no_opaca"] > 0]
+    decision = (f"composición sobre fondo {list(fondo)} en las {len(no_opacos)} con píxeles no opacos; "
+                "convert('RGB') en las demás" if no_opacos
+                else "convert('RGB') sin pérdida: el alfa es totalmente opaco en todas")
+    return {"n_png": sum(1 for r in legibles if r["formato"] == "PNG"),
+            "n_rgba": sum(1 for r in legibles if r["modo"] == "RGBA"),
+            "n_con_alfa_no_opaco": len(no_opacos), "n_alfa_totalmente_opaco": len(alfa_r) - len(no_opacos),
+            "no_opacos": no_opacos, "decision": decision}
+
+
+def _conteos_formato(legibles: list[dict], resultados: list[dict]) -> tuple[dict, list[dict]]:
+    """Extensiones, formatos y modos, y la lista de imágenes cuya extensión no corresponde a su formato real."""
+    discordantes = [r for r in legibles if FORMATO_POR_EXTENSION.get(r["ext"].lower()) != r["formato"]]
+    return {"extensiones_en_zip": _dict_ordenado(Counter(r["ext"] for r in resultados)),
+            "formatos": _dict_ordenado(Counter(r["formato"] for r in legibles)),
+            "modos": _dict_ordenado(Counter(r["modo"] for r in legibles)),
+            "extension_distinta_del_formato_real": len(discordantes)}, discordantes
+
+
+def _conteos_resoluciones(res_exif: Counter, res_sin: Counter) -> dict:
+    return {"resoluciones_tras_exif_mas_frecuentes": _resoluciones(res_exif),
+            "resoluciones_distintas_tras_exif": len(res_exif),
+            "resoluciones_sin_exif_mas_frecuentes": _resoluciones(res_sin),
+            "resoluciones_distintas_sin_exif": len(res_sin)}
+
+
+def _diferencias_con_app(cfg: dict) -> dict:
+    """Diferencia entre lo que se entrena (JPEG recomprimido) y lo que hace la app. Copiada de la config, sin re-medir."""
+    d = dict(cfg["diferencias_con_app"])
+    d["calidad_jpeg_del_entrenamiento"] = cfg["preprocesado"]["calidad_jpeg"]
+    return d
+
+
+def construir_conteos(cfg: dict, resultados: list[dict]) -> tuple[dict, list[dict]]:
     """Todos los conteos de ``ficha.json`` y las filas de ``calidad.csv`` (medidos sobre el .zip)."""
     legibles = [r for r in resultados if not r["ilegible"]]
     ilegibles = [r for r in resultados if r["ilegible"]]
-    aplicar = cfg["preprocesado"]["aplicar_orientacion_exif"]
     por_clase_zip = Counter(r["clase"] for r in resultados)
     por_clase_leg = Counter(r["clase"] for r in legibles)
     res_exif = Counter(f"{r['tam_original'][0]}x{r['tam_original'][1]}" for r in legibles)
     res_sin = Counter(f"{r['tam_sin_exif'][0]}x{r['tam_sin_exif'][1]}" for r in legibles)
-    orient = Counter(str(r["orientacion"]) if r["orientacion"] is not None else "sin_orientacion" for r in legibles)
-    aplicadas = [r for r in legibles if r["orientacion_aplicada"]]
-    ejemplos = {}
-    por_valor = Counter(str(r["orientacion"]) for r in aplicadas)
-    for valor in sorted(por_valor):
-        ejemplos[valor] = [r["id"] for r in aplicadas if str(r["orientacion"]) == valor][:MAX_EJEMPLOS]
-    alfa_r = [r for r in legibles if r["alfa"]["tiene_alfa"]]
-    no_opacos = [{"id": r["id"], "fraccion_pixeles_no_opacos": r["alfa"]["fraccion_no_opaca"]}
-                 for r in alfa_r if r["alfa"]["fraccion_no_opaca"] > 0]
-    fondo = cfg["preprocesado"]["fondo_alfa"]
-    decision_alfa = (f"composición sobre fondo {list(fondo)} en las {len(no_opacos)} con píxeles no opacos; "
-                     "convert('RGB') en las demás" if no_opacos
-                     else "convert('RGB') sin pérdida: el alfa es totalmente opaco en todas")
-    mismatch = [r for r in legibles if FORMATO_POR_EXTENSION.get(r["ext"].lower()) != r["formato"]]
+    prep = cfg["preprocesado"]
+    formato, discordantes = _conteos_formato(legibles, resultados)
     conteos = {
         "total_en_zip": len(resultados), "ilegibles": len(ilegibles), "legibles": len(legibles),
         "por_clase_en_zip": _dict_ordenado(por_clase_zip), "por_clase_legibles": _dict_ordenado(por_clase_leg),
         "ilegibles_por_clase": _dict_ordenado(Counter(r["clase"] for r in ilegibles)),
-        "extensiones_en_zip": _dict_ordenado(Counter(r["ext"] for r in resultados)),
-        "formatos": _dict_ordenado(Counter(r["formato"] for r in legibles)),
-        "modos": _dict_ordenado(Counter(r["modo"] for r in legibles)),
-        "extension_distinta_del_formato_real": len(mismatch),
-        "resoluciones_tras_exif_mas_frecuentes": _resoluciones(res_exif),
-        "resoluciones_distintas_tras_exif": len(res_exif),
-        "resoluciones_sin_exif_mas_frecuentes": _resoluciones(res_sin),
-        "resoluciones_distintas_sin_exif": len(res_sin),
-        "exif": {
-            "aplicar_orientacion_exif": aplicar, "orientacion_distribucion": _dict_ordenado(orient),
-            "orientacion_aplicada_n": len(aplicadas), "orientacion_aplicada_por_valor": _dict_ordenado(por_valor),
-            "ejemplos_por_orientacion": ejemplos, "errores_de_lectura": sum(1 for r in legibles if r["exif_error"]),
-            "marca": _dict_ordenado(Counter(r["marca"] for r in legibles if r["marca"])),
-            "modelo": _dict_ordenado(Counter(r["modelo"] for r in legibles if r["modelo"])),
-        },
-        "png_alfa": {
-            "n_png": sum(1 for r in legibles if r["formato"] == "PNG"),
-            "n_rgba": sum(1 for r in legibles if r["modo"] == "RGBA"),
-            "n_con_alfa_no_opaco": len(no_opacos), "n_alfa_totalmente_opaco": len(alfa_r) - len(no_opacos),
-            "no_opacos": no_opacos, "decision": decision_alfa,
-        },
+        "extensiones_en_zip": formato["extensiones_en_zip"], "formatos": formato["formatos"], "modos": formato["modos"],
+        "extension_distinta_del_formato_real": formato["extension_distinta_del_formato_real"],
+        **_conteos_resoluciones(res_exif, res_sin),
+        "exif": _conteos_exif(prep["aplicar_orientacion_exif"], legibles),
+        "png_alfa": _conteos_alfa(prep["fondo_alfa"], legibles),
         "fechas_medidas": medir_fechas(legibles),
         "declarado_vs_medido": comparar_declarado(cfg, por_clase_zip, por_clase_leg, len(resultados), len(legibles), res_exif),
         "variables_que_la_fuente_no_trae": VARIABLES_QUE_LA_FUENTE_NO_TRAE,
+        "diferencias_con_app": _diferencias_con_app(cfg),
     }
-    return conteos, filas_calidad(conteos, ilegibles, mismatch)
+    return conteos, filas_calidad(conteos, ilegibles, discordantes)
 
 
-def filas_calidad(conteos: dict, ilegibles: list[dict], mismatch: list[dict]) -> list[dict]:
-    filas = []
-    for r in ilegibles:
-        filas.append({"categoria": "ilegible", "elemento": r["ruta"], "valor": r["error"],
-                      "detalle": f"{r['mensaje']}; bytes {r['bytes']}; primeros {BYTES_INICIALES_ILEGIBLE} bytes (hex) "
-                                 f"{r['bytes_iniciales_hex']}; id reservado {r['id']} (no se reutiliza)"})
-    exif = conteos["exif"]
-    for valor, n in exif["orientacion_aplicada_por_valor"].items():
-        filas.append({"categoria": "orientacion_aplicada", "elemento": valor, "valor": n,
-                      "detalle": f"ejemplos (id): {', '.join(exif['ejemplos_por_orientacion'][valor])}"})
-    a = conteos["png_alfa"]
-    filas.append({"categoria": "png_alfa", "elemento": "png_rgba", "valor": a["n_rgba"],
-                  "detalle": f"PNG {a['n_png']}; alfa opaco {a['n_alfa_totalmente_opaco']}; no opaco "
-                             f"{a['n_con_alfa_no_opaco']}; {a['decision']}"})
-    for r in a["no_opacos"]:
-        filas.append({"categoria": "png_alfa_no_opaco", "elemento": r["id"], "valor": r["fraccion_pixeles_no_opacos"],
-                      "detalle": "fracción de píxeles con alfa distinto de 255"})
-    for r in mismatch:
-        filas.append({"categoria": "extension_distinta_del_formato", "elemento": r["ruta"], "valor": r["formato"],
-                      "detalle": f"extensión {r['ext']}"})
+def _filas_ilegibles(ilegibles: list[dict]) -> list[dict]:
+    return [{"categoria": "ilegible", "elemento": r["ruta"], "valor": r["error"],
+             "detalle": f"{r['mensaje']}; bytes {r['bytes']}; primeros {BYTES_INICIALES_ILEGIBLE} bytes (hex) "
+                        f"{r['bytes_iniciales_hex']}; id reservado {r['id']} (no se reutiliza)"} for r in ilegibles]
+
+
+def _filas_exif(exif: dict) -> list[dict]:
+    return [{"categoria": "orientacion_aplicada", "elemento": valor, "valor": n,
+             "detalle": f"ejemplos (id): {', '.join(exif['ejemplos_por_orientacion'][valor])}"}
+            for valor, n in exif["orientacion_aplicada_por_valor"].items()]
+
+
+def _filas_alfa(a: dict) -> list[dict]:
+    filas = [{"categoria": "png_alfa", "elemento": "png_rgba", "valor": a["n_rgba"],
+              "detalle": f"PNG {a['n_png']}; alfa opaco {a['n_alfa_totalmente_opaco']}; no opaco "
+                         f"{a['n_con_alfa_no_opaco']}; {a['decision']}"}]
+    filas += [{"categoria": "png_alfa_no_opaco", "elemento": r["id"], "valor": r["fraccion_pixeles_no_opacos"],
+               "detalle": "fracción de píxeles con alfa distinto de 255"} for r in a["no_opacos"]]
+    return filas
+
+
+def _filas_extension(discordantes: list[dict]) -> list[dict]:
+    return [{"categoria": "extension_distinta_del_formato", "elemento": r["ruta"], "valor": r["formato"],
+             "detalle": f"extensión {r['ext']}"} for r in discordantes]
+
+
+def _filas_declarado(conteos: dict) -> list[dict]:
     d = conteos["declarado_vs_medido"]
     t = d["total"]
-    filas.append({"categoria": "declarado_vs_medido", "elemento": "total", "valor": t["medido_legibles"],
-                  "detalle": f"declarado {t['declarado']}; medido en el .zip {t['medido_en_zip']}; legibles "
-                             f"{t['medido_legibles']}; diferencia (legibles - declarado) {t['diferencia_legibles']}"})
+    filas = [{"categoria": "declarado_vs_medido", "elemento": "total", "valor": t["medido_legibles"],
+              "detalle": f"declarado {t['declarado']}; medido en el .zip {t['medido_en_zip']}; legibles "
+                         f"{t['medido_legibles']}; diferencia (legibles - declarado) {t['diferencia_legibles']}"}]
     for clase, c in d["por_clase"].items():
         filas.append({"categoria": "declarado_vs_medido", "elemento": clase, "valor": c["medido_legibles"],
                       "detalle": f"declarado {c['declarado']}; medido en el .zip {c['medido_en_zip']}; legibles "
@@ -392,6 +428,23 @@ def filas_calidad(conteos: dict, ilegibles: list[dict], mismatch: list[dict]) ->
                              f"{d['imagenes_con_la_resolucion_declarada_en_cualquier_orientacion']}); la más frecuente medida "
                              f"es {top[0]} con {top[1]} imágenes; {conteos['resoluciones_distintas_tras_exif']} resoluciones distintas"})
     return filas
+
+
+def _filas_diferencia_app(d: dict) -> list[dict]:
+    pct = f"{d['fraccion_fuera_de_mas_menos_1'] * 100:.1f}".replace(".", ",")
+    media = str(d["diferencia_absoluta_media_niveles"]).replace(".", ",")
+    return [{"categoria": "diferencia_con_app", "elemento": f"jpeg{d['calidad_jpeg_del_entrenamiento']}_vs_sin_recomprimir",
+             "valor": d["diferencia_absoluta_media_niveles"],
+             "detalle": f"{d['descripcion']} Muestra de {d['muestra_imagenes']} imágenes ({d['muestra_criterio']}): "
+                        f"|diferencia| media {media} niveles de 255; mediana {d['mediana']}, "
+                        f"p95 {d['p95']}, p99 {d['p99']}, máximo {d['maximo']}; {pct} % de los valores fuera de ±1. "
+                        f"Cifras copiadas de {d['evidencia']}"}]
+
+
+def filas_calidad(conteos: dict, ilegibles: list[dict], discordantes: list[dict]) -> list[dict]:
+    return (_filas_ilegibles(ilegibles) + _filas_exif(conteos["exif"]) + _filas_alfa(conteos["png_alfa"])
+            + _filas_extension(discordantes) + _filas_declarado(conteos)
+            + _filas_diferencia_app(conteos["diferencias_con_app"]))
 
 
 # --------------------------------------------------------------------------- documentos de salida
@@ -435,12 +488,8 @@ def _csv(df: pd.DataFrame, ruta: Path) -> None:
 
 
 # --------------------------------------------------------------------------- principal
-def main(cfg: dict) -> int:
-    ent, sal, prep_cfg = cfg["entrada"], cfg["salida"], cfg["preprocesado"]
-    # 1) Todo se lee, se procesa y se valida en memoria antes de escribir: si algo falla, no queda nada a medias.
-    p = validar_preprocesado(prep_cfg)
-    diccionario = construir_diccionario(cfg)
-    sha_zip = verificar_zip(ent)
+def _procesar_zip(ent: dict, p: dict) -> tuple[list[dict], dict[str, bytes]]:
+    """Lee el .zip sin extraerlo y procesa cada miembro en memoria. Devuelve (resultados por miembro, JPEG por id)."""
     resultados, jpegs = [], {}
     with zipfile.ZipFile(ent["zip"]) as z:
         miembros = listar_miembros(z, ent)
@@ -456,22 +505,26 @@ def main(cfg: dict) -> int:
             resultados.append(r)
             if n % 1000 == 0:
                 print(f"  {n}/{len(miembros)} imágenes revisadas", flush=True)
-    legibles = [r for r in resultados if not r["ilegible"]]
-    if not legibles:
+    if all(r["ilegible"] for r in resultados):
         raise ValueError("Ninguna imagen del .zip es legible; no se escribe nada")
-    conteos, filas = construir_conteos(cfg, miembros, resultados)
-    ficha = construir_ficha(cfg, sha_zip, conteos)
+    return resultados, jpegs
 
-    indice = pd.DataFrame([{"id": r["id"], "archivo": f"{sal['imagenes']}/{r['clase']}/{r['id']}.jpg", "clase": r["clase"],
+
+def _construir_tablas(imagenes: str, legibles: list[dict], filas_hallazgos: list[dict]) -> dict[str, pd.DataFrame]:
+    indice = pd.DataFrame([{"id": r["id"], "archivo": f"{imagenes}/{r['clase']}/{r['id']}.jpg", "clase": r["clase"],
                             "grupo_duplicado": "", "split": "", "ancho": r["tam_original"][0],
                             "alto": r["tam_original"][1]} for r in legibles], columns=COLUMNAS_INDICE)
     origen = pd.DataFrame([{"id": r["id"], "archivo_original": r["ruta"], "sha256_original": r["sha256_original"],
                             "formato": r["formato"], "modo": r["modo"],
                             "orientacion_exif": "" if r["orientacion"] is None else r["orientacion"]}
                            for r in legibles], columns=COLUMNAS_ORIGEN)
-    calidad = pd.DataFrame(filas, columns=COLUMNAS_CALIDAD)
+    return {"indice": indice, "origen": origen, "calidad": pd.DataFrame(filas_hallazgos, columns=COLUMNAS_HALLAZGOS)}
 
-    # 2) Escritura. La carpeta de imágenes es nuestra: se recrea para que no queden archivos de corridas anteriores.
+
+def _escribir_salidas(cfg: dict, legibles: list[dict], jpegs: dict[str, bytes], tablas: dict[str, pd.DataFrame],
+                      ficha: dict, diccionario: dict) -> list[Path]:
+    """Escribe todo. La carpeta de imágenes es nuestra: se recrea para que no queden archivos de corridas anteriores."""
+    sal = cfg["salida"]
     salida, eda = Path(sal["carpeta"]), Path(sal["eda"])
     dir_imagenes = salida / sal["imagenes"]
     if dir_imagenes.exists():
@@ -482,10 +535,10 @@ def main(cfg: dict) -> int:
         destino.parent.mkdir(parents=True, exist_ok=True)
         destino.write_bytes(jpegs[r["id"]])
         huella_imagenes.update(jpegs[r["id"]])
-    _csv(indice, salida / sal["indice"])
-    _csv(origen, salida / sal["origen"])
+    _csv(tablas["indice"], salida / sal["indice"])
+    _csv(tablas["origen"], salida / sal["origen"])
     escribir_ficha(eda / "ficha.json", ficha)
-    _csv(calidad, eda / "calidad.csv")
+    _csv(tablas["calidad"], eda / "calidad.csv")
     save_json(eda / "diccionario.json", diccionario)
     save_json(eda / "procesado.json", {
         "n_imagenes": len(legibles),
@@ -495,8 +548,21 @@ def main(cfg: dict) -> int:
                                        "(el mismo orden de indice.csv)"),
         "python": platform.python_version(), "pillow": PIL.__version__, "config": cfg,
     })
-    _imprimir(conteos, [salida / sal["indice"], salida / sal["origen"], eda / "ficha.json", eda / "calidad.csv",
-                        eda / "diccionario.json", eda / "procesado.json"])
+    return [salida / sal["indice"], salida / sal["origen"], eda / "ficha.json", eda / "calidad.csv",
+            eda / "diccionario.json", eda / "procesado.json"]
+
+
+def main(cfg: dict) -> int:
+    """Validar -> procesar en memoria -> construir -> escribir. Si algo falla antes de escribir, no queda nada a medias."""
+    p = validar_preprocesado(cfg["preprocesado"])
+    diccionario = construir_diccionario(cfg)
+    sha_zip = verificar_zip(cfg["entrada"])
+    resultados, jpegs = _procesar_zip(cfg["entrada"], p)
+    legibles = [r for r in resultados if not r["ilegible"]]
+    conteos, filas = construir_conteos(cfg, resultados)
+    tablas = _construir_tablas(cfg["salida"]["imagenes"], legibles, filas)
+    archivos = _escribir_salidas(cfg, legibles, jpegs, tablas, construir_ficha(cfg, sha_zip, conteos), diccionario)
+    _imprimir(conteos, archivos)
     return 0
 
 
