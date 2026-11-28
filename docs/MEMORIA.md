@@ -92,6 +92,9 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-28 · Daniel · PR #6 fusionado (JJ-1..JJ-3). Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
+  CPU (fallaba el #8), `results/**` y `*.csv` byte a byte en `.gitattributes` (huellas SHA-256 en Windows) y `test_no_network`
+  ya no reescribe las figuras versionadas. En clones de Windows existentes: `git checkout -- results tests/fixtures`.
 - 2026-11-26 · Juan José · JJ-3 ✅: partición sin fuga de M3 (1 066 / 326 / 606, semilla 2026, huella en `resumen.json`),
   `test_fuga_m3.py`, blog 07 «Partición»; D8–D10; 2 candidatos a la cacería.
 - 2026-11-26 · Juan José · JJ-2 ✅: descriptivo de M3 (9 hipótesis, 4 figuras, blog 07 con caso de uso); corrección del rótulo
