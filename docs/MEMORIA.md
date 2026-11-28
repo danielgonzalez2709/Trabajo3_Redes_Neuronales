@@ -26,6 +26,9 @@
   (`asignar_split`, `popularidad_train`, `historial_conocido`, `candidatos`); `tests/test_fuga_m3.py` (53 pruebas; mutantes
   detectados). Revisado por auditor-fugas (SIN FUGA), revisor-spec (aprobado en la 2.ª vuelta) y revisor-calidad (aprobado en la
   2.ª vuelta, más un ajuste de la sesión principal). Blog 07: subsección «Partición».
+- CA-3 (flota y conductores de M1) ✅ el vie 27 en `dev/camila`, pendiente de PR: `run.py m1-operacion` escribe
+  `results/data/m1/operacion/` (incluida `nomina_semanal.csv`); m_r por ruta (por corredor como sensibilidad,
+  `calibracion.multiplicador`). Revisado por revisor-spec, verificador-matematico y revisor-calidad (2.ª vuelta), más R1/R2/R8/R10.
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -96,6 +99,10 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-27 · Camila · CA-1, CA-2 y CA-4 ✅ (revisados, verificaciones y fe de erratas aplicadas; 136 pruebas); CA-5 🟨:
+  referencias listas (`presupuesto.json`, `pred_test_*.parquet`) pero falta evaluarlas con el arnés AN-1 de Andrés y su `summary.json`.
+- 2026-11-27 · Camila · CA-3 ✅: recomendaciones R1, R2, R8 y R10 de calidad aplicadas (encabezado corto, print sin
+  semanas completas, aserciones a mano, 11001-15759 empeora con m_r fuera de ventana); PLAN y spec personal marcados.
 - 2026-11-27 · Camila · CA-3d (tripulación E1, m_r por ruta O1, nómina semanal N\* O3) revisado: spec APROBADO,
   matemática APROBADO CON OBSERVACIONES, calidad NO APROBADO (print de N\*) → CA-3e (m por corredor como sensibilidad, `calibracion.multiplicador`;
   sin columnas de diagnóstico) → calidad APROBADO en 2.ª vuelta; aviso de paridad a Daniel; candidato a cacería H-?? (CA-3d).

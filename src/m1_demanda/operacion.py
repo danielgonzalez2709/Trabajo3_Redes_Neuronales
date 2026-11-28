@@ -29,25 +29,12 @@ tests/test_operacion_m1.py. Decisiones con fecha, cifras de validación y limita
              nómina mínima de la semana w (lunes a domingo) que cubre cada día con s días libres por conductor
              (necesaria y suficiente, construcción de McNaughton); con días faltantes es una cota inferior.
 
-Calibración, solo con train (nada posterior a `datos.fin_entrenamiento`, núcleo §5.4); W = últimos
-`calibracion.meses_fraccion` meses de train, días con registro en los dos sentidos del corredor; A_r = Σ_{d∈W} f(r) ·
-D(r, d) / cap_ef(r) (cargas llenas) y O_r = Σ_{d∈W} despachos ORIGEN observados(r, d):
-    f(r)   = Σ_W pasajeros ORIGEN(r) / Σ_W pasajeros (ORIGEN + TRÁNSITO)(r)               `fraccion_pasajeros_origen`
-    cap(j) = min(máx. del grupo, max(mín. del grupo, ⌈máx. pasajeros/despacho ORIGEN⌉))        `capacidad_supuesta`
-             grupos del Decreto 1079/2015 arts. 2.2.1.4.7.3–4.
-    ρ*     = Σ_r A_r / Σ_r O_r                                                                  `ocupacion_calibrada`
-    m_r    = (A_r / O_r) / ρ*                       por ruta (defecto)                   `multiplicadores_ocupacion`
-    m_c    = (Σ_{r∈c} A_r / Σ_{r∈c} O_r) / ρ*       por corredor, igual en r y r'   `multiplicadores_ocupacion_corredor`
-             La variante usada es `calibracion.multiplicador`; las dos cumplen Σ O · m = Σ O. Con ρ = ρ*, m por ruta
-             reproduce los despachos de CADA sentido en W; m por corredor, la suma del corredor.
-Validación fuera de ventana (`validar_fuera_de_ventana`): se recalibra todo con fecha ≤ fin de `calibracion.validacion.
-calibrar` y en `probar` se mide, con ρ global, ρ · m_r y ρ · m_c: (i) Σ_d desp / Σ_d obs por ruta y total
-(`reproduccion_despachos`) y (ii) Σ_d max(desp_r, desp_r') / Σ_d max(obs_r, obs_r') por corredor, la cantidad que fija
-vehículos y conductores (`reproduccion_flota_corredor`).
-
-Redondeo: ⌈x⌉ = ceil(x − ε) y ⌊x⌋ = floor(x + ε), ε = 1e-9, igual que la app (dimensionar.ts): 56,7 / (27 · 0,7) =
-3,0000000000000004 da 3 despachos, no 4. Costos (`costo_pasajero_sin_atender`, `costo_vehiculo_dia_sobrante`): §5.4 los
-exige y los usa negocio 3; `dimensionar` no los usa.
+Calibración (solo train, ventana W de `calibracion.meses_fraccion` meses; A_r = Σ_W f·D/cap_ef, O_r = Σ_W despachos ORIGEN):
+f(r) `fraccion_pasajeros_origen` · cap(j) `capacidad_supuesta` (Decreto 1079/2015) · ρ* = ΣA/ΣO `ocupacion_calibrada` ·
+m_r = (A_r/O_r)/ρ* `multiplicadores_ocupacion` (defecto) o m_c por corredor `multiplicadores_ocupacion_corredor`
+(`calibracion.multiplicador`). Con ρ = ρ*, m_r reproduce ≈ 100 % los despachos de cada sentido en W (el ⌈·⌉ diario suma
+0–1 %). Validación fuera de ventana: `validar_fuera_de_ventana`. Redondeo con ε = 1e-9, igual que la app. Fórmula
+de cada paso: docstring de su función; cifras y limitaciones: notas de configs/m1/operacion.yaml.
 """
 
 from __future__ import annotations
@@ -805,9 +792,12 @@ def _imprimir_resumen(resumen: dict) -> None:
         n = resumen["nomina_semanal_por_corredor"][c]
         incompletas = (f"semanas incompletas ≥ {n['cota_inferior_semanas_incompletas']} (cota inferior)"
                        if n["cota_inferior_semanas_incompletas"] is not None else "sin semanas incompletas")
+        completas = (f"N* semanas completas {n['max_nomina_semanal_semanas_completas']} "
+                     f"({n['semanas_completas']}/{n['semanas']} semanas)"
+                     if n["max_nomina_semanal_semanas_completas"] is not None
+                     else f"N* sin semanas completas (0/{n['semanas']})")
         print(f"  {c}: {v['vehiculos']} vehículos, {v['conductores_servicio']} conductores en servicio, "
-              f"{v['conductores']} de nómina diaria; N* semanas completas {n['max_nomina_semanal_semanas_completas']} "
-              f"({n['semanas_completas']}/{n['semanas']} semanas); {incompletas}")
+              f"{v['conductores']} de nómina diaria; {completas}; {incompletas}")
 
 
 def main(cfg: dict) -> int:

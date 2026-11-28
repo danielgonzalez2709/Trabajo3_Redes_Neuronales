@@ -490,19 +490,32 @@ def test_parametros_fuera_de_rango_dan_error_claro(clave, valor, mensaje):
         op.dimensionar(_ida_y_regreso(), p)
 
 
+# Caso a mano del par A-B / B-A (_params, _ida_y_regreso): cap_ef = 30 y 0,5·30 + 0,5·18 = 24; ρ = 0,8, f = 1 →
+# desp = ⌈100 / 24⌉ = 5 y ⌈150 / 19,2⌉ = 8; v = 18 / 9 = 2 → veh = ⌈8 / 2⌉ = 4; t = 4 → k = 1, h = 4;
+# P = 2 · 8 = 16.
+def _resumen_par(tabla: pd.DataFrame) -> tuple[int, int, int, int]:
+    fila = tabla.set_index("ruta_id").loc["A-B"]
+    return int(fila["despachos"]), int(fila["vehiculos"]), int(fila["conductores_servicio"]), int(fila["conductores"])
+
+
 @pytest.mark.parametrize("q", [0.5, 0.75, 0.9, 0.95])
 def test_cuantiles_del_arnes_son_validos(q):
-    op.dimensionar(_ida_y_regreso(), _params(cuantil=q))
+    # El cuantil elige qué pronóstico entra como demanda; con la misma demanda la tabla no depende de él.
+    tabla = op.dimensionar(_ida_y_regreso(), _params(cuantil=q))
+    assert _resumen_par(tabla) == _resumen_par(op.dimensionar(_ida_y_regreso(), _params(cuantil=0.9)))
 
 
 def test_semana_justa_en_el_limite_es_valida():
-    # J_ef · (7 − s) = 7 · 6 = 42 ≤ 42 (igualdad permitida).
-    op.dimensionar(_ida_y_regreso(), _params(jornada_efectiva_h=7.0, dias_descanso_semana=1))
+    # J_ef · (7 − s) = 7 · 6 = 42 ≤ 42 (igualdad permitida). L = ⌊7 / 4⌋ = 1 → C_serv = ⌈1 · 16 / 1⌉ = 16;
+    # nómina = ⌈16 / 0,91 · 7 / 6⌉ = ⌈20,51⌉ = 21.
+    tabla = op.dimensionar(_ida_y_regreso(), _params(jornada_efectiva_h=7.0, dias_descanso_semana=1))
+    assert _resumen_par(tabla) == (5, 4, 16, 21)
 
 
 def test_dos_dias_de_descanso_por_debajo_del_limite_son_validos():
-    # s = 2: 6 · 5 = 30 h < 42 h.
-    op.dimensionar(_ida_y_regreso(), _params(jornada_efectiva_h=6.0, dias_descanso_semana=2))
+    # s = 2: 6 · 5 = 30 h < 42 h. L = ⌊6 / 4⌋ = 1 → C_serv = 16; nómina = ⌈16 / 0,91 · 7 / 5⌉ = ⌈24,62⌉ = 25.
+    tabla = op.dimensionar(_ida_y_regreso(), _params(jornada_efectiva_h=6.0, dias_descanso_semana=2))
+    assert _resumen_par(tabla) == (5, 4, 16, 25)
 
 
 def test_tripulacion_cubre_cualquier_pierna_dentro_de_la_jornada_efectiva():
@@ -1164,6 +1177,11 @@ def test_validacion_fuera_de_ventana_mejora_con_el_multiplicador(validacion):
             continue
         assert abs(por_ruta[r]["porcentaje"] - 100) < abs(glob[r]["porcentaje"] - 100), r
         assert 95 <= por_ruta[r]["porcentaje"] <= 110, r
+    # Y en 11001-15759 el multiplicador EMPEORA: 171,9 % frente a 66,6 % con ρ global (sobredimensiona tras el cambio
+    # de régimen). La prueba documenta el fallo en vez de solo saltarlo.
+    sog = "11001-15759"
+    assert abs(por_ruta[sog]["porcentaje"] - 100) > abs(glob[sog]["porcentaje"] - 100)
+    assert por_ruta[sog]["porcentaje"] == pytest.approx(171.9, abs=0.05)
     assert validacion["ventana_calibracion"] == ["2022-09-01", "2022-10-31"]
     assert validacion["ventana_prueba"] == ["2022-11-01", "2022-12-31"]
 
