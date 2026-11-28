@@ -138,6 +138,27 @@ Parquets crudos (`data/raw/m1/rutas/`, no versionados):
 `TODO(cita)`: la página oficial del DANE (nomenclatura DIVIPOLA) no enlaza un archivo descargable ni su fecha de corte; se usa la
 publicación del propio DANE en datos.gov.co.
 
+## M2 — Clasificación de imágenes (comportamiento del conductor)
+
+### Conjunto principal
+| Dato | Valor |
+|---|---|
+| Conjunto | «Multi-Class Driver Behavior Image Dataset» (Mendeley Data), versión 1 |
+| DOI | 10.17632/mzb4b6dff3.1 (https://doi.org/10.17632/mzb4b6dff3.1) |
+| API pública consultada | https://data.mendeley.com/public-api/datasets/mzb4b6dff3/files?folder_id=root&version=1 (devuelve un único archivo; la API da `size` y `sha256_hash`, con los que el script verifica la descarga) |
+| Archivo | `Multi-Class Driver Behavior Image Dataset.zip` |
+| Tamaño | 2 556 850 881 bytes |
+| SHA-256 | `427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c` (igual al de la API y al medido localmente por `docs/investigacion/JO-1_inventario.py`) |
+| Fecha de descarga | 2026-11-27 (hora local de la máquina; la descarga terminó a las 22:11 locales del 27-nov; la segunda ejecución, que solo verificó, a las 2026-11-28 03:11 UTC) |
+| Descargó | José, vía `scripts/descargar_m2.py` (streaming; verifica tamaño y SHA-256 contra la API; no extrae el .zip) |
+| Ubicación | `data/raw/m2/` (no versionado; está en `.gitignore`) |
+| Licencia, autores, cita | TODO(dato-faltante): no se consultaron en la fase A (la API de archivos no los trae); pendiente de la ficha de datos de M2 (JO-1 fase B) |
+
+### Cómo regenerar
+1. `.venv/bin/python scripts/descargar_m2.py` (con red; si el archivo ya existe con el SHA-256 correcto no lo vuelve a bajar).
+2. Sin red: `.venv/bin/python -I docs/investigacion/JO-1_inventario.py` (lee el .zip sin extraerlo; escribe
+   `docs/investigacion/JO-1_inventario_salida.txt`).
+
 ## M3 — Recomendación de destinos
 
 ### Conjunto principal
