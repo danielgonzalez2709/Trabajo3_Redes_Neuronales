@@ -553,7 +553,15 @@ def _escribir_salidas(cfg: dict, legibles: list[dict], jpegs: dict[str, bytes], 
 
 
 def main(cfg: dict) -> int:
-    """Validar -> procesar en memoria -> construir -> escribir. Si algo falla antes de escribir, no queda nada a medias."""
+    """Validar -> procesar en memoria -> construir -> escribir. Si algo falla antes de escribir, no queda nada a medias.
+
+    Con ``etapa: particion`` (``configs/m2/particion.yaml``) delega en la partición de JO-3, que parte de las imágenes ya
+    procesadas y no necesita el .zip: así ``run.py m2-datos`` cubre las dos etapas sin tocar ``run.py``.
+    """
+    if cfg.get("etapa") == "particion":
+        from src.m2_conduccion import particion
+
+        return particion.main(cfg)
     p = validar_preprocesado(cfg["preprocesado"])
     diccionario = construir_diccionario(cfg)
     sha_zip = verificar_zip(cfg["entrada"])
