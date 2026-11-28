@@ -339,6 +339,8 @@ Prompt: `alucinaciones/prompts/JO-1-revisiones.md` (sección «cazador-alucinaci
 las fuentes primarias se descargaron el 2026-11-27 a `fuentes/` (XML de PMC12019831 por E-utilities, API pública de Mendeley
 del conjunto y de sus archivos, API de Zenodo 14908802, Crossref y el BibTeX oficial de ambos DOI vía doi.org).
 **Resultado: 0 afirmaciones incorrectas de IA; no se registra ningún candidato nuevo.** Dos imprecisiones menores, abajo.
+*Actualización (27-nov):* José decidió registrar la primera imprecisión («coherente con el preprocesado fijo de la app») como
+candidato menor: ver «H-?? (JO-1)» en Hallazgos.
 - **Cifras de los datos (recálculo independiente, sin importar `datos.py` ni `JO-1_inventario.py`):** `verificar_datos.py` →
   `verificar_datos_salida.txt`, **39 de 39 iguales**: tamaño y SHA-256 del .zip; conteo por clase en el .zip (1 190 / 1 679 /
   1 513 / 1 561 / 1 343 = 7 286) y legibles (1 184 / 1 679 / 1 513 / 1 561 / 1 339 = 7 276); los 10 ilegibles (mismos
@@ -381,6 +383,8 @@ del conjunto y de sus archivos, API de Zenodo 14908802, Crossref y el BibTeX ofi
   las citas es correcto. Tampoco existe la numeración `[F-n]` en el archivo (estaba en el mensaje final del agente, no guardado), así
   que la referencia «F-19» del prompt `JO-1b-curador-datos.md` no se puede rastrear; lo que dice (la fuente no etiqueta el tipo de
   vehículo) sí está en §7. No se registran como candidatos.
+  *Actualización (sesión principal, 27-nov, tras JO-1c):* los localizadores se corrigieron y el archivo numera ahora `[F-1]`…`[F-44]`;
+  la afirmación del tipo de vehículo es **F-42** (commit `86ca3eb`).
 - **Discrepancias fuente frente a datos (hallazgos de datos, no alucinaciones):** «400 × 600» (artículo §2.1) frente a 0 imágenes
   con esa resolución; «October 2024» y «30 days» frente a EXIF del 2024-09-30 al 2024-10-28 (324 de 431 en septiembre), 11
   nombres `photo_` del 2024-09-14 y 183 nombres con fecha 2019-04-24; «unprocessed» (Mendeley) frente a un 91 % de imágenes

@@ -26,6 +26,11 @@
   (`asignar_split`, `popularidad_train`, `historial_conocido`, `candidatos`); `tests/test_fuga_m3.py` (53 pruebas; mutantes
   detectados). Revisado por auditor-fugas (SIN FUGA), revisor-spec (aprobado en la 2.ª vuelta) y revisor-calidad (aprobado en la
   2.ª vuelta, más un ajuste de la sesión principal). Blog 07: subsección «Partición».
+- JO-1 (datos de M2) terminado en `dev/jose` el vie 27, pendiente de PR: `run.py m2-datos --config configs/m2/datos.yaml` lee
+  `data/raw/m2/` (Mendeley, un .zip; se baja con `scripts/descargar_m2.py`, que verifica SHA-256; no versionado) y escribe
+  `data/processed/m2/{imagenes/,indice.csv,origen.csv}` y `results/data/m2/eda/{ficha.json,calidad.csv,diccionario.json,procesado.json}`.
+  7 286 imágenes en el .zip, 10 ilegibles, 7 276 procesadas a 224×224. Fuentes: `docs/investigacion/JO-1_fuentes_m2.md`. Revisado por
+  revisor-spec (aprobado con observaciones), revisor-calidad (aprobado en la 2.ª vuelta) y cazador-alucinaciones (39/39 cifras recalculadas).
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -50,6 +55,11 @@
   todos los modelos, con su huella en la `evidencia`; HPO y parada temprana con validación, modelos finales solo con train y
   una evaluación en prueba; toda estadística de interacciones solo con train (`popularidad_train`); candidatos = catálogo
   menos historial conocido (prueba: train ∪ validación; validación: train); clave de una interacción = `(origen, id_origen)`.
+- M2 [DECIDIDO, José, 27-nov; `docs/spec/partes/jose.md` §3.1]: D1 se versionan las 7 276 imágenes legibles en
+  `data/processed/m2/imagenes/` (~112 MB) y los 10 ilegibles se excluyen y registran en `calidad.csv`; D2 224×224 estirado,
+  bilineal (PIL), RGB, JPEG calidad 85 (la app no recomprime: diferencia declarada en `ficha.json`); D3 orientación EXIF antes de
+  redimensionar (113 imágenes); D4 `ancho`/`alto` originales tras EXIF, sin `tipo_vehiculo` (la fuente no lo trae), trazabilidad en
+  `origen.csv`; D5 ids `m2_NNNNN` por posición en el .zip y `n_variables` = 2.
 - [PROPUESTO por el analista, pendiente de Juan José] umbral de actividad pocas ≤ 2 / muchas ≥ 3; efectos mínimos y criterio de
   veredicto en `configs/m3/eda.yaml` (convención nuestra); emparejamiento léxico preferencia→tipo (Beaches→Beach, etc.); K = 5 por
   defecto y K ∈ {1, 3, 5, 10}; diagnósticos de `resumen.json` (destinos fríos, coincidencia de lugar con su esperado por azar),
@@ -65,6 +75,10 @@
   (las pruebas reales de `test_fuga_m3.py` lo leen).
 - M3: la demo en vivo con otra semilla debe redirigir las salidas a `results/data/m3_demo/` (orden en `configs/m3/datos.yaml`);
   sin redirigir se pisan archivos versionados.
+- M2: el artículo declara 400×600 y «October 2024», pero lo medido es 640×480 en el 91 % y fechas de 2019 y septiembre de 2024
+  (hallazgos de datos para el blog de M2). El entrenamiento de M2 usa JPEG 85 y la app no recomprime (diferencia declarada).
+- M2: para que la CI pase, el PR de JO-1 debe incluir `data/processed/m2/`, `results/data/m2/eda/`, `configs/m2/datos.yaml` y
+  `tests/fixtures/m2/`. La máquina de José no tiene GPU NVIDIA (afecta JO-6).
 
 ## Pendientes
 1. Hora de la entrega y fecha de la sustentación.
@@ -77,6 +91,7 @@
    sobre los 141 usuarios sin interacciones (sin verdad de terreno: solo ejemplos; los usuarios nuevos de la pregunta de negocio 1
    se simulan en JJ-6 con usuarios de prueba); en JJ-4/JJ-5 registrar cada ajuste en `AJUSTES_SOLO_TRAIN` y copiar la huella a
    `evidencia`; reportar el acierto por lugar frente a su línea base del azar.
+5. José: PR de JO-1; ética (C-6: acuerdo de uso de Zenodo frente a CC BY 4.0 de Mendeley, rostros visibles) para JO-11; GPU para JO-6.
 
 ## Cacería
 - Hallazgos confirmados: 0 / meta ≥ 5 (≥ 3 categorías, ≥ 1 por módulo). Candidatos: H-01 (Código, común: la marca
@@ -87,11 +102,14 @@
   literatura» (redactor Sonnet, Conceptos, condicionado a fuente primaria); evidencia en `alucinaciones/evidencias/JJ-2/`; 2 candidatos de M3 de JJ-3 (sin número): «acierto por lugar trivial»
   (Matemáticas; premisa del prompt humano convertida en hecho por el orquestador Opus y el implementador-experto Opus; 204 observados
   frente a 198,0 por azar) y «los 3 valores de VisitDate son posteriores» (Datos del mundo real, menor; MEMORIA → orquestador →
-  redactor Sonnet); evidencia en `alucinaciones/evidencias/JJ-3/`; ver `alucinaciones/registro.md`.
+  redactor Sonnet); evidencia en `alucinaciones/evidencias/JJ-3/`; 1 candidato de M2 de JO-1 (sin número, Código, menor; orquestador Opus): «coherente con el preprocesado fijo de la app» omitía la
+  recompresión JPEG (evidencia en `alucinaciones/evidencias/JO-1/`); ver `alucinaciones/registro.md`.
 - Las inconsistencias del diccionario de M1 son hallazgos de datos para el blog, no alucinaciones, salvo que una IA haya
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-27 · José · JO-1 ✅: descarga verificada (SHA-256), 7 276 imágenes 224×224 versionadas, ficha/calidad/diccionario de M2,
+  D1–D5 en `jose.md` §3.1; 1 candidato a la cacería.
 - 2026-11-26 · Juan José · JJ-3 ✅: partición sin fuga de M3 (1 066 / 326 / 606, semilla 2026, huella en `resumen.json`),
   `test_fuga_m3.py`, blog 07 «Partición»; D8–D10; 2 candidatos a la cacería.
 - 2026-11-26 · Juan José · JJ-2 ✅: descriptivo de M3 (9 hipótesis, 4 figuras, blog 07 con caso de uso); corrección del rótulo
