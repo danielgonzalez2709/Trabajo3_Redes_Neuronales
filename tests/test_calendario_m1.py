@@ -125,7 +125,8 @@ def test_puente_lunes_y_viernes(df):
 
 
 def test_fin_de_anio_bordes(df):
-    assert not fila(df, "2021-12-14")["fin_de_anio"] and fila(df, "2021-12-15")["fin_de_anio"]
+    # Res. 264 de 2020 (MinTransporte), art. 8: del 10 de diciembre al 15 de enero del año siguiente, ambos inclusive
+    assert not fila(df, "2021-12-09")["fin_de_anio"] and fila(df, "2021-12-10")["fin_de_anio"]
     assert fila(df, "2022-01-15")["fin_de_anio"] and not fila(df, "2022-01-16")["fin_de_anio"]
     assert fila(df, "2021-01-01")["fin_de_anio"] and fila(df, "2024-12-31")["fin_de_anio"]
 

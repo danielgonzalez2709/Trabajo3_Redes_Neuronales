@@ -53,7 +53,7 @@ def hacer_calendario(inicio="2021-12-01", fin="2023-12-31") -> pd.DataFrame:
             "puente": (f.day == 9) & (f.month % 2 == 0),
             "semana_santa": (f.month == 4) & (f.day >= 10) & (f.day <= 16),
             "jueves_viernes_santo": (f.month == 4) & (f.day >= 13) & (f.day <= 14),
-            "fin_de_anio": (f.month == 12) & (f.day >= 15) | (f.month == 1) & (f.day <= 15),
+            "fin_de_anio": (f.month == 12) & (f.day >= 10) | (f.month == 1) & (f.day <= 15),
             "vacaciones_escolares_00001": pd.array(np.arange(n) % 90 < 20, dtype="boolean"),
             "vacaciones_escolares_00002": pd.array(np.arange(n) % 70 < 15, dtype="boolean"),
         }

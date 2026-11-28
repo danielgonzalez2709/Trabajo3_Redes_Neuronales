@@ -17,7 +17,7 @@ Reglas (fuentes y supuestos en ``data/fuentes.md``, sección «Calendario exóge
     TODO(cita): fuente primaria de los desfases de Corpus Christi (Pascua+60) y Sagrado Corazón (Pascua+68).
   * ``puente`` (supuesto): sábado, domingo y lunes si el lunes es festivo; viernes, sábado y domingo si el festivo cae en viernes.
   * ``semana_santa``: lunes a domingo que termina en el Domingo de Pascua (informe §1.1).
-  * ``fin_de_anio`` (supuesto): del 15-dic al 15-ene, ambos inclusive.
+  * ``fin_de_anio``: del 10-dic al 15-ene, ambos inclusive (Resolución 264 de 2020 de MinTransporte, art. 8).
   * Vacaciones: rangos de receso del yaml (versión original de cada calendario). Dentro de la ``cobertura`` de la ciudad
     lo que no es receso es falso; fuera de ella, o en los ``vacios`` del yaml (días que ningún acto cubre), es nulo
     (sin fuente, no se imputa).
@@ -27,7 +27,7 @@ Reglas (fuentes y supuestos en ``data/fuentes.md``, sección «Calendario exóge
     anular la variable de vacaciones del día objetivo cuando origen < conocible_desde. Excepciones documentadas en las que el
     acto es posterior al propio día: Pasto 2021-01-04..14 y Ipiales 2021-01-04..13 (fuera del periodo de test).
   * Festivos: la Ley 51 de 1983 es anterior a todo el periodo, así que son conocibles siempre y no llevan columna.
-    ``fin_de_anio`` y ``puente`` son reglas fijas (supuestos del equipo), también conocibles siempre.
+    ``fin_de_anio`` (Res. 264/2020, de 2020, anterior al entrenamiento) y ``puente`` (supuesto del equipo) son reglas fijas, también conocibles siempre.
 """
 from __future__ import annotations
 
@@ -172,7 +172,7 @@ def construir_calendario(fuentes: dict | Path | str | None = None, inicio: str |
     df["semana_santa"] = [d in ss for d in fechas]
     df["jueves_viernes_santo"] = [d in jv for d in fechas]
 
-    # fin de año (supuesto): 15-dic .. 15-ene
+    # fin de año: 10-dic .. 15-ene (Res. 264/2020 art. 8), extremos del yaml
     m1, d1 = (int(x) for x in sup["fin_de_anio"]["inicio_mes_dia"].split("-"))
     m2, d2 = (int(x) for x in sup["fin_de_anio"]["fin_mes_dia"].split("-"))
     df["fin_de_anio"] = [(d.month, d.day) >= (m1, d1) or (d.month, d.day) <= (m2, d2) for d in fechas]

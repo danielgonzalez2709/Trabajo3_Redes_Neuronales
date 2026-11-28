@@ -6,7 +6,18 @@
 periodo: {inicio: "2021-01-01", fin: "2024-12-31"}   # núcleo §5.2 (todo el periodo + 30 días); sobrescribible por CLI
 consulta_por_defecto: "2026-11-26"
 supuestos:
-  fin_de_anio: {inicio_mes_dia: "12-15", fin_mes_dia: "01-15", nota: "Supuesto del equipo (sin definición oficial, informe §4); ambos extremos inclusive."}
+  fin_de_anio:
+    inicio_mes_dia: "12-10"
+    fin_mes_dia: "01-15"
+    acto: "Resolución 264 de 2020 del Ministerio de Transporte, art. 8 (Periodos de alta demanda para la definición de contratos)"
+    consulta: "2026-11-27"
+    copia: "alucinaciones/evidencias/CA-6/res_264_2020_mintransporte.pdf (escaneo firmado alojado en bogota.gov.co; OCR en .txt)"
+    nota: >-
+      Art. 8: «Del 10 de diciembre al 15 de enero del año siguiente.» (decisión de Camila, 27-nov); ambos extremos inclusive.
+      Límites: la copia es un escaneo firmado alojado en bogota.gov.co (URL exacta no registrada, TODO(dato-faltante)); la fecha
+      exacta del acto no se lee en el OCR (TODO(cita): copia del normograma de MinTransporte con fecha y vigencia); la vigencia
+      se infiere de que el Decreto 1048 de 2026 la cita. Conocibilidad (regla 0.9): el acto es de 2020 y los modelos
+      entrenan desde 2021-06-01, así que es conocible siempre. No se agregan columnas para los demás periodos del art. 8.
   semana_santa: {dias_antes_de_pascua: 6, nota: "Ventana del informe §1.1: semana lunes-domingo que termina en el Domingo de Pascua."}
   puente: {nota: "Supuesto del equipo (informe §2): fin de semana largo; sábado, domingo y lunes si el lunes es festivo; viernes, sábado y domingo si el festivo cae en viernes."}
   desfases_pascua:   # informe §1.1; Corpus Christi y Sagrado Corazón: TODO(cita) (sin fuente primaria literal)

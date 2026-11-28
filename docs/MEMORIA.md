@@ -42,6 +42,14 @@
 - M1: mayo de 2021 casi vacío → serie completa con marcas; los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`).
 - M1: reglas contra fuga del arnés (núcleo §5.3): lista blanca de columnas; test sin excluir anómalos; ventanas desde
   2021-06-01; rejilla de orígenes anclada al 2023-12-01 para cubrir el fin de año; composición por clase solo con train.
+- M1 negocio (CA-6) [DECIDIDO, Camila, 27-nov]: se implementa con la mejor red de Andrés (AN-5), no con las referencias;
+  «próximos 30 días» = origen 2023-12-01; temporada alta = días `fin_de_anio` del horizonte frente a una semana normal sin
+  festivos, puentes ni vacaciones escolares. Opciones de flota [DECIDIDO, 27-nov, tras CA-6a y su verificación]: propia =
+  propia o vinculada hasta la capacidad máxima fijada (≤ mínima + 20 %, Dec. 1079 art. 2.2.1.4.7.2); arrendada = contrato con
+  servicio especial en alta demanda (art. 2.2.1.6.3.5 mod. Dec. 1048/2026; Res. 264/2020); convenio = figura estable (≤ 2 años,
+  ruta completa). Sin costos en pesos con fuente oficial: comparación cualitativa.
+- M1 calendario [DECIDIDO, Camila, 27-nov]: `fin_de_anio` = 10-dic a 15-ene (Res. 264/2020 MinTransporte, art. 8); antes
+  supuesto 15-dic. Cambia `calendario.parquet` (aviso a Andrés).
 - Serie sintética: códigos ficticios del departamento `00`. JSON de juguete de la app: en DA-5.
 - M3 [DECIDIDO, Juan José, 25-nov; `docs/spec/partes/juanjose.md` §3.1]: interacción = unión de Reviews y UserHistory
   como implícita (no comparten pares); destino = los 1 000 `DestinationID`, con `lugar` (5 lugares) para el análisis
@@ -99,6 +107,10 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
+- 2026-11-27 · Camila · Verificación de CA-6a (cazador): marco legal confirmado, omisión de la Res. 264/2020 y del art.
+  2.2.1.6.3.5, fe de erratas en el informe; candidato H-?? (CA-6a, Conceptos); CA-1c (`fin_de_anio` desde el 10-dic) despachado.
+- 2026-11-27 · Camila · CA-6: decisiones de horizonte y temporada alta; espera AN-5; CA-6a (costos y marco legal de
+  flota propia/arrendada/convenio) despachado a investigador-fuentes.
 - 2026-11-27 · Camila · CA-1, CA-2 y CA-4 ✅ (revisados, verificaciones y fe de erratas aplicadas; 136 pruebas); CA-5 🟨:
   referencias listas (`presupuesto.json`, `pred_test_*.parquet`) pero falta evaluarlas con el arnés AN-1 de Andrés y su `summary.json`.
 - 2026-11-27 · Camila · CA-3 ✅: recomendaciones R1, R2, R8 y R10 de calidad aplicadas (encabezado corto, print sin

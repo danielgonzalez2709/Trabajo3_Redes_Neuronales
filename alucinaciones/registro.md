@@ -7,7 +7,7 @@ evidencia no cuenta.
 ## Cobertura
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
-| M1 | | 1 candidato menor sin número (CA-3d, implementador-experto) | | | |
+| M1 | | 1 candidato menor sin número (CA-3d, implementador-experto) | | | 1 candidato sin número (CA-6a, investigador-fuentes) |
 | M2 | | | | | |
 | M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
 | Común | | H-01 (candidato) | | | |
@@ -268,6 +268,29 @@ evidencia no cuenta.
 - **6. Lección aprendida:** un «caso a mano» en un comentario no lo ejecuta nadie: si la prueba no aserta ese número, puede
   estar mal sin que nada falle. Escribir el cálculo completo con los datos de la prueba, o convertirlo en aserción.
 - **Estado:** candidato (menor: no afectó ningún resultado; Andrés decide si cuenta en la categoría Código).
+
+### H-?? (CA-6a) — «Arrendar en vez de comprar mueve ~un tercio de la estructura de costos»
+- **Módulo / categoría / quién lo encontró:** M1 / **Conceptos** (interpretación de un índice de costos) / cazador-alucinaciones
+  (Opus) en la verificación CA-6, 27-nov-2026. Dirige: Camila.
+- **1. Prompt literal:** `alucinaciones/prompts/CA-6a.md` (investigador-fuentes, Sonnet, 27-nov-2026), sección «Entrega»: «una
+  sección "Qué se puede concluir con esto" que diga qué comparación de costos es defendible y cuál no».
+- **2. Respuesta relevante de la IA:** `docs/investigacion/CA-6_costos_flota.md` §8, «Defendible (con cita)», punto 3:
+  «Estructura relativa de costos: combustible ~31 %, costos fijos ~33 % (incluye conductores), peajes y terminales ~20 %. Permite
+  argumentar, por ejemplo, que una opción que reduzca costos fijos (arrendar, no comprar) mueve ~un tercio de la estructura».
+- **3. Cómo se sospechó:** la misma frase reconoce que los costos fijos «incluye[n] conductores»; arrendar un vehículo no elimina
+  el salario del conductor, así que el «tercio» no puede atribuirse a la decisión comprar/arrendar.
+- **4. Evidencia:** DANE, metodología DSO-ICTIP-MET-001 v2 (2018): «costos fijos (parqueaderos, seguros, costo del vehículo,
+  impuestos y mano de obra)» (`alucinaciones/evidencias/CA-6/ictip_met_v2.txt`). DANE, boletín ICTIP III-2026 (22-oct-2026),
+  Tabla 3: «Costos fijos 32,99 14,07 4,83» y Tabla 4: «Mano de obra conductor(es) y ayudante(s) 22,11 4,72»
+  (`ictip_bol_IIItrim2026.txt`): de los 4,83 p.p. que aportó el grupo en el año corrido, 4,72 vienen de la mano de obra.
+  `verificar.py` → `salida.txt` (fragmentos CF, C-2c, C-2cf).
+- **5. Corrección:** «Arrendar en vez de comprar sustituye solo el componente de capital ("Costo del vehículo y su
+  apalancamiento"), cuyo peso no está en el boletín (T-9); conductores, combustible, peajes y seguros se mantienen. No se puede
+  cuantificar el ahorro con el 32,99 %».
+- **6. Lección aprendida:** un grupo de un índice de precios no es una palanca de decisión: antes de decir qué «mueve» una
+  opción, bajar al nivel de clase de costo y comprobar qué componentes cambia realmente.
+- **Estado:** candidato. Detalle: `docs/investigacion/CA-6_verificacion.md` (V-20). Es un error de razonamiento, no un dato inventado:
+  Andrés decide si cuenta en la categoría Conceptos.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto
