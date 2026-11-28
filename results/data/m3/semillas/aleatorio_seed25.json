@@ -1,0 +1,130 @@
+{
+  "modelo": "aleatorio",
+  "semilla": 25,
+  "run_id": 25,
+  "split_evaluado": "prueba",
+  "n_usuarios_evaluados": 606,
+  "tiempo_s": 0.2455975999473594,
+  "hiperparametros": {},
+  "n_parametros": 0,
+  "diagnosticos": {},
+  "metricas": {
+    "global": {
+      "precision@1": 0.0,
+      "recall@1": 0.0,
+      "ndcg@1": 0.0,
+      "acierto@1": 0.0,
+      "cobertura@1": 0.456,
+      "precision@3": 0.0,
+      "recall@3": 0.0,
+      "ndcg@3": 0.0,
+      "acierto@3": 0.0,
+      "cobertura@3": 0.841,
+      "precision@5": 0.00033003300330033004,
+      "recall@5": 0.0016501650165016502,
+      "ndcg@5": 0.0007106873895600546,
+      "acierto@5": 0.0016501650165016502,
+      "cobertura@5": 0.963,
+      "precision@10": 0.00033003300330033004,
+      "recall@10": 0.0033003300330033004,
+      "ndcg@10": 0.0012074365573223997,
+      "acierto@10": 0.0033003300330033004,
+      "cobertura@10": 1.0,
+      "acierto_por_lugar@1": 0.22442244224422442,
+      "acierto_por_lugar@3": 0.5148514851485149
+    },
+    "concentracion": {
+      "gini@1": 0.6321155115511552,
+      "hhi@1": 0.0026685836900521734,
+      "gini@3": 0.3987106710671069,
+      "hhi@3": 0.0015321664179619283,
+      "gini@5": 0.3199933993399342,
+      "hhi@5": 0.0013371238113910403,
+      "gini@10": 0.22217260726072618,
+      "hhi@10": 0.0011592545393153176
+    },
+    "por_grupo": {
+      "pocas": {
+        "n_usuarios": 280,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.235,
+        "precision@3": 0.0,
+        "recall@3": 0.0,
+        "ndcg@3": 0.0,
+        "acierto@3": 0.0,
+        "cobertura@3": 0.576,
+        "precision@5": 0.0007142857142857143,
+        "recall@5": 0.0035714285714285713,
+        "ndcg@5": 0.0015381305645478323,
+        "acierto@5": 0.0035714285714285713,
+        "cobertura@5": 0.753,
+        "precision@10": 0.00035714285714285714,
+        "recall@10": 0.0035714285714285713,
+        "ndcg@10": 0.0015381305645478323,
+        "acierto@10": 0.0035714285714285713,
+        "cobertura@10": 0.937,
+        "acierto_por_lugar@1": 0.21785714285714286,
+        "acierto_por_lugar@3": 0.525
+      },
+      "muchas": {
+        "n_usuarios": 326,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.28,
+        "precision@3": 0.0,
+        "recall@3": 0.0,
+        "ndcg@3": 0.0,
+        "acierto@3": 0.0,
+        "cobertura@3": 0.637,
+        "precision@5": 0.0,
+        "recall@5": 0.0,
+        "ndcg@5": 0.0,
+        "acierto@5": 0.0,
+        "cobertura@5": 0.81,
+        "precision@10": 0.00030674846625766873,
+        "recall@10": 0.003067484662576687,
+        "ndcg@10": 0.000923404894674789,
+        "acierto@10": 0.003067484662576687,
+        "cobertura@10": 0.96,
+        "acierto_por_lugar@1": 0.23006134969325154,
+        "acierto_por_lugar@3": 0.5061349693251533
+      }
+    },
+    "destinos_frios": {
+      "1": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 0.3118811881188119
+      },
+      "3": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 1.0115511551155116
+      },
+      "5": {
+        "acierto_objetivo_frio": 0.004878048780487805,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 1.6897689768976898
+      },
+      "10": {
+        "acierto_objetivo_frio": 0.00975609756097561,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 3.419141914191419
+      }
+    }
+  },
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}

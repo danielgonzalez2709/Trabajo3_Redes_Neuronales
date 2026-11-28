@@ -1,0 +1,75 @@
+{
+  "modelos": {
+    "ingenuo_estacional": {
+      "n_parametros": 0,
+      "n_configuraciones_busqueda": 0,
+      "tiempo_total_s": 0.258,
+      "device": "cpu",
+      "evidencia": {
+        "demanda_diaria_sha256": "caa2d340e7163f57b641783dfa1a34a474dd8a64ff25f62077aa7291930faf9f",
+        "calendario_sha256": "c29dc412857e31bbbab647ae9d0f96a9b31deff8ad43fd7cde15790960ae2fb9",
+        "particion_sha256": "7b248080d706460f4acdd17a19132568d0425d8a00a25d111e63d6a35b7aca29"
+      },
+      "n_origenes": 40
+    },
+    "regresion_calendario": {
+      "n_parametros": 102,
+      "n_configuraciones_busqueda": 0,
+      "tiempo_total_s": 0.555,
+      "device": "cpu",
+      "evidencia": {
+        "demanda_diaria_sha256": "caa2d340e7163f57b641783dfa1a34a474dd8a64ff25f62077aa7291930faf9f",
+        "calendario_sha256": "c29dc412857e31bbbab647ae9d0f96a9b31deff8ad43fd7cde15790960ae2fb9",
+        "particion_sha256": "7b248080d706460f4acdd17a19132568d0425d8a00a25d111e63d6a35b7aca29"
+      },
+      "n_origenes": 40
+    }
+  },
+  "origenes": [
+    "2023-03-03",
+    "2023-03-10",
+    "2023-03-17",
+    "2023-03-24",
+    "2023-03-31",
+    "2023-04-07",
+    "2023-04-14",
+    "2023-04-21",
+    "2023-04-28",
+    "2023-05-05",
+    "2023-05-12",
+    "2023-05-19",
+    "2023-05-26",
+    "2023-06-02",
+    "2023-06-09",
+    "2023-06-16",
+    "2023-06-23",
+    "2023-06-30",
+    "2023-07-07",
+    "2023-07-14",
+    "2023-07-21",
+    "2023-07-28",
+    "2023-08-04",
+    "2023-08-11",
+    "2023-08-18",
+    "2023-08-25",
+    "2023-09-01",
+    "2023-09-08",
+    "2023-09-15",
+    "2023-09-22",
+    "2023-09-29",
+    "2023-10-06",
+    "2023-10-13",
+    "2023-10-20",
+    "2023-10-27",
+    "2023-11-03",
+    "2023-11-10",
+    "2023-11-17",
+    "2023-11-24",
+    "2023-12-01"
+  ],
+  "ventana_train": [
+    "2021-06-01",
+    "2022-12-31"
+  ],
+  "nota": "n_parametros del ingenuo = 0 (cuantiles = valores empíricos, no parámetros); regresión = coeficientes + intercepto por ruta. Sin búsqueda de hiperparámetros (alpha fijo en config)."
+}

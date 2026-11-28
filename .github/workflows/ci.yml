@@ -12,8 +12,10 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      # torch de CPU primero (la rueda de PyPI en Linux trae CUDA y pesa varios GB); el resto queda fijado.
-      - run: pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/cpu
+      # torch y torchvision de CPU primero y del MISMO índice (la rueda de PyPI en Linux trae CUDA y pesa varios GB).
+      # Si torchvision viene de PyPI (compilado contra el torch de CUDA) sus operadores C++ no se registran sobre el
+      # torch +cpu: «RuntimeError: operator torchvision::nms does not exist». El resto queda fijado en requirements.txt.
+      - run: pip install torch==2.15.0 torchvision==0.29.2 --index-url https://download.pytorch.org/whl/cpu
       - run: pip install -r requirements.txt
       - run: python -m pytest -q -m "not lento"
       # App (Next.js estático en app/): mismos pasos que en el Trabajo 2. Van en este mismo job para que el check

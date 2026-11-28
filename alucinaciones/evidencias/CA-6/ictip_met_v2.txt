@@ -1,0 +1,1271 @@
+
+===== PÁGINA 1 =====
+Departamento
+Administrativo Nacional de
+Estadística
+Diseño
+DSO
+Dirección de Metodología y Producción Estadística / DIMPE
+METODOLOGÍA GENERAL ÍNDICE DE COSTOS DEL TRANSPORTE INTERMUNICIPAL DE PASAJEROS (ICTIP)
+Feb/2018
+===== PÁGINA 2 =====
+DEPARTAMENTO ADMINISTRATIVO NACIONAL DE ESTADÍSTICA
+MAURICIO PERFETTI DEL CORRAL
+Director
+CARLOS FELIPE PRADA LOMBO
+Subdirector
+LUIS HUMBERTO MOLINA
+Secretario General
+Directores Técnicos
+ANDREA CAROLINA RUBIANO FONTECHA
+Metodología y Producción Estadística
+GIOVANNI BUITRAGO HOYOS
+Síntesis Cuentas Nacionales
+EDUARDO EFRAÍN FREIRE DELGADO
+Censos y Demografía
+ANA PAOLA GÓMEZ ACOSTA
+Regulación, Planeación, Estandarización y Normalización
+MIGUEL ANGEL CARDENAS CONTRERAS
+Geoestadística
+RAMÓN RICARDO VALENZUELA GUTIÉRREZ
+Difusión, Mercadeo y Cultura Estadística
+Bogotá, D.C., 2016
+Dirección de Metodología y Producción Estadística – DIMPE
+Andrea Carolina Rubiano Fontecha
+Equipo Temático: María Ximena Caicedo Moreno (Coordinación oficina de índices), Luz Adriana Hernández Vargas (Coordinación grupo temático de IPC e índices
+relacionados con transporte), Claudia Fabiola Jara Peñaloza (Temática), Luz Mery Huertas Romero (Temática transporte de carga), Camilo Andrés Rodríguez Fandiño (Temático
+transporte de pasajeros) y Carlos Eduardo Rocha Aldana (Temático).
+Equipo Logístico: Marisol Sabogal Hoyos (Coordinación), Luz Martha Santos (apoyo logístico) y Paula Natalia Ruiz (apoyo logístico transporte).
+Equipo de sistemas: Jakeline Suárez Cabezas (Ingeniero de apoyo)
+Diseño y Diagramación
+Dirección de Difusión, Mercadeo y Cultura Estadística
+===== PÁGINA 3 =====
+METODOLOGÍA GENERAL ÍNDICE DE COSTOS DEL TRANSPORTE
+INTERMUNICIPAL DE PASAJEROS (ICTIP)
+PROCESO: PROCESOS MISIONALES CÓDIGO: DSO-ICTIP-MET-001
+VERSIÓN: 2
+FECHA: 26/Feb/2018
+OPERACIÓN O INVESTIGACIÓN ESTADÍSTICA: ICTIP – ÍNDICE DE
+COSTOS DE TRANSPORTE INTERMUNICIPAL DE PASAJEROS
+TABLA DE CONTENIDO
+PRESENTACIÓN
+INTRODUCCIÓN
+1. ANTECEDENTES
+2. DISEÑO DE LA OPERACIÓN ESTADÍSTICA
+2.1. DISEÑO TEMÁTICO/METODOLÓGICO
+2.1.1. Necesidades de Información
+2.1.2. Objetivos
+2. 1. 2. 1. Objetivo general
+2. 1. 2. 2. Objetivos específicos
+2.1.3. Alcance
+2.1.4. Marco de referencia
+2.1.5. Diseño de indicadores
+2.1.6. Plan de resultados
+2.1.6.1. Diseño de cuadros de salida o de resultados
+2.1.7. Diseño del formulario o cuestionario
+2.1.8. Normas, especificaciones o reglas de validación, consistencia e imputación
+2.1.9. Nomenclaturas y clasificaciones utilizadas
+2.2. DISEÑO ESTADÍSTICO
+2.2.1. Componentes básicos del diseño estadístico
+2.2.2. Unidades estadísticas
+2.2.3. Periodo de referencia y recolección
+2.2.4. Diseño muestral (aplica en investigaciones por muestreo)
+2.2.5. Ajustes Cobertura
+2.3. DISEÑO DE LA EJECUCIÓN
+2.3.1. Sistema de capacitación
+2.3.2. Actividades preparatorias
+2.3.3. Diseño de instrumentos
+2.3.4. Recolección de la información
+2.4. DISEÑO DE SISTEMAS
+2.5. DISEÑO MÉTODOS Y MECANISMOS PARA EL CONTROL DE CALIDAD
+2.6. DISEÑO DE PRUEBAS PILOTO
+2.7. DISEÑO DEL ANÁLISIS DE RESULTADOS
+2.7.1. Análisis estadístico
+2.7.2. Análisis del contexto
+2.7.3. Comité de Personas expertas
+2.8. DISEÑO DE LA DIFUSIÓN
+2.8.1. Administracion del repositorio de datos
+2.8.2. Productos e instrumentos de difusión
+2.9. DISEÑO DE LA EVALUACIÓN
+2.10. DOCUMENTACIÓN RELACIONADA
+3. GLOSARIO
+4. BIBLIOGRAFÍA
+5. ANEXOS
+===== PÁGINA 4 =====
+PRESENTACIÓN
+El Departamento Administrativo Nacional de Estadística (DANE), como coordinador del Sistema Estadístico Nacional (SEN) y en el marco del proyecto de Planificación y
+Armonización Estadística, trabaja por el fortalecimiento y consolidación del SEN. Esto lo hace mediante: la producción de estadísticas estratégicas; la generación,
+adaptación, adopción y difusión de estándares; la consolidación y armonización de la información estadística y la articulación de instrumentos, actores, iniciativas y
+productos. Estas acciones tienen como fin mejorar la calidad de la información estadística estratégica, su disponibilidad, oportunidad y accesibilidad para responder a la gran
+demanda que se tiene de ella.
+Consciente de la necesidad y obligación de brindar a los usuarios mejores productos, el DANE desarrolló una guía estándar para la presentación de metodologías que
+contribuye en la visualización y entendimiento del proceso estadístico. Con este instrumento la entidad elaboró los documentos metodológicos de sus operaciones e
+investigaciones estadísticas que quedan a disposición de los usuarios especializados y del público en general. Allí se presentan de manera estándar, completa y de fácil
+lectura las principales características técnicas de los procesos y subprocesos de cada investigación, lo que permite su análisis, control, replicabilidad y evaluación.
+Esta serie de documentos favorecen la transparencia, confianza y credibilidad de la calidad técnica de la institución para un mejor entendimiento, comprensión y
+aprovechamiento de la información estadística. Tal información es producida bajo los principios de coherencia, comparabilidad, integralidad y calidad de las estadísticas.
+INTRODUCCIÓN
+El Índice de Costos del Transporte Intermunicipal de Pasajeros (ICTIP) es una operación estadística que mide las variaciones porcentuales promedio de los precios para un
+conjunto representativo de los bienes y los servicios que garantizan la movilización de un vehículo prestador del servicio del transporte intermunicipal de pasajeros. Es un
+indicador especializado, solicitado específicamente por el Ministerio de Transporte, que permite la toma de decisiones por parte de entidades del gobierno y las empresas
+privadas del sector.
+En el marco del Convenio Interadministrativo 136 de 2015 suscrito entre el DANE y el Ministerio de Transporte, se describe la necesidad de contar con un indicador que sirva
+de herramienta para la formulación de parámetros de regulación y formulación tarifaria. El mencionado Convenio permite contar con los recursos técnicos y financieros para
+realizar el levantamiento de información necesaria para el diseño del índice, así como la generación de su componente metodológico, descrito en el presente documento.
+La información brindada por el ICTIP permite:
+• Describir la estructura de costos operativos del transporte intermunicipal de pasajeros en Colombia, en pesos relativos o ponderaciones.
+• Servir de guía en el establecimiento de las condiciones económicas de los contratos celebrados en el sector.
+• Dentro de la estructura de costos operativos del transporte intermunicipal de pasajeros, medir la incidencia de la variación de precios tanto de combustible, insumos, costos
+fijos, peajes y partes, piezas como, servicios de mantenimiento y reparación.
+• Deflactar e indexar valores monetarios relacionados con el transporte intermunicipal de pasajeros.
+Dentro del proceso de construcción y diseño del ICTIP, se han incluido las recomendaciones internacionales sobre la construcción de índices de precios y costos, contenidas
+dentro del Manual del Índice de Precios al Consumidor y del Fondo Monetario Internacional (FMI). Igualmente, se contó con la participación permanente de actores
+institucionales (gremios y Ministerio de Transporte).
+Después de cincuenta años de diseño, desarrollo, revisión y aplicación de las mejores prácticas, para el rediseño y la puesta en funcionamiento de índices de precios y
+costos, el DANE implementa dicho conocimiento generando la metodología del ICTIP.
+Esta metodología se constituye como un documento que facilita la consulta de los usuarios de la información, al brindar un panorama resumido y claro de los procesos
+técnicos que le dieron origen. En los siguientes apartados se ubican: los antecedentes de la investigación; las particularidades del diseño metodológico; aspectos técnicos
+referidos al proceso de recolección, y herramientas de sistemas, así como el plan de difusión. Finalmente el lector podrá encontrar la documentación relacionada, el glosario y
+anexos.
+1. ANTECEDENTES
+En el marco del Convenio Interadministrativo 136 de 2015, que busca “aunar esfuerzos para el diseño y la implementación de la encuesta básica de transporte de carga, y de
+transporte de pasajeros a las empresas, así como para realizar el rediseño del ICTC y el diseño del índice de costos del transporte intermunicipal de pasajeros (ICTIP)”, el
+DANE inició el estudio de la temática relacionada con el transporte Intermunicipal de Pasajeros en Colombia para estructurar y generar un índice que sirviera de herramienta
+en la toma de decisiones.
+Las tareas abordadas en el diseño del ICTIP incluyeron la revisión de los resultados de la Encuesta Básica de Pasajeros (DANE; 2015)1 la revisión y estudio de antecedentes,
+la generación de estructura de ponderaciones, la selección de la canasta de bienes y servicios a recolectar, la adaptación del aplicativo de captura y la elaboración del
+sistema de cálculo.
+Dado que la estructuración del índice requiere contar con la información básica producida por la Encuesta Básica de Caracterización, la cual fue realizada en 2015, a cargo
+del DANE y soportada en el Convenio 136 de 2015, la revisión de sus resultados es una de las tareas fundamentales que soportan el diseño.
+En Colombia el antecedente más cercano al ICTIP es el Índice de Costos de transporte Carga por Carretera2, producido por el DANE desde el primer trimestre de 2009, y
+cuyo objetivo es medir las variaciones porcentuales promedio de los precios para un conjunto representativo de los bienes y servicios que garantizan la movilización de un
+vehículo prestador del servicio de transporte de carga por carretera.
+A su vez y producido también por el DANE, el Índice de Precios al Consumidor (IPC)3, refiere un antecedente al ICTIP. El IPC mide la variación de precios de una canasta de
+bienes y servicios representativos del consumo de los hogares del país.
+A nivel internacional, se ubica como antecedente el Índice de Costos de Pasajeros presentados por The Confederation of Passenger Transport UK (CPT)4, un gremio
+consultivo en transporte de pasajeros, cuyo índice se publica desde 2003 de manera semestral y utiliza datos suministrados de manera voluntaria por las compañías
+agremiadas. El índice hace seguimiento a los principales costos operacionales de las compañías y se utiliza en las negociaciones de precios en contratos.
+Finalmente, se ubica el Índice de Precios del Sector Servicios, calculado por el Instituto Nacional de Estadística de España 5
+. Dicha investigación permite medirle la evolución
+trimestral de los precios, desde el lado de la oferta, de los servicios suministrados a empresas (segmento de negocios) por las empresas que operan en los sectores incluidos
+en el Reglamento (CE) nº 1158/2005 del Parlamento Europeo y del Consejo de 6 de julio del 2005 sobre estadísticas coyunturales.
+Dado que el ICTIP hace parte de las operaciones estadística a cargo del DANE, sus procesos de producción y análisis se realizan teniendo en cuenta la infraestructura
+tecnológica usada en los otros índices de precios y costos. Una de las tareas a desarrollar en el diseño consistió en adaptar el aplicativo de captura y análisis de índices a
+las particularidades propias de la canasta de recolección del ICTIP.
+===== PÁGINA 5 =====
+A partir de la estructura de publicación definida se construyó el sistema de cálculo para el índice teniendo en cuenta dos niveles: fijo y flexible. El algoritmo usado en toda la
+estructura fija es la media aritmética ponderada, mientras que en el nivel flexible se utiliza la media aritmética ponderada (agregación de artículos para llegar al primer nivel fijo)
+y media geométrica equiponderada (agregación de variaciones por fuente para un mismo artículo). Las variaciones de precio recolectadas cada mes son ponderadas de
+acuerdo al mecanismo definido, y se agregan para constituir índices de costos.
+El desarrollo del diseño incluyó la realización de mesas de trabajo continuas con el Ministerio de Transporte, así como la socialización con los gremios relacionados con la
+temática, entre los que se destacan:
+• Asociación para el Desarrollo Integral del Transporte Terrestre Intermunicipal (ADITT).
+• Asociación Nacional de Transportadores (ATRANSEC).
+• Asociación Nacional de Transportadores (ASOTRANS).
+• Consejo Superior del Transporte (CST).
+• Asociación Nacional de Empresarios de Colombia (ANDI).
+El resultado obtenido al generar el ICTIP con base IV trimestre de 2015, denominado en adelante como ICTIP-15, se caracteriza porque su información base refiere la
+Encuesta de caracterización del parque automotor de transporte intermunicipal de pasajeros de 2015 realizada por el DANE; el ICTIP tiene por periodo base el IV trimestre de
+2015=100 y su vigencia abarca desde el primer trimestre de 2016 a la fecha.
+Los detalles técnicos de rediseño constituyen el cuerpo fundamental de la metodología que se presenta en adelante.
+2. DISEÑO DE LA OPERACIÓN ESTADÍSTICA
+A continuación se describe el diseño general del ICTIP, incluyendo el apartado temático, estadístico, el relacionado con la producción (ejecución), el componente de sistemas
+y análisis de la información, entre otros.
+2.1. DISEÑO TEMÁTICO/METODOLÓGICO
+El diseño temático incluye la descripción de las necesidades de información, alcance y objetivos del ICTIP; la definición del plan de resultados, el diseño del formulario, la
+descripción general de las especificaciones de validación y nomenclaturas utilizadas, entre otros.
+2.1.1. Necesidades de Información
+El ICTIP busca establecer la variación promedio de los precios de una canasta representativa de los bienes y servicios requeridos para garantizar la movilización de un
+vehículo prestador del servicio del transporte intermunicipal de pasajeros en el país, lo que permite analizar el contexto económico directamente relacionado con esta actividad
+productiva, constituyéndose como un indicador de gran utilidad en la toma de decisiones del Gobierno y entes privados.
+En este sentido, puede ser usado como factor de ajuste en los sistemas de información de los organismos encargados de la regulación del mercado y, directamente
+relacionados con los precios del transporte intermunicipal de pasajeros (tarifas negociadas entre el usuario del servicio, la empresa de transporte y el propietario del vehículo),
+así como para indexar valores monetarios relacionados con la temática y el análisis económico relacionado.
+2.1.2. Objetivos
+A continuación se encuentran los objetivos generales y específicos del ICTIP.
+2. 1. 2. 1. Objetivo general
+Medir la variación promedio de los precios de una canasta representativa de los bienes y los servicios requeridos para garantizar la movilización de un vehículo prestador del
+servicio del transporte intermunicipal de pasajeros en el país.
+2. 1. 2. 2. Objetivos específicos
+• Determinar las fuentes informantes de precios para realizar el seguimiento a las variaciones.
+• Construir la canasta de los bienes y servicios representativos del ICTIP.
+• Realizar el seguimiento de precios a los bienes y servicios que conforman la canasta de costos
+• Medir la variación porcentual promedio de los precios para una selección de bienes y servicios requeridos por los vehículos de transporte de pasajeros que sirva para el
+análisis de coyuntura económica y la toma de decisiones.
+___________________________________________
+1Realizado a partir del análisis de la información producida por la encuesta Básica de Caracterización del Transporte Intermunicipal de Pasajeros (DANE;2015)
+2http://www.dane.gov.co/index.php/estadisticas-por-tema/precios-y-costos/indice-de-costos-del-transporte-de-carga-por-carretera-ictc
+3http://www.dane.gov.co/index.php/estadisticas-por-tema/precios-y-costos/indice-de-precios-al-consumidor-ipc
+4http://www.cpt-uk.org/index.php?string_to_search=cost+index&fuseaction=publications.public_briefing_list
+5(http://www.ine.es/dynt3/metadatos/es/RespuestaDatos.htm?oe=30182; 2016)
+===== PÁGINA 6 =====
+2.1.3. Alcance
+El ICTIP mide la variación promedio de los precios de una canasta representativa de los bienes y servicios requeridos para garantizar la movilización de un vehículo prestador
+del servicio del transporte intermunicipal de pasajeros el país, por lo que incluye los costos directamente relacionados con el vehículo.
+Excluye los costos y los gastos asumidos por las empresas de transporte, debido a que no es posible asignar un costo (gasto) específico al vehículo. La exclusión se
+establece con el fin de depurar los resultados obtenidos, enfocándose en los determinados para el vehículo específicamente. De otro lado, es excluido el servicio de transporte
+de pasajeros de carácter privado, dado que estos automotores no fueron incluidos en la medición de la Encuesta básica de Caracterización 2015.
+2.1.4. Marco de referencia
+a. Marco teórico 6
+Dadas las necesidades de información establecidas, el tipo de investigación a desarrollar se enmarca como un índice de precios7 . Conceptualmente, la construcción de un
+indicador de este tipo debe decidir entre: la construcción de un índice tipo Laspeyres, Paasche o Fischer, entre otros.
+Índice tipo Laspeyres
+Desde el punto de vista del productor, se cuenta con una frontera de posibilidades de producción (conjunto de cantidades producidas que se pueden obtener dada una
+tecnología de producción y de unos insumos), de modo que dados los precios de los insumos a los que se enfrenta, la tecnología y los insumos mismos, este puede producir
+una combinación de cantidades que le generen el máximo beneficio, por lo que la inflación desde la oferta se puede medir suponiendo que el productor es un sujeto
+maximizador de beneficios y que posee una restricción tecnológica.
+Un índice de precios de producto que usa la tecnología e insumos de un periodo base, permite evolucionar los precios a los que se enfrenta el productor en dos periodos de
+tiempo.
+Desde el punto de vista del consumidor, el enfoque Laspeyres busca evidenciar el cambio (entre dos periodos de tiempo) del gasto mínimo que es necesario para adquirir una
+canasta de bienes y servicios manteniendo constante el nivel de utilidad que el consumidor obtiene. Para su desarrollo se requiere conocer el nivel de utilidad o bienestar
+asumido por el consumidor como unidad y como agregado. En la práctica, a partir de los instrumentos estadísticos típicos (encuestas) se dificulta la construcción de estas
+dos funciones de utilidad.
+La construcción de un índice de precios (Índices de canasta fija) establece la utilidad implícita formada en una estructura de preferencias, que se mantiene fija en el mediano
+plazo. (En el caso de productor, se refiere a las condiciones fijas de tecnología e insumos). Dadas las dificultades asociadas a la construcción de un índice de utilidad fija, los
+índices de precios de canasta fija resultan ser una alternativa en la medición de la evolución de los precios y costos. En el desarrollo de un índice de canasta fija el problema
+de construcción de un indicador de la evolución de los precios, se reduce a la medición de cantidades y precios.
+La estructura de preferencias utilizada corresponde a la observada en la estructura de costos y gastos de los agentes, para un determinado periodo de tiempo (se puede
+escoger entre un periodo base o corriente). De hecho, dentro de la bibliografía se conocen los índices del tipo Lowe, definidos como “un cambio porcentual en el costo total de
+adquirir un conjunto dado de cantidades generalmente llamado canasta, entre los periodos comparados8
+.
+Índice tipo Paasche
+Desde el punto de vista del consumidor este enfoque responde a la pregunta: ¿en cuánto aumenta o disminuye el valor de compra de una canasta de bienes y servicios si se
+pudiera comprar la cantidad que se compra actualmente manteniendo los precios del período inicial? Desde el punto de vista del productor, este enfoque refiere al uso de la
+tecnología e insumos disponibles en los periodos subsiguientes a los de la base
+En los índices de ponderaciones variables la estructura de ponderaciones y consecuentemente, la de preferencias de los agentes corresponde a la del período corriente. En
+este sentido es posible asociar los cambios en el valor de la canasta a variaciones efectivas de precios.
+En la teoría de índices se considera que los índices tipo Paasche pueden presentar, contrario a lo que ocurre con los índices de ponderaciones fijas, un sesgo de sustitución
+a la baja pues el punto de referencia para el cálculo de la variación es la estructura de consumo del período corriente, y dado que esta estructura refleja las condiciones de
+precio del período actual y no la estructura de consumo de período anterior, las variaciones de precios observadas pueden ser menores.
+Índice Superlativo o Ideal de Fisher
+Estos surgen como una alternativa de solución a los sesgos de sustitución que se pueden presentar en los índices tipo Laspeyres y Paasche. En este sentido también
+constituyen una aproximación a los Índices de utilidad constante. Así, con un índice ideal de Fisher se busca incorporar los cambios de precio que se reflejan adecuadamente
+en un índice tipo Laspeyres y los cambios en estructura de preferencias o patrones de costos y gastos que se incorporan en un índice Paasche. Debido a que con un índice
+tipo Fisher se resuelven los sesgos de sustitución al alza y a la baja mencionados anteriormente, es que se conocen también como índices superlativos o ideales de Fisher.
+En la práctica, para la construcción del índice superlativo los requerimientos de información resultan mayores que en el caso individual de los otros índices; pues es necesaria
+la previa construcción de ellos, tanto Paasche como Laspeyres.
+El ICTIP desarrolla un índice de precios tipo Laspeyres en consideración a que la estructura de costos de los vehículos dedicados al transporte de pasajeros (en adelante
+denominados como vehículos) se mantiene en el corto plazo y a la dificultad operativa de actualizar mensualmente dichas estructuras. Además, se entiende como un
+instrumento estadístico que mide la variación de precios de un conjunto de bienes y servicios representativos de los costos asumidos por los propietarios de los vehículos,
+que transitan dentro del territorio nacional, y ejecutados por medio de un gasto monetario.
+De otro lado, el ICTIP es considerado un índice de costos porque mide la evolución de los costos asociados a la compra de los bienes y servicios requeridos por los vehículos
+para garantizar su movilidad. A partir de lo anterior, se determina que dichas erogaciones se realizan con el único fin de contar con los artículos necesarios para realizar la
+actividad económica del vehículo. Es pertinente aclarar que el alcance temático implica calcular la variación de los precios de compra final al que se someten los propietarios
+para contar con dichos bienes (por ejemplo, si se incluyen los costos por combustibles, la construcción metodológica del ICTIP implica tener en cuenta los precios finales al
+público de dichos bienes, incluyendo impuestos al valor agregado).
+___________________________________________
+6 El marco teórico descrito a continuación se soporta en el documento del FMI (índices de calidad constante y canastas fijas e índice de Fischer): Manual del Índice de Precios al
+Consumidor Teoría y Práctica; 2006 y el Manual del Índice de Precios al Productor producido por el FMI en 2004.
+7 En general, un índice resuelve el problema de estimar la variación agregada de los precios o cantidades de una serie de artículos. Genéricamente se denomina índice de precios al
+indicador que permite mediar la evolución de los valores monetarios, en tanto que los índices de cantidades dan cuenta de la variación de los volúmenes. Dentro de esta
+denominación –índices de precios- se incluyen los índices de precios (como el IPC) y los índices de costos (como el ICTIP o el ICTC)
+8Manual del IPC (OIT; FMI; OECD; EUROSTAT; ONU; BM;2006); ver en: http://www.dane.gov.co/files/investigaciones/fichas/cpi_sp.pdf
+===== PÁGINA 7 =====
+b. Marco conceptual
+El ICTIP utiliza el marco conceptual determinado para los índices de precios y costos generados por el DANE y que resultan ser homogéneos para términos como: variación y
+contribución.
+Artículo o variedad: bien o servicio individual de la muestra de productos seleccionados para cotizar. (Organización Internacional del Trabajo / Fondo Monetario Internacional
+/ Organización de Cooperación y Desarrollo Económicos / Oficina Estadística de las Comunidades Europeas /Naciones Unidas / Banco Internacional de Reconstrucción y
+Fomento / Banco Mundial Pág. 447.Manual de Índice de Precios al Consumidor: Teoría y Práctica- ISBN 92-2-113699-X Copyright © 2006).
+Año del modelo: año que asigna el fabricante o ensamblador al modelo del vehículo, de acuerdo con la declaración de despacho para consumo. Para efectos de este
+documento se denomina el año del modelo como “modelo” (Ley 769 de 2002).
+Canasta básica: conjunto representativo de bienes y servicios a los que se les realiza seguimiento de precios. Esta canasta se conforma tomando como referencia un año
+base. (Organización Internacional del trabajo OIT, Glosario de términos principales para la formulación del Índice de Precios al Consumidor IPC).
+Contribución porcentual: aporte en puntos porcentuales de las variaciones individuales a la variación de un agregado (FMI; 2006)9
+.
+Índice de Laspeyres: índice de precios definidos como de canasta fija o de ponderaciones fijas, este índice usa la canasta de bienes y servicios del periodo base. El periodo
+base se refiere tanto al periodo de referencia de las ponderaciones como al periodo de referencia de los precios (Concepto adaptado por el DANE de acuerdo a definiciones de
+la Organización Internacional del Trabajo / Fondo Monetario Internacional / Organización de Cooperación y Desarrollo Económicos / Oficina Estadística de las Comunidades
+Europeas / Naciones Unidas / Banco Internacional de Reconstrucción y Fomento / Banco Mundial Manual de Índice de Precios al Consumidor: Teoría y Práctica- ISBN 92-2-
+113699-X Copyright © 2006 Pág. 517).
+Número índice: cantidad que muestra los cambios de una magnitud en el tiempo o en el espacio. Las características importantes en la construcción de un número de índice
+son su cobertura, período de base, sistema de ponderación y el método de promedio de observaciones (Organización para la Cooperación y el Desarrollo Económico OECD -
+Data and Metadata Reporting).
+Variación: cambio porcentual calculado para una variable en un período dado con relación a otro. (Task force on data and metadata presentation for the OECD Short-term
+Economic Statistics Working Party (STESWP), Paris, 2004 [quoted in Organisation for Economic Co-operation and Development (OECD), "Data and Metadata Reporting and
+Presentation Handbook", OECD, Paris, 2007])
+c. Marco legal
+Por medio del Decreto 3167 del 26 de diciembre de 1968, se estableció como función del DANE “establecer índices de precios al nivel de productor, del distribuidor y del
+consumidor, de los principales bienes y servicios, realizar el levantamiento y publicar periódicamente el resumen de los resultados obtenidos”.
+d. Referentes internacionales
+En el diseño y la ejecución del ICTIP se adoptan las recomendaciones del Manual del Índice de Precios al consumidor publicado en 2006 por: la Oficina Internacional del
+Trabajo, el Fondo Monetario Internacional, la Organización de Cooperación y Desarrollo Económico, la Oficina Estadística de las Comunidades Europeas, la Organización de
+las Naciones Unidas y el Banco Mundial . 10
+.
+e. Referentes nacionales
+Dentro de los referentes nacionales de la investigación se encuentran los anteriormente mencionados IPC e ICTC. Es a partir de la configuración de dos niveles de cálculo en
+el IPC e ICTC (nivel fijo y flexible), que el ICTIP implementa el mismo tipo de estructura, lo que le permite mantener un nivel de publicación durante el mediano plazo (nivel fijo),
+al tiempo que la actualización constante de los bienes y servicios seleccionados para el seguimiento efectivo del precio (nivel flexible).
+De la misma forma, el ICTIP adopta los protocolos de recolección y análisis utilizados en el índice de precios al consumidor, al utilizar sus novedades técnicas para tratar los
+cambios de calidad observados en campo y el mismo formulario de recolección.
+2.1.5. Diseño de indicadores
+A continuación se describen los indicadores para difusión como también los aspectos más relevantes tenidos en cuenta en la construcción de las ponderaciones, selección
+de canasta y metodología de cálculo del ICTIP11
+.
+a. Información básica para la construcción de ponderaciones
+La información básica para construir las ponderaciones del ICTIP se obtiene a partir de una encuesta especializada aplicada por el DANE: Encuesta Básica de
+caracterización de los vehículos de transporte intermunicipal de pasajeros_15 (de ahora en adelante denominada Encuesta básica) e información del Ministerio de Transporte.
+La Encuesta Básica fue aplicada por el DANE en 2015 y permitió la construcción del patrón de costos de los vehículos de transporte de pasajeros del país, ya que indagó
+sobre los costos asumidos por el propietario. Capturó información de los vehículos de propiedad de empresas de transporte y pequeños propietarios (que no se configuran
+como empresas de transporte), recolectando datos sobre la frecuencia y valor del consumo realizado en el 2014. Incluyó los costos asociados a combustibles, insumos
+(filtros, lubricantes, llantas); costos fijos (parqueaderos, seguros, costo del vehículo, impuestos y mano de obra), y peajes, entre otros. Los resultados permitieron calcular las
+ponderaciones del ICTIP.
+Los resultados incluyeron exclusivamente todos los costos en los que incurre el propietario del vehículo para mantenerlo en capacidad de ofrecer su servicio y difieren de
+acuerdo a las características del vehículo (clase y rango de modelo). A continuación se describen los elementos metodológicos considerados en el diseño de la estructura
+que permitieron calcular las ponderaciones:
+___________________________________________
+9 Manual del IPC (OIT; FMI; OECD; EUROSTAT; ONU; BM;2006); ver en: http://www.dane.gov.co/files/investigaciones/fichas/cpi_sp.pdf
+10 Para acceder al documento, ver: http://www.dane.gov.co/files/investigaciones/fichas/cpi_sp.pdf
+11Los apartados referidos a la generación de ponderaciones y selección de la canasta, tienen como soporte teórico el Manual del Índice de Precios al Consumidor Teoría y Práctica
+(FMI; 2006)
+===== PÁGINA 8 =====
+Estado de la red
+El estado de la red por la que los vehículos de transporte transitan es una variable implícitamente incorporada a la estructura de costos, ya que las respuestas de los
+propietarios a las preguntas de la Encuesta Básica, están directamente relacionados con el estado de la red vial y el régimen de funcionamiento propio del vehículo.
+Lo anterior determina que la estructura no requiera la inclusión de variables explícitas que definan el estado de la red vial. Sin embargo, implica que se requiere una
+actualización en el momento en que el estado de la red se modifique de forma tal que se afecten los costos de funcionamiento promedio de la flota.
+Alcance de la estructura
+El periodo base de la estructura es diciembre de 2015 (los datos de la Encuesta Básica fueron capturados para 2014, pero los valores fueron indexados, con el fin de
+evolucionarlos y llevarlos a diciembre de 2015). La construcción de la estructura tiene en cuenta los vehículos según su clase y su agrupación de modelo.
+b. Generación de las ponderaciones
+Los datos recolectados por la Encuesta Básica evidencian que existe un cierto número de bienes y servicios que son típicamente consumidos por buena parte de los
+vehículos. Sin embargo, cada cual selecciona una combinación diferente de este conjunto (cantidad de bienes y servicios, así como la frecuencia de compra de los mismos),
+lo que determina que los patrones específicos de consumo son particulares para cada quien sin que ello limite la posibilidad de generar agregaciones de patrones individuales
+para obtener un patrón de consumo nacional promedio o generalizado que a su vez define tanto la estructura de ponderaciones del costo (precios * cantidades) como la
+selección de una canasta de bienes y servicios para el seguimiento de precios.
+Los insumos básicos requeridos para la conformación del ICTIP son las ponderaciones, o los pesos (importancia relativa) de cada artículo dentro del costo de los propietarios
+de vehículos, y la canasta de seguimiento a precios. A partir de esta construcción es posible recrear la estructura fija y flexible del ICTIP. También es posible determinar un
+patrón de consumo promedio que defina los insumos básicos para que con la recolección mensual de precios se realice el cálculo del índice.
+Dado que el ICTIP se define como un indicador estadístico que mide la variación promedio de los precios de un conjunto representativo de los bienes y los servicios
+necesarios para garantizar la movilización de un vehículo de transporte intermunicipal de pasajeros en el país, es preciso determinar aquellos artículos incluidos dentro del
+alcance de la investigación y que se tienen en cuenta en la determinación de las ponderaciones y subsecuente selección de canasta.
+Generación de estructura de ponderaciones
+El cálculo del ICTIP requiere dos insumos básicos: una estructura de ponderaciones, o los pesos (importancia relativa) de cada artículo dentro del costo de los propietarios de
+vehículos; y una base que permita determinar las variaciones de precio en su nivel más básico. El primer insumo se mantiene fijo durante la vigencia del diseño del índice y
+depende en buena medida de los resultados obtenidos en la Encuesta Básica del Caracterización del transporte intermunicipal de pasajeros. El segundo insumo es
+recolectado cada mes.
+El ICTIP posee una estructura fija y flexible donde es posible determinar un patrón de consumo promedio que define los insumos básicos, para que con la recolección
+mensual de precios se realice el cálculo del índice.
+Para definir las ponderaciones es necesario construir la estructura de costos operativos del transporte intermunicipal de pasajeros. El insumo básico de este ejercicio es la
+Encuesta Básica, aunque también se utiliza información oficial de organismos como el Ministerio de Transporte]; los datos recolectados por la Encuesta Básica evidencian
+que existe un cierto número de bienes y servicios que son típicamente consumidos por buena parte de los vehículos.
+La estructura de costos operativos del transporte intermunicipal de pasajeros incluye exclusivamente todos aquellos costos en los que incurre el propietario del vehículo para
+mantenerlo en capacidad de ofrecer su servicio de transporte intermunicipal de pasajeros en el territorio colombiano. La construcción de la estructura refiere el total nacional,
+según la configuración vehicular por clase de vehículos (discriminados en automóvil, campero, camioneta, microbús, buseta y bus), y por modelo en las siguientes categorías:
+vehículos de más de 15 años de servicio y vehículos de menos de 16 años de servicio para automóvil, camioneta, microbús y buseta, vehículos de más de 19 años de
+servicio, vehículos entre 19 y 10 años de servicio y vehículos de menos de 10 años de servicio para buses, y todos los modelos para camperos.
+Dado que el ICTIP se define como un indicador estadístico que mide la variación promedio de los precios de un conjunto representativo de los bienes y los servicios
+necesarios para garantizar la movilización de un vehículo de transporte intermunicipal de pasajeros en el país, es preciso determinar aquellos artículos incluidos dentro del
+alcance de la investigación y que se tienen en cuenta en la determinación de las ponderaciones y subsecuente selección de canasta.
+Costo monetario
+Se origina cuando el propietario del vehículo paga en efectivo, con cheque, tarjeta de crédito, o cualquier otra forma de pasivo financiero. El alcance del ICTIP se suscribe a los
+gastos de tipo monetario debido a que son susceptibles de ser observados y registrados y se excluyen aquellos artículos (bienes o servicios) de acceso gratuito. Además se
+incluyen los costos asociados a los impuestos por rodamiento y similares que puedan ser asignados a un vehículo específico.
+Impuestos
+Sobre el tema de impuestos, y dado que la recomendación internacional (FMI; OIT; OCED; ONU; BM, 2006)12 no determina una posición clara sobre la materia y plantea la
+necesidad de analizar los casos particulares de cada país, en el ICTIP los impuestos de rodamiento y similares son incluidos dentro del alcance temático del índice, por
+cuanto son costos asignados a un vehículo específico y se entiende que su pago permite la movilidad del vehículo en condiciones óptimas (no contar con el pago de
+impuestos puede acarrear multas e inmovilización del vehículo); sin embargo, las licencias que le permiten a un conductor realizar dicha tarea son excluidas, dado que
+corresponden a un costo asociado a la persona interesada, más que al vehículo en particular.
+Seguros
+De acuerdo al Manual para la construcción del IPC, existen dos tipos de seguros (seguros de vida y no vida) y es el agente que realiza un pago determinado por el pago por el
+cubrimiento del riesgo y el referido al reconocimiento por el servicio de aseguramiento.
+- Pago por el cubrimiento del riesgo: hace referencia a la parte de la póliza que permite aportar a la bolsa común que finalmente respalda el siniestro, si es que el riesgo se
+hace efectivo. Es conocido como la prima neta y para el caso de los seguros de no vida, se consideran una transferencia de recursos, por cuanto el pago pasa a ser un aporte
+a una cuenta común. (Al tratarse como una transferencia de recursos, no debería incluirse dentro del alcance temático del índice).
+- Pago por el servicio de aseguramiento: se refiere a la parte de la póliza que reconoce el servicio de aseguramiento que realiza la compañía aseguradora y su estructura de
+distribución. Teniendo en cuenta que esa parte del pago retribuye un servicio, debe de considerarse como la porción que debe incluirse dentro del índice en consideración.
+La experiencia internacional ha manifestado la dificultad técnica para determinar eficientemente la diferencia entre la prima bruta, entendido como el valor de la póliza = (pago
+por el cubrimiento del riesgo + pago por el servicio de aseguramiento), y cualquiera de sus dos componentes. Sería ideal poder contar con el valor de los pagos por el servicio
+de aseguramiento exclusivamente, razón por la cual el ICTIP calcula el gasto de los propietarios en los servicios de aseguramiento con el valor de la prima bruta, que en todo
+caso ampara exclusivamente el vehículo.
+___________________________________________
+12EL manual determina que en general, deben ser excluidos los pagos realizados por los hogares (referido a IPC) que no presentan una contraprestación clara de parte del Estado, en
+términos de un servicio ofrecido con periodicidades, unidades de medida y especificaciones particulares
+===== PÁGINA 9 =====
+Otros artículos excluidos del alcance del ICTIP
+El ICTIP no incluye el pago de intereses que se pueden generar al realizar una transacción comercial a crédito,(exceptuando la compra del vehículo) y en general todos
+aquellos en donde no es posible la determinación de un precio de transacción asociado a un mercado (que no impliquen la relación de compra y venta). Igualmente, son
+excluidos los costos por compra de accesorios para el vehículo por no ser necesarios para la movilización del mismo.
+Finalmente, el índice excluye cualquier tipo de “servicios financieros de los bienes no producidos por la economía”, como por ejemplo, el denominado “cupo”13
+.
+Construcción de la estructura de costos
+A continuación se describen las consideraciones respecto de la construcción de la estructura de costos que finalmente permite determinar las ponderaciones.
+- Selección de la unidad de construcción de la estructura
+El diseño de la Encuesta Básica permitió contar con los costos asumidos por la totalidad de la flota de transporte intermunicipal de pasajeros en 2014, diferenciando clases y
+modelo. La unidad definida para construir la estructura es el vehículo promedio, por lo que el procedimiento aplicado a los resultados de la encuesta consistió en determinar el
+costo promedio anual de un vehículo de transporte intermunicipal de pasajeros:
+Donde:
+d = corresponde al costo asumido por el propietario del vehículo para un ítem particular: por ejemplo, costo anual por lubricantes del motor.
+k = refiere a la clase de vehículo (automóvil, campero, camioneta, microbús, buseta y bus)
+m = se refiere a la agrupación de modelos: más de 19 años, entre 19 y 10 años y menos de 10 años para buses, más de 15 años, menos de 16 años para automóvil,
+camioneta, microbús y buseta; y todos los modelos para campero.
+Calculo costo de combustibles
+Para calcular el costo de combustibles se utiliza la información suministrada por la Encuesta básica según el modelo y clase del vehículo:
+- Número de kilómetros promedio recorridos por los vehículos según modelo y clase en 2014.
+- Número de kilómetros promedio recorridos por galón de combustibles (metro cubico para el caso de GNV).
+- Prevalencia de uso de cada combustible: GNV; gasolina y ACPM.
+Inicialmente se calculan las cantidades promedio de combustible requeridas por el vehículo (según modelo y clase) para cubrir el número de kilómetros recorridos en 2014 (se
+obtienen 3 resultados por tipo de vehículo: cantidades requeridas si se transitase con gasolina, con ACPM o GNV exclusivamente); cada resultado es valorado al precio
+promedio de cada combustible en 2015:
+Costo para el vehículok; m;c = Kilómetros recorridos promedio 2014 / kilómetros logrados por unidad de combustible c * precio promedio del combustible c en 2015.
+Donde:
+k = representa las clases de vehículo.
+m = los modelos.
+c = el tipo de combustible.
+Finalmente, y en función de la prevalencia de uso de ACPM, gasolina y GNV se determinó el costo por combustible total para los vehículos según su clase y modelo. El
+costo de combustibles resulta de la suma ponderada del costo por ACPM, gasolina y GNV.
+Calculo costo de parqueadero
+Este costo incluye tanto el parqueadero fijo como el utilizado de manera ocasional.
+Calculo costo de impuestos y revisiones
+Este costo incluye el costo de impuesto de rodamiento y similares, así como la revisión técnico mecánica
+Construcción del costo por peajes
+Debido a que los peajes no fueron incluidos en la Encuesta Básica, fue necesario reconstruir su costo a partir de los trayectos establecidos por tipo de ruta14. La ponderación
+fue construida a partir del costo promedio por kilómetro recorrido para cada tipo de vehículo (clase y modelo). Para llegar a dicho costo se pondera cada ruta en función de la
+prevalencia de uso reportada con cifras del Ministerio de Transporte.
+___________________________________________
+1313Dadas las políticas de restricción al crecimiento del parque automotor, y para ciertos casos prácticos, se observa como los propietarios de algunos vehículos están en disposición
+de vender/comprar los permisos que permiten ingresar al mercado del transporte de pasajeros, monto que es reconocido por el mercado como cupo. Este tipo de situaciones,
+circunscritas en el margen de legalidad o ilegalidad, son definidas por el SNCN (Sistena Nacional de Cuentas Nacionales) como servicios financieros de bienes no producidos por la
+economía, debido a que no fue usada la estructura productiva del país para generar el cupo, y que su producción se refiere a un servicio financiero que puede ser efectivo o no para el
+propietario.
+14El capítulo II de la Encuesta Básica se consultó por la distribución en porcentaje de los KM recorridos en 2014 para los vehículos de pasajeros según el tipo de ruta, sea larga,
+mediana o corta de acuerdo a los siguientes parámetros: Larga: más de 350 km, mediana: 71 a 349 km y corta:0 a 70 km
+===== PÁGINA 10 =====
+Dado que la Encuesta Básica permite conocer el número de kilómetros promedio recorridos según el tipo de ruta (larga, mediana y corta), la construcción posterior tuvo en
+cuenta esta diferenciación.
+Costo del vehículo y su apalancamiento (costo de capital)
+Típicamente, el costo de capital hace referencia a dos componentes: el costo derivado por el desgaste de la maquinaria, debido al paso del tiempo y su uso, pero también
+implica el costo financiero asumido por el propietario al seleccionar la compra del vehículo entre varias alternativas posibles de inversión. En ambos casos se entiende como
+un costo de oportunidad.
+Teniendo en cuenta que el costo de capital se está calculando sobre un bien semi durable como lo es un vehículo de pasajeros, y debido a que los beneficios de la utilización
+de los bienes de consumo duraderos abarcan más de un período, resulta inapropiado asignar todo el costo de la compra del bien duradero al período de compra inicial15
+.
+Para tratar la medición es posible utilizar el enfoque de alquiler equivalente o el enfoque de costo de uso.
+Alquiler equivalente: busca mediar la variación en el precio de los servicios generados por el vehículo, consumidos por el propietario, estimando el valor de mercado de tales
+servicios.
+Para calcular la ponderación del alquiler equivalente se requiere: “…, puede decirse que el enfoque del alquiler equivalente respecto de los bienes duraderos es
+conceptualmente sencillo: se imputa el precio de un alquiler o arrendamiento del periodo corriente para un producto comparable como si fuera el precio de la compra de una
+unidad del bien de consumo duradero” (FMI, 2006, pág. 489)
+Por esta razón, en la encuesta básica se aplicó la siguiente pregunta: ¿En cuánto alquilaría su vehículo mensualmente? (el alquiler incluye únicamente el uso del vehículo,
+excluye gastos de seguro, impuestos, peajes, salarios del conductor y combustibles)16. Se esperaría que el valor del alquiler del vehículo de pasajeros represente el costo de
+capital.
+Los resultados de la aplicación de esta pregunta permitieron analizar que la ausencia de un mercado establecido de alquiler de vehículos de pasajeros, repercutió en que la
+respuesta de los encuestados refiriera valores que incluían otros costos ya contabilizados previamente: impuestos y seguros por ejemplo, además de la expectativa de
+ganancia que sobrepasaba valores de mercado. Dada esta situación el cálculo de ponderaciones del ICTIP no utilizó este enfoque.
+• Costo de uso: busca medir los cambios en el costo que representa para los propietarios el uso del vehículo. Su cálculo sigue la siguiente fórmula17. :
+Donde:
+Cu = representa el costo de uso anual
+Tasa de interés de colocación = refiere la tasa de interés que debe asumir el propietario del vehículo al solicitar un préstamo
+Tasa de captación = refiere la tasa de interés de los fondos propios (se entiende también como el interés que deja de percibir el propietario del vehículo al realizar su compra y
+no utilizarlo en otra opción de inversión: costo de oportunidad)
+Otros costos= para este caso es igual a cero.
+A continuación se describen las particularidades de la fórmula empleada:
+Monto de la deuda asumida y apalancamiento con fondos propios: para calcular el monto de la deuda asumida se tienen en cuenta los valores financiados a través de leasing,
+renting y crédito financiero consultados en el capítulo III, pregunta 5 del formulario de la Encuesta básica. Para calcular el monto del apalancamiento con fondos propios se
+tiene en cuenta los valores reportados en fondos propios familiares, fondos propios personales y recursos propios de la empresa consultados en el mismo capítulo.
+Tasa de interés de colocación: se refiere al promedio de las tasas de colocación 2014 publicadas por el Banco de la Republica.
+Tasa de captación: se refiere al promedio de la DTF para el 2014, incluyendo los puntos spread promedio referenciados por el mercado financiero.
+Los dos primeros componentes de la formula describen el costo financiero anual asumido por el propietario del vehículo al preferirlo como una alternativa de inversión. Teniendo
+en cuenta que en promedio, la financiación otorgada por terceros (deuda asumida), no sobrepasa los 15 años 18. (para automóviles, camionetas, microbuses y busetas), el
+primer componente de la fórmula: Monto de la deuda asumida* tasa de interés de colocación, se calcula para los vehículos de este rango de modelo exclusivamente
+(Vehículos de menos de 16 años), por otro lado, en la clasificación de buses se asume la misma metodología pero aplicado al corte de 10 años. El segundo componente
+(apalancamiento por fondos propios * tasa de captación) se calcula para todos los grupos de vehículos 19
+.
+Para el caso de los camperos, donde no hay diferenciación por modelo, solo se calcula el costo el costo financiero propio: apalancamiento por fondos propios * tasa de
+captación.
+Depreciación geométrica 20
+.
+El cálculo del costo de capital utiliza el método de depreciación geométrica, descrito en el Manual de medición de capital: “La independencia de esta tasa de depreciación de
+la edad del activo genera una fórmula del costo del usuario particularmente conveniente. Los costos del usuario son proporcionales a los precios de los activos y en general, el
+factor de proporcionalidad comprende las tasas de retorno, de depreciación y la revaloración dependen del año del activo porque la tasa de depreciación es dependiente de la
+edad” (OCDE, 2009, pág. 78).
+___________________________________________
+15Manual del índice de precios al consum idor: Teoría y práctica. Fondo Monetario Internacional. Pág. 485.
+16Formulario de encuesta de vehículos intermunicipal de pasajeros - 15, Capitulo III, pregunta 8.DANE.
+17Manual del Indice de Precios al Consumidor
+18Resultados Encuesta Básica.
+19Sin embargo, para los vehículos de más de 15 años, el campero (todos los modelos) y los buses de más de 10 años y más de 19 años, el componente tiene en cuenta el valor
+comercial esperado al terminar de generar gasto por depreciación; en el entendido que el propietario del vehículo asume el costo de oportunidad al no vender su vehículo y usar los
+fondos en una alternativa diferente de inversión.
+20También conocido como método de balance decreciente
+===== PÁGINA 11 =====
+Su cálculo está dado por la siguiente fórmula:
+Donde:
+Pn = Valor del bien en el momento n.
+Po = Valor del bien en el momento o.
+δ= Tasa de depreciación.
+n = Periodos contemplados
+La tasa de depreciación se obtuvo al determinar la relación entre el valor final del vehículo (valor comercial esperado al terminar de generar gasto por depreciación) y el valor de
+compra21.Se entiende como el porcentaje de participación del valor final del vehículo al terminar de generar gasto por depreciación respecto de su valor de compra.
+Valor comercial esperado al terminar de generar gasto por depreciación
+Finalizado su gasto por depreciación, el vehículo conserva un valor comercial que reconoce el valor de los servicios que puede prestar en el futuro, para este caso se calcula
+como el 20% del valor de compra promedio del vehículo 22
+.
+Definida la tasa de depreciación= Pn /Po, el costo por depreciación corresponde a la productoria de dicha tasa y la diferencia entre el valor de compra del vehículo y valor
+comercial esperado al terminar de generar gasto por depreciación. El costo por depreciación es calculado para los vehículos de hasta 19 años en buses y de hasta 15 en
+automóviles, camionetas, microbuses y busetas23, en el entendido que los vehículos de más de 19 años y de más de 15 años, respectivamente, ya han cubierto su costo por
+depreciación.
+Tabla 1. Componentes de costo de uso por modelo de vehículo
+Fuente: DANE_ICTIP
+El costo de depreciación calculado para los vehículos de menos de 10 años es más alto que el definido para los vehículos de entre 10 y 19 años en buses. De igual manera
+los menores de 16 años en automóviles, camioneta, microbús y buseta.
+Ponderaciones
+Estas ponderaciones se generan según la caracterización de los vehículos dada su configuración por clase y grupo de modelo. Para determinar las ponderaciones requeridas
+se analizan las diferencias entre los pesos relativos de las agrupaciones de costos de los vehículos con el fin de agregar aquellos con comportamientos similares, partiendo
+de la diferenciación que posibilita la inferencia estadística de la Encuesta Básica 24. La estructura de ponderaciones tiene por periodo base diciembre de 2015.
+Según clase de vehículo:se originaron las siguientes tipologías de acuerdo a la planteado en el Decreto 171 de 2001: Automóvil, campero, camioneta, microbús, buseta y
+bus.
+Según modelo del vehículo: además de las diferencias encontradas según clase de vehículo, fue posible identificar que las ponderaciones resultan diferentes al agregar los
+vehículos de acuerdo a su modelo. Se generaron diferentes grupos, definidos en un segundo nivel, por debajo de la clasificación según clase:
+• Vehículos con más de 19 años (bus).
+• Vehículos entre 10 y 19 años (bus).
+• Vehículos de menos de 10 años (bus).
+• Vehículos con más de15 años (automóvil, camioneta, microbús y buseta).
+• Vehículos con menos de16 años (automóvil, camioneta, microbús y buseta).
+• Todos los modelos (campero).
+La conformación de las agrupaciones se encuentra soportada en varias consideraciones:
+1. La composición del parque automotor respecto de su configuración es muy dispersa, por lo que resulta pertinente constituir grupos por clases y modelos que agrupen los
+registros más homogéneos, de forma tal que se impida inclinar los resultados hacia alguno de los extremos de la distribución.
+___________________________________________
+21Obtenido de la Encuesta Básica.
+22Definido al corresponder a la tasa de depreciación anual para un vehículo según el método de depreciación lineal a 5 años y a la cercanía de este valor con el promedio de la
+participación de los valores por reconocimiento económico sobre el valor de compra aplicado para los vehículos de carga (todos los ejes y modelo).
+23Los vehículos de clase camperos no tienen cálculo de gasto por depreciación, dado que la gran mayoría de los vehículos son de modelos antiguos y no se mueven bajo el patrón
+anteriormente mencionado, asumiendo que no costean ningún gasto por concepto de financiación.
+===== PÁGINA 12 =====
+2. Criterios técnicos tales como: las dimensiones, peso y algunas características de la configuración mecánica y capacidad del vehículo. Estas indican que tanto la
+frecuencia de costo como el total de costo se comportan de manera diferente según la configuración de los vehículos, tanto por modelo como por clases.
+De otro lado, los costos observados en la estructura se clasificaron en función de la racionalidad económica asociada a la producción del servicio del transporte intermunicipal
+de pasajeros y de la importancia relativa de cada componente, de forma tal que los pesos relativos agregados mantuviesen el máximo equilibrio posible entre ellos, y se
+pudiese representar con suficiencia variaciones en los costos manteniendo el interés para el usuario. No se cuenta con una clasificación internacional que permita definir una
+estructura para los costos del transporte intermunicipal de pasajeros.
+Los cinco grupos agregados se denominan:
+• Combustibles.
+• Insumos: agrupa bienes y servicios con frecuencias típicamente inferiores al año.
+• Costos fijos: hacen referencia a los costos fijos asumidos por el propietario del vehículo.
+• Peajes y uso de terminales: peajes y pago por uso de plataformas físicas para movilidad de pasajeros.
+• Partes, piezas, servicios de mantenimiento y reparación.
+c. Selección de la canasta para seguimiento de precios
+Este seguimiento de precios requiere la selección de un conjunto representativo de bienes y servicios (canasta de seguimiento), a partir de la aplicación de criterios generales
+y particulares a la información del costo reportado para los vehículos.
+Los criterios de selección de carácter general que serán aplicados a los bienes y servicios son:
+• Contar con características que faciliten el seguimiento de los precios. Dichas características incluyen, la posibilidad de identificar: un precio; la determinación de una unidad
+base; fuentes informantes, y la selección de las especificaciones de seguimiento que permitan identificar las calidades de los artículos de manera que se asegura el
+seguimiento de la “variación pura por efecto precio”.
+• Ofrecer garantía suficiente de permanencia en el mercado.
+De otro lado, los lineamientos internacionales describen la aplicación de los criterios específicos en el proceso de selección de la canasta, que permiten limitar el número de
+artículos en seguimiento. Estos criterios son:
+Participación en el gasto
+Este criterio delimita los bienes y servicios a incluir en la canasta de seguimiento, a partir de la participación que tiene cada uno, dentro de diferentes niveles o subtotales del
+costo (incluyendo el total de costo). La experiencia internacional acoge diferentes formas de construcción para este criterio: a partir del comportamiento histórico de las
+ponderaciones, o en función de los resultados más actualizados de la estructura de costo analizada.
+El análisis histórico de las ponderaciones requiere al análisis de los resultados de la estructura calculadas en diferentes periodos, manteniendo sus características de diseño,
+lo que permite definir la evolución (ganancia o pérdida) de peso relativo de cada costo y a partir de estos resultados determinar la inclusión o exclusión de un artículo.
+Frecuencia de demanda
+Se utiliza como criterio de selección, en particular para determinar la inclusión forzosa de un artículo. La mayoría de sistemas estadísticos no hacen explícito el uso de
+valores para efectuar el análisis de frecuencia de demanda.
+Expectativas de crecimiento en la demanda por un artículo o producto
+Este criterio particular permite incluir productos que aparecen por primera vez en la encuesta, presentan una participación de gasto y frecuencia de demanda baja pero
+expectativas importantes de crecimiento en el corto y mediano plazo.
+La selección de la canasta del ICTIP requirió el análisis experto de los artículos a incluir, partiendo de la participación del gasto y frecuencia de la demanda. La canasta
+seleccionada en 2016 tuvo un tamaño de 141 artículos25
+.
+Tabla 2. Tamaño de la canasta ICTIP 2016
+Fuente: DANE - ICTIP
+___________________________________________
+24Clases de vehículos y modelo
+25La canasta sufre un proceso de revisión anual que permite la inclusión y salida de los artículos teniendo en cuenta el comportamiento del mercado.
+===== PÁGINA 13 =====
+Composición de la canasta del ICTIP (estructura)
+El ICTIP se divide en 5 grupos, 14 subgrupos y 27 clases de costo. En el sistema de agregación del ICTIP, los bienes y los servicios seleccionados se encuentran
+organizados de acuerdo con una estructura que garantiza que cada bien o servicio ocupa un único lugar y que siempre es posible obtener el total como resultado de la
+agregación de las categorías o los niveles más simples.
+Gráfico 1. Estructura general de la canasta en ICTIP
+Fuente: DANE-ICTIP
+Donde:
+• El Grupos de costos se obtiene a partir de la agregación de subgrupos.
+• Los Subgrupos de costos se obtienen de la agregación de clases de costo.
+• Las Clases de costos se obtienen de la agregación de los artículos.
+A partir de la revisión realizada en el IPC-98, el DANE avanzó en el diseño de una variante metodológica aplicable a los índices de precios tipo Laspeyres, consistente en
+identificar dos niveles generales en la estructura, con diferencias en sus características y la forma de actualización. Estos niveles se caracterizan por tener un componente fijo
+acompañado de un nivel flexible. El ICTIP acogió la variante y la incorporó dentro de su diseño.
+Nivel fijo
+Debe su nombre a que es la parte de la estructura del indicador que únicamente puede ser actualizada a partir de la aplicación y procesamiento de información de una
+encuesta básica. Lo anterior implica que durante la vigencia de cada una de dichas encuestas, las ponderaciones asociadas se mantienen estables.
+El nivel fijo se caracteriza porque es la parte de la estructura que será objeto de difusión y publicación, y en donde se continua trabajando dentro del marco tradicional de lo
+que se describe como un índice tipo Laspeyres (cada nivel tiene asociada una ponderación de gasto fija, determinada a partir de datos de la Encuesta Básica)
+En el ICTIP el nivel fijo se compone de tres categorías. Al describirlas desde el mayor al menor nivel de agregación son: grupo de costo, subgrupo de costo y clase de costo.
+Grupo de costo: es el nivel más general de la estructura y está compuesto por 5 componentes.
+Tabla 3. Grupos, subgrupos y clases de costo ICTIP
+Fuente: DANE-ICTIP
+Clases de costo: es el nivel fundamental de la estructura, y capta un efecto precio muy puro. Corresponde también al punto más bajo para el cual se tiene ponderación fija. En
+algunos casos, puede ser equivalente directo a un artículo.26
+.
+===== PÁGINA 14 =====
+Nivel flexible
+La estructura de carácter flexible, está sujeta a ser modificada con base en el análisis económico y estadístico especializado, que permite detectar cambios en los patrones
+de consumo reflejados en el seguimiento de precios.
+La flexibilidad comentada permite cotizar precios sobre una gama más amplia de bienes y servicios, capturando así la heterogeneidad de la demanda entre vehículos. También
+permite una mayor rapidez en la actualización del patrón para seguimiento de precios.
+Otra de las ventajas del uso de una estructura flexible, consiste en el uso del promedio geométrico para calcular los índices simples, haciendo explícitos los procesos de
+sustitución que el consumidor puede hacer a nivel de artículos o entre variedades de artículos. El uso del promedio geométrico provee de consistencia matemática, dado que
+al utilizar muestras emparejadas, la variación porcentual entre promedios de precios, es igual al promedio de variaciones porcentuales.
+Finalmente el nivel flexible permite capturar el efecto precio que conlleva la aparición de un nuevo artículo, aun cuando no se disponga en este nivel, de una ponderación de
+gasto asociada en la Encuesta Básica. Cualquier incorporación se aplica a partir de la reponderación del costo, entre los artículos pertenecientes a la clase de costo en el
+que podría ser ubicado el nuevo bien o servicio.
+Seguimiento a precios para el costo del vehículo y su apalancamiento
+El seguimiento a las variaciones de precio se diseña en el nivel flexible, partiendo de la cotización de precios para una especificación de artículo, como por ejemplo “filtro de
+aire”, “Reparación del radiador vehículos medianos”, “ACPM”, en las fuentes que ofertan ese bien o servicio, para dos periodos de tiempo. La recolección requiere: el
+establecimiento de un directorio de fuentes; la determinación de un precio real de transacción definido en función de la oferta y la demanda del artículo especificado, y la
+selección de artículos definidos en función de las características que lo describen (especificaciones de seguimiento), entre las que se destacan la marca, unidad y cantidad
+de medida (para los bienes) y horas de hombre de trabajo (para el caso de los servicios)27
+.
+La selección de artículos de seguimiento en el caso del vehículo y su apalancamiento ofrece un reto interesante por las características del costo a representar. Dicho valor
+hace referencia al costo de uso del vehículo, que incluye el costo del dinero en el tiempo derivado de préstamos, el costo de oportunidad del dinero propio destinado a la
+compra del vehículo y la depreciación.
+La depreciación no se construye como un valor de mercado, es decir no hay un precio asociado a una especificación de seguimiento que remita señales para definir la oferta
+y la demanda, por lo que su seguimiento se descarta en la selección de canasta. Sin embargo, la variación de la depreciación depende del comportamiento de los precios de
+los vehículos: cuando los precios de los vehículos se incrementan, el costo por depreciación debe aumentar y viceversa.
+Por otro lado, tanto los costos financieros derivados de la compra del vehículo con fondos ajenos como el costo de oportunidad derivado del uso de fondos propios en esta
+opción de inversión, dependen del valor del vehículo y las tasas de interés.
+El seguimiento de precios debe incorporar el seguimiento de la variación de dos variables: el precio del vehículo y las tasas de interés. Los elementos testigo seleccionados
+deben permitir la ubicación de fuentes de información permanentes, que jueguen dentro de las fuerzas del mercado y ofrezcan variedad de opciones al propietario del vehículo.
+Inicialmente se incluyeron dos elementos testigo: la cuota de leasing y el crédito financiero; ambos requieren la recolección del valor de la primera cuota concertada para
+financiar la compra de un vehículo nuevo (Actualmente el seguimiento de precios efectivo se realiza a partir del articulo Leasing).
+La recolección de la cuota de leasing y del crédito financiero se realiza en dos fases:
+I. Se recolectan los precios de los vehículos nuevos en concesionarios. En este punto se identifican los vehículos nuevos y la variación mensual de su precio final de venta.
+II. Recolección de la variación en la tasa de interés. En este punto se calcula la variación en la primera cuota concertada, teniendo en cuenta los cambios en la tasa de
+interés y los precios de los vehículos recolectados anteriormente. La variación en la cuota representa los cambios en los precios de los vehículos y la tasa de interés.
+Metodología de cálculo del ICTIP
+El esquema general que determina el cálculo del ICTIP, permite la generación de resultados para los vehículos según sus clases y modelos. El cálculo inicia con el nivel
+flexible (Cálculo de índices elementales), cuya agregación genera las clases, subgrupos, grupos y un total nacional.
+Cálculos de índices elementales
+A continuación se describe al procedimiento de cálculo del ICTIP, partiendo de los niveles más simples hasta llegar al total.
+• Cálculo relativo de precios
+Se realiza el cálculo de los relativos r para cada cotización i del artículo j, a partir de la información recolectada de cada cotización en los periodos t y t-1 . La formulación
+empleada es la siguiente:
+• Cálculo de la variación promedio geométrica por artículo
+Partiendo de relativos obtenidos en el paso anterior, se calcula la variación promedio geométrica por variedad de artículo V, de todas las n cotizaciones i que pertenecen al
+artículo i , a partir de la siguiente fórmula:
+_________________________________________________
+26 Para observar las clases remitirse al anexo 1
+27La recolección de artículos tipo servicios refiere mayor dificultad debido a la complejidad asociada a su caracterización o establecimiento de especificaciones de seguimiento.
+===== PÁGINA 15 =====
+• Cálculo de la variación promedio aritmética ponderada por clase (Índice total)
+Después de calcular la variación promedio geométrica por artículo se obtiene la agregación de todos los artículos que pertenecen a la clase c , por medio del cálculo de la
+media aritmética ponderada (Uso de ponderaciones flexibles).
+El índice a nivel de clase c se obtiene como un promedio aritmético ponderado de las variaciones promedio por artículo, donde, el ponderador α es el peso de cada artículo en
+la clase de costo c
+.
+Cálculos de índices en el nivel fijo
+Una vez se obtiene el primer índice del nivel fijo del ICTIP, es decir índice de clase, los demás, subgrupo y grupo, se calculan agregando los índices del nivel inmediatamente
+inferior y usando las ponderaciones fijas.
+El trimestre base del índice es IV de 2015 = 100
+• Cálculo del índice de la clase
+Se calcula el índice elemental de la clase c, obtenido en el paso anterior y se multiplican por el índice obtenido en el periodo t-1. Para el cálculo del primer índice de la serie,
+se toma como período anterior el valor al IV trimestre de 2015 = base 100.
+Donde:
+Cálculo del índice a nivel de subgrupo (Índice total)
+El índice a nivel de subgrupo S se obtiene como un promedio aritmético ponderado de los índices de clases, donde, el ponderador α es el peso de cada clase c en el
+subgrupo k
+.
+• Cálculo del índice a nivel de grupo (Índice total)
+Para obtener los índices a nivel de grupo G, se calcula un promedio aritmético ponderado con los índices a nivel de subgrupo S que pertenecen al grupo l , donde el
+ponderador α es el peso de cada subgrupo S dentro del grupo L:
+• Cálculo de índice nacional (Índice total)
+El ICTIP total se calcula como un promedio aritmético ponderado de los índices a nivel de grupo L, en donde, el ponderador α es el peso de cada grupo dentro del total:
+• Cálculo de índices para el total por clases y modelo de vehículo
+El método de cálculo del ICTIP permite conocer la variación promedio total de los costos para un tipo de vehículo en función de su configuración por clases y modelo. Este
+cálculo consiste en obtener un índice a nivel de clase para un tipo de vehículo I, (donde I identifica el automotor según su clase y modelo). Se calcula el índice elemental de la
+clase c, empleando los relativos obtenidos en el nivel flexible de índice y se multiplican por el índice obtenido en el periodo t-1. Para el cálculo del primer índice de la serie, se
+toma como período anterior IV trimestre de 2015 = base 100.
+El índice a nivel de clase por tipo de vehículo según modelo y clase I, se obtiene como un promedio aritmético ponderado del resultado anterior, usando como ponderador α el
+peso relativo que tienen, a nivel de clases, la tipología del vehículo dentro del total nacional.
+El cálculo del índice a nivel de subgrupo por tipo de vehículo según su clase y modelo I, puede obtenerse por medio de un promedio aritmético ponderado a partir del índice de
+clase, usando como ponderador α el peso relativo que tienen, a nivel de clases, la tipología del vehículo dentro del total nacional.
+El cálculo del índice a nivel de grupo por tipo de vehículo según su configuración clase y modelo I, puede obtenerse por medio de un promedio aritmético ponderado a partir del
+índice de subgrupo, usando como ponderador α el peso relativo que tienen, a nivel de subgrupos, la tipología del vehículo dentro del total nacional.
+Genéricamente el cálculo se describe como:
+El cálculo se realiza con un total de 16 números dígitos, aunque la difusión de los indicadores sujetos a publicación se hace redondeando los resultados hasta el segundo
+número decimal.
+Metodología de cálculo aplicada para ciertos artículos ICTIP
+A continuación se describen los cálculos particulares aplicados a ciertos artículos de la canasta de seguimiento.
+Costo de capital para vehículos de 20 años o más y 15 años o más: debido a que no es posible apalancar un vehículo de más de 20 años en buses, un campero antiguo
+y un vehículo de más de 15 años clase automóvil, camioneta, microbús y buseta usando la alternativa del leasing y el crédito comercial, la evolución de ese costo se realiza a
+partir de las variaciones observadas para los vehículos más parecidos.
+===== PÁGINA 16 =====
+Seguros (póliza contra todo riesgo del vehículo y SOAT): debido a las dificultades en la determinación del pago por el servicio de aseguramiento, y su diferenciación
+respecto de la prima bruta, el precio de seguimiento para los seguros corresponde a dicho valor.
+2.1.6. Plan de resultados
+Los resultados correspondientes con el ICTIP se publican trimestralmente mediante un comunicado de prensa, boletín técnico, anexos y presentación, donde se resumen los
+principales resultados.
+Indicadores para difusión
+El principal indicador generado por el ICTIP es el número índice, sin embargo, de la investigación también se obtienen: variaciones y contribuciones (trimestrales, año corrido y
+anual).
+El cálculo de la variación trimestral se realiza así:
+I trimestre: compara el resultado de los índices encadenados de marzo versus diciembre, de la misma manera el segundo trimestre compara los resultados del índice para
+junio y marzo; en el tercer trimestre: septiembre y junio; y finalmente para el cuarto trimestre: diciembre con septiembre.
+Variaciones
+Variación trimestral: es la relación del índice en el trimestre de referencia, con el índice del trimestre anterior, menos 1 por 100.
+Por ejemplo, supóngase que la variación trimestral del combustible, para los automóviles de más de 15 años fue 1,02% en el primer trimestre de 2016, lo que describe que la
+variación promedio trimestral para ese trimestre, calculada para los combustibles, de este tipo de vehículos ascendió a 1,02%
+Variación año corrido: es la relación del índice en el trimestre de referencia con el índice del último trimestre del año anterior (IV), menos 1 por 100.
+Variación anual: es la relación del índice en el trimestre de referencia con el índice del mismo trimestre del año anterior, menos 1 por 100.
+Contribuciones
+corrido y anual.
+Contribución trimestral
+La contribución permite medir el aporte en puntos porcentuales de cada nivel jerárquico (grupo de costo; subgrupo de costo y clase de costo) a la variación trimestral, año
+Por ejemplo, supóngase que la variación trimestral del ICTIP fue 4,50%, y que la contribución del costo de capital fue 1,25 puntos porcentuales. Lo anterior significa que el
+costo de capital le aportó 1,25 puntos porcentuales a la variación total de 4,50%. Es posible encontrar contribuciones que le restan a la variación.
+Contribución año corrido
+Contribución anual
+Donde:
+a = nivel jerárquico.
+===== PÁGINA 17 =====
+I = índice del nivel jerárquico.
+TN = total nacional.
+P = ponderación del nivel jerárquico.
+VT = variación trimestral del nivel jerárquico.
+VAC = variación año corrido del nivel jerárquico.
+VAN = variación anual del nivel jerárquico.
+2.1.6.1. Diseño de cuadros de salida o de resultados
+Los cuadros de salida que publica el ICTIP, corresponden a las diferentes agrupaciones posibles que determinan: la discriminación temática del índice (total y para cada tipo
+de vehículo según clases y agrupación de modelos).
+2.1.7. Diseño del formulario o cuestionario
+Para la recolección de los precios de la canasta de bienes y servicios del ICTIP se aplica como instrumento de recolección el Formulario Único de Recolección (FUR) que
+se implementa con la PDA28, denominado de ahora en adelante como Dispositivo Movil de Captura (DMC), con el fin de capturar directamente los precios de las fuentes
+visitadas en medio magnético. Por razones logísticas en ciertas zonas es posible hacer la recolección en formularios físicos. El ICTIP utiliza el cuestionario o formulario único
+aplicable a los índices de precios y costos del DANE.
+A continuación se presenta el formulario utilizado en ICTC:
+• Primera parte del formulario
+Dentro de la primera parte del formulario se incluye entre otros, la identificación de la investigación: ICTCP y la enunciación a la ley de reserva estadística, en la que se
+informa a las fuentes informantes sobre la confidencialidad con que se trata la información del DANE. Igualmente se incluye el número de página y el total de páginas que
+deben generarse por fuente.
+• Segunda parte del formulario
+En este apartado se incluye el campo para registrar el código de la ciudad, según la División Político Administrativa (DIVIPOLA) y en el segundo espacio, el nombre de la
+ciudad.
+Además se registra el código de la fuente, conformado por el consecutivo especifico asignado a la fuente, sector, sección y manzana de ubicación, la zona en donde se
+encuentra asignada, grupo y clase fuente.
+También se incluyen:
+• El nombre o razón social de la fuente.
+• La dirección del establecimiento.
+• El número telefónico o números telefónicos de la fuente.
+• Nombre del informante (Si se realiza entrevista directa).
+• Código anterior
+• E - mail
+• Fax.
+Se incluye también, la identificación del período al que corresponde la información. El año se anota con cuatro dígitos y el mes con dos dígitos. Para denotar los meses se
+nombra enero con 01; febrero con 02, y sucesivamente
+Finalmente se incluye un recuadro con la información de artículos previamente diligenciados por fuente, con el fin de controlar el número de artículos a recolectar.
+• Cuerpo del formulario
+En el apartado cinco se registra el código del artículo, el cual se compone de cinco dígitos que corresponden al grupo, subgrupo y clase de costo en el cual se encuentra
+clasificado, además del consecutivo asignado específicamente al artículo.
+En el apartado seis, se registra el nombre del artículo y la descripción o detalle de los conceptos que conforman su especificación. Los conceptos que identifican el artículo,
+especificación, son particulares a la fuente, puesto que cada establecimiento comercializa una marca, una referencia, una variedad, un modelo, etc., en particular.
+En el apartado siete se indica la cantidad y la unidad de medida que posee internamente el sistema para el artículo y sobre la cual se identifican los precios. El sistema
+convierte los precios a esta cantidad cuando la cantidad recolectada es diferente a la cantidad base.
+Apartado ocho corresponde a la cantidad tomada en la recolección anterior, en la unidad correspondiente.
+En el apartado nueve se incluye el precio obtenido (sin conversión alguna) en la recolección anterior. Este precio corresponde al precio de contado y con IVA de los artículos.
+A continuación, los campos 10 a 15 permiten establecer si se pudo identificar la presencia de alguna novedad técnica para el periodo de referencia. Se incluye un campo que
+permite establecer si el registro tuvo asignación de una novedad técnica en la pasada recolección: “NT ANT”.
+En el apartado diez “IN” (Insumo Nuevo) se registra una equis (X) cuando se concede al artículo la novedad técnica insumo nuevo.
+En el apartado once “PE” (Periodo de Espera) se registra una equis (X) cuando se concede al artículo la novedad técnica período de espera (No es posible la asignación de
+dos periodos de espera consecutivos para el mismo artículo en la misma fuente).
+En el apartado doce “SI” (Sustitución Inmediata) se utiliza para señalar, mediante una equis (X), si se realizó la sustitución inmediata de la especificación del artículo.
+En el apartado trece “FC” (Fuente Complementaria) se utiliza únicamente cuando la información proviene de una fuente complementaria, marcando una (x) y diligenciando la
+información de dicha fuente, en el campo dispuesto (19).
+____________________________________
+28DANE. Personal Digital Assistant (ayudante personal digital) es un dispositivo de pequeño tamaño que combina ordenador y funciones de interconexión a red.
+===== PÁGINA 18 =====
+En el apartado catorce “CR” (Cambio de Referencia) se diligencia con una equis (X) cuando se concede al artículo la novedad técnica cambio de referencia.
+En el apartado quince “IS” (Insumo Sale) se registra una equis (X) cuando se concede al artículo la novedad técnica insumo sale.
+En el apartado dieseis cantidad recolectada, se registra la cantidad recolectada para el artículo en el periodo de referencia.
+Dentro del apartado diecisiete “Precio Actual”, se registra el precio que se obtiene para el artículo en el período actual. Este precio corresponde al precio de contado y con el
+Impuesto de Valor Agregado (IVA).
+En el apartado diez y ocho “Observaciones” se incluye el código asignado a cada una de las observaciones preestablecidas. Si se trata de una observación no codificada, en
+el reverso del formulario o en el campo establecido para este fin en la DMC, se registran las explicaciones relacionadas con las observaciones ocurridas en la recolección.
+En el evento que se aplicase la novedad Fuente Complementaria, sus datos se incorporan en el apartado 19 (nombre, dirección y teléfono)
+En caso que sea necesario el diligenciamiento en papel, la fecha de recolección y supervisión deben diligenciarse en el siguiente orden: en el primer campo, el día a dos
+dígitos; en el segundo campo, el mes a dos dígitos; en el tercer campo, el año a cuatro dígitos.
+Los campos para indicar la responsabilidad de los encargados de adelantar el proceso de recolección, supervisión y fuente informante han de ser diligenciados por el
+respectivo responsable. (Para el caso de la DMC, el sistema determina el responsable a partir del perfil que permitió el acceso al sistema y que requiere una clave de acceso
+para cada encargado). En la recolección a papel, los responsables del proceso de recolección y supervisión deben anotar su nombre e incluir su firma, al tiempo que solicitar
+la firma y/o sello del informante. (Para el caso de la recolección por DMC, esta solicitud es descartada).
+2.1.8. Normas, especificaciones o reglas de validación, consistencia e imputación
+La información recolectada debe ser ingresada en su totalidad al aplicativo determinado para tal fin. El aplicativo está montado en ORACLE y permiten la visualización de los
+registros según el estado en que se encuentren.
+Cada una de las ciudades es responsable del ingreso de la información dentro del sistema, su supervisión, análisis y verificación. Cuando los datos han sobrepasado los
+estados locales, que a su vez hacen referencia al punto en donde se encuentra el registro dentro del proceso a surtir por parte de la ciudad, se ubican en el nivel central, en
+donde serán objeto de análisis general.
+En general se espera que las variables relacionadas con precio actual y cantidad recolectada tenga valor, excepto si la novedad técnica marcada es: PE, IS e CR29. Cuando
+existan variaciones de precio ubicadas por fuera del contexto local o nacional, para el artículo revisado, se debe incluir una observación en el aplicativo que permita identificar
+la situación que soporta dicho comportamiento.
+Procesamiento de imputación
+La imputación pretende captar el efecto precio que debe reflejar el indicador cuando en el proceso de recolección se enfrenta la ausencia temporal de un artículo. La novedad
+técnica “período en espera” identifica aquellos artículos para los que es imposible ubicar precio y especificaciones, y se debe asignar un “período”, en espera a que dicha
+especificación (marca, referencia), se encuentre nuevamente en el mercado.
+El procedimiento de imputación se inicia con la detección en terreno de la ausencia temporal de la especificación en la fuente que se está visitando. En ese caso, se registra
+la novedad técnica Período de Espera (PE) en el DMC o en el FUR en físico.
+2.1.9. Nomenclaturas y clasificaciones utilizadas
+La clasificación utilizada por el ICTIP comprende cinco grupos de costo agregados a partir de dos criterios básicos: la frecuencia del costo y la naturaleza del mismo. En el
+proceso de campo se utiliza la DIVIPOLA.
+Para fines operativos el ICTIP clasifica sus fuentes de información de acuerdo sus características y bienes y servicios ofertados. A continuación de describen las clases de
+fuentes aplicables en el índice:
+Tabla 4. Clase fuente en el ICTIP
+Fuente: DANE - ICTIP
+Finalmente, las novedades técnicas son codificadas dentro de la base, así:
+“ “ Informa normalmente.30
+________________________________________________
+29PE: periodo en espera, IS: insumo nuevo y CR: cambio de referencia.
+30La cotización de precios recopilada sin novedad no requiere marcación en la base.
+===== PÁGINA 19 =====
+CR = Cambio de referencia. Utilizada cuando la variedad recolectada presenta diferencias en su calidad y no es posible comparar los precios.
+SI = Sustitución inmediata. Utilizada cuando la variedad recolectada presenta pequeños cambios respecto a la observada el periodo anterior, lo que permite comparar los
+precios
+PE = Período de espera. Utilizada cuando se presenta una ausencia temporal de la variedad en la fuente
+IS = Insumo (cotización) sale. Utilizada cuando la fuente no vende el artículo.
+IN = Insumo (cotización) nueva. Utilizada cuando se ingresa un artículo –especificación-
+FC = Fuente complementaria. Usada cuando se registra que la variedad en seguimiento no es ubicada en la fuente oficial, pero puede encontrarse en una fuente alterna.
+2.2. DISEÑO ESTADÍSTICO
+A continuación se describen los componentes del diseño estadístico, el universo y población objetivo a medir, cobertura, selección de canasta, unidades estadísticas y los
+mecanismos de imputación utilizados.
+2.2.1. Componentes básicos del diseño estadístico
+A continuación se describen los componentes básicos como universo, población objetivo, marco estadístico, entre otros.
+Universo
+Son todos los establecimientos de comercio y servicios dedicados a la venta de partes, piezas, servicios de mantenimiento y reparación, dirigidos a los vehículos de
+transporte intermunicipal de pasajeros, así como: compañías de financiamiento comercial, aseguradoras, terminales de transporte, Secretarias de Hacienda, alcaldías,
+casetas de peajes y concesionarios, corredores de seguros y empresas de transporte intermunicipal de pasajeros, ubicados dentro del territorio nacional.
+Población objetivo
+Todos los establecimientos de comercio y servicios ubicados en las veintidós ciudades capitales de departamento y Duitama y dedicados a la venta de partes, piezas,
+servicios de mantenimiento y reparación, dirigidos a los vehículos de transporte intermunicipal de pasajeros, así como las compañías de financiamiento comercial,
+aseguradoras, terminales de transporte, Secretarías de Hacienda, alcaldías, casetas de peajes y concesionarios, corredores de seguros y empresas de transporte
+intermunicipal de pasajeros, ubicados dentro del territorio.
+Marco estadístico
+El diseño del ICTIP utiliza un diseño no probabilístico debido a la complejidad de ubicar marcos actualizados y completos que permitan la selección de fuentes.
+Definición de variables
+Las variables consideradas en el ICTIP son:
+• Variables de clasificación: grupo, subgrupo y clase de costo, configuración vehicular según clase de vehículo y modelo.
+• Variable de análisis: los artículos incluidos en la canasta de seguimiento del índice, aun cuando la publicación requiere la agregación de artículos en la construcción del
+primer nivel fijo (clase de costo).
+• Variable calculada: promedio geométrico de la variación de los precios y promedio ponderado de números índices.
+Fuentes de datos en la recolección mensual de precios
+Las fuentes son todos los establecimientos comerciales, de servicios y municipales que venden uno o varios artículos, o prestan un servicio al consumidor final. El número de
+cotizaciones por artículo, en principio debe conservarse o ajustarse según el comportamiento del mercado.
+La selección de fuentes debe atender criterios mínimos de inclusión: que dicha fuente cuente con afluencia relevante de compradores, y abundante variedad de artículos para
+la venta al por menor y que ofrezca posibilidades reales de permanencia en el mercado de manera que posibilite el seguimiento regular de precios. Los criterios de selección
+de las fuentes están enfocados a representar los diferentes lugares donde los consumidores adquieren sus bienes y servicios.
+Cobertura geográfica
+El ICTIP tiene cobertura nacional que abarca 22 ciudades capitales de Departamento y Duitama, incluyendo algunas áreas metropolitanas, las cuales concentran el mayor
+número de habitantes en el país y presentan la mayor dinámica económica y poblacional con respecto a otras ciudades del mismo.
+Municipios con sus áreas metropolitanas:
+• Bogotá
+• Medellín con Bello; Envigado e Itagüí
+• Cali y Yumbo
+• Barranquilla y Soledad
+• Bucaramanga con Floridablanca; Piedecuesta y Girón
+• Manizales y Villa María
+• Pereira y Dosquebradas
+• Cúcuta, Los Patios, El Zulia y Villa del Rosario
+• Pasto
+• Montería
+• Neiva
+• Cartagena
+• Villavicencio
+• Riohacha
+• Armenia
+• Sincelejo
+• Valledupar
+• Popayán
+• Ibagué
+• Santa Marta
+• Tunja
+• Duitama
+• Florencia.
+===== PÁGINA 20 =====
+Desagregación geográfica
+La presentación de resultados se hace a nivel nacional.
+Desagregación temática
+La información es difundida a partir de Índices, variaciones y contribuciones para el total nacional.
+• Según clase del vehículo: Automóvil, campero, camioneta, microbús, buseta y bus.
+• Según modelos de los vehículos: modelos de más de 19 años, entre 10 y 19 años y modelos inferiores a 10 años para buses; Mas de 15 años y menos de 16 años para
+automóvil, camioneta, microbús y buseta; y en el caso de camperos todos los modelos.
+2.2.2. Unidades estadísticas
+Se describirán las unidades estadísticas de observación, análisis y muestreo.
+Unidad de observación
+Los establecimientos donde el propietario del vehículo adquiere bienes y servicios para su consumo.
+Unidad de análisis
+Se refiere a los artículos incluidos en la canasta de seguimiento del índice, aun cuando la publicación requiere la agregación de artículos en la construcción del primer nivel fijo
+(artículos).
+Unidad de muestreo
+Los establecimientos donde el propietario del vehículo adquiere bienes y servicios para su consumo.
+2.2.3. Periodo de referencia y recolección
+Se describirán los dos periodos que se manejan.
+Período de referencia: el ICTIP tiene como período de referencia el trimestre en el que se realiza la recolección, la verificación, la validación y el análisis primario de los
+precios.
+Período de recolección: la toma de información se realiza cada mes del año para todas las fuentes y artículos de la canasta, aunque la periodicidad de recolección está
+relacionada con la frecuencia con que se modifican los precios. Se han definido una serie de períodos en los que se realiza la toma de información: mensual, anual y
+periodicidad abierta; en esta última, se encuentran todos aquellos artículos cuyo precio puede variar en cualquier momento y debe hacérseles seguimiento durante todo el
+mes.
+De la misma forma, la canasta del ICTIP contempla los precios de formación nacional, entendidos como aquellos cuya variación es uniforme en todo el país, y por lo tanto es
+posible hacer recolección en una ciudad que represente las variaciones del resto.
+2.2.4. Diseño muestral (aplica en investigaciones por muestreo)
+El diseño de muestra para el cálculo de índices es un diseño no probabilístico, debido a la dificultad operativa de contar con marcos actualizados y completos, que permitan
+identificar todas las fuentes de bienes y servicios seleccionados en la canasta.
+2.2.5. Ajustes Cobertura
+Los ajustes de cobertura en esta investigación se llevan a cabo mediante la aplicación de las novedades técnicas.
+2.3. DISEÑO DE LA EJECUCIÓN
+A continuación se describe el proceso de recolección y análisis primario de la información. Incluye apartados sobre el sistema de capacitación, actividades preparatorias y
+recolección de información.
+2.3.1. Sistema de capacitación
+Teniendo en cuenta las actividades de campo, se recomienda desarrollar entrenamiento constante del personal encargado, cubriendo al menos, los siguientes aspectos:
+• Marco conceptual.
+• Cobertura geográfica.
+• Población de referencia.
+• Canasta para seguimiento.
+• Clasificación de la estructura de la canasta.
+• Conceptualización de los artículos incluidos en la canasta
+• Especificaciones del artículo (Marcas y Calidades).
+• Unidad base, Unidad Recolectada, Cantidad base y Cantidad Recolectada.
+• Precio base y Precio Recolectado.
+• Cálculo de variaciones de precios entre dos periodos.
+• Georreferenciación y Cartografía
+• Clasificación posible de fuentes.
+• Selección de fuentes.
+• Inclusión de fuentes nuevas y reemplazo de fuentes.
+• Novedades de carácter técnico: definición, aplicación y su efecto en el índice.
+• Promociones, ofertas y descuentos.
+• Artículos calificados como Mensuales observados.
+• Definición y conceptualización de “media geométrica”.
+• Artículos de conformación nacional.
+• Consideraciones sobre el trabajo de campo.
+• FUR y uso en la DMC.
+===== PÁGINA 21 =====
+Se recomienda que todas las personas participantes discutan al menos un ejercicio o caso práctico, que permita asentar el conocimiento teórico con la realidad práctica
+vivida.
+Los ejercicios de entrenamiento deben realizarse teniendo en cuenta los resultados operativos de cada ciudad, así como las observaciones remitidas desde el DANE Central,
+sin embargo se espera que el entrenamiento completo se realice al menos una vez durante el año (aprovechando el proceso de contratación) o si el personal de campo sin
+experiencia en recolección para índices supera el 50% del total 31
+2.3.2. Actividades preparatorias
+Entre las actividades preparatorias se encuentran el proceso de sensibilización y la selección de personal.
+Proceso de sensibilización
+La sensibilización la lleva a cabo en el proceso de recolección (y en las actividades de acompañamiento, el proceso de supervisión de la zona), desarrollándose en el
+momento en que se visita las fuentes, comunicándole al informante el quehacer estadístico del DANE, los objetivos de la visita y del ICTIP, así como los usos del índice.
+El objeto de las tareas de sensibilización es mejorar la comunicación del personal de campo con la fuente, de manera tal que esta acceda a suministrar la información
+requerida en las condiciones solicitadas. En las fuentes y casos en que sea posible, el personal a cargo podría suministrar material que permita presentar el ICTIP,
+desarrollando como contenido la información básica de la investigación.
+Selección del personal
+Una vez que el DANE Central remite los insumos básicos para adelantar la contratación, los niveles locales buscan los candidatos que cumplan los requisitos y las
+normativas vigentes.
+En general, las tareas desarrolladas desde el nivel local son:
+• Recolección: En donde se recopila la información relacionada con el ICTIP.
+• Supervisión: En donde se valida la información remitida durante las tareas de recolección.
+• Análisis: En donde se revisa la calidad de la totalidad de registros y la cobertura lograda
+2.3.3. Diseño de instrumentos
+La documentación que soporta el ICTIP se encuentra documentada, según los requerimientos del Sistema Integrado de Gestión Institucional de la Entidad.
+2.3.4. Recolección de la información
+A continuación se describe el esquema operativo, supervisión y control del operativo de recolección
+Esquema operativo
+La recolección de información de ICTIP se basa en el diligenciamiento del FUR. Actualmente este formulario se diligencia con un sistema mixto de recolección: papel (de
+acuerdo a situaciones de campo) y directamente en el DMC. La recolección de precios se realiza mediante visita personal, no es posible tomar información por teléfono y, en
+ningún caso, delegar la entrevista a otra persona y/o dar a conocer la información capturada a terceras personas.
+La información recolectada es validada por en el proceso de supervisión, quien previa solicitud por el proceso de análisis y en función de sus resultados, visita la fuente y
+valida la información recolectada en un plazo no superior a dos días después de realizada la visita en el proceso de recolección. El proceso de análisis es el encargado de
+analizar y depurar toda la información recolectada.
+El trabajo de campo utiliza un ruteo que permite distribuir la carga; dicho sistema se genera partiendo de la generación de la programación de la información del mes (las
+fuentes que deben ser visitadas en el mes de referencia, para recolectar los artículos de acuerdo a su periodicidad). A partir del prediligenciamiento, en el proceso de
+recolección, en conjunto en el proceso de supervisión, revisan, validan y determinan sus rutas diarias de trabajo en las planillas de recolección, indicando las fuentes por
+visitar; este trabajo debe desarrollarse de forma tal que la tarea sea distribuida de manera equitativa durante el mes.
+Diariamente en el proceso de análisis se debe descargar la información recolectada el día anterior y cargar el dispositivo con las fuentes a visitar y los artículos que en el
+proceso de recolección se deben capturar. De esta forma, controla que la programación se esté cumpliendo de acuerdo a lo previamente establecido. Los procesos de
+recolección y de supervisión inician sus tareas a partir de la programación diaria que se carga en el DMC, iniciando el ciclo para el día.
+De la misma forma, la distribución homogénea debe garantizar que las visitas a las fuentes se realicen aproximadamente en las mismas fechas, por ejemplo, la fuente de
+combustibles “XXX” visitada el décimo día, debe visitarse aproximadamente sobre la misma fecha al mes siguiente (de esa forma se garantiza que la visita a la fuente se haga
+al mes.
+Respecto de la recolección de los artículos con periodicidad abierta (también denominado mensuales observados) el equipo logístico verifica constantemente la variación de
+precios para todos los días del mes, con el fin de garantizar que el índice capte los cambios observados durante todo el período. Este es el caso delos combustibles.
+Supervisión y control del operativo de recolección
+El procedimiento de supervisión implica una serie de actividades encaminadas al control de la calidad de la información recolectada, la detección de situaciones atípicas con
+las fuentes informantes y comportamientos especiales de los precios obtenidos en la recolección.
+____________________________________
+31Para estos casos, el DANE ha dispuesto herramientas específicas de aprendizaje que permiten adelantar el entrenamiento requerido.
+===== PÁGINA 22 =====
+Las actividades del proceso de supervisión se inician con la entrega del listado de fuentes por recolectar mensualmente al proceso de recolección asignado. Para verificar que
+este listado corresponda a las fuentes por visitar en el período relacionado, se clasifican las fuentes por zona de recolección. La entrega del listado se hace en físico o en
+medio magnético.
+Una vez ha sido recolectada la información y de acuerdo con el informe del proceso de análisis y la selección de rutas por supervisar diariamente, se procede a visitar las
+fuentes para establecer la veracidad de la información; se aplican además, las pautas indicadas por la coordinación y presentes en el Manual de Diligenciamiento. Los
+artículos (códigos) supervisados deben ser registrados en la planilla de supervisión y los lineamientos para su registro deben obedecer a la verificación y análisis de
+información de interés como la representatividad relativa de las fuentes, la supervisión selectiva, alzas y disminuciones de precio, así como la aplicación de novedades
+técnicas debidamente soportadas.
+En cuanto a las inconsistencias encontradas en la supervisión, se realizan las correcciones, se incluyen las observaciones pertinentes y se devuelve la información al proceso
+de análisis.
+La supervisión debe atender dos aspectos primordiales: los datos relacionados con la fuente y los datos respecto de los artículos o las variedades.
+Los datos de la fuente incluyen la revisión y verificación en campo de:
+- Nombre.
+- Dirección y teléfono.
+- Período de recolección.
+- Grupo y clase fuente (de requerir de acuerdo a las solicitudes de las otras investigaciones en donde se desarrolla la recolección en plataforma Oracle compartida)
+En el desarrollo de la labor de supervisión y de acuerdo a sus resultados, es responsabilidad del proceso de supervisión a cargo informar las novedades al proceso de análisis
+asignado.
+Los datos de los artículos o variedades incluyen la verificación de la calidad y completitud de la información para cada artículo. La información asociada a cada artículo incluye
+precios, observaciones y especificaciones. En general las variables que deben ser revisadas son:
+- Marca o variedad.
+- Características primarias.
+- Características secundarias.
+- Unidad base.
+- Cantidad anterior y precio anterior.
+- Cantidad recolectada y precio actual.
+- Novedades técnicas, si se requieren.
+- Observaciones, si se requieren.
+El proceso de supervisión inicia su verificación con los datos de la fuente y continuando con los referidos a los artículos o variedades. Dentro de la supervisión a los artículos
+debe constatar que la información de los artículos objeto de supervisión, incluyan las especificaciones mínimas para identificarlo y de lo contrario agregar las que considere
+necesarias para reconocer la variedad que está siendo comparada entre los períodos cotizados.
+El proceso de supervisión debe realizar el cálculo de variaciones de precios teniendo en cuenta la cantidad recolectada, el precio actual y las observaciones del período
+recolectado en relación con el período anterior.
+En caso que los datos suministrados por la fuente sean inconsistentes respecto de los obtenidos por el proceso de recolección, es fundamental que se comente esta
+situación y determinar si el informante (persona) es el mismo o no. En caso positivo se verificará junto con el proceso de recolección, la información que suministró la fuente,
+con el fin de detectar y corregir los sesgos que puedan derivarse al consultar una fuente informante diferente en cada visita. El sesgo que puede producirse al consultar con un
+interlocutor diferente para cada perfil: proceso de recolección / proceso de supervisión o en cada visita.
+Dado que en los primeros días del mes, el proceso de supervisión no tiene carga por supervisión (el ciclo de trabajo inicia), es su responsabilidad acordar y realizar el
+acompañamiento a cada proceso de recolección, con el fin de evaluar todo el proceso de toma de información. Este implica una adecuada interacción con la fuente mediante
+la presentación e identificación como personal del DANE, expresión, técnica de entrevista (acceso a la información), técnicas de sondeo (completar o aclarar respuestas) y
+demás habilidades que garanticen la toma y calidad en la información tomada en terreno.
+Como parte de las tareas de autocontrol y mejoramiento continuo es deber del proceso de supervisión y su equipo de trabajo (proceso de análisis y proceso de recolección),
+ubicar los espacios necesarios para socializar, y aclarar las dudas generadas en los proceso de campo; igualmente comentar las omisiones e inconsistencias encontradas.
+Estos resultados deben consignarse en la planilla de supervisión o, si son objeto de conciliación, se discuten con todo el grupo operativo para aplicar la novedad que más se
+ajuste, según la metodología del ICTIP.
+Es importante mencionar que el papel del proceso de supervisión es determinante, pues es el perfil encargado de validar la información recolectada en campo, aplicando los
+parámetros técnicos establecidos para garantizar el control y calidad del proceso.
+El control requerido por las actividades de análisis recae en la coordinación local y/o asistente profesional, quien puede definir una supervisión aleatoria del número de fuentes
+que se deben supervisar teniendo en cuenta las zonas y personal del proceso de recolección; y que debe consignar en un informe la programación y los resultados del
+proceso de supervisión. Mensualmente, la recolección de precios tendrá una supervisión dirigida por el coordinación local y/o asistente profesional, con el propósito de
+constatar situaciones como:
+- Existencia de la fuente informante.
+- Volumen y calidad de la información recolectada, verificando la fecha de la recolección.
+- Tratamiento (comunicación) que brinda en el proceso de recolección al informante y viceversa.
+- Otros aspectos relevantes en el proceso de recolección.
+===== PÁGINA 23 =====
+Esquema operativo
+El proceso de recolección de datos recibirá del proceso de análisis la información referente a la ruta de trabajo o recolección de los diferentes bienes y servicios. La
+recolección de precios inicia con la selección de la fuente atendiendo los criterios para desarrollar este procedimiento; posteriormente el proceso de recolección debe evaluar
+la especificación o variedad del artículo “más vendida” y recolectar la totalidad de sus especificaciones o características que permiten definir un artículo en específico. Las
+especificaciones usadas más comunes son, por ejemplo, la marca del bien; la referencia.
+En el proceso de recolección se revisa constantemente que dicha variedad continúa entre las más vendidas en la fuente; en caso contrario debe ubicar la especificidad más
+vendida e incluirla en la recolección periódica, de esta forma se asegura que la variación de precios incorporada en el índice corresponda a los artículos con mayor demanda
+en el mercado.
+La recolección también implica la toma de precios de la variedad en seguimiento, y la verificación de las especificaciones que permiten identificarla, igualmente el
+levantamiento de las observaciones de campo requeridas para soportar el comportamiento del mercado. Finalmente, el proceso de recolección está atento de las fuentes
+nuevas presentes en el mercado y las novedades que presenten los bienes y servicios de la canasta.
+Cabe acotar que en el proceso de recolección se debe visitar personalmente a los informantes y obtener de manera directa los precios de venta al por menor de los bienes y
+servicios en las fuentes que lo requieran. Si no es posible entrevistarse con el informante, el proceso de recolección debe informar esta situación al proceso de supervisión,
+quien deberá indicar el procedimiento a seguir para acordar revisitas que permitan conseguir los datos. En el desarrollo de esta situación el DMC ubica el estado “pendiente
+por recolectar”, que permite ubicar los registros que aún no tienen recolección.
+El control directo sobre las tareas de recolección las asume el proceso de supervisión quien verifica la información levantada en campo. La supervisión de las fuentes y
+artículos es definida por el proceso de análisis local y proceso de coordinación local, quien analiza la información agregada por el proceso de recolección y solicita las
+revisitas requeridas. Finalmente, el proceso de coordinación local y/o asistente de encuesta verifica la información de su ciudad y remite los datos al DANE Central.
+Transmisión de datos
+A continuación se describe el tránsito de estados que aplica en la recolección y análisis del ICTIP.
+En el proceso de recolección: en este estado se encuentran los registros programados que ya fueron descargados a la DMC para su recolección. Desde este estado se
+digita la información recolectada en papel.
+Recolectado: en el estado recolectado quedan los registros provenientes de los DMC que utilizaron en el proceso de recolección para la captura de los precios. Los registros
+en este estado solo pueden ser actualizados desde la pantalla de análisis por el proceso de análisis locales.
+Supervisado: en el estado Supervisado quedan los registros provenientes de los DMC que utilizaron en el proceso de supervisión para la captura de las verificaciones a los
+precios tomados por el proceso de recolección. Los registros en este estado solo pueden ser actualizados por el proceso de análisis locales desde la pantalla de Análisis.
+Analizado local: este estado representa el visto bueno del proceso de análisis local al proceso de recolección o al proceso de supervisión. Esto sucede cuando acepta el
+registro al marcar la caja de chequeo en la pantalla de análisis. También corresponde al visto bueno del coordinaciones local cuando desde la pantalla de análisis acepta de la
+misma forma los registros de la muestra de control de calidad, o cuando considera que no es correcta la decisión del proceso de análisis de enviar a supervisar un registro.
+Los registros en este estado se visualizan en la pantalla de análisis pero solo pueden ser modificados por las coordinaciones locales.
+Control de calidad local: a este estado pasan todos los registros seleccionados en una muestra que le permite al proceso de coordinación local, verificar la calidad de los
+procesos previos de recolección, supervisión y análisis local. En este punto los registros seleccionados a la zar son verificados, al finalizar esta tarea el sistema envía al
+DANE Central la totalidad de registros ubicados en el estado “Analizado local”.
+Para verificar nivel central: Este estado permite que la información sea validada por el nivel central. El estado contiene los registros que obligatoriamente deben ser
+verificados uno a uno, dado que cumplen con los requisitos para ser revisados en el nivel central. Los registros en este estado se visualizan por la pantalla de análisis y solo
+pueden ser modificados por los analistas centrales.
+Disponible para nivel central: En este estado, la información queda disponible para ser actualizada por el nivel central. Los registros son visualizados pero no son de
+obligatoria revisión a nivel de micro dato, debido a que no cumplen los requisitos para tener que ser analizados desde el nivel central.
+Analizado central: El estado representa el visto bueno del proceso de análisis central. Los registros en este estado se visualizan en la pantalla de análisis pero solo pueden
+ser modificados por los coordinadores centrales o el secretario técnico.
+Revisado central: este estado garantiza que todos los registros han pasado por el universo del cual se toma la muestra para el control de calidad. A este estado se
+actualizan los registros del universo del cual se tomó la muestra para el control de calidad, una vez culmina por parte de la coordinación central la revisión total de los
+registros de la muestra.
+Los registros en este estado se visualizan en la pantalla de análisis pero solo pueden ser modificados por los coordinadores centrales o el temático.
+Disponible para el cálculo: El estado Disponible para cálculo corresponde al último estado del ciclo e indica los registros que se deben tomar para efectuar el cálculo de
+los índices. A este estado pasan los registros en estado Revisado central en el momento que se ejecute el proceso de cierre.
+Control de cobertura
+La cobertura es verificada a partir de los reportes entregados por el sistema que determina el número de registros que no han sido recolectados (generación de reportes
+locales).
+2.4. DISEÑO DE SISTEMAS
+Para la recolección y análisis de los datos recolectados se utiliza Oracle, aplicativo de precios y costos, específicamente adaptado para permitir la recolección del ICTC. El
+cálculo se realiza en SAS.
+Base de datos
+La información recolectada y analizada se ubica en única base de datos centralizada, que permite su verificación en tiempo real. Los datos recolectados son digitalizados
+usando el DMC, y se ingresan a la base de datos del ICTIP en el estado “Recolectado”; a medida que se desarrollan los procesos de revisión en cada ciudad y nivel central,
+los registros cambian su estado, atendiendo dicho proceso de revisión.
+===== PÁGINA 24 =====
+Los permisos de edición de la información se establecen a partir del proceso ejecutado; si la verificación de la información se encuentra a cargo de la ciudad, los perfiles
+locales pueden modificar la información; de otro lado, si el análisis está a cargo del nivel central, los perfiles asociados tienen permiso de edición. Sin embargo, el sistema
+guarda cada una de las modificaciones realizadas, fecha del cambio y el perfil de usuario que realizo el proceso. El ingreso a la plataforma solo es permitido a través de la
+determinación de un usuario y contraseña controlados por el nivel central.
+2.5. DISEÑO MÉTODOS Y MECANISMOS PARA EL CONTROL DE CALIDAD
+La producción estadística se desarrolla en dos niveles: local y central. Por otra parte el nivel central o DANE Central hace referencia a los procesos de la producción
+estadística que tienen lugar en las oficinas principales de la entidad en la ciudad de Bogotá.
+Instrumentos de control para supervisión
+La supervisión implica una serie de actividades encaminadas al control de la calidad de la información recolectada, a detectar situaciones específicas que afectan las fuentes
+informantes y comportamientos especiales o atípicos de los precios obtenidos en la recolección.
+Las actividades en el proceso de supervisión se inician con la entrega del listado de fuentes (magnético o físico) por supervisar. Para verificar que este listado corresponda
+efectivamente a esas fuentes en el periodo correspondiente, ellas se clasifican por zona del proceso de supervisión y se entregan en el proceso de supervisión al personal
+asignado, en medio magnético.
+Una vez ha sido recolectada la información se procede a visitar la(s) fuente(s) y se establece la veracidad de la información aplicando las pautas indicadas en el manual del
+proceso de supervisión. Este proceso se da de acuerdo con el informe de análisis y la selección de rutas por supervisar según los parámetros establecidos por la
+coordinación local. (Los aspectos básicos a verificar dentro de la supervisión son: representatividad de las fuentes, supervisión selectiva, alzas y bajas de precios o asignación
+de novedades técnicas, entre otros).
+Las inconsistencias encontradas en la supervisión son corregidas e incluidas en el espacio de observaciones dentro del aplicativo.
+Indicadores para el control de calidad de los procesos de la investigación
+Los indicadores construidos para determinar el nivel de calidad de los procesos productivos de la investigación, son:
+Indicador de cobertura: permite medir la tarea de recolección, mediante la cuantificación de la cobertura lograda. Existe:
+• Cobertura de fuentes Calculado como:
+ITRF = TRF = (FV/ FE)*100
+Donde:
+TRF = Tasa de Respuesta por Fuentes
+FV = Fuentes visitada
+FE = Fuentes esperadas
+• Cobertura de registros Calculado como:
+TRR = (Registros Efectivos / Registros Esperados)*100
+Donde:
+Registros Efectivos = Registros sin aplicación de Novedades Técnicas
+Registros Esperados = Número de artículos pre-diligenciados para recolección
+• Indicador de calidad: permite cuantificar la calidad lograda dentro del proceso de análisis del índice. Existe:
+• Indicador de no imputación
+Diferencia entre el número total de registros y el número de aquellos marcados con una novedad técnica.
+• Índice de no imputación o estimación local (INIL)
+INIL = (RES – Registros marcados con novedad / RES) * 100
+RES = Registros esperados
+• Índice de no imputación central (INIC)
+INIC = (RES–Registros marcado novedad en DANE Central/RES)* 100.
+• Índice de confiabilidad (ICFA)
+A partir de los cálculos ya efectuados y que miden la cobertura y calidad en diferentes puntos del proceso, se establece el indicador de confiablidad, calculado como:
+ICFA = (ITRF + ITRR + INIL + INIC) / 4
+Donde:
+ICFA = Indicador de Confiabilidad
+ITRF = Tasa de Respuesta por Fuentes
+ITRR = Tasa de Respuesta por Registro
+INIL = Índice de No Imputación Local.
+INIC = Índice de No Imputación Central
+2.6. DISEÑO DE PRUEBAS PILOTO
+Debido a que la investigación es regular, el diseño de pruebas piloto suele efectuarse cuando se efectúan modificaciones importantes en el diseño. Dado el diseño del índice,
+fue necesario incorporar pruebas para testear los artículos seleccionados en la canasta inicial, y verificar el comportamiento del nuevo sistema de captura y análisis.
+Respecto a las pruebas de recolección de información, se realizó un ejercicio de sensibilización a fuentes y ubicación de los artículos a partir de agosto de 2015 y hasta
+diciembre del mismo año. Los resultados obtenidos permitieron afinar las descripciones utilizadas para identificar los bienes y servicios, determinar los tipos de
+especificaciones que describen adecuadamente los artículos y ubicar las fuentes oferentes. La prueba se desarrolló utilizando el mismo formulario descrito anteriormente.
+===== PÁGINA 25 =====
+Respecto del aplicativo, la prueba al mismo se efectuó durante el mismo lapso de tiempo, meses en lo que se efectuaron las pruebas de accesibilidad y funcionalidad
+correspondientes. La prueba se desarrolló en un servidor habilitado para tal fin, observándose que en general el sistema se comportaba de manera adecuada respecto del
+almacenamiento y manejo de la información.
+Al terminar la fase de pruebas, los resultados permitieron utilizar ORACLE en la recolección y análisis regular del índice a partir de enero de 2016.
+2.7. DISEÑO DEL ANÁLISIS DE RESULTADOS
+A continuación se registra la información para el diseño del análisis de los resultados.
+2.7.1. Análisis estadístico
+El análisis de la información implica el análisis descriptivo de la información, que involucra la verificación de la clase fuente, análisis histórico de los precios y su evolución,
+verificación de variaciones significativas y/o atípicas, determinación del contexto local, nacional y en ciertas oportunidades internacional.
+El sistema cuenta con salidas específicas que le permiten al proceso de análisis determinar los comportamientos históricos y agregados de la información, y de esta manera
+hacer eficiente la ubicación de posibles errores. Sin embargo, es el funcionario quien puede establecer si la información es veraz.
+La evaluación de la información conlleva como aspectos mínimos:
+- Verificación de la fuente: correspondencia dentro los parámetros solicitados por el índice.
+- La verificación del comportamiento histórico de precios y novedades técnicas aplicadas.
+- Comparación de las especificaciones recolectadas (contra el registro histórico y versus los parámetros establecidos en los manuales de la investigación).
+- El análisis de los precios y su posición relativa respecto de la distribución de precios para el mismo artículo (ciudad y total).
+- La verificación de la cantidad recolectada anterior y actual y su relación respecto de la unidad base.
+2.7.2. Análisis del contexto
+Se revisa y analiza cada uno de los cuadros de salida del ICTIP y se compara con el comportamiento observado por los ítems medidos en otras investigaciones y que tengan
+relación.
+2.7.3. Comité de Personas expertas
+Precediendo la publicación, los funcionarios encargados del indicador realizan un comité técnico interno, que permite contar con un espacio de intercambio entre los
+metodólogos encargados de las diferentes investigaciones del DANE y que tienen directa relación con el ICTIP. El comité tiene por objeto discutir las realidades percibidas
+desde otras ópticas y retroalimentar las investigaciones.
+De manera análoga el indicador realizar un comité externo, en donde participan los usuarios especializados del índice, y en donde se socializan y contextualizan los
+resultados obtenidos. Es un espacio de interacción entre los funcionarios a cargo del índice y los usuarios.
+2.8. DISEÑO DE LA DIFUSIÓN
+A continuación se describen las características de la difusión ejecutada trimestralmente en la investigación.
+2.8.1. Administracion del repositorio de datos
+La base de datos consolidada se mantiene dentro de un servidor exclusivo para Índices en la sede del DANE Central. De esta base de datos se generan las consultas para
+hacer el cálculo y posterior difusión.
+La aplicación para el manejo de esta base de datos es administrada por el temático y coordinación temática de la investigación.
+2.8.2. Productos e instrumentos de difusión
+A partir del cálculo trimestral se producen los siguientes documentos:
+Boletín técnico: contiene los resultados del indicador: variaciones y contribuciones trimestrales, año corrido y anual para el total, y por dominio de publicación (clase de
+vehículo), por grupos y clases de costo.
+Comunicado de prensa: corresponde al resumen del boletín técnico.
+Anexos: documento en Excel que presenta los resultados obtenidos: numero índice, variaciones y contribuciones trimestrales, año corrido y dos meses, por dominio de
+publicación (clase de vehículo y modelo), por grupos, subgrupos y clases de costo.
+Documentación metodológica: el público tiene acceso al presente documento metodológico y la ficha resumen del mismo (ficha metodológica).
+Toda la información se encuentra disponible en página web del DANE, y las fechas de actualización correspondiente, se informan a través del calendario oficial de
+publicaciones de la entidad (accesible también por medio del portal en internet: www.dane.gov.co ).
+===== PÁGINA 26 =====
+2.9. DISEÑO DE LA EVALUACIÓN
+Por medio de la interacción del grupo técnico a cargo del ICTIP y sus usuarios (internos y externos), se permite obtener la evaluación respecto del indicador en lo que
+respecta a su uso y características generales.
+Es fundamental cumplir con los estándares de calidad en el proceso de producción de las estadísticas. En este sentido el diseño de la evaluación en la investigación del
+ICTIP se constituye en un mecanismo importante para dar un tratamiento adecuado a esta información.
+La evaluación realizada a la investigación del índice, es un proceso que se realiza de manera continua, en varias etapas desde el diseño hasta el proceso de producción y
+difusión de la misma. Incluye entre otros:
+Encuesta de satisfacción al cliente: es una herramienta para conocer las necesidades de los clientes y se trabaja en conjunto con el Banco de Datos de la entidad, que es el
+primer canal de contacto con los usuarios.
+Comités internos y externos: corresponde a reuniones trimestrales, que se realizan con el fin de analizar los resultados de la investigación en un contexto de coyuntura
+económica y permiten informar a usuarios sobre los resultados del ICTIP de manera explícita y confidencial. Estos dos comités se realizan antes de la publicación de los
+resultados y permiten recibir sugerencias y recomendaciones de usuarios y asesores.
+2.10. DOCUMENTACIÓN RELACIONADA
+La documentación del ICTIP se ubica en la página web del DANE (link de acceso público: destinado a la consulta de resultados del ICTIP), y comprende:
+• La presente metodología de diseño temático.
+• Ficha metodológica.
+3. GLOSARIO
+Cambio de referencia: novedad que permite enfrentar el cambio de calidad de una especificación. La ausencia se puede presentar por condiciones de mercado o por
+cambio en las características primarias de una especificación, entendidas estas como aquellas que diferencian un producto de otro o incluso entre variedades del mismo. El
+cambio de referencia es un procedimiento para “captar” de manera implícita los cambios de calidad en los artículos. Fuente: Metodología IPC 98.
+Formulario Único de Recolección (FUR): corresponde al diseño del formato de recolección con el que se trabaja en los formularios (hojas impresas) o en las PDA (en
+forma magnética). Este formato está diseñado por fuentes, las cuales pueden contener información simultánea de uno o varios artículos de diferentes marcas, variedades o
+especificaciones. Fuente: DANE. Concepto adaptado de definiciones del Fondo Monetario Internacional.
+Fuentes: los establecimientos comerciales, municipales o educativos que venden uno o varios artículos, o prestan un servicio al consumidor final. Fuente: DANE. Concepto
+elaborado de acuerdo a definiciones utilizadas en la entidad.
+Fuente complementaria: se ofrece como alternativa para suplir la ausencia de una especificación en una fuente en la que no se puede aplicar una sustitución perfecta o no
+es posible aplicar un cambio de referencia, buscando una especificación de igual calidad en otro establecimiento, sin ningún cambio en las características del artículo. En
+esta fuente no aplica ninguna novedad de carácter técnico. Si la especificación no aparece nuevamente en el establecimiento original, se debe tomar una nueva especificación
+en el mismo. Si esto no es posible, se debe tomar en otra fuente o incluir la especificación en otra fuente original, donde no se cotice. Fuente: Metodología IPC 98.
+Período de espera: período de recolección sin información para cualquier artículo o producto, por no encontrarse la marca o variedad objeto del seguimiento de precios, y se
+utiliza cuando la ausencia de información es de carácter temporal. Fuente: DANE. Metodología IPC 98.
+Sustitución inmediata:se establece para enfrentar la ausencia de una especificación remplazándola por un “sustituto perfecto”, considerando todas las características de
+calidad, y utilizando como una aproximación a este concepto el precio, la cantidad y la marca. El efecto sobre el sistema de cálculo es variaciones en rangos mínimos que
+puede recibir el consumidor al realizar su gasto de consumo y moverse en su estructura de preferencias. Fuente: DANE. Concepto elaborado de acuerdo a definiciones
+utilizadas en la entidad.
+4. BIBLIOGRAFÍA
+Bureau of Transportation Statistics. (2003).
+Confederation of Passenger Transport UK (CPT).
+DANE (2015). Metodología ICTC 2008
+̶(2015). Metodología IPC-08
+̶(2002). Consideraciones metodológicas para la construcción de Indicadores.
+2002). Metodología IPC-98
+FMI (2006). Consumer price index manual: Theory and practice.
+Ginés de Rus, Campos J. y Nombela G. (2003). Economía del Transporte. Barcelona: Antoni Bosch Editores.
+INVIAS. (2004). Principales rutas viales y sus tarifas de peaje 2004.
+(2007). Red Vial Nacional 2007.
+̶(2006). Volúmenes de Tránsito 2006.
+Ministerio de Transporte. (2015). Viajes diarios Aforos Rutas pasajeros.
+̶(2015). Tarifas 2015 peajes nacional
+OCDE (2009). Medición del Capital. Segunda Edición.
+Truman L. (1921). Certain Properties of Index Numbers. Quarterly Publications of the American Statistical Association, Vol. 17, No. 135
+===== PÁGINA 27 =====
+5. ANEXOS
+VERSIÓN FECHA RAZÓN DE LA ACTUALIZACIÓN
+1 26/Ene/2018 Creación primera versión del documento
+2 23/Feb/2018 Se ajusta según lineamiento Dirección DIMPE la palabra doce meses por anual
+ELABORÓ REVISÓ APROBÓ
+Nombre: Diana Marcela Castillo Cruz
+Cargo: CONTRATISTA
+Fecha: 23/Feb/2018
+Nombre: Luz Adriana Hernandez Vargas
+Cargo: Profesional Especializado..
+Fecha: 23/Feb/2018
+Nombre: Andrea Carolina Rubiano Fontecha
+Cargo: Profesional Especializado..
+Fecha: 26/Feb/2018
+Si este documento es impreso se considera copia no controlada

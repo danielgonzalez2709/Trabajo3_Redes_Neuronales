@@ -138,6 +138,68 @@ Parquets crudos (`data/raw/m1/rutas/`, no versionados):
 `TODO(cita)`: la página oficial del DANE (nomenclatura DIVIPOLA) no enlaza un archivo descargable ni su fecha de corte; se usa la
 publicación del propio DANE en datos.gov.co.
 
+## Calendario exógeno de M1 (CA-1)
+
+Salida: `data/processed/m1/calendario.parquet` (1 461 filas, 2021-01-01..2024-12-31, una por `fecha`; 21 columnas), generada con
+`.venv/bin/python -m src.m1_demanda.calendario` (sin red). Tablas de recesos y supuestos: `data/externos/m1/calendario_fuentes.yaml`
+(cada bloque con acto, fecha del acto, URL y fecha de consulta). Investigación de fuentes: `docs/investigacion/CA-1_fuentes_calendario.md`
+(investigador-fuentes, consulta 2026-11-26). Todo es conocible 30 días antes (regla 0.9): ley de 1983, cálculo determinista de la
+Pascua y calendarios escolares expedidos, por regla, antes del 1-nov del año anterior (versión **original** de cada acto; las
+modificaciones posteriores solo se documentan aquí). Excepciones que este mismo archivo documenta: Pasto 2021 (Res. 0064, 15-ene-2021) e Ipiales 2021 (Res. 00023, 14-ene-2021), Pasto 2022 (Res. 2706, 7-dic-2021) y Cali 2023 (afiche, posible versión modificada por la Res. 00011 del 3-ene-2023).
+
+| Columna | Fuente / regla | Tipo de dato |
+|---|---|---|
+| `fecha`, `dia_semana` (0 = lunes) | calendario gregoriano | derivada |
+| `festivo`, `festivo_nombre`, `festivo_trasladado` | Ley 51 de 1983 (sancionada el 22-dic-1983; Diario Oficial 36.428, 30-dic-1983; rige desde la sanción, art. 4; el «Dada en Bogotá» del 6-dic-1983 es la firma de los presidentes del Congreso), art. 1 num. 1–2. Fijos sin traslado: 1-ene, 1-may, 20-jul, 7-ago, 8-dic, 25-dic, Jueves y Viernes Santo. Con traslado al lunes siguiente si no caen en lunes (incluidos los sábados y domingos): 6-ene, 19-mar, 29-jun, 15-ago, 12-oct, 1-nov, 11-nov, Ascensión, Corpus Christi, Sagrado Corazón. Copias: https://apps.procuraduria.gov.co/gd_1952/docs/l0051_83.htm · https://www.alcaldiabogota.gov.co/sisjur/normas/Norma1.jsp?i=4954 · https://www.corteconstitucional.gov.co/relatoria/1994/C-107-94.htm | norma + cálculo (la prueba compara contra las 4 × 18 fechas de la tabla del informe §2) |
+| Pascua y desfases | `dateutil.easter.easter`. Jueves Santo = Pascua−3, Viernes Santo = Pascua−2, Ascensión (jueves) = Pascua+39, Corpus Christi (jueves) = Pascua+60, Sagrado Corazón (viernes) = Pascua+68; estos tres, trasladados al lunes. Ascensión: «On the fortieth day after Easter…» (Normas universales sobre el año litúrgico, n. 25; copia https://www.catholicculture.org/culture/library/view.cfm?id=10842, confianza media) | `TODO(cita)`: fuente primaria de los desfases de Corpus Christi y Sagrado Corazón, texto vaticano de la norma 25 y tabla oficial de Pascua |
+| `semana_santa` | lunes a domingo que termina en el Domingo de Pascua (así la fijan los decretos de Sogamoso 2021–2023; Bogotá 2024 coincide). Pascua: 2021-04-04, 2022-04-17, 2023-04-09, 2024-03-31 | norma escolar + cálculo; el informe no usa «Domingo de Ramos», sino esta ventana |
+| `jueves_viernes_santo` | Pascua−3 y Pascua−2 (Ley 51) | norma + cálculo |
+| `puente` | **Supuesto del equipo** (no es término legal; Camila, 26-nov): sábado, domingo y lunes de un fin de semana cuyo lunes es festivo (incluidos los trasladados); viernes, sábado y domingo si el festivo cae en viernes (incluido el Viernes Santo). Festivos en martes o jueves no generan puente | supuesto |
+| `fin_de_anio` | Resolución 264 de 2020 del Ministerio de Transporte, art. 8 (Periodos de alta demanda para la definición de contratos): «Del 10 de diciembre al 15 de enero del año siguiente.»; ambos extremos inclusive (decisión de Camila, 27-nov). Copia: escaneo firmado alojado en bogota.gov.co (https://bogota.gov.co/sites/default/files/inline-files/resolucion-264-de-2020.pdf), en `alucinaciones/evidencias/CA-6/res_264_2020_mintransporte.{pdf,txt}` (consulta 2026-11-27; verificación en `docs/investigacion/CA-6_verificacion.md`, V-7). Vigencia inferida de que el Decreto 1048 de 2026 la cita. Conocible siempre: el acto es de 2020 y los modelos entrenan desde 2021-06-01 | norma |
+| `vacaciones_escolares_11001/_76001/_15759/_52001/_52356` | Receso estudiantil del calendario A de colegios oficiales de la secretaría certificada de cada ciudad (Bogotá, Cali, Sogamoso, Pasto, Ipiales). Actos y URL en el yaml (listados MEN: https://www.mineducacion.gov.co/1780/w3-article-402903.html · `-408776` · `-413526` · `-419296`). Marco: Decreto 1075 de 2015, art. 2.4.3.4.1 (calendario antes del 1-nov) | calendarios oficiales; transcripción por OCR en parte (ver confianza por bloque en el yaml) |
+| `vacaciones_escolares` | = `vacaciones_escolares_11001` (Bogotá), por compatibilidad con núcleo §5.2 | derivada |
+| `vacaciones_escolares_<DIVIPOLA>_conocible_desde` y `vacaciones_escolares_conocible_desde` (Bogotá) | Fecha (`datetime64[ns]`, anulable) de expedición del acto **original** (`fecha_acto` del yaml, versión original: decisión de Camila, 26-nov) que fija el valor de ese día. Si el día es receso, es el bloque cuyos rangos lo contienen; si no, el bloque vigente (el de inicio más reciente <= día). Nulo si el valor de vacaciones es nulo o si el bloque no trae `fecha_acto` (`TODO(dato-faltante)`; no se inventa; hoy todos los bloques la traen). Ejemplo: Pasto 2022-01-03..06 -> 2021-12-07 (Res. 2706) | derivada del yaml |
+
+**Cómo deben usar la columna los modelos (regla 0.9):** para un par (origen, fecha objetivo), si `origen < <vacaciones>_conocible_desde` de la fecha objetivo, la variable de vacaciones **no era conocible** en el origen y debe anularse (valor 0/NaN según el modelo, documentado). Si `conocible_desde` es nulo, el valor ya es nulo. Excepciones en que el acto es posterior al propio día: Pasto 2021-01-04..14 (Res. 0064, 2021-01-15) e Ipiales 2021-01-04..13 (Res. 00023, 2021-01-14); caen antes del 2021-06-01 y no afectan el entrenamiento ni el test.
+**Festivos:** la Ley 51 de 1983 es anterior a todo el periodo; son conocibles siempre y no llevan columna. `fin_de_anio` (Res. 264/2020, de 2020) y `puente` (supuesto del equipo) son reglas fijas, conocibles siempre.
+
+### Supuestos y decisiones declaradas
+1. Calendario B y colegios privados no cubiertos. Se supone que la demanda responde a la ciudad de origen o destino.
+2. **Pasto**: su acto lista «Vacaciones» y «Desarrollo Institucional» (solo 2024 rotula «Receso Estudiantil»); se trata como sin clases todo lo que
+   no es «Desarrollo Académico». Es inferencia aritmética (23+10+7 = 40 semanas académicas en 2022–2023; 39 en 2021), no texto literal. Pasto no tiene receso de Semana Santa.
+3. **Bogotá 2021-01-01..10**: el inicio del receso es supuesto (continuidad con el calendario 2020); el fin sale del considerando de la Res. 1739/2020.
+4. **Vacíos sin fuente = nulo (`boolean` anulable), no se imputa:** Cali y Sogamoso 2021-01-01..17 (17 días cada una; calendario 2020 no recuperado);
+   Pasto e Ipiales 2021-01-01..03 (3 días; Res. 1588 y 0916 de 2020 no obtenidas); Sogamoso desde 2024-01-15 hasta 2024-12-31 (352 días; decreto
+   de 2024 no encontrado). Los modelos entrenan desde el 2021-06-01 (núcleo §5.1), así que enero de 2021 no los afecta; **Sogamoso 2024 sí** quedaría con
+   nulos si se usara 2024 (la serie de M1 llega a 2023-12-31, y el calendario va hasta 2024-12-31).
+5. 1-ene-2024 en Pasto e Ipiales (festivo): ningún acto lo cubre (el calendario 2023 termina el 31-dic y el de 2024 empieza el 2-ene). Por la regla de vacíos sin fuente
+   (punto 4) vale **nulo** (clave `vacios` del yaml). Antes valía falso, un falso «hay clases» en un festivo (corrección de la verificación CA-1). Por eso Pasto e Ipiales tienen 4 nulos, no 3.
+5b. **Cali 2023**: el afiche se contradice (30-ene-2023 es a la vez el último día del receso, p. 4, y el primer día de clases, p. 3; las semanas lectivas suman 9+11+11+8 = 39; la semana del 26-jun al 2-jul no tiene rótulo). Se mantiene el valor literal del cuadro de receso (2023-01-30 = receso). **Decisión pendiente de Camila.**
+6. Los rangos que cruzan el fin del periodo (p. ej. 2024-12-02..2025-01-12) se recortan a 2024-12-31.
+
+### Modificaciones posteriores (solo documentadas; no entran en la columna) y casos dudosos de conocibilidad (informe §5)
+- Pasto 2021: Res. 0064 (2021-01-15) modifica la Res. 1588 (2020-11-13, no obtenida); Ipiales 2021: Res. 00023 (2021-01-14) modifica la Res. 0916
+  (2020-10-30, no obtenida). Lo vigente 30 días antes puede diferir del usado. `TODO(cita)`.
+- Pasto 2022: Res. 2706 expedida el 2021-12-07, 27 días antes de las vacaciones del 3-ene-2022 (el receso de enero dependía del calendario previo).
+- Cali 2021: modificada por Res. 06575 (2020-12-15; ajustó las vacaciones de los docentes) y Res. 0002 (2021-01-04; convirtió la semana lectiva del 25 al 31 de enero de 2021 en semana de desarrollo institucional, sin clases; según los considerandos de la Res. 06395/2021). La 0002 no era conocible 30 días antes y es anterior al 2021-06-01; no entra en la columna. Cali 2023: la Res. 4143.010.21.0.06455 (2022-10-25) no se obtuvo;
+  se usa el afiche oficial de la Secretaría de Educación, que podría ser la versión modificada por la Res. 00011 (2023-01-03). `TODO(cita)`.
+- Sogamoso 2022: Decreto 333 modificado parcialmente por el Decreto 026 (2022-01-20), no obtenido. `TODO(cita)`.
+- Sogamoso 2024: decreto de calendario no encontrado. `TODO(cita)`.
+- Boyacá y Nariño (departamentos) no se extrajeron: los cinco extremos de las rutas son entidades certificadas.
+
+### Discrepancias entre fuentes (datos, no alucinaciones)
+- Ley 51: no son dos versiones de un dato. La copia de la Procuraduría trae ambas fechas: «Dada en Bogotá, D.E., a los seis días del mes de diciembre de 1983» (firma del Congreso) y «22 de diciembre de 1983» (sanción de Belisario Betancur). Rige desde la sanción (art. 4), por eso se cita 22-dic con el Diario Oficial; la ficha de la Alcaldía de Bogotá usa la fecha del «Dada en».
+- Bogotá Res. 2204/2021: encabezado 29-oct frente a «veinticuatro (24) días del mes de octubre»; trece semanas de receso en lugar de doce.
+- Cali 2021: «Cinco (6) semanas».
+- Cali 2023: contradicción interna del afiche (ver punto 5b).
+
+### Lista de `TODO(cita)` abiertos de este bloque
+Lista anual oficial de festivos 2021–2024 (contraste); fuente primaria de Corpus Christi (+60) y Sagrado Corazón (+68); tabla oficial de Pascua;
+Sogamoso 2024; Cali 2023 (resolución) y 2021; Decreto 026/2022 de Sogamoso, Res. 1588/2020 de Pasto, Res. 0916/2020 de Ipiales, Res. 06575/2020 y 0002/2021 de Cali;
+copia de la Res. 264/2020 (fin de año) del normograma de MinTransporte, con fecha y vigencia; Boyacá y Nariño; concepto de Función Pública sobre el traslado; vigencia de la Ley 51 en Función Pública o SUIN (no accesibles).
+Cerrados por la verificación CA-1 (2026-11-26): sentencia C-568/1993 (M. P. Fabio Morón Díaz, 9-dic-1993, arts. 1 y 2 de la Ley 51 exequibles; https://www.corteconstitucional.gov.co/relatoria/1993/C-568-93.htm) y ponente de la C-107/1994 (Carlos Gaviria Díaz, 10-mar-1994, «estarse a lo resuelto» en la C-568;
+https://www.corteconstitucional.gov.co/relatoria/1994/C-107-94.htm). Detalle: `docs/investigacion/CA-1_verificacion.md`.
+
 ## M2 — Clasificación de imágenes (comportamiento del conductor)
 
 ### Conjunto principal

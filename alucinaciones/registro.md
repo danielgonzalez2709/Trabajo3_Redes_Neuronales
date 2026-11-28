@@ -7,9 +7,9 @@ evidencia no cuenta.
 ## Cobertura
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
-| M1 | | | | | |
+| M1 | | 1 candidato menor sin número (CA-3d, implementador-experto) | | | 1 candidato sin número (CA-6a, investigador-fuentes) |
 | M2 | | 1 candidato menor sin número (JO-1, orquestador) | 1 candidato sin número (JO-3a, implementador-experto) · 1 candidato menor sin número (JO-3c, orquestador) | | 1 candidato menor sin número (JO-3b, orquestador; sin prompt literal) |
-| M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
+| M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) · 1 candidato sin número (JJ-4, orquestador + implementador: MF colapsada) · 1 candidato menor sin número (JJ-4, redactor) · 1 candidato menor sin número (JJ-5, orquestador + implementador-experto: personalización) | 1 candidato menor sin número (JJ-2, analista) · 1 candidato menor sin número (JJ-4, guarda 1e-8) · 1 candidato menor sin número (JJ-5, fracción en [0, 1]) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) · 1 candidato menor sin número (JJ-5, orquestador: destinos fríos) |
 | Común | | H-01 (candidato) | | | |
 
 ## Hallazgos
@@ -330,6 +330,149 @@ evidencia no cuenta.
 - **6. Lección aprendida:** al resumir el informe de un subagente para otro, el orquestador redondeó «casi ninguna, y la única es
   otra cosa» a «ninguna». Pasar las cifras, no la conclusión.
 - **Estado:** candidato menor.
+
+
+### H-?? (JJ-4) — La «mejor» factorización de la búsqueda era la solución trivial X = Y = 0
+- **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (con efecto en Código) / lo detectó el
+  `verificador-matematico` (Opus) en R1 de JJ-4; lo confirmó la sesión principal con numpy. Dirige: Juan José.
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-4-implementador.md`, C5 (sesión principal, Opus 5.5 → implementador, Sonnet):
+  «Rangos [PROPUESTO por esta tarea …]: factores 4–64, λ 1e-3–1e2, α 1–100, iteraciones 5–30».
+- **2. Respuesta relevante de la IA:** el implementador declaró ese espacio, corrió 20 ensayos y reportó como mejor el ensayo 3
+  (f = 8, λ = 29,542, α = 1,248; NDCG@5 en validación 0,0101) sin advertencia; el redactor (Sonnet) escribió que el empate de los
+  ensayos 3, 14 y 18 «no se explica» y presentó la fila de la MF como una factorización normal.
+- **3. Cómo se sospechó:** el verificador recalculó la pérdida de los factores guardados y dio exactamente (1 + α)·1 066, la
+  pérdida en X = Y = 0.
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-4/colapso_mf.md` (+ `hpo_ensayos_colapsado.json`, `mf_als_colapsado.json`,
+  `hpo_colapsado.yaml`): max|X| = 6,45e-23, max|Y| = 1,31e-23; σ_max(P_train) = 2,871; derivación
+  L(X, Y) − L(0, 0) ≥ (λ − (1 + α)σ_max)(‖X‖² + ‖Y‖²); 8 de 20 ensayos (los 5 mejores entre ellos) con λ > (1 + α)·2,871.
+- **5. Corrección:** λ ≤ 5,0 < (1 + α_min)σ_max = 5,742 (calculado solo con train y escrito en `hpo_ensayos.json`), guarda de
+  degeneración, búsqueda y 30 corridas regeneradas (0 degenerados; mejor ensayo 19). Prompts `JJ-4-implementador-2.md` a `-4.md`.
+- **6. Lección aprendida:** con datos casi aleatorios una búsqueda puede premiar una solución degenerada que empata con el azar;
+  hay que mirar la norma de los factores (o la pérdida frente a L(0, 0)) del mejor ensayo y acotar la regularización con la
+  escala de los datos antes de declarar el espacio.
+- **Estado:** candidato. Origen en el prompt del orquestador (Opus); el implementador y el redactor (Sonnet) no lo detectaron.
+
+### H-?? (JJ-4) — «La tolerancia 1e-8 detecta el colapso» y «la cota es suficiente, no necesaria»
+- **Módulo / categoría / quién lo encontró:** M3 / **Código** (menor; con un matiz de Matemáticas) / `verificador-matematico`
+  (Opus), R1 2.ª vuelta (N1 y N3).
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-4-implementador-2.md` (sesión principal → implementador): «una guarda marca
+  como degenerado todo ajuste con max|x_uᵀy_i| < tolerancia … nunca puede ser el mejor» y «la cota es suficiente, no necesaria».
+- **2. Respuesta relevante de la IA:** el implementador (Sonnet) lo implementó tal cual y el redactor lo escribió en el blog
+  («la búsqueda nunca elige un ensayo degenerado»).
+- **3. Cómo se sospechó:** el verificador probó ajustes justo encima de la cota con pocos barridos.
+- **4. Evidencia:** informe de R1 (2.ª vuelta): con λ/((1 + α)σ_max) = 1,05 y 5 barridos, max|S| = 8,7e-5 > 1e-8 (no detectado);
+  además, en la dirección de los primeros vectores singulares, L − L(0, 0) = 2t²(λ − (1 + α)σ_max) + O(t⁴): la condición es «si y
+  solo si», no solo suficiente (lo suficiente es solo el tope del espacio). Tabla en
+  `alucinaciones/evidencias/JJ-4/guarda_tolerancia.md` (los scripts del verificador quedaron en el scratchpad, no versionados).
+- **5. Corrección:** regla exacta de tres condiciones (λ ≥ (1 + α)σ_max, pérdida ≥ L(0, 0), o max|S| < tolerancia) con pruebas de
+  cada motivo (`JJ-4-implementador-4.md`); texto corregido en YAML, docstrings y blog.
+- **6. Lección aprendida:** un umbral numérico absoluto no sustituye a la condición teórica cuando ésta se conoce.
+- **Estado:** candidato menor (origen compartido orquestador Opus + implementador Sonnet).
+
+### H-?? (JJ-4) — Afirmaciones numéricas del redactor en la «lectura de resultados»
+- **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (menor) / `verificador-matematico` (Opus), R1 (H2, H3, H4, N2).
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-4-redactor-tecnico.md` y `-2.md` (sesión principal → redactor, Sonnet).
+- **2. Respuesta relevante de la IA:** «diferencias de 0,0004 a 0,0035» (el mínimo real era 0,00017); «Gini hasta 0,999; HHI de
+  0,001 a 1» sin depender de K; «de 1 a 3 aciertos por grupo» (eran 0,97 a 3,33); «la mayor diferencia con el esperado en la tabla
+  es la de la popularidad con K = 10» (falso en esa tabla: la cobertura se aleja mucho más).
+- **3. Cómo se sospechó:** recálculo independiente de cada cifra del texto contra los JSON.
+- **4. Evidencia:** informes de R1 (1.ª y 2.ª vuelta): con listas de K destinos distintos, Gini ≤ 1 − K/n y HHI ≤ 1/K; cobertura de
+  la popularidad 0,0250 frente a 0,9977 esperado con K = 10.
+- **5. Corrección:** texto reescrito con las cifras recalculadas (`JJ-4-redactor-tecnico-2.md` y `-4.md`).
+- **6. Lección aprendida:** toda frase comparativa («la mayor», «de a … b») se recalcula sobre todas las filas de la tabla.
+- **Estado:** candidato menor.
+
+### H-?? (JJ-5) — «Personalización = desviación entre usuarios de s_ui» no mide la personalización del ranking
+- **Módulo / categoría / quién lo encontró:** M3 / **Matemáticas** (menor) / `verificador-matematico` (Opus), R1 de JJ-5.
+  Dirige: Juan José.
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-5-implementador-experto.md`, punto 2 (sesión principal, Opus 5.5 →
+  implementador-experto, Opus): «una medida de personalización, p. ej. la media sobre destinos de la desviación entre usuarios de
+  s_ui».
+- **2. Respuesta relevante de la IA:** el implementador la implementó con el comentario «b_i no aporta: es común a todos» y la
+  reportó entre semillas (media 0,091, máximo 0,242 en la semilla 8) como medida de personalización.
+- **3. Cómo se sospechó:** el verificador descompuso S en efectos de usuario, de destino e interacción y comparó con las listas.
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-5/diagnosticos_red.md` (C1), `v5_semilla8.py`, `v3_colapso.py`: la semilla con la
+  medida más alta da el mismo top-1 a los 606 usuarios y solo 6 listas top-10 distintas; el desplazamiento ⟨u, v̄⟩ de cada usuario
+  infla la desviación sin cambiar ningún orden.
+- **5. Corrección:** interacción doble centrada y tres diagnósticos de listas (`JJ-5-implementador-experto-2.md`); pruebas con una
+  matriz aditiva (personalización 0) y una de interacción pura (cálculo a mano).
+- **6. Lección aprendida:** una medida de «cuánto difieren los usuarios» debe ser invariante a lo que no cambia el orden
+  (desplazamientos por usuario); se comprueba con un caso aditivo puro.
+- **Estado:** candidato menor. Origen en el prompt del orquestador (Opus); el implementador (Opus) no lo detectó.
+
+### H-?? (JJ-5) — «La fracción de varianza es 0 si S es constante» y «está en [0, 1]» (punto flotante)
+- **Módulo / categoría / quién lo encontró:** M3 / **Código** (menor; matiz de Matemáticas) / `verificador-matematico` (Opus), R1
+  2.ª y 3.ª vuelta.
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-5-implementador-experto-2.md` (orquestador → implementador: «`fraccion_varianza_
+  interaccion` (‖E‖²/‖S − S.mean()‖²)»); la garantía «∈ [0, 1]» la escribió el orquestador al corregir (registrado en
+  `JJ-5-verificador-matematico-3.md`).
+- **2. Respuesta relevante de la IA:** docstring «(0 si S es constante)» con la guarda `total > 0`; luego «∈ [0, 1]; 0 si S es
+  constante» con la guarda `ptp == 0`.
+- **3. Cómo se sospechó:** el verificador probó matrices constantes y casi constantes.
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-5/diagnosticos_red.md` (C2), `w1_funcion.py`, `x1_frac.py`: 2,25 y 1 089 con S
+  constante; hasta 2,7e9 con una celda a un ulp; 66 de 75 casos casi constantes fuera de [0, 1].
+- **5. Corrección:** denominador por la descomposición ortogonal y guarda `ptp == 0` (`x2_arreglo.py`; 0 de 75 fuera de [0, 1]);
+  pruebas de S constante y casi constante. No cambió ningún resultado (ninguna semilla real tiene S casi constante).
+- **6. Lección aprendida:** un cociente de sumas de cuadrados centradas no hereda en punto flotante las cotas de la matemática
+  exacta; se prueba con entradas a pocos ulp.
+- **Estado:** candidato menor (implementador Opus + orquestador Opus).
+
+### H-?? (JJ-5) — «Los destinos fríos quedan por debajo de los destinos con train»
+- **Módulo / categoría / quién lo encontró:** M3 / **Conceptos** (menor) / `verificador-matematico` (Opus), R1 2.ª y 3.ª vuelta.
+- **1. Prompt literal:** `alucinaciones/prompts/JJ-5-implementador-experto-2.md`, punto 2 (orquestador → implementador): «que diga
+  que los fríos reciben puntaje solo por su tipo … y que en la práctica quedan por debajo de los destinos con train».
+- **2. Respuesta relevante de la IA:** el implementador lo copió en `descripcion_frios` (también en `summary.json`); el
+  orquestador lo reescribió como «pueden superar a destinos con train, pero no a los mejor puntuados de cada usuario».
+- **3. Cómo se sospechó:** el verificador midió la posición del mejor frío en la lista de cada usuario.
+- **4. Evidencia:** `alucinaciones/evidencias/JJ-5/diagnosticos_red.md` (C3), `x3_frios.py`: el mejor frío supera entre el 62,3 % y
+  el 88,7 % de los destinos con train; posición mínima 75. Solo es empírico que ningún frío entre al top-10 (30 semillas).
+- **5. Corrección:** «Pueden superar a destinos con train; si entran o no al top-K depende del entrenamiento, así que se MIDE en
+  `frios_por_lista`.»
+- **6. Lección aprendida:** no convertir un resultado de una corrida (0 fríos en el top-10) en una propiedad del modelo.
+- **Estado:** candidato menor (orquestador Opus; el implementador lo copió).
+
+### H-?? (CA-3d) — «R1: 15,5 / 0,6 · … ≠ 31» en el comentario de una prueba (la carga real es 16,5)
+- **Módulo / categoría / quién lo encontró:** M1 / **Código** (cifra falsa en el comentario de una prueba; menor) / lo señaló
+  el `revisor-calidad` (Sonnet) en la 1.ª vuelta de CA-3d como comentario ilegible (C10); el `implementador-experto` de CA-3e
+  (Opus) al reescribirlo encontró que la cifra estaba mal; lo verificó la sesión orquestadora con un script propio. Dirige: Camila.
+- **1. Prompt literal:** `alucinaciones/prompts/CA-3d.md` (subagente `implementador-experto`, Opus, 27-nov-2026), que pedía
+  calibrar m_r y probar con «el caso a mano en el comentario».
+- **2. Respuesta relevante de la IA:** en el commit `1a27df7`, `tests/test_operacion_m1.py:747`
+  (`test_multiplicadores_reproducen_cada_ruta`): «# con ρ* global solo el total coincide (R1: 15,5 / 0,6 · … ≠ 31).»
+- **3. Cómo se sospechó:** C10 de `alucinaciones/prompts/CA-3e.md` pidió escribir el cálculo completo; al hacerlo, el
+  implementador de CA-3e obtuvo 16,5 y no 15,5.
+- **4. Evidencia:** `alucinaciones/evidencias/CA-3d/verificar_comentario_R1.py` → `salida_comentario_R1.txt` (no importa
+  `src/`; lee el comentario del commit `1a27df7` con `git show`): con los datos de la propia prueba, Σ f·D/cap_ef de R1 =
+  0,5·(400+260)/20 = **16,5**; ρ* = 21,5/36 = 0,5972; 16,5/0,6 = 27,5 y 16,5/ρ* = 27,63, ambos ≠ 31. Con la cifra del comentario
+  saldría 15,5/0,6 = 25,83. La conclusión (≠ 31) era cierta; el número que la sostenía, no.
+- **5. Corrección:** CA-3e reescribió el comentario con el cálculo completo (`tests/test_operacion_m1.py:736-744` y `:770-772`:
+  16,5 / 0,5972 = 27,63 ≠ 31); la 2.ª vuelta de `revisor-calidad` lo verificó.
+- **6. Lección aprendida:** un «caso a mano» en un comentario no lo ejecuta nadie: si la prueba no aserta ese número, puede
+  estar mal sin que nada falle. Escribir el cálculo completo con los datos de la prueba, o convertirlo en aserción.
+- **Estado:** candidato (menor: no afectó ningún resultado; Andrés decide si cuenta en la categoría Código).
+
+### H-?? (CA-6a) — «Arrendar en vez de comprar mueve ~un tercio de la estructura de costos»
+- **Módulo / categoría / quién lo encontró:** M1 / **Conceptos** (interpretación de un índice de costos) / cazador-alucinaciones
+  (Opus) en la verificación CA-6, 27-nov-2026. Dirige: Camila.
+- **1. Prompt literal:** `alucinaciones/prompts/CA-6a.md` (investigador-fuentes, Sonnet, 27-nov-2026), sección «Entrega»: «una
+  sección "Qué se puede concluir con esto" que diga qué comparación de costos es defendible y cuál no».
+- **2. Respuesta relevante de la IA:** `docs/investigacion/CA-6_costos_flota.md` §8, «Defendible (con cita)», punto 3:
+  «Estructura relativa de costos: combustible ~31 %, costos fijos ~33 % (incluye conductores), peajes y terminales ~20 %. Permite
+  argumentar, por ejemplo, que una opción que reduzca costos fijos (arrendar, no comprar) mueve ~un tercio de la estructura».
+- **3. Cómo se sospechó:** la misma frase reconoce que los costos fijos «incluye[n] conductores»; arrendar un vehículo no elimina
+  el salario del conductor, así que el «tercio» no puede atribuirse a la decisión comprar/arrendar.
+- **4. Evidencia:** DANE, metodología DSO-ICTIP-MET-001 v2 (2018): «costos fijos (parqueaderos, seguros, costo del vehículo,
+  impuestos y mano de obra)» (`alucinaciones/evidencias/CA-6/ictip_met_v2.txt`). DANE, boletín ICTIP III-2026 (22-oct-2026),
+  Tabla 3: «Costos fijos 32,99 14,07 4,83» y Tabla 4: «Mano de obra conductor(es) y ayudante(s) 22,11 4,72»
+  (`ictip_bol_IIItrim2026.txt`): de los 4,83 p.p. que aportó el grupo en el año corrido, 4,72 vienen de la mano de obra.
+  `verificar.py` → `salida.txt` (fragmentos CF, C-2c, C-2cf).
+- **5. Corrección:** «Arrendar en vez de comprar sustituye solo el componente de capital ("Costo del vehículo y su
+  apalancamiento"), cuyo peso no está en el boletín (T-9); conductores, combustible, peajes y seguros se mantienen. No se puede
+  cuantificar el ahorro con el 32,99 %».
+- **6. Lección aprendida:** un grupo de un índice de precios no es una palanca de decisión: antes de decir qué «mueve» una
+  opción, bajar al nivel de clase de costo y comprobar qué componentes cambia realmente.
+- **Estado:** candidato. Detalle: `docs/investigacion/CA-6_verificacion.md` (V-20). Es un error de razonamiento, no un dato inventado:
+  Andrés decide si cuenta en la categoría Conceptos.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto

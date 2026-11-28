@@ -1,0 +1,147 @@
+{
+  "modelo": "mf_als",
+  "semilla": 22,
+  "run_id": 22,
+  "split_evaluado": "prueba",
+  "n_usuarios_evaluados": 606,
+  "tiempo_s": 0.640976499998942,
+  "hiperparametros": {
+    "factores": 4,
+    "regularizacion": 0.002104317845122097,
+    "alfa": 1.484941433731389,
+    "iteraciones": 9,
+    "escala_inicial": 0.01
+  },
+  "n_parametros": 7432,
+  "diagnosticos": {
+    "degenerado": false,
+    "motivo_degenerado": null,
+    "condiciones_degenerado": {
+      "lambda_ge_cota": false,
+      "perdida_no_menor_que_nula": false,
+      "puntaje_bajo_tolerancia": false
+    },
+    "max_abs_puntaje": 0.7937320572044,
+    "sigma_max_train": 2.871018232037863,
+    "n_parametros_con_datos": 6052
+  },
+  "metricas": {
+    "global": {
+      "precision@1": 0.0016501650165016502,
+      "recall@1": 0.0016501650165016502,
+      "ndcg@1": 0.0016501650165016502,
+      "acierto@1": 0.0016501650165016502,
+      "cobertura@1": 0.028,
+      "precision@3": 0.00275027502750275,
+      "recall@3": 0.00825082508250825,
+      "ndcg@3": 0.0049504950495049506,
+      "acierto@3": 0.00825082508250825,
+      "cobertura@3": 0.051,
+      "precision@5": 0.0023102310231023103,
+      "recall@5": 0.01155115511551155,
+      "ndcg@5": 0.00637186982862506,
+      "acierto@5": 0.01155115511551155,
+      "cobertura@5": 0.069,
+      "precision@10": 0.0011551155115511551,
+      "recall@10": 0.01155115511551155,
+      "ndcg@10": 0.00637186982862506,
+      "acierto@10": 0.01155115511551155,
+      "cobertura@10": 0.098,
+      "acierto_por_lugar@1": 0.21947194719471946,
+      "acierto_por_lugar@3": 0.5099009900990099
+    },
+    "concentracion": {
+      "gini@1": 0.9880396039603963,
+      "hhi@1": 0.08660915596510146,
+      "gini@3": 0.9770638063806383,
+      "hhi@3": 0.040043278255218265,
+      "gini@5": 0.9686594059405942,
+      "hhi@5": 0.029309980503000797,
+      "gini@10": 0.9484643564356436,
+      "hhi@10": 0.017670380899476087
+    },
+    "por_grupo": {
+      "pocas": {
+        "n_usuarios": 280,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.025,
+        "precision@3": 0.0035714285714285713,
+        "recall@3": 0.010714285714285714,
+        "ndcg@3": 0.005357142857142857,
+        "acierto@3": 0.010714285714285714,
+        "cobertura@3": 0.043,
+        "precision@5": 0.002142857142857143,
+        "recall@5": 0.010714285714285714,
+        "ndcg@5": 0.005357142857142857,
+        "acierto@5": 0.010714285714285714,
+        "cobertura@5": 0.056,
+        "precision@10": 0.0010714285714285715,
+        "recall@10": 0.010714285714285714,
+        "ndcg@10": 0.005357142857142857,
+        "acierto@10": 0.010714285714285714,
+        "cobertura@10": 0.095,
+        "acierto_por_lugar@1": 0.2357142857142857,
+        "acierto_por_lugar@3": 0.5285714285714286
+      },
+      "muchas": {
+        "n_usuarios": 326,
+        "precision@1": 0.003067484662576687,
+        "recall@1": 0.003067484662576687,
+        "ndcg@1": 0.003067484662576687,
+        "acierto@1": 0.003067484662576687,
+        "cobertura@1": 0.026,
+        "precision@3": 0.0020449897750511245,
+        "recall@3": 0.006134969325153374,
+        "ndcg@3": 0.004601226993865031,
+        "acierto@3": 0.006134969325153374,
+        "cobertura@3": 0.051,
+        "precision@5": 0.00245398773006135,
+        "recall@5": 0.012269938650306749,
+        "ndcg@5": 0.007243414466707933,
+        "acierto@5": 0.012269938650306749,
+        "cobertura@5": 0.068,
+        "precision@10": 0.001226993865030675,
+        "recall@10": 0.012269938650306749,
+        "ndcg@10": 0.007243414466707933,
+        "acierto@10": 0.012269938650306749,
+        "cobertura@10": 0.097,
+        "acierto_por_lugar@1": 0.20552147239263804,
+        "acierto_por_lugar@3": 0.4938650306748466
+      }
+    },
+    "destinos_frios": {
+      "1": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0024937655860349127,
+        "frios_por_lista": 0.0
+      },
+      "3": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.012468827930174564,
+        "frios_por_lista": 0.0
+      },
+      "5": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.017456359102244388,
+        "frios_por_lista": 0.0
+      },
+      "10": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.017456359102244388,
+        "frios_por_lista": 0.0
+      }
+    }
+  },
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}

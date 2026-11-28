@@ -9,6 +9,10 @@
 # Datos procesados y evidencias: byte a byte (su SHA-256 se verifica)
 data/processed/** -text
 alucinaciones/evidencias/** -text
+# Resultados y CSV en general: varias pruebas comparan su SHA-256 con el guardado en un resumen.json; con
+# core.autocrlf=true (Windows) git los sacaba con CRLF y la huella dejaba de coincidir.
+results/** -text
+*.csv -text
 
 # Binarios
 *.parquet binary

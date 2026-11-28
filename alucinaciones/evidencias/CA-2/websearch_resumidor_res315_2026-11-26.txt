@@ -1,0 +1,15 @@
+Herramienta: WebSearch (modo "extended") usada por el cazador-alucinaciones en la verificación CA-2, 2026-11-26.
+Consulta literal enviada:
+Colombia norma tiempos de conducción continua conductores transporte de pasajeros resolución Ministerio de Transporte 2025 2026 pausas activas fatiga
+
+Fragmento literal del resumen generado por la herramienta (IA):
+"- **Cifras contradictorias en fuentes secundarias:** una guía señala conducción continua máxima de 5 horas según la Resolución 315 de 2013, que es la norma de carga. Otra fuente recomienda no conducir más de 8 horas seguidas y hacer pausas de al menos 30 minutos cada 4 horas, atribuyéndolo al Ministerio sin citar la norma. Una tercera habla de una pausa tras 4-5 horas de conducción. Estas cifras no coinciden entre sí y no están verificadas."
+
+Contraste con la fuente primaria (ver res_315_2013_colpensiones.txt y mintransporte_concepto_20251340607391.pdf, p. 4):
+- Título: "Por la cual se adoptan unas medidas para garantizar la seguridad en el transporte público terrestre automotor y se dictan otras disposiciones."
+- Art. 6: "Todos los vehículos de servicio público de transporte terrestre de pasajeros y mixto, para la realización de operaciones de transporte con una duración superior a ocho (8) horas de recorrido entre el lugar de origen y el lugar de destino, deberán contar con un segundo conductor. Las empresas de transporte deberán adoptar las medidas conducentes para garantizar los descansos necesarios de los conductores."
+- El texto completo (13 artículos) no contiene la cifra "5 horas" de conducción continua.
+- El art. 4 (alistamiento) sí menciona a "las empresas de transporte de carga" junto con pasajeros y mixto.
+=> "que es la norma de carga" es IMPRECISO (la Res. 315/2013 es de seguridad del transporte público terrestre automotor en
+   general; su art. 6, el único sobre conductores, se refiere a pasajeros y mixto, no a carga). La cifra de 5 h la atribuye
+   el resumidor a "una guía" y la marca como no verificada; la Res. 315/2013 no la contiene (13 artículos leídos).

@@ -1,0 +1,1390 @@
+{
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  },
+  "familias": {
+    "mf_als": {
+      "n_ensayos": 20,
+      "objetivo_nombre": "ndcg@5",
+      "objetivo": "ndcg@5 medio en validación (candidatos = catálogo − train)",
+      "espacio": {
+        "factores": {
+          "tipo": "entero",
+          "min": 4,
+          "max": 64,
+          "log": true
+        },
+        "regularizacion": {
+          "tipo": "real",
+          "min": 0.001,
+          "max": 5.0,
+          "log": true
+        },
+        "alfa": {
+          "tipo": "real",
+          "min": 1.0,
+          "max": 100.0,
+          "log": true
+        },
+        "iteraciones": {
+          "tipo": "entero",
+          "min": 5,
+          "max": 30,
+          "log": false
+        }
+      },
+      "sampler": "TPESampler",
+      "semilla_sampler": 2026,
+      "cota_solucion_nula": {
+        "sigma_max_train": 2.871018232037863,
+        "alfa_min": 1.0,
+        "lambda_max": 5.0,
+        "cota": 5.742036464075726,
+        "lambda_max_bajo_la_cota": true,
+        "nota": "La condición λ ≥ (1 + α)·σ_max(P_train) ⇔ «X = Y = 0 es el único mínimo global» es exacta (si y solo si): L(X, Y) − L(0, 0) ≥ (λ − (1 + α)σ_max)(‖X‖² + ‖Y‖²), con σ_max la norma espectral (mayor valor singular) de la matriz binaria usuario × destino de TRAIN, y si λ < (1 + α)σ_max el origen es un punto de silla y existe un mínimo no nulo. Lo «suficiente, no necesario» es solo el tope del espacio: con α ≥ alfa_min, (1 + α)σ_max ≥ cota = (1 + alfa_min)·σ_max, así que lambda_max < cota garantiza que ningún punto del espacio colapsa, aunque para α grandes λ podría llegar más arriba. Además, MFImplicitaALS marca como degenerada la factorización que cumple la condición exacta, una pérdida final ≥ L(0, 0) o puntajes bajo mf_als.tolerancia_degenerado."
+      },
+      "n_degenerados": 0,
+      "nota_degenerados": "Ensayo degenerado (X = Y = 0 o equivalente): λ ≥ (1 + α)σ_max(P_train), o pérdida final ≥ L(0, 0), o max|XYᵀ| < mf_als.tolerancia_degenerado; `motivo_degenerado` dice cuál. Se registra, cuenta en el presupuesto y nunca es el mejor.",
+      "ensayos": [
+        {
+          "numero": 0,
+          "params": {
+            "factores": 7,
+            "regularizacion": 0.03370683896168441,
+            "alfa": 89.79888750108249,
+            "iteraciones": 7
+          },
+          "valor": 0.0013210937364214511,
+          "tiempo_s": 0.3009233000339009,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.1913397915596864,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0013210937364214511,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0013210937364214511,
+          "recall@10": 0.003067484662576687
+        },
+        {
+          "numero": 1,
+          "params": {
+            "factores": 14,
+            "regularizacion": 4.496966537633221,
+            "alfa": 2.4904749512695403,
+            "iteraciones": 28
+          },
+          "valor": 0.004443126131531878,
+          "tiempo_s": 0.8369326000101864,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.7444022763385924,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0019353673422437348,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.004443126131531878,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.007515148219059278,
+          "recall@10": 0.018404907975460124
+        },
+        {
+          "numero": 2,
+          "params": {
+            "factores": 18,
+            "regularizacion": 0.7891186550900305,
+            "alfa": 4.026736202311015,
+            "iteraciones": 15
+          },
+          "valor": 0.004601226993865031,
+          "tiempo_s": 0.8450449000229128,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.0230694803859788,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.004601226993865031,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.004601226993865031,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.006580588998238988,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 3,
+          "params": {
+            "factores": 8,
+            "regularizacion": 2.0286466050534044,
+            "alfa": 1.248389782269395,
+            "iteraciones": 16
+          },
+          "valor": 0.0058061020267312045,
+          "tiempo_s": 1.0108868000097573,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.7973334731595028,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0058061020267312045,
+          "recall@3": 0.009202453987730062,
+          "ndcg@5": 0.0058061020267312045,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.007660487619073587,
+          "recall@10": 0.015337423312883436
+        },
+        {
+          "numero": 4,
+          "params": {
+            "factores": 18,
+            "regularizacion": 0.022149784615023684,
+            "alfa": 24.489851963134466,
+            "iteraciones": 29
+          },
+          "valor": 0.001186665052866692,
+          "tiempo_s": 1.6755301000084728,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.1711268933892933,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.001186665052866692,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.004089431951915438,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 5,
+          "params": {
+            "factores": 4,
+            "regularizacion": 0.0028123869606657844,
+            "alfa": 2.909462338003,
+            "iteraciones": 21
+          },
+          "valor": 0.008430079519574625,
+          "tiempo_s": 1.0780311999842525,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.8044066549149088,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.004601226993865031,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.008430079519574625,
+          "recall@5": 0.015337423312883436,
+          "ndcg@10": 0.010321168085371282,
+          "recall@10": 0.02147239263803681
+        },
+        {
+          "numero": 6,
+          "params": {
+            "factores": 7,
+            "regularizacion": 3.7705740968563046,
+            "alfa": 1.9876241558723335,
+            "iteraciones": 6
+          },
+          "valor": 0.006189517057687115,
+          "tiempo_s": 0.6427036999957636,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.6072143826515733,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.005002852004820422,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.006189517057687115,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.009173265706637212,
+          "recall@10": 0.018404907975460124
+        },
+        {
+          "numero": 7,
+          "params": {
+            "factores": 14,
+            "regularizacion": 0.33483714935266745,
+            "alfa": 57.38076294120295,
+            "iteraciones": 22
+          },
+          "valor": 0.0,
+          "tiempo_s": 1.3262371000018902,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.1590599147655398,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0,
+          "recall@5": 0.0,
+          "ndcg@10": 0.0019353673422437348,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 8,
+          "params": {
+            "factores": 16,
+            "regularizacion": 0.05338749611284362,
+            "alfa": 3.2719088784880164,
+            "iteraciones": 18
+          },
+          "valor": 0.003256461078665186,
+          "tiempo_s": 1.1016650999663398,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.0519491004464463,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0019353673422437348,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.003256461078665186,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.007101025229654997,
+          "recall@10": 0.018404907975460124
+        },
+        {
+          "numero": 9,
+          "params": {
+            "factores": 19,
+            "regularizacion": 0.06501598297250454,
+            "alfa": 2.5963306509388957,
+            "iteraciones": 16
+          },
+          "valor": 0.0019353673422437348,
+          "tiempo_s": 1.1831750000128523,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.0938880499616532,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0019353673422437348,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.0019353673422437348,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0019353673422437348,
+          "recall@10": 0.003067484662576687
+        },
+        {
+          "numero": 10,
+          "params": {
+            "factores": 5,
+            "regularizacion": 0.019932515779700705,
+            "alfa": 2.4022457357960936,
+            "iteraciones": 23
+          },
+          "valor": 0.0015337423312883436,
+          "tiempo_s": 1.0220425999723375,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.851083092345204,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0015337423312883436,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.0015337423312883436,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0024571472259631326,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 11,
+          "params": {
+            "factores": 9,
+            "regularizacion": 0.08435297050845353,
+            "alfa": 1.53370429186801,
+            "iteraciones": 5
+          },
+          "valor": 0.008831704530530015,
+          "tiempo_s": 0.4074826999567449,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.9456522661206423,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.005002852004820422,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.008831704530530015,
+          "recall@5": 0.015337423312883436,
+          "ndcg@10": 0.010876694305581141,
+          "recall@10": 0.02147239263803681
+        },
+        {
+          "numero": 12,
+          "params": {
+            "factores": 4,
+            "regularizacion": 0.002184577122632933,
+            "alfa": 3.9036414070072762,
+            "iteraciones": 6
+          },
+          "valor": 0.007108985783153173,
+          "tiempo_s": 0.48116640001535416,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.776312498896082,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.004601226993865031,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.007108985783153173,
+          "recall@5": 0.012269938650306749,
+          "ndcg@10": 0.011229673291703794,
+          "recall@10": 0.024539877300613498
+        },
+        {
+          "numero": 13,
+          "params": {
+            "factores": 9,
+            "regularizacion": 0.02513925657902842,
+            "alfa": 1.7998217131836152,
+            "iteraciones": 6
+          },
+          "valor": 0.008831704530530015,
+          "tiempo_s": 0.3535309999715537,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.9477440929903389,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.005002852004820422,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.008831704530530015,
+          "recall@5": 0.015337423312883436,
+          "ndcg@10": 0.010722793096326672,
+          "recall@10": 0.02147239263803681
+        },
+        {
+          "numero": 14,
+          "params": {
+            "factores": 9,
+            "regularizacion": 0.05751765171282224,
+            "alfa": 3.7086346560387344,
+            "iteraciones": 6
+          },
+          "valor": 0.006725570752197265,
+          "tiempo_s": 0.47146760002942756,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.9336463092866331,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.005404477015775813,
+          "recall@3": 0.009202453987730062,
+          "ndcg@5": 0.006725570752197265,
+          "recall@5": 0.012269938650306749,
+          "ndcg@10": 0.009503361239214437,
+          "recall@10": 0.02147239263803681
+        },
+        {
+          "numero": 15,
+          "params": {
+            "factores": 8,
+            "regularizacion": 0.07526343294637648,
+            "alfa": 1.031321701222625,
+            "iteraciones": 7
+          },
+          "valor": 0.0058061020267312045,
+          "tiempo_s": 0.5001623000134714,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.9700010298426259,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0058061020267312045,
+          "recall@3": 0.009202453987730062,
+          "ndcg@5": 0.0058061020267312045,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.00870886892577995,
+          "recall@10": 0.018404907975460124
+        },
+        {
+          "numero": 16,
+          "params": {
+            "factores": 17,
+            "regularizacion": 0.010781694374557133,
+            "alfa": 1.5158558344016957,
+            "iteraciones": 10
+          },
+          "valor": 0.004655774726398771,
+          "tiempo_s": 0.7251272000139579,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 1.0919441026029144,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0034691096735320784,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.004655774726398771,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.005678269613924333,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 17,
+          "params": {
+            "factores": 11,
+            "regularizacion": 0.07802141482068602,
+            "alfa": 8.574477690765628,
+            "iteraciones": 11
+          },
+          "valor": 0.004388578398998138,
+          "tiempo_s": 0.6326260000350885,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.9960916381001367,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.003067484662576687,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.004388578398998138,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.007221180102419005,
+          "recall@10": 0.018404907975460124
+        },
+        {
+          "numero": 18,
+          "params": {
+            "factores": 5,
+            "regularizacion": 0.02952589600043453,
+            "alfa": 5.858267595016936,
+            "iteraciones": 12
+          },
+          "valor": 0.0013210937364214511,
+          "tiempo_s": 0.7068523999769241,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.8522775553256341,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0013210937364214511,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0030944975788624813,
+          "recall@10": 0.009202453987730062
+        },
+        {
+          "numero": 19,
+          "params": {
+            "factores": 4,
+            "regularizacion": 0.002104317845122097,
+            "alfa": 1.484941433731389,
+            "iteraciones": 9
+          },
+          "valor": 0.010152798266951467,
+          "tiempo_s": 0.4855589999933727,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "condiciones_degenerado": {
+            "lambda_ge_cota": false,
+            "perdida_no_menor_que_nula": false,
+            "puntaje_bajo_tolerancia": false
+          },
+          "max_abs_puntaje": 0.8211832866448538,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.005002852004820422,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.010152798266951467,
+          "recall@5": 0.018404907975460124,
+          "ndcg@10": 0.012213142021226777,
+          "recall@10": 0.024539877300613498
+        }
+      ],
+      "mejor": {
+        "numero": 19,
+        "params": {
+          "factores": 4,
+          "regularizacion": 0.002104317845122097,
+          "alfa": 1.484941433731389,
+          "iteraciones": 9
+        },
+        "valor": 0.010152798266951467
+      },
+      "tiempo_total_s": 16.005255299969576
+    },
+    "red": {
+      "n_ensayos": 20,
+      "objetivo_nombre": "ndcg@5",
+      "objetivo": "ndcg@5 medio en validación (candidatos = catálogo − train)",
+      "espacio": {
+        "modelo.dim_embedding": {
+          "tipo": "categorico",
+          "valores": [
+            4,
+            8,
+            16,
+            32
+          ]
+        },
+        "entrenamiento.lr": {
+          "tipo": "real",
+          "min": 0.0001,
+          "max": 0.01,
+          "log": true
+        },
+        "regularizacion.weight_decay": {
+          "tipo": "real",
+          "min": 1e-06,
+          "max": 0.01,
+          "log": true
+        },
+        "regularizacion.dropout": {
+          "tipo": "real",
+          "min": 0.0,
+          "max": 0.5
+        },
+        "modelo.capas_usuario": {
+          "tipo": "categorico",
+          "valores": [
+            0,
+            1,
+            2
+          ]
+        },
+        "modelo.unidades_usuario": {
+          "tipo": "categorico",
+          "valores": [
+            16,
+            32,
+            64
+          ]
+        },
+        "modelo.capas_destino": {
+          "tipo": "categorico",
+          "valores": [
+            0,
+            1,
+            2
+          ]
+        },
+        "modelo.unidades_destino": {
+          "tipo": "categorico",
+          "valores": [
+            16,
+            32,
+            64
+          ]
+        },
+        "modelo.negativos_por_positivo": {
+          "tipo": "categorico",
+          "valores": [
+            1,
+            2,
+            4,
+            8
+          ]
+        },
+        "perdida.tipo": {
+          "tipo": "categorico",
+          "valores": [
+            "bce",
+            "bpr"
+          ]
+        },
+        "modelo.usar_id_destino": {
+          "tipo": "categorico",
+          "valores": [
+            true,
+            false
+          ]
+        },
+        "modelo.usar_id_usuario": {
+          "tipo": "categorico",
+          "valores": [
+            true,
+            false
+          ]
+        }
+      },
+      "sampler": "TPESampler",
+      "semilla_sampler": 2026,
+      "n_degenerados": 0,
+      "nota_degenerados": "Ensayo degenerado de la red: puntajes no finitos, puntajes de validación constantes por usuario o max‖u‖·max‖v_i‖ < red.tolerancia_degenerado (ver red.diagnostico_degeneracion); `motivo_degenerado` dice cuál. Se registra, cuenta en el presupuesto y nunca es el mejor.",
+      "nota_parada_temprana": "Cada ensayo para por NDCG@5 de validación (paciencia de la config) y se evalúa con los pesos de su mejor época: validación elige la época y los hiperparámetros (D9, D19).",
+      "ensayos": [
+        {
+          "numero": 0,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0009090331464314102,
+            "regularizacion.weight_decay": 0.008916655278184252,
+            "regularizacion.dropout": 0.09907054450945907,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 32,
+            "modelo.capas_destino": 0,
+            "modelo.unidades_destino": 64,
+            "modelo.negativos_por_positivo": 1,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.0013210937364214511,
+          "tiempo_s": 4.023688499990385,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 4,
+          "epoca_parada": 14,
+          "ndcg5_validacion_mejor": 0.0013210937364214511,
+          "n_parametros": 11333,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0013210937364214511,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0013210937364214511,
+          "recall@10": 0.003067484662576687
+        },
+        {
+          "numero": 1,
+          "params": {
+            "modelo.dim_embedding": 8,
+            "entrenamiento.lr": 0.000859035510744769,
+            "regularizacion.weight_decay": 1.070538770912872e-05,
+            "regularizacion.dropout": 0.25401414034991676,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 32,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 64,
+            "modelo.negativos_por_positivo": 8,
+            "perdida.tipo": "bpr",
+            "modelo.usar_id_destino": false,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.002373330105733384,
+          "tiempo_s": 1.4932402999838814,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.006134969325153374,
+          "n_parametros": 7881,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.002373330105733384,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.002373330105733384,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 2,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0014962895366179027,
+            "regularizacion.weight_decay": 2.4394514003860556e-06,
+            "regularizacion.dropout": 0.49869923189756454,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.006134969325153374,
+          "tiempo_s": 1.5256503999698907,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.006134969325153374,
+          "n_parametros": 17472,
+          "ndcg@1": 0.006134969325153374,
+          "recall@1": 0.006134969325153374,
+          "ndcg@3": 0.006134969325153374,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.006134969325153374,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.006134969325153374,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 3,
+          "params": {
+            "modelo.dim_embedding": 8,
+            "entrenamiento.lr": 0.008474067535517086,
+            "regularizacion.weight_decay": 0.0007312389639727655,
+            "regularizacion.dropout": 0.029217292441938658,
+            "modelo.capas_usuario": 1,
+            "modelo.unidades_usuario": 32,
+            "modelo.capas_destino": 2,
+            "modelo.unidades_destino": 64,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": false,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.003067484662576687,
+          "tiempo_s": 1.8459983000066131,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 4,
+          "epoca_parada": 14,
+          "ndcg5_validacion_mejor": 0.007456063061574825,
+          "n_parametros": 12449,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.003067484662576687,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.003067484662576687,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0040351683336985545,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 4,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.002476174576862428,
+            "regularizacion.weight_decay": 0.00021277510252954002,
+            "regularizacion.dropout": 0.03446345231570841,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 0,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bpr",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.0015337423312883436,
+          "tiempo_s": 1.2309576999978162,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 2,
+          "epoca_parada": 12,
+          "ndcg5_validacion_mejor": 0.0015337423312883436,
+          "n_parametros": 11333,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0015337423312883436,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.0015337423312883436,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0015337423312883436,
+          "recall@10": 0.003067484662576687
+        },
+        {
+          "numero": 5,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0018906223566653403,
+            "regularizacion.weight_decay": 0.0019818664922578787,
+            "regularizacion.dropout": 0.08320524634872606,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 0,
+            "modelo.unidades_destino": 64,
+            "modelo.negativos_por_positivo": 4,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": false,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.0,
+          "tiempo_s": 1.104101900011301,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.004041501120576487,
+          "n_parametros": 13926,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0,
+          "recall@5": 0.0,
+          "ndcg@10": 0.001979362004373957,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 6,
+          "params": {
+            "modelo.dim_embedding": 8,
+            "entrenamiento.lr": 0.008697492022991004,
+            "regularizacion.weight_decay": 4.011509790850908e-06,
+            "regularizacion.dropout": 0.09212281627036606,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bpr",
+            "modelo.usar_id_destino": false,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.0013210937364214511,
+          "tiempo_s": 1.409771799982991,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 2,
+          "epoca_parada": 12,
+          "ndcg5_validacion_mejor": 0.005787892046731723,
+          "n_parametros": 7617,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0013210937364214511,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.003381437490696761,
+          "recall@10": 0.009202453987730062
+        },
+        {
+          "numero": 7,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0002409361302325144,
+            "regularizacion.weight_decay": 0.0015544057327615028,
+            "regularizacion.dropout": 0.4341874894348839,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 64,
+            "modelo.negativos_por_positivo": 1,
+            "perdida.tipo": "bpr",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.004388578398998138,
+          "tiempo_s": 2.108567099960055,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 12,
+          "epoca_parada": 22,
+          "ndcg5_validacion_mejor": 0.004388578398998138,
+          "n_parametros": 26448,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.003067484662576687,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.004388578398998138,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.004388578398998138,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 8,
+          "params": {
+            "modelo.dim_embedding": 8,
+            "entrenamiento.lr": 0.0001060189236025443,
+            "regularizacion.weight_decay": 8.857458823568235e-05,
+            "regularizacion.dropout": 0.2554450934016931,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 2,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 8,
+            "perdida.tipo": "bpr",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.0,
+          "tiempo_s": 1.4214049000293016,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.0,
+          "n_parametros": 14352,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0,
+          "recall@5": 0.0,
+          "ndcg@10": 0.00177340384244103,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 9,
+          "params": {
+            "modelo.dim_embedding": 4,
+            "entrenamiento.lr": 0.00012237508501380668,
+            "regularizacion.weight_decay": 2.1161511464353044e-05,
+            "regularizacion.dropout": 0.2625994695921374,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 4,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.004601226993865031,
+          "tiempo_s": 1.5518181000370532,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.004601226993865031,
+          "n_parametros": 7324,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.004601226993865031,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.004601226993865031,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.006374630836306061,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 10,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0016862029558476644,
+            "regularizacion.weight_decay": 0.0003700995495172498,
+            "regularizacion.dropout": 0.48227567242679326,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": false,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.0013210937364214511,
+          "tiempo_s": 1.5668645999976434,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 5,
+          "epoca_parada": 15,
+          "ndcg5_validacion_mejor": 0.007108985783153173,
+          "n_parametros": 849,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0013210937364214511,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0033004557407954084,
+          "recall@10": 0.009202453987730062
+        },
+        {
+          "numero": 11,
+          "params": {
+            "modelo.dim_embedding": 4,
+            "entrenamiento.lr": 0.0009213776580433746,
+            "regularizacion.weight_decay": 5.144574565388029e-05,
+            "regularizacion.dropout": 0.33796470125745126,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 4,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.004601226993865031,
+          "tiempo_s": 1.477015400014352,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.004601226993865031,
+          "n_parametros": 7324,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.004601226993865031,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.004601226993865031,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.004601226993865031,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 12,
+          "params": {
+            "modelo.dim_embedding": 4,
+            "entrenamiento.lr": 0.0008505315096980828,
+            "regularizacion.weight_decay": 3.353872759652619e-05,
+            "regularizacion.dropout": 0.49041511503167845,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.003122032395110427,
+          "tiempo_s": 2.377415499999188,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 12,
+          "epoca_parada": 22,
+          "ndcg5_validacion_mejor": 0.003122032395110427,
+          "n_parametros": 8436,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0019353673422437348,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.003122032395110427,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.003122032395110427,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 13,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0034504530389046126,
+            "regularizacion.weight_decay": 5.7754255271373e-06,
+            "regularizacion.dropout": 0.3047995188928457,
+            "modelo.capas_usuario": 0,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.0042541497154433795,
+          "tiempo_s": 1.4764734000200406,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.0042541497154433795,
+          "n_parametros": 11984,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.003067484662576687,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.0042541497154433795,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.007918642123681065,
+          "recall@10": 0.018404907975460124
+        },
+        {
+          "numero": 14,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.006813121665850798,
+            "regularizacion.weight_decay": 1.1602544366306593e-06,
+            "regularizacion.dropout": 0.1518920075430033,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bpr",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.0038288525257095946,
+          "tiempo_s": 2.3706603000173345,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 10,
+          "epoca_parada": 20,
+          "ndcg5_validacion_mejor": 0.0038288525257095946,
+          "n_parametros": 12528,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0,
+          "recall@3": 0.0,
+          "ndcg@5": 0.0038288525257095946,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.0038288525257095946,
+          "recall@10": 0.009202453987730062
+        },
+        {
+          "numero": 15,
+          "params": {
+            "modelo.dim_embedding": 8,
+            "entrenamiento.lr": 0.00021072827121809085,
+            "regularizacion.weight_decay": 1.7443942147732896e-05,
+            "regularizacion.dropout": 0.12816865306428663,
+            "modelo.capas_usuario": 1,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 4,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.005002852004820422,
+          "tiempo_s": 3.8507478999672458,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 28,
+          "epoca_parada": 38,
+          "ndcg5_validacion_mejor": 0.005002852004820422,
+          "n_parametros": 13912,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.005002852004820422,
+          "recall@3": 0.009202453987730062,
+          "ndcg@5": 0.005002852004820422,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.006025346892345984,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 16,
+          "params": {
+            "modelo.dim_embedding": 32,
+            "entrenamiento.lr": 0.0004478044736285933,
+            "regularizacion.weight_decay": 5.648021922693074e-05,
+            "regularizacion.dropout": 0.015194974544662537,
+            "modelo.capas_usuario": 1,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 4,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.005787892046731723,
+          "tiempo_s": 2.571557000046596,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 14,
+          "epoca_parada": 24,
+          "ndcg5_validacion_mejor": 0.005787892046731723,
+          "n_parametros": 52192,
+          "ndcg@1": 0.003067484662576687,
+          "recall@1": 0.003067484662576687,
+          "ndcg@3": 0.004601226993865031,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.005787892046731723,
+          "recall@5": 0.009202453987730062,
+          "ndcg@10": 0.006810386934257284,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 17,
+          "params": {
+            "modelo.dim_embedding": 32,
+            "entrenamiento.lr": 0.0005323314214297109,
+            "regularizacion.weight_decay": 2.568268838488382e-06,
+            "regularizacion.dropout": 0.22478593278718909,
+            "modelo.capas_usuario": 1,
+            "modelo.unidades_usuario": 32,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 4,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.003067484662576687,
+          "tiempo_s": 1.5667363000102341,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 3,
+          "epoca_parada": 13,
+          "ndcg5_validacion_mejor": 0.003067484662576687,
+          "n_parametros": 23520,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.003067484662576687,
+          "recall@3": 0.006134969325153374,
+          "ndcg@5": 0.003067484662576687,
+          "recall@5": 0.006134969325153374,
+          "ndcg@10": 0.003067484662576687,
+          "recall@10": 0.006134969325153374
+        },
+        {
+          "numero": 18,
+          "params": {
+            "modelo.dim_embedding": 32,
+            "entrenamiento.lr": 0.0007434215990914675,
+            "regularizacion.weight_decay": 0.000359255347484978,
+            "regularizacion.dropout": 0.25122337342804407,
+            "modelo.capas_usuario": 1,
+            "modelo.unidades_usuario": 64,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 16,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": true
+          },
+          "valor": 0.006725570752197265,
+          "tiempo_s": 2.0938166999840178,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 10,
+          "epoca_parada": 20,
+          "ndcg5_validacion_mejor": 0.006725570752197265,
+          "n_parametros": 52192,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.005404477015775813,
+          "recall@3": 0.009202453987730062,
+          "ndcg@5": 0.006725570752197265,
+          "recall@5": 0.012269938650306749,
+          "ndcg@10": 0.006725570752197265,
+          "recall@10": 0.012269938650306749
+        },
+        {
+          "numero": 19,
+          "params": {
+            "modelo.dim_embedding": 16,
+            "entrenamiento.lr": 0.0006197711973496026,
+            "regularizacion.weight_decay": 9.609352656448275e-05,
+            "regularizacion.dropout": 0.31831656562399646,
+            "modelo.capas_usuario": 2,
+            "modelo.unidades_usuario": 16,
+            "modelo.capas_destino": 1,
+            "modelo.unidades_destino": 32,
+            "modelo.negativos_por_positivo": 2,
+            "perdida.tipo": "bce",
+            "modelo.usar_id_destino": true,
+            "modelo.usar_id_usuario": false
+          },
+          "valor": 0.0015337423312883436,
+          "tiempo_s": 1.328016999992542,
+          "degenerado": false,
+          "motivo_degenerado": null,
+          "mejor_epoca": 1,
+          "epoca_parada": 11,
+          "ndcg5_validacion_mejor": 0.0015337423312883436,
+          "n_parametros": 12528,
+          "ndcg@1": 0.0,
+          "recall@1": 0.0,
+          "ndcg@3": 0.0015337423312883436,
+          "recall@3": 0.003067484662576687,
+          "ndcg@5": 0.0015337423312883436,
+          "recall@5": 0.003067484662576687,
+          "ndcg@10": 0.0015337423312883436,
+          "recall@10": 0.003067484662576687
+        }
+      ],
+      "mejor": {
+        "numero": 18,
+        "params": {
+          "modelo.dim_embedding": 32,
+          "entrenamiento.lr": 0.0007434215990914675,
+          "regularizacion.weight_decay": 0.000359255347484978,
+          "regularizacion.dropout": 0.25122337342804407,
+          "modelo.capas_usuario": 1,
+          "modelo.unidades_usuario": 64,
+          "modelo.capas_destino": 1,
+          "modelo.unidades_destino": 16,
+          "modelo.negativos_por_positivo": 2,
+          "perdida.tipo": "bce",
+          "modelo.usar_id_destino": true,
+          "modelo.usar_id_usuario": true
+        },
+        "valor": 0.006725570752197265
+      },
+      "tiempo_total_s": 38.467052500054706
+    }
+  }
+}

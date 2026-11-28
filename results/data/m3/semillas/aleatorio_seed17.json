@@ -1,0 +1,130 @@
+{
+  "modelo": "aleatorio",
+  "semilla": 17,
+  "run_id": 17,
+  "split_evaluado": "prueba",
+  "n_usuarios_evaluados": 606,
+  "tiempo_s": 0.23290370003087446,
+  "hiperparametros": {},
+  "n_parametros": 0,
+  "diagnosticos": {},
+  "metricas": {
+    "global": {
+      "precision@1": 0.0,
+      "recall@1": 0.0,
+      "ndcg@1": 0.0,
+      "acierto@1": 0.0,
+      "cobertura@1": 0.454,
+      "precision@3": 0.0,
+      "recall@3": 0.0,
+      "ndcg@3": 0.0,
+      "acierto@3": 0.0,
+      "cobertura@3": 0.833,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "ndcg@5": 0.0,
+      "acierto@5": 0.0,
+      "cobertura@5": 0.954,
+      "precision@10": 0.0006600660066006601,
+      "recall@10": 0.006600660066006601,
+      "ndcg@10": 0.0021789938515062923,
+      "acierto@10": 0.006600660066006601,
+      "cobertura@10": 0.993,
+      "acierto_por_lugar@1": 0.2079207920792079,
+      "acierto_por_lugar@3": 0.4884488448844885
+    },
+    "concentracion": {
+      "gini@1": 0.6330528052805282,
+      "hhi@1": 0.002635907155071943,
+      "gini@3": 0.4055005500550055,
+      "hhi@3": 0.0015551610166517202,
+      "gini@5": 0.3167392739273929,
+      "hhi@5": 0.0013266673201973661,
+      "gini@10": 0.23219471947194736,
+      "hhi@10": 0.0011710725527998343
+    },
+    "por_grupo": {
+      "pocas": {
+        "n_usuarios": 280,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.25,
+        "precision@3": 0.0,
+        "recall@3": 0.0,
+        "ndcg@3": 0.0,
+        "acierto@3": 0.0,
+        "cobertura@3": 0.57,
+        "precision@5": 0.0,
+        "recall@5": 0.0,
+        "ndcg@5": 0.0,
+        "acierto@5": 0.0,
+        "cobertura@5": 0.755,
+        "precision@10": 0.0007142857142857143,
+        "recall@10": 0.007142857142857143,
+        "ndcg@10": 0.002317136464710936,
+        "acierto@10": 0.007142857142857143,
+        "cobertura@10": 0.929,
+        "acierto_por_lugar@1": 0.20357142857142857,
+        "acierto_por_lugar@3": 0.49642857142857144
+      },
+      "muchas": {
+        "n_usuarios": 326,
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "ndcg@1": 0.0,
+        "acierto@1": 0.0,
+        "cobertura@1": 0.275,
+        "precision@3": 0.0,
+        "recall@3": 0.0,
+        "ndcg@3": 0.0,
+        "acierto@3": 0.0,
+        "cobertura@3": 0.625,
+        "precision@5": 0.0,
+        "recall@5": 0.0,
+        "ndcg@5": 0.0,
+        "acierto@5": 0.0,
+        "cobertura@5": 0.807,
+        "precision@10": 0.0006134969325153375,
+        "recall@10": 0.006134969325153374,
+        "ndcg@10": 0.00206034375427531,
+        "acierto@10": 0.006134969325153374,
+        "cobertura@10": 0.957,
+        "acierto_por_lugar@1": 0.2116564417177914,
+        "acierto_por_lugar@3": 0.4815950920245399
+      }
+    },
+    "destinos_frios": {
+      "1": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 0.34983498349834985
+      },
+      "3": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 1.0594059405940595
+      },
+      "5": {
+        "acierto_objetivo_frio": 0.0,
+        "acierto_objetivo_no_frio": 0.0,
+        "frios_por_lista": 1.7491749174917492
+      },
+      "10": {
+        "acierto_objetivo_frio": 0.004878048780487805,
+        "acierto_objetivo_no_frio": 0.007481296758104738,
+        "frios_por_lista": 3.442244224422442
+      }
+    }
+  },
+  "evidencia": {
+    "particion_huella": "b35cd70b0475e901816f140dafc637f5a4063a29728f16b8d467b8d86b58e8b8",
+    "particion_huella_formato": "SHA-256 del texto UTF-8 «usuario_id,destino_id,split\\n» seguido de una línea «<usuario_id>,<destino_id>,<split>\\n» por interacción (enteros en base 10, sin índice ni comillas), en orden ascendente de (usuario_id, destino_id).",
+    "sha256_parquet": {
+      "interacciones": "4e14362608ea5531e981a1ffeb2765b46f95a1b79801ddee318a56df785e315e",
+      "destinos": "064bd2dbe130fffaa0595d2183721bce11a3746915da28614689cbedf1dcb6b8",
+      "usuarios": "8135ee4a7382c05e43cc938a692e998c22ed4f6dc238e7e802992037a0569c7e"
+    }
+  }
+}

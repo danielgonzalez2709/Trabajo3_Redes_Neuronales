@@ -1,0 +1,21 @@
+# M3 — búsqueda de hiperparámetros de la factorización de matrices por ALS (JJ-4; D13).
+# Uso: .venv\Scripts\python run.py m3-hpo --config configs/m3/hpo.yaml
+# Optuna (TPE, semilla fija, sin almacenamiento en disco), 20 ensayos (mismo presupuesto que la red de JJ-5, núcleo §6),
+# objetivo NDCG@5 medio en VALIDACIÓN con candidatos = catálogo − train (D10); el modelo se ajusta solo con train y la
+# búsqueda NUNCA lee prueba (D9). En todos los ensayos el modelo y el desempate usan make_rng(base_seed, 0): solo cambian los
+# hiperparámetros. Escribe <salida.carpeta>/hpo_ensayos.json (si ya existe con la misma huella de partición conserva las
+# otras familias, p. ej. la de la red de JJ-5; si la huella es otra, lo reemplaza).
+hereda: base.yaml
+
+busqueda:
+  n_ensayos: 20                                  # D13
+  objetivo: ndcg                                 # métrica a maximizar en validación: ndcg | recall
+  objetivo_k: 5                                  # D13: NDCG@5
+  semilla_sampler: 2026                          # semilla de TPESampler (elección nuestra; fija el resultado)
+  ejecutar_en_experimento: false                 # true (demo): `run.py m3` corre primero la búsqueda y usa su mejor
+  # Rangos [PROPUESTO por esta tarea; elección nuestra, no de la literatura]. `log: true` muestrea en escala logarítmica.
+  espacio:
+    factores: {tipo: entero, min: 4, max: 64, log: true}
+    regularizacion: {tipo: real, min: 1.0e-3, max: 1.0e+2, log: true}   # λ
+    alfa: {tipo: real, min: 1.0, max: 100.0, log: true}                  # α de la confianza c = 1 + α·r
+    iteraciones: {tipo: entero, min: 5, max: 30, log: false}

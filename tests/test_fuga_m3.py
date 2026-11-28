@@ -12,6 +12,10 @@ Dónde podría colarse una fuga y qué prueba la descarta:
   F4 la validación «ve» la prueba (excluye su destino)              → test_candidatos_de_validacion_solo_excluyen_train
   F5 la partición depende del orden de entrada o del estado global  → test_independiente_del_orden, test_no_toca_el_azar_global
   F6 el parquet versionado no corresponde a la regla ni a la semilla → pruebas con los datos reales (skipif si no están)
+  F7 (JJ-5) la red usa validación o prueba para entrenar, para sus negativos o para sus índices de id
+      → AJUSTES_SOLO_TRAIN (negativos, entrenamiento a épocas fijas), AJUSTES_SIN_PRUEBA (ajuste completo con parada temprana
+        y búsqueda), test_la_validacion_solo_elige_la_epoca_de_parada, test_los_indices_de_id_y_el_dropout_de_id_solo_usan_train
+  F8 (JJ-5) el contenido de la red lee interacciones o estadísticas calculadas con ellas → test_contenido_no_lee_interacciones_ni_salidas
 """
 from __future__ import annotations
 
@@ -24,8 +28,11 @@ import pandas as pd
 import pytest
 import yaml
 
+from src.comun.seeds import make_rng
+from src.comun.config import apply_overrides, load_config
+from src.m3_recomendacion import contenido
 from src.m3_recomendacion import datos as dm
-from src.m3_recomendacion import particion
+from src.m3_recomendacion import hpo, particion, red, referencias
 from test_datos_m3 import montar, salidas
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -520,8 +527,74 @@ def test_real_popularidad_y_candidatos_sin_fuga():
 # el catálogo y devuelve algo comparable con ``==`` tras ``np.asarray`` (vector de puntajes, embeddings con semilla fija,
 # negativos muestreados con un generador fijo…). JJ-4 y JJ-5 AGREGAN aquí sus funciones de ajuste: la prueba exige que la
 # salida no cambie si se alteran o se eliminan las interacciones de validación y de prueba (D9: «solo con train»).
+def _ajuste_popularidad(inter, cat):
+    """JJ-4: puntajes de ``referencias.Popularidad`` (semilla fija) para un usuario cualquiera."""
+    return referencias.Popularidad().ajustar(inter, cat, make_rng(0, 0)).puntuar([1])
+
+
+def _ajuste_mf_als(inter, cat):
+    """JJ-4: factores (usuarios y destinos) de ``referencias.MFImplicitaALS`` con semilla fija y pocos hiperparámetros."""
+    m = referencias.MFImplicitaALS(factores=4, regularizacion=0.1, alfa=10.0, iteraciones=3, escala_inicial=0.01)
+    m.ajustar(inter, cat, make_rng(0, 0))
+    return np.concatenate([m.X.ravel(), m.Y.ravel()])
+
+
+def _ajuste_aleatorio(inter, cat):
+    """JJ-4: puntajes de ``referencias.Aleatorio`` (semilla fija); hoy no lee ``inter``, la guarda vigila que siga así."""
+    return referencias.Aleatorio().ajustar(inter, cat, make_rng(0, 0)).puntuar([1, 2])
+
+
+# ---- JJ-5: la red de dos torres. Contenido sintético (tipo de destino y preferencias del usuario); no depende de las
+# interacciones, así que no puede filtrar validación ni prueba.
+TIPOS_SINT = ["Adventure", "Beach", "City", "Historical", "Nature"]
+COMBOS_SINT = [("pref_beaches", "pref_historical"), ("pref_adventure", "pref_nature"), ("pref_city", "pref_historical")]
+HP_RED = {"modelo.dim_embedding": 4, "modelo.capas_usuario": 1, "modelo.unidades_usuario": 8, "modelo.capas_destino": 1,
+          "modelo.unidades_destino": 8, "modelo.usar_id_usuario": True, "modelo.usar_id_destino": True,
+          "modelo.dropout_id": 0.2, "modelo.negativos_por_positivo": 2, "modelo.usar_demografia": False,
+          "perdida.tipo": "bce", "entrenamiento.lr": 0.01, "entrenamiento.max_epocas": 4, "entrenamiento.paciencia": 2,
+          "entrenamiento.tam_lote": 32, "regularizacion.weight_decay": 1e-4, "regularizacion.dropout": 0.1}
+
+
+def _destinos_sint(n: int = 45) -> pd.DataFrame:
+    ids = np.arange(1, n + 1)
+    return pd.DataFrame({"destino_id": ids, "lugar": [f"lugar_{i % 5}" for i in ids], "tipo": [TIPOS_SINT[i % 5] for i in ids]})
+
+
+def _usuarios_sint(n: int = 70) -> pd.DataFrame:
+    ids = np.arange(1, n + 1)
+    df = pd.DataFrame({"usuario_id": ids})
+    for col in contenido.COLUMNAS_PREFERENCIAS:
+        df[col] = [col in COMBOS_SINT[u % 3] for u in ids]
+    return df
+
+
+def _red(usar_validacion: bool, **hp) -> red.RedDosTorres:
+    return red.RedDosTorres({**HP_RED, **hp}, contenido.contenido_usuarios(_usuarios_sint()),
+                            contenido.contenido_destinos(_destinos_sint()), usar_validacion=usar_validacion)
+
+
+def _ajuste_red_negativos(inter, cat):
+    """JJ-5 (D17): negativos de una época por el MISMO camino de ajustar (preparar_train + sortear_epoca), generador fijo."""
+    usuarios, positivos, negativos = red.negativos_train(inter, cat, 3, make_rng(0, 0))
+    return np.concatenate([usuarios, positivos, negativos.ravel()])
+
+
+def _pesos(m: red.RedDosTorres) -> np.ndarray:
+    return np.concatenate([v.detach().numpy().ravel() for v in m.red.state_dict().values()])
+
+
+def _ajuste_red_epocas_fijas(inter, cat):
+    """JJ-5 (D19): la red entrenada a épocas fijas, SIN parada temprana (semilla fija): sus pesos solo dependen de train."""
+    return _pesos(_red(usar_validacion=False).ajustar(inter, cat, make_rng(0, 0)))
+
+
 AJUSTES_SOLO_TRAIN = {
     "popularidad_train": lambda inter, cat: particion.popularidad_train(inter, cat),
+    "referencias.popularidad": _ajuste_popularidad,
+    "referencias.mf_als": _ajuste_mf_als,
+    "referencias.aleatorio": _ajuste_aleatorio,
+    "red.negativos": _ajuste_red_negativos,
+    "red.entrenamiento_epocas_fijas": _ajuste_red_epocas_fijas,
 }
 
 
@@ -568,6 +641,23 @@ def test_ningun_modelo_de_m3_lee_estadisticas_calculadas_con_todas_las_interacci
     assert not infractores, f"modelos que leen estadísticas con validación/prueba: {infractores}"
 
 
+# Guarda propuesta por el auditor-fugas en JJ-4: los modelos reciben todo por ``ajustar(inter, catalogo, rng)``; no abren
+# parquet ni JSON (la fábrica recibe el cfg completo, con rutas) ni leen salidas de evaluación calculadas con prueba (D9).
+# No va en PROHIBIDAS_PARA_MODELOS porque experimento.py escribe esas salidas con razón.
+ARCHIVOS_DE_MODELO_M3 = {"referencias.py", "red.py"}   # JJ-5: la red (su contenido lo lee contenido.py, ver abajo)
+SALIDAS_DE_EVALUACION_M3 = ("recomendaciones_prueba", "summary.json", "metricas_por_k.json", "metricas_por_grupo.json",
+                            "semillas/")
+LECTURAS_DE_ARCHIVOS = ("read_parquet", "load_json", "open(", "read_csv", "np.load", "read_text", "read_bytes", "torch.load")
+
+
+def test_los_modelos_no_leen_archivos_ni_salidas_de_evaluacion():
+    carpeta = RAIZ / "src" / "m3_recomendacion"
+    for nombre in sorted(ARCHIVOS_DE_MODELO_M3):
+        texto = (carpeta / nombre).read_text(encoding="utf-8")
+        assert not [p for p in SALIDAS_DE_EVALUACION_M3 if p in texto], f"{nombre} lee salidas de evaluación"
+        assert not [p for p in LECTURAS_DE_ARCHIVOS if p in texto], f"{nombre} abre archivos por su cuenta"
+
+
 @real
 def test_real_usuarios_sin_interacciones_o_con_una_no_se_evaluan():
     inter = pd.read_parquet(PROCESADOS / "interacciones.parquet")
@@ -580,3 +670,179 @@ def test_real_usuarios_sin_interacciones_o_con_una_no_se_evaluan():
     cand_p, cand_v = particion.candidatos(inter, cat, PRUEBA), particion.candidatos(inter, cat, VAL)
     assert not (sin & set(cand_p)) and not (sin & set(cand_v))
     assert set(cand_p) == set(n[n >= 2].index) and set(cand_v) == set(n[n >= 3].index)
+
+
+# --------------------------------------------------------------------------- guardas de la red (JJ-5)
+# AJUSTES_SIN_PRUEBA: ajustes que SÍ usan validación (solo para la parada temprana y para elegir hiperparámetros, D9) y por
+# eso no están en AJUSTES_SOLO_TRAIN; su salida no puede cambiar si se alteran o se eliminan las interacciones de PRUEBA.
+def _escribir_contenido(carpeta: Path) -> dict:
+    carpeta.mkdir(parents=True, exist_ok=True)
+    _destinos_sint().to_parquet(carpeta / "destinos.parquet", index=False)
+    _usuarios_sint().to_parquet(carpeta / "usuarios.parquet", index=False)
+    cfg = load_config(CFG_DATOS.parent / "hpo.yaml")
+    sets = [f"datos.carpeta={carpeta.as_posix()}", "busqueda.n_ensayos=2", "entrenamiento.max_epocas=3",
+            "entrenamiento.paciencia=1", "evaluacion.k=[5, 10]"]
+    return apply_overrides(cfg, sets)
+
+
+def _ajuste_red_completo(inter, cat, carpeta):
+    """La red con parada temprana por NDCG@5 de validación: puntajes de 3 usuarios y curvas."""
+    m = _red(usar_validacion=True).ajustar(inter, cat, make_rng(0, 0))
+    curvas = [x for clave in ("perdida_train", "perdida_validacion", "ndcg5_validacion") for x in m.curvas[clave]]
+    return np.concatenate([m.puntuar([1, 2, 3]).ravel(), np.asarray(curvas, dtype=float), [m.curvas["mejor_epoca"]]])
+
+
+def _busqueda_red(inter, cat, carpeta):
+    """La búsqueda Optuna de la red (2 ensayos): parámetros y métricas de validación de cada ensayo (sin tiempos)."""
+    fam = hpo.buscar_red(_escribir_contenido(carpeta), inter, cat)
+    return np.asarray([json.dumps({k: v for k, v in e.items() if k != "tiempo_s"}, sort_keys=True) for e in fam["ensayos"]])
+
+
+AJUSTES_SIN_PRUEBA = {
+    "red.ajuste_con_parada_temprana": _ajuste_red_completo,
+    "hpo.buscar_red": _busqueda_red,
+}
+
+
+@pytest.mark.parametrize("nombre", sorted(AJUSTES_SIN_PRUEBA))
+def test_la_red_y_su_busqueda_son_invariantes_a_prueba(nombre, tmp_path):
+    ajustar = AJUSTES_SIN_PRUEBA[nombre]
+    cat = catalogo(45)["destino_id"]
+    con_split = particion.asignar_split(tabla({u: 1 + u % 7 for u in range(1, 60)}, n_destinos=40), 2)
+    base = np.asarray(ajustar(con_split, cat, tmp_path / "a"))
+    assert np.array_equal(np.asarray(ajustar(_alterar_no_train(con_split, cat, PRUEBA), cat, tmp_path / "b")), base)
+    assert np.array_equal(np.asarray(ajustar(con_split[con_split["split"] != PRUEBA], cat, tmp_path / "c")), base)
+
+
+def test_la_validacion_solo_elige_la_epoca_de_parada():
+    """D9: la validación entra a la red SOLO por la parada temprana. Los pesos del ajuste completo (con validación) son
+    exactamente los de un entrenamiento sin validación con max_epocas = mejor época: validación no toca el gradiente, los
+    negativos ni el dropout; solo decide en qué época se queda la red."""
+    cat = catalogo(45)["destino_id"]
+    con_split = particion.asignar_split(tabla({u: 1 + u % 7 for u in range(1, 60)}, n_destinos=40), 2)
+    completo = _red(usar_validacion=True, **{"entrenamiento.max_epocas": 12}).ajustar(con_split, cat, make_rng(0, 0))
+    mejor = completo.curvas["mejor_epoca"]
+    fijo = _red(usar_validacion=False, **{"entrenamiento.max_epocas": mejor}).ajustar(con_split, cat, make_rng(0, 0))
+    assert np.array_equal(_pesos(completo), _pesos(fijo))
+    assert np.array_equal(completo.puntuar([1, 2, 3]), fijo.puntuar([1, 2, 3]))
+
+
+def test_los_indices_de_id_y_el_dropout_de_id_solo_usan_train():
+    """El índice de id (y por lo tanto el «dropout de id», que solo pone índices en 0) sale solo de train: un usuario o un
+    destino que solo aparece en validación o prueba recibe 0, y alterar o eliminar esos splits no cambia ningún índice."""
+    cat = catalogo(45)["destino_id"]
+    con_split = particion.asignar_split(tabla({u: 1 + u % 7 for u in range(1, 60)}, n_destinos=40), 2)
+    mapa, idx = red.indices_de_id(con_split, cat)
+    train = con_split[con_split["split"] == TRAIN]
+    assert set(mapa) == set(train["usuario_id"].astype(int)) and sorted(mapa.values()) == list(range(1, len(mapa) + 1))
+    con_train = set(train["destino_id"].astype(int))
+    assert all((idx[j] > 0) == (int(d) in con_train) for j, d in enumerate(cat))
+    for s in (VAL, PRUEBA):
+        for otra in (_alterar_no_train(con_split, cat, s), con_split[con_split["split"] != s]):
+            m2, i2 = red.indices_de_id(otra, cat)
+            assert m2 == mapa and np.array_equal(i2, idx), f"los índices de id usan {s}"
+    extra = pd.concat([con_split, pd.DataFrame({"usuario_id": [900, 901], "destino_id": [44, 45], "split": [VAL, PRUEBA]})])
+    m3, i3 = red.indices_de_id(extra, cat)
+    assert 900 not in m3 and 901 not in m3 and i3[list(cat).index(44)] == 0 and i3[list(cat).index(45)] == 0
+    out = red.aplicar_dropout_id(np.array(sorted(mapa.values())), 0.5, make_rng(0, 0))
+    assert set(out.tolist()) <= {0} | set(mapa.values())
+
+
+def test_contenido_no_lee_interacciones_ni_salidas():
+    """contenido.py lee SOLO destinos y usuarios (atributos de la fuente): ninguna interacción, ningún resultado ni ninguna
+    estadística calculada con todas las interacciones (D9, D15)."""
+    texto = (RAIZ / "src" / "m3_recomendacion" / "contenido.py").read_text(encoding="utf-8")
+    prohibidas = ("interacciones", "results/", "popularidad", *PROHIBIDAS_PARA_MODELOS, *SALIDAS_DE_EVALUACION_M3)
+    assert not [p for p in prohibidas if p in texto]
+
+
+# --------------------------------------------------------------------------- guardas dinámicas (auditor-fugas, JJ-5)
+# Las guardas de arriba sobre el texto de red.py y contenido.py se evaden con una cadena partida («inter" "acciones»,
+# «recomendaciones" + "_prueba») o con un lector que no está en la lista (``pyarrow.parquet.read_table``) envuelto en
+# try/except. Estas dos pruebas miran lo que el código HACE, no lo que dice.
+def _inter_con_split_en(carpeta: Path, con_split: pd.DataFrame, nombre: str = "interacciones.parquet") -> Path:
+    ruta = carpeta / nombre
+    con_split.to_parquet(ruta, index=False)
+    return ruta
+
+
+def test_contenido_es_invariante_a_las_interacciones_de_su_misma_carpeta(tmp_path, monkeypatch):
+    """F8 dinámica: con un ``interacciones.parquet`` real (con ``split``) en la carpeta y la ruta en ``cfg["datos"]``, el
+    contenido no cambia si se alteran sus filas de prueba o de validación o si el archivo desaparece, y ``cargar_contenido``
+    solo pide a pandas los dos archivos de contenido."""
+    carpeta = tmp_path / "proc"
+    carpeta.mkdir()
+    _destinos_sint().to_parquet(carpeta / "destinos.parquet", index=False)
+    _usuarios_sint().to_parquet(carpeta / "usuarios.parquet", index=False)
+    cfg = {"datos": {"carpeta": carpeta.as_posix(), "destinos": "destinos.parquet", "usuarios": "usuarios.parquet",
+                     "interacciones": "interacciones.parquet"}}
+    cat = _destinos_sint()["destino_id"]
+    con_split = particion.asignar_split(tabla({u: 1 + u % 7 for u in range(1, 60)}, n_destinos=40), 2)
+
+    def foto():
+        cu, ci = contenido.cargar_contenido(cfg, usar_demografia=False)
+        return [cu.ids.tolist(), cu.X.tolist(), list(cu.columnas), ci.ids.tolist(), ci.X.tolist(), list(ci.columnas)]
+
+    ruta = _inter_con_split_en(carpeta, con_split)
+    leidos: list[str] = []
+    original = pd.read_parquet
+
+    def espia(path, *a, **k):
+        leidos.append(Path(path).name)
+        return original(path, *a, **k)
+
+    monkeypatch.setattr(pd, "read_parquet", espia)
+    base = foto()
+    assert sorted(leidos) == ["destinos.parquet", "usuarios.parquet"], leidos
+    for s in (VAL, PRUEBA):
+        _inter_con_split_en(carpeta, _alterar_no_train(con_split, cat, s))
+        assert foto() == base, f"el contenido cambia al alterar {s}"
+    ruta.unlink()
+    assert foto() == base, "el contenido cambia si no está el archivo de interacciones"
+
+
+def test_la_red_no_abre_archivos_al_ajustar_puntuar_ni_diagnosticar(monkeypatch):
+    """La red recibe todo por ``ajustar(inter, catalogo, rng)``: durante ajustar, puntuar, diagnosticos, n_parametros y
+    arquitectura no abre ningún archivo del repositorio (open / io.open / Path.open) ni llama a un lector de pandas, pyarrow,
+    numpy o torch. Cada intento se REGISTRA (y además falla), así que un ``try/except`` en el código no lo esconde."""
+    import builtins
+    import io
+
+    import pyarrow.parquet as pq
+    import torch
+
+    intentos: list[str] = []
+    venv = (RAIZ / ".venv").resolve()
+    abrir, abrir_io = builtins.open, io.open
+
+    def vigilar(real):
+        def envoltura(archivo, *a, **k):
+            if isinstance(archivo, (str, Path)):
+                p = Path(archivo).resolve()
+                if p.is_relative_to(RAIZ) and not p.is_relative_to(venv):
+                    intentos.append(f"open {p}")
+                    raise PermissionError(f"la red intentó abrir {p}")
+            return real(archivo, *a, **k)
+        return envoltura
+
+    def prohibido(nombre):
+        def lector(*a, **k):
+            intentos.append(nombre)
+            raise PermissionError(f"la red llamó a {nombre}")
+        return lector
+
+    cat = catalogo(45)["destino_id"]
+    con_split = particion.asignar_split(tabla({u: 1 + u % 7 for u in range(1, 60)}, n_destinos=40), 2)
+    m = _red(usar_validacion=True)
+    monkeypatch.setattr(builtins, "open", vigilar(abrir))
+    monkeypatch.setattr(io, "open", vigilar(abrir_io))
+    for modulo, nombre in ((pd, "read_parquet"), (pd, "read_csv"), (pd, "read_json"), (pd, "read_pickle"),
+                           (pq, "read_table"), (np, "load"), (np, "loadtxt"), (torch, "load")):
+        monkeypatch.setattr(modulo, nombre, prohibido(f"{modulo.__name__}.{nombre}"))
+    m.ajustar(con_split, cat, make_rng(0, 0))
+    m.puntuar([1, 2, 3])
+    m.diagnosticos()
+    m.n_parametros()
+    m.arquitectura()
+    monkeypatch.undo()
+    assert not intentos, f"la red abrió archivos por su cuenta: {intentos}"
