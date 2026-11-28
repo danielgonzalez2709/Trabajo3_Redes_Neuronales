@@ -8,7 +8,7 @@ evidencia no cuenta.
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
 | M1 | | | | | |
-| M2 | | | | | |
+| M2 | | 1 candidato menor sin número (JO-1, orquestador) | | | |
 | M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
 | Común | | H-01 (candidato) | | | |
 
@@ -248,6 +248,32 @@ evidencia no cuenta.
   siguientes. Las cifras de un prompt se copian del archivo de resultados, no de la memoria.
 - **Estado:** candidato menor. El origen probable es la redacción de MEMORIA (documentador o sesión de JJ-2; no se buscó el
   prompt exacto); el prompt literal del eslabón de JJ-3 sí está guardado.
+
+### H-?? (JO-1) — «JPEG calidad 85 — coherente con el preprocesado fijo de la app»
+- **Módulo / categoría / quién lo encontró:** M2 / **Código** (coherencia entre el preprocesado de entrenamiento y el de la
+  app), menor / lo detectó el `cazador-alucinaciones` (Opus) en la revisión de JO-1. Dirige: José.
+- **1. Prompt literal:** `alucinaciones/prompts/JO-1b-curador-datos.md`, l. 18–19 (sesión principal, Opus 5.5 →
+  curador-datos, Sonnet), dentro del bloque «Decisiones de José»: «Resolución **224×224**, redimensionado **estirando** […] con
+  interpolación **bilineal** de PIL, RGB, JPEG calidad 85 — coherente con el preprocesado fijo de la app (spec de José §3.0)».
+  José eligió 224×224; el JPEG calidad 85 lo propuso la sesión principal y lo rotuló como decisión de José.
+- **2. Respuesta relevante de la IA:** el curador implementó la recompresión JPEG 85 en `src/m2_conduccion/datos.py` y versionó
+  las 7 276 imágenes así (commit `3531620`), sin declarar ninguna diferencia con la app.
+- **3. Cómo se sospechó:** se le pidió al cazador contrastar la frase con `app/lib/imagen.ts` y `app/lib/contratos.ts`: estirar,
+  bilineal y RGB coinciden, pero la app redimensiona la foto original **sin recompresión**. La afirmación es cierta en lo que
+  dice e incompleta en lo que calla.
+- **4. Evidencia:** `alucinaciones/evidencias/JO-1/experimento_jpeg85.py` → `experimento_jpeg85_salida.txt` (292 imágenes):
+  diferencia media 2,74 niveles de 255 (p99 14, máx. 90); 55,7 % de los valores fuera de la tolerancia ±1 de la paridad de la
+  app; recodificar a JPEG 85 reproduce los bytes versionados en 292 de 292.
+- **5. Corrección:** José decidió (27-nov) mantener JPEG 85 por tamaño del repositorio (~112 MB; sin pérdida serían varios
+  cientos) y **declarar** la diferencia: `configs/m2/datos.yaml` (`diferencias_con_app`), `results/data/m2/eda/ficha.json`
+  (`conteos.diferencias_con_app`) y una fila en `calidad.csv` (commit `86ca3eb`, prompt `JO-1c-curador-datos.md`). Va también a
+  la sección de limitaciones del blog de M2.
+- **6. Lección aprendida:** «coherente con X» hay que verificarlo paso a paso contra X, también en lo que se agrega. Una
+  decisión del orquestador escrita dentro de las «decisiones del humano» deja de revisarse, porque los subagentes no la
+  discuten.
+- **Estado:** candidato (José lo aprobó el 27-nov). Matiz para Andrés: no es una afirmación falsa sino una omisión con efecto
+  medido; la paridad ONNX↔PyTorch no se ve afectada (usa la misma entrada), solo la distribución de entrenamiento frente a la de
+  la app.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto
