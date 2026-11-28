@@ -53,6 +53,20 @@ Brief (DOI 10.1016/j.dib.2025.111529) con `investigador-fuentes`. Imágenes redi
 Plantilla común §5.12 completa; sección 4 con iluminación (brillo medio), ángulo y tipo de vehículo (si la fuente lo
 etiqueta [VERIFICAR]; si no, muestra anotada a mano y declarada).
 
+**[DECIDIDO, José, 27-nov] (JO-1).** Fuente medida: un .zip de Mendeley (SHA-256 `427fec9d…af41c8c`, 2 556 850 881 B) con 7 286
+imágenes en 5 carpetas (`other_activities`, `safe_driving`, `talking_phone`, `texting_phone`, `turning`); 10 ilegibles; la fuente
+**no** etiqueta tipo de vehículo, iluminación ni ángulo (`docs/investigacion/JO-1_fuentes_m2.md`, F-42). Decisiones:
+- D1. Se versionan las **7 276 imágenes legibles** procesadas en `data/processed/m2/imagenes/` (~112 MB): el Anexo exige los datos
+  procesados en el repositorio. Los 10 ilegibles se excluyen y se registran en `results/data/m2/eda/calidad.csv`.
+- D2. **224×224**, estirado, bilineal (PIL), RGB, **JPEG calidad 85**. La recompresión JPEG no existe en la app: diferencia
+  medida y declarada en `ficha.json` (`conteos.diferencias_con_app`) y en el blog (limitación).
+- D3. Se aplica la orientación EXIF antes de redimensionar (113 imágenes).
+- D4. `ancho`/`alto` de `indice.csv` = dimensiones **originales** tras EXIF; sin `tipo_vehiculo` (la fuente no lo trae).
+  Trazabilidad en `data/processed/m2/origen.csv`; huellas en `results/data/m2/eda/procesado.json`.
+- D5. Ids `m2_NNNNN` por posición en el .zip (con huecos para los ilegibles); `n_variables` = 2 (imagen y clase).
+- Pendiente de ética (JO-11): el `DATA USE AGREEMENT` del depósito en Zenodo prohíbe redistribuir y menciona rostros visibles,
+  frente a CC BY 4.0 en Mendeley (C-6 de `JO-1_fuentes_m2.md`).
+
 ### 3.2 Partición sin fuga (JO-3) 🧠 [PROPUESTO]
 Hash perceptual (pHash/dHash) + similitud coseno de características de la red congelada → grafo de casi duplicados →
 componentes conexas = `grupo_duplicado`. Partición estratificada **por grupo** (70/15/15). Umbrales justificados con ejemplos
@@ -75,7 +89,7 @@ elegido según costo relativo (en `configs/m2/alertas.yaml`).
 ## 4. Tareas
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
-| JO-1 | Descarga, ficha y lectura del artículo | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json`; conteos por clase y resolución medidos | ⬜ |
+| JO-1 | Descarga, ficha y lectura del artículo | mar 24 | curador-datos (Sonnet) + investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | `ficha.json`; conteos por clase y resolución medidos | ✅ 27-nov |
 | JO-2 | Descriptivo M2 (plantilla §5.12) | mié 25 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json` con clases difíciles | ⬜ |
 | JO-3 | Casi duplicados y partición por grupos (§3.2) | mié 25 | implementador-experto (Opus) 🧠 | auditor-fugas (Opus) | `test_fuga_m2.py` en verde; figura de pares en la frontera | ⬜ |
 | JO-4 | Características congeladas + logística | jue 26 | implementador (Sonnet) | revisor-spec (Sonnet) | `summary.json` con presupuesto y parámetros | ⬜ |
