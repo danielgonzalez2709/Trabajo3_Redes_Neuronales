@@ -152,12 +152,17 @@ publicación del propio DANE en datos.gov.co.
 | Fecha de descarga | 2026-11-27 (hora local de la máquina; la descarga terminó a las 22:11 locales del 27-nov; la segunda ejecución, que solo verificó, a las 2026-11-28 03:11 UTC) |
 | Descargó | José, vía `scripts/descargar_m2.py` (streaming; verifica tamaño y SHA-256 contra la API; no extrae el .zip) |
 | Ubicación | `data/raw/m2/` (no versionado; está en `.gitignore`) |
-| Licencia, autores, cita | TODO(dato-faltante): no se consultaron en la fase A (la API de archivos no los trae); pendiente de la ficha de datos de M2 (JO-1 fase B) |
+| Licencia | **CC BY 4.0** según el campo de licencia de la página de Mendeley (versión 1); el artículo también es CC BY 4.0. Exige atribución, enlace a la licencia e indicar si se hicieron cambios (aquí: redimensionado a 224×224 y recompresión JPEG). **Contradicción sin resolver (C-6 de `docs/investigacion/JO-1_fuentes_m2.md`):** el depósito de Zenodo del mismo conjunto trae un `DATA USE AGREEMENT.docx` (plantilla con campos en blanco) que pide uso no comercial y no redistribuir sin permiso escrito de DIU; `TODO(dato-faltante)`: si aplica a quien descarga de Mendeley. Relevante porque `data/processed/m2/` versiona las imágenes procesadas (decisión de José) |
+| Autores | Afridi, A. S.; Kafy, A.; Moon, N. N.; Shakil, M. S. (Department of Computer Science and Engineering, Daffodil International University, Dhaka, Bangladesh, según el artículo). Ortografía distinta de los nombres entre Mendeley, el artículo y Zenodo (`JO-1_fuentes_m2.md` §1 y C-11) |
+| Cita (APA 7) | Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2024). *Multi-class driver behavior image dataset* (Version 1) [Data set]. Mendeley Data. https://doi.org/10.17632/mzb4b6dff3.1 |
+| Artículo del conjunto | Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time detection and road safety enhancement. *Data in Brief, 60*, Article 111529. https://doi.org/10.1016/j.dib.2025.111529 |
 
 ### Cómo regenerar
 1. `.venv/bin/python scripts/descargar_m2.py` (con red; si el archivo ya existe con el SHA-256 correcto no lo vuelve a bajar).
 2. Sin red: `.venv/bin/python -I docs/investigacion/JO-1_inventario.py` (lee el .zip sin extraerlo; escribe
    `docs/investigacion/JO-1_inventario_salida.txt`).
+3. Sin red: `.venv/bin/python run.py m2-datos --config configs/m2/datos.yaml` (lee el .zip sin extraerlo; escribe
+   `data/processed/m2/` y `results/data/m2/eda/`).
 
 ## M3 — Recomendación de destinos
 

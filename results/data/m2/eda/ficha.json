@@ -1,0 +1,280 @@
+{
+  "fuente": "Multi-Class Driver Behavior Image Dataset (Mendeley Data), versión 1",
+  "cita": "Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2024). Multi-class driver behavior image dataset (Version 1) [Data set]. Mendeley Data. https://doi.org/10.17632/mzb4b6dff3.1",
+  "url": "https://doi.org/10.17632/mzb4b6dff3.1",
+  "fecha_descarga": "2026-11-27",
+  "sha256": "427fec9d689a22856c51c7773adc6024158d5b228e36b2c9b58a13ce9af41c8c",
+  "unidad_de_observacion": "una fotografía de un conductor dentro de un vehículo (automóvil particular o bus público, según la fuente), etiquetada con una de 5 clases de comportamiento; la clase es la carpeta que la contiene",
+  "n_registros": 7276,
+  "n_variables": 2,
+  "n_variables_justificacion": "2 = la imagen y la clase (carpeta). La fuente no trae metadatos por imagen: el artículo solo describe «Each class was saved in a separate folder» (§3.3/§3.4) y no declara etiqueta de tipo de vehículo, iluminación ni ángulo (docs/investigacion/JO-1_fuentes_m2.md §7). indice.csv tiene 7 columnas, pero id, archivo, ancho y alto los calculamos nosotros y grupo_duplicado y split los llena JO-3. [PROPUESTO por el orquestador]",
+  "periodo": {
+    "rotulo": "según el artículo",
+    "texto": "October 2024 (Data in Brief 60, 111529, Tabla de especificaciones; Mendeley, descripción). El artículo, §2, añade: «Data collection spanned over a period of 30 days, with each driver being monitored for approximately 1–2 hours per day.»",
+    "cita": "Afridi, A. S., Kafy, A., Moon, N. N., & Shakil, M. S. (2025). A multi-class driver behavior dataset for real-time detection and road safety enhancement. Data in Brief, 60, Article 111529. https://doi.org/10.1016/j.dib.2025.111529",
+    "nota": "no hay una fecha por imagen declarada; las fechas medidas en el archivo (EXIF y nombres) van en conteos.fechas_medidas"
+  },
+  "conteos": {
+    "total_en_zip": 7286,
+    "ilegibles": 10,
+    "legibles": 7276,
+    "por_clase_en_zip": {
+      "other_activities": 1190,
+      "safe_driving": 1679,
+      "talking_phone": 1513,
+      "texting_phone": 1561,
+      "turning": 1343
+    },
+    "por_clase_legibles": {
+      "other_activities": 1184,
+      "safe_driving": 1679,
+      "talking_phone": 1513,
+      "texting_phone": 1561,
+      "turning": 1339
+    },
+    "ilegibles_por_clase": {
+      "other_activities": 6,
+      "turning": 4
+    },
+    "extensiones_en_zip": {
+      ".JPG": 32,
+      ".jpg": 7054,
+      ".png": 200
+    },
+    "formatos": {
+      "JPEG": 7076,
+      "PNG": 200
+    },
+    "modos": {
+      "RGB": 7076,
+      "RGBA": 200
+    },
+    "extension_distinta_del_formato_real": 0,
+    "resoluciones_tras_exif_mas_frecuentes": [
+      [
+        "640x480",
+        6629
+      ],
+      [
+        "3072x4096",
+        262
+      ],
+      [
+        "683x384",
+        183
+      ],
+      [
+        "2460x3280",
+        136
+      ],
+      [
+        "3024x4032",
+        32
+      ],
+      [
+        "720x1280",
+        8
+      ],
+      [
+        "1200x1200",
+        1
+      ],
+      [
+        "2371x3310",
+        1
+      ],
+      [
+        "2395x2938",
+        1
+      ],
+      [
+        "2462x2939",
+        1
+      ]
+    ],
+    "resoluciones_distintas_tras_exif": 32,
+    "resoluciones_sin_exif_mas_frecuentes": [
+      [
+        "640x480",
+        6629
+      ],
+      [
+        "683x384",
+        183
+      ],
+      [
+        "3072x4096",
+        182
+      ],
+      [
+        "2460x3280",
+        135
+      ],
+      [
+        "4096x3072",
+        80
+      ],
+      [
+        "4032x3024",
+        32
+      ],
+      [
+        "720x1280",
+        8
+      ],
+      [
+        "1200x1200",
+        1
+      ],
+      [
+        "2371x3310",
+        1
+      ],
+      [
+        "2395x2938",
+        1
+      ]
+    ],
+    "resoluciones_distintas_sin_exif": 34,
+    "exif": {
+      "aplicar_orientacion_exif": true,
+      "orientacion_distribucion": {
+        "1": 318,
+        "6": 112,
+        "8": 1,
+        "sin_orientacion": 6845
+      },
+      "orientacion_aplicada_n": 113,
+      "orientacion_aplicada_por_valor": {
+        "6": 112,
+        "8": 1
+      },
+      "ejemplos_por_orientacion": {
+        "6": [
+          "m2_00124",
+          "m2_00125"
+        ],
+        "8": [
+          "m2_00076"
+        ]
+      },
+      "errores_de_lectura": 0,
+      "marca": {
+        "Apple": 32,
+        "motorola": 404
+      },
+      "modelo": {
+        "iPhone 11": 32,
+        "motorola edge 50 fusion": 404
+      }
+    },
+    "png_alfa": {
+      "n_png": 200,
+      "n_rgba": 200,
+      "n_con_alfa_no_opaco": 0,
+      "n_alfa_totalmente_opaco": 200,
+      "no_opacos": [],
+      "decision": "convert('RGB') sin pérdida: el alfa es totalmente opaco en todas"
+    },
+    "fechas_medidas": {
+      "exif_datetime": {
+        "n": 431,
+        "minimo": "2024-09-30 13:22:40",
+        "maximo": "2024-10-28 14:36:04",
+        "por_anio_mes": {
+          "2024-09": 324,
+          "2024-10": 107
+        },
+        "no_interpretables": 0
+      },
+      "nombres_de_archivo": {
+        "AAAA-MM-DDhh-mm-ss": {
+          "n": 183,
+          "minimo": "2019-04-24 16:01:33",
+          "maximo": "2019-04-24 17:31:59",
+          "por_anio_mes": {
+            "2019-04": 183
+          },
+          "con_forma_pero_no_fecha_valida": 0
+        },
+        "photo_AAAA-MM-DD_hh-mm-ss": {
+          "n": 11,
+          "minimo": "2024-09-14 14:51:02",
+          "maximo": "2024-09-14 15:12:22",
+          "por_anio_mes": {
+            "2024-09": 11
+          },
+          "con_forma_pero_no_fecha_valida": 0
+        },
+        "IMG_AAAAMMDD_hhmmss": {
+          "n": 404,
+          "minimo": "2024-09-30 13:22:37",
+          "maximo": "2024-10-28 14:34:32",
+          "por_anio_mes": {
+            "2024-09": 329,
+            "2024-10": 75
+          },
+          "con_forma_pero_no_fecha_valida": 0
+        }
+      },
+      "nota": "Fechas medidas en el archivo, sin interpretar: la fuente declara «October 2024» (periodo) y no da una fecha por imagen; el patrón del nombre es una lectura nuestra de los nombres vistos en la fase A."
+    },
+    "declarado_vs_medido": {
+      "fuente_de_lo_declarado": "Afridi et al. (2025), Data in Brief 60, 111529, §2.1 «Dataset statistics»",
+      "total": {
+        "declarado": 7286,
+        "medido_en_zip": 7286,
+        "medido_legibles": 7276,
+        "diferencia_zip": 0,
+        "diferencia_legibles": -10
+      },
+      "por_clase": {
+        "safe_driving": {
+          "declarado": 1679,
+          "medido_en_zip": 1679,
+          "medido_legibles": 1679,
+          "diferencia_zip": 0,
+          "diferencia_legibles": 0
+        },
+        "turning": {
+          "declarado": 1343,
+          "medido_en_zip": 1343,
+          "medido_legibles": 1339,
+          "diferencia_zip": 0,
+          "diferencia_legibles": -4
+        },
+        "talking_phone": {
+          "declarado": 1513,
+          "medido_en_zip": 1513,
+          "medido_legibles": 1513,
+          "diferencia_zip": 0,
+          "diferencia_legibles": 0
+        },
+        "texting_phone": {
+          "declarado": 1561,
+          "medido_en_zip": 1561,
+          "medido_legibles": 1561,
+          "diferencia_zip": 0,
+          "diferencia_legibles": 0
+        },
+        "other_activities": {
+          "declarado": 1190,
+          "medido_en_zip": 1190,
+          "medido_legibles": 1184,
+          "diferencia_zip": 0,
+          "diferencia_legibles": -6
+        }
+      },
+      "resolucion_declarada": "400x600",
+      "texto_resolucion_declarada": "Each image has a resolution of 400 × 600 pixels",
+      "imagenes_con_la_resolucion_declarada": 0,
+      "imagenes_con_la_resolucion_declarada_en_cualquier_orientacion": 0,
+      "nota_correspondencia": "La correspondencia de las clases declaradas con las carpetas es por nombre (inferencia nuestra; «Others» ↔ other_activities)."
+    },
+    "variables_que_la_fuente_no_trae": [
+      "tipo_vehiculo",
+      "iluminacion",
+      "angulo"
+    ]
+  }
+}
