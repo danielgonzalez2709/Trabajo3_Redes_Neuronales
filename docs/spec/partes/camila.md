@@ -91,11 +91,11 @@ Limitaciones discutidas con datos cuando sea posible.
 ## 4. Tareas
 | ID | Tarea | Fecha | Agente (modelo) | + Verificador | Aceptación | Estado |
 |---|---|---|---|---|---|---|
-| CA-1 | Calendario exógeno (§3.1) | mar 24–mié 25 | investigador-fuentes (Sonnet) + implementador (Sonnet) | cazador-alucinaciones (Opus) | Esquema §5.2; cada columna con fuente; prueba de fechas conocidas | ⬜ |
-| CA-2 | Normativa y `operacion.yaml` (§3.2) | mar 24–mié 25 | investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | Cada valor normativo con cita primaria; supuestos marcados | ⬜ |
-| CA-3 | `dimensionar()` y conductores (§3.3) | mié 25–jue 26 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | Pruebas con casos hechos a mano; usa ida y regreso | ⬜ |
-| CA-4 | Análisis descriptivo M1 secciones 3–7 (§3.4) | mié 25–jue 26 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json` válido; figuras de series y descomposición | ⬜ |
-| CA-5 | Modelos de referencia (§3.5) | jue 26 | implementador (Sonnet) | auditor-fugas (Opus) | Evaluados con el arnés común; `summary.json` con presupuesto y parámetros | ⬜ |
+| CA-1 | Calendario exógeno (§3.1) | mar 24–mié 25 | investigador-fuentes (Sonnet) + implementador (Sonnet) | cazador-alucinaciones (Opus) | Esquema §5.2; cada columna con fuente; prueba de fechas conocidas | ✅ (26-nov) |
+| CA-2 | Normativa y `operacion.yaml` (§3.2) | mar 24–mié 25 | investigador-fuentes (Sonnet) | cazador-alucinaciones (Opus) | Cada valor normativo con cita primaria; supuestos marcados | ✅ (26-nov) |
+| CA-3 | `dimensionar()` y conductores (§3.3) | mié 25–jue 26 | implementador-experto (Opus) 🧠 | verificador-matematico (Opus) | Pruebas con casos hechos a mano; usa ida y regreso | ✅ (27-nov) |
+| CA-4 | Análisis descriptivo M1 secciones 3–7 (§3.4) | mié 25–jue 26 | analista-experimentos (Sonnet) | revisor-spec (Sonnet) | `hipotesis.json` válido; figuras de series y descomposición | ✅ (26-nov) |
+| CA-5 | Modelos de referencia (§3.5) | jue 26 | implementador (Sonnet) | auditor-fugas (Opus) | Evaluados con el arnés común; `summary.json` con presupuesto y parámetros | 🟨 (falta arnés AN-1 y `summary.json`) |
 | CA-6 | Negocio 1, 2 y 4 + limitaciones (§3.6) | sáb 28 | analista-experimentos (Sonnet) | verificador-matematico (Opus) | Tablas y figuras de flota, conductores, sensibilidad y temporada alta | ⬜ |
 | CA-7 | Figuras de M1 (datos y operación) | sáb 28 | implementador (Sonnet) | auditor-entregables (Haiku) | Todas las figuras mínimas que me tocan, regenerables con `run.py figures` | ⬜ |
 | CA-8 | Exportación de parámetros y casos de paridad para la app | sáb 28 | implementador (Sonnet) | revisor-spec (Sonnet) | Casos de paridad de `dimensionar()` en `app/public/model/m1/` | ⬜ |

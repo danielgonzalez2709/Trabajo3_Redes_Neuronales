@@ -1,0 +1,219 @@
+"""M1 — calendario exógeno (CA-1, núcleo §5.2). Sin red. Todo es conocible 30 días antes (regla 0.9).
+
+Salida: ``data/processed/m1/calendario.parquet``, una fila por ``fecha`` (sin huecos) del periodo de
+``data/externos/m1/calendario_fuentes.yaml`` (por defecto 2021-01-01..2024-12-31). Ejecutar:
+``python -m src.m1_demanda.calendario [--salida RUTA] [--fuentes RUTA] [--inicio AAAA-MM-DD] [--fin AAAA-MM-DD]``.
+
+Columnas: ``fecha`` (date), ``dia_semana`` (0 = lunes), ``festivo``, ``festivo_nombre``, ``festivo_trasladado``, ``puente``,
+``semana_santa``, ``jueves_viernes_santo``, ``vacaciones_escolares_<DIVIPOLA>`` (11001, 76001, 15759, 52001, 52356;
+booleano anulable), ``vacaciones_escolares`` (= la de Bogotá, 11001, por compatibilidad con §5.2), ``fin_de_anio`` y, por
+cada columna de vacaciones, ``<columna>_conocible_desde`` (datetime64, anulable): fecha de expedición del acto original que
+fija el valor de ese día (regla 0.9; ver abajo).
+
+Reglas (fuentes y supuestos en ``data/fuentes.md``, sección «Calendario exógeno de M1»):
+  * Festivos: Ley 51 de 1983. Fijos sin traslado: 1-ene, 1-may, 20-jul, 7-ago, 8-dic, 25-dic, Jueves y Viernes Santo.
+    Con traslado al lunes siguiente si no caen en lunes: 6-ene, 19-mar, 29-jun, 15-ago, 12-oct, 1-nov, 11-nov, Ascensión,
+    Corpus Christi y Sagrado Corazón. Pascua con ``dateutil.easter``; desfases del informe CA-1 §1.1.
+    TODO(cita): fuente primaria de los desfases de Corpus Christi (Pascua+60) y Sagrado Corazón (Pascua+68).
+  * ``puente`` (supuesto): sábado, domingo y lunes si el lunes es festivo; viernes, sábado y domingo si el festivo cae en viernes.
+  * ``semana_santa``: lunes a domingo que termina en el Domingo de Pascua (informe §1.1).
+  * ``fin_de_anio``: del 10-dic al 15-ene, ambos inclusive (Resolución 264 de 2020 de MinTransporte, art. 8).
+  * Vacaciones: rangos de receso del yaml (versión original de cada calendario). Dentro de la ``cobertura`` de la ciudad
+    lo que no es receso es falso; fuera de ella, o en los ``vacios`` del yaml (días que ningún acto cubre), es nulo
+    (sin fuente, no se imputa).
+  * ``<vacaciones>_conocible_desde``: ``fecha_acto`` (versión original) del bloque del yaml que fija el valor del día: el
+    bloque cuyos rangos contienen el día (receso) o, si no es receso, el bloque vigente (el de inicio más reciente <= día).
+    Nulo si el valor es nulo o si el bloque no trae ``fecha_acto`` (TODO(dato-faltante); no se inventa). Un modelo debe
+    anular la variable de vacaciones del día objetivo cuando origen < conocible_desde. Excepciones documentadas en las que el
+    acto es posterior al propio día: Pasto 2021-01-04..14 y Ipiales 2021-01-04..13 (fuera del periodo de test).
+  * Festivos: la Ley 51 de 1983 es anterior a todo el periodo, así que son conocibles siempre y no llevan columna.
+    ``fin_de_anio`` (Res. 264/2020, de 2020, anterior al entrenamiento) y ``puente`` (supuesto del equipo) son reglas fijas, también conocibles siempre.
+"""
+from __future__ import annotations
+
+import argparse
+from datetime import date, timedelta
+from pathlib import Path
+
+import pandas as pd
+import yaml
+from dateutil.easter import easter
+
+RAIZ = Path(__file__).resolve().parents[2]
+FUENTES = RAIZ / "data" / "externos" / "m1" / "calendario_fuentes.yaml"
+SALIDA = RAIZ / "data" / "processed" / "m1" / "calendario.parquet"
+
+# Ley 51 de 1983, art. 1: (mes, día, nombre, ¿se traslada al lunes?)
+_FIJOS = [
+    (1, 1, "Año Nuevo", False),
+    (1, 6, "Reyes Magos", True),
+    (3, 19, "San José", True),
+    (5, 1, "Día del Trabajo", False),
+    (6, 29, "San Pedro y San Pablo", True),
+    (7, 20, "Independencia", False),
+    (8, 7, "Batalla de Boyacá", False),
+    (8, 15, "Asunción", True),
+    (10, 12, "Día de la Raza", True),
+    (11, 1, "Todos los Santos", True),
+    (11, 11, "Independencia de Cartagena", True),
+    (12, 8, "Inmaculada Concepción", False),
+    (12, 25, "Navidad", False),
+]
+
+
+def cargar_fuentes(ruta: Path | str | None = None) -> dict:
+    with open(ruta or FUENTES, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def _al_lunes(d: date) -> date:
+    """Lunes siguiente si ``d`` no es lunes (art. 1 num. 2)."""
+    return d if d.weekday() == 0 else d + timedelta(days=7 - d.weekday())
+
+
+def festivos_del_anio(anio: int, desfases: dict | None = None) -> dict[date, tuple[str, bool]]:
+    """{fecha observada: (nombre, trasladado)} de los festivos del año."""
+    if desfases is None:
+        desfases = cargar_fuentes()["supuestos"]["desfases_pascua"]
+    pascua = easter(anio)
+    out: dict[date, tuple[str, bool]] = {}
+
+    def poner(original: date, nombre: str, traslada: bool) -> None:
+        obs = _al_lunes(original) if traslada else original
+        if obs in out:  # no hay regla en el informe para esta colisión: no se inventa
+            raise ValueError(f"dos festivos el {obs}: {out[obs][0]} y {nombre}; sin regla en el informe CA-1")
+        out[obs] = (nombre, obs != original)
+
+    for mes, dia, nombre, traslada in _FIJOS:
+        poner(date(anio, mes, dia), nombre, traslada)
+    poner(pascua + timedelta(days=desfases["jueves_santo"]), "Jueves Santo", False)
+    poner(pascua + timedelta(days=desfases["viernes_santo"]), "Viernes Santo", False)
+    poner(pascua + timedelta(days=desfases["ascension"]), "Ascensión", True)
+    poner(pascua + timedelta(days=desfases["corpus_christi"]), "Corpus Christi", True)  # TODO(cita)
+    poner(pascua + timedelta(days=desfases["sagrado_corazon"]), "Sagrado Corazón", True)  # TODO(cita)
+    return out
+
+
+def _vacaciones(fechas: pd.Series, ciudad: dict) -> pd.Series:
+    ini_c, fin_c = (date.fromisoformat(x) for x in ciudad["cobertura"])
+    receso = set()
+    for b in ciudad["bloques"]:
+        for ini, fin in b["rangos"]:
+            d, f = date.fromisoformat(ini), date.fromisoformat(fin)
+            while d <= f:
+                receso.add(d)
+                d += timedelta(days=1)
+
+    # `vacios` (opcional): días dentro de la cobertura que ningún acto cubre (p. ej. 1-ene-2024 de Pasto e Ipiales) -> nulo
+    vacios = [(date.fromisoformat(a), date.fromisoformat(b)) for a, b in ciudad.get("vacios", [])]
+
+    def valor(d: date):
+        if d < ini_c or d > fin_c or any(a <= d <= b for a, b in vacios):
+            return pd.NA
+        return d in receso
+
+    return pd.Series([valor(d) for d in fechas], index=fechas.index, dtype="boolean")
+
+
+def _conocible_desde(fechas: pd.Series, ciudad: dict, valor: pd.Series) -> pd.Series:
+    """Fecha de expedición del acto original que fija el valor de cada día (nulo si el valor es nulo o falta ``fecha_acto``)."""
+    bloques = []
+    for b in ciudad["bloques"]:
+        rangos = [(date.fromisoformat(a), date.fromisoformat(z)) for a, z in b["rangos"]]
+        acto = pd.Timestamp(b["fecha_acto"]) if b.get("fecha_acto") else pd.NaT  # TODO(dato-faltante) si no hay fecha
+        bloques.append((min(a for a, _ in rangos), rangos, acto))
+
+    def acto_de(d: date):
+        for _, rangos, acto in bloques:
+            if any(a <= d <= z for a, z in rangos):
+                return acto
+        vigentes = [(ini, acto) for ini, _, acto in bloques if ini <= d]
+        return max(vigentes, key=lambda x: x[0])[1] if vigentes else pd.NaT
+
+    vals = [pd.NaT if pd.isna(v) else acto_de(d) for d, v in zip(fechas, valor)]
+    return pd.Series(pd.to_datetime(vals), index=fechas.index, dtype="datetime64[ns]")
+
+
+def construir_calendario(fuentes: dict | Path | str | None = None, inicio: str | None = None, fin: str | None = None) -> pd.DataFrame:
+    if not isinstance(fuentes, dict):
+        fuentes = cargar_fuentes(fuentes)
+    ini = date.fromisoformat(inicio or fuentes["periodo"]["inicio"])
+    fin_ = date.fromisoformat(fin or fuentes["periodo"]["fin"])
+    sup = fuentes["supuestos"]
+    des = sup["desfases_pascua"]
+
+    # solo los años del periodo (ningún festivo ni la Semana Santa cruzan de año)
+    festivos: dict[date, tuple[str, bool]] = {}
+    for a in range(ini.year, fin_.year + 1):
+        festivos.update(festivos_del_anio(a, des))
+
+    fechas = [ini + timedelta(days=i) for i in range((fin_ - ini).days + 1)]
+    df = pd.DataFrame({"fecha": fechas})
+    df["dia_semana"] = [d.weekday() for d in fechas]
+    df["festivo"] = [d in festivos for d in fechas]
+    df["festivo_nombre"] = pd.Series([festivos[d][0] if d in festivos else None for d in fechas], dtype=object)
+    df["festivo_trasladado"] = [bool(festivos[d][1]) if d in festivos else False for d in fechas]
+
+    # puente (supuesto): lunes festivo -> sáb, dom, lun; viernes festivo -> vie, sáb, dom
+    puente: set[date] = set()
+    for d in festivos:
+        if d.weekday() == 0:
+            puente.update({d - timedelta(days=2), d - timedelta(days=1), d})
+        elif d.weekday() == 4:
+            puente.update({d, d + timedelta(days=1), d + timedelta(days=2)})
+    df["puente"] = [d in puente for d in fechas]
+
+    # Semana Santa y Jueves/Viernes Santo
+    ss, jv = set(), set()
+    for a in range(ini.year, fin_.year + 1):
+        p = easter(a)
+        ss.update(p - timedelta(days=k) for k in range(sup["semana_santa"]["dias_antes_de_pascua"] + 1))
+        jv.update({p + timedelta(days=des["jueves_santo"]), p + timedelta(days=des["viernes_santo"])})
+    df["semana_santa"] = [d in ss for d in fechas]
+    df["jueves_viernes_santo"] = [d in jv for d in fechas]
+
+    # fin de año: 10-dic .. 15-ene (Res. 264/2020 art. 8), extremos del yaml
+    m1, d1 = (int(x) for x in sup["fin_de_anio"]["inicio_mes_dia"].split("-"))
+    m2, d2 = (int(x) for x in sup["fin_de_anio"]["fin_mes_dia"].split("-"))
+    df["fin_de_anio"] = [(d.month, d.day) >= (m1, d1) or (d.month, d.day) <= (m2, d2) for d in fechas]
+
+    cols, conocibles = {}, {}
+    for ciudad in fuentes["ciudades"].values():
+        k = f"vacaciones_escolares_{ciudad['divipola']}"
+        cols[k] = _vacaciones(df["fecha"], ciudad)
+        conocibles[f"{k}_conocible_desde"] = _conocible_desde(df["fecha"], ciudad, cols[k])
+    for k, v in {**cols, **conocibles}.items():
+        df[k] = v
+    df["vacaciones_escolares"] = df["vacaciones_escolares_11001"]  # Bogotá, compatibilidad §5.2
+    df["vacaciones_escolares_conocible_desde"] = df["vacaciones_escolares_11001_conocible_desde"]
+    orden = (["fecha", "dia_semana", "festivo", "festivo_nombre", "festivo_trasladado", "puente", "semana_santa",
+              "jueves_viernes_santo", "vacaciones_escolares", "vacaciones_escolares_conocible_desde"]
+             + list(cols) + list(conocibles) + ["fin_de_anio"])
+    return df[orden]
+
+
+def main(argv: list[str] | None = None) -> pd.DataFrame:
+    ap = argparse.ArgumentParser(description="Calendario exógeno de M1 (CA-1)")
+    ap.add_argument("--fuentes", default=str(FUENTES))
+    ap.add_argument("--salida", default=str(SALIDA))
+    ap.add_argument("--inicio", default=None)
+    ap.add_argument("--fin", default=None)
+    a = ap.parse_args(argv)
+    df = construir_calendario(a.fuentes, a.inicio, a.fin)
+    salida = Path(a.salida)
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(salida, index=False)
+    print(f"{salida}: {len(df)} filas, {df['fecha'].min()} .. {df['fecha'].max()}")
+    for c in df.columns:
+        if c in ("fecha", "dia_semana", "festivo_nombre"):
+            continue
+        if c.endswith("_conocible_desde"):
+            print(f"  {c}: {df[c].min().date()} .. {df[c].max().date()}  nulos={int(df[c].isna().sum())}")
+            continue
+        print(f"  {c}: verdadero={int((df[c] == True).sum())}  nulos={int(df[c].isna().sum())}")  # noqa: E712
+    print(f"  festivo_nombre: no nulos={int(df['festivo_nombre'].notna().sum())}")
+    return df
+
+
+if __name__ == "__main__":
+    main()

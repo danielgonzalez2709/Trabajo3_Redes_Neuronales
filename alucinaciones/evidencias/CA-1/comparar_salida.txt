@@ -1,0 +1,56 @@
+(1461, 15) 2021-01-01 2024-12-31
+fecha                          object
+dia_semana                      int64
+festivo                          bool
+festivo_nombre                    str
+festivo_trasladado               bool
+puente                           bool
+semana_santa                     bool
+jueves_viernes_santo             bool
+vacaciones_escolares          boolean
+vacaciones_escolares_11001    boolean
+vacaciones_escolares_76001    boolean
+vacaciones_escolares_15759    boolean
+vacaciones_escolares_52001    boolean
+vacaciones_escolares_52356    boolean
+fin_de_anio                      bool
+dtype: object
+n festivos 72 {2021: 18, 2022: 18, 2023: 18, 2024: 18}
+informe 72 parquet 72
+solo informe set()
+solo parquet set()
+nombre distinto []
+dia semana mal en informe []
+rangos informe 89 yaml 90
+solo informe []
+solo yaml [('sogamoso', '2022-01-17', '2022-01-23')]
+vacaciones_escolares_11001 true 341 nulos 0 difs 0
+  receso fuera de cobertura: [datetime.date(2025, 1, 1), datetime.date(2025, 1, 2), datetime.date(2025, 1, 3)] 12
+vacaciones_escolares_76001 true 325 nulos 17 difs 0
+  receso fuera de cobertura: [datetime.date(2025, 1, 1), datetime.date(2025, 1, 2), datetime.date(2025, 1, 3)] 12
+vacaciones_escolares_15759 true 252 nulos 369 difs 0
+  receso fuera de cobertura: [] 0
+vacaciones_escolares_52001 true 344 nulos 3 difs 0
+  receso fuera de cobertura: [] 0
+vacaciones_escolares_52356 true 342 nulos 3 difs 0
+  receso fuera de cobertura: [] 0
+True
+bogota 2021 94 dias 13.43 sem
+bogota 2022 91 dias 13.0 sem
+bogota 2023 84 dias 12.0 sem
+bogota 2024 84 dias 12.0 sem
+cali 2021 84 dias 12.0 sem
+cali 2022 84 dias 12.0 sem
+cali 2023 85 dias 12.14 sem
+cali 2024 84 dias 12.0 sem
+sogamoso 2021 91 dias 13.0 sem
+sogamoso 2022 84 dias 12.0 sem
+sogamoso 2023 84 dias 12.0 sem
+pasto 2021 91 dias 13.0 sem
+pasto 2022 84 dias 12.0 sem
+pasto 2023 84 dias 12.0 sem
+pasto 2024 85 dias 12.14 sem
+ipiales 2021 91 dias 13.0 sem
+ipiales 2022 84 dias 12.0 sem
+ipiales 2023 84 dias 12.0 sem
+ipiales 2024 83 dias 11.86 sem

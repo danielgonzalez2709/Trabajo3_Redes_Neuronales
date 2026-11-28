@@ -1,0 +1,507 @@
+
+===== PÁGINA 1 =====
+Boletín técnico Bogotá
+22 de octubre de 2026
+Índice de Costos del Transporte
+Intermunicipal de Pasajeros – ICTIP
+Tercer trimestre 2026
+Gráfico 1: Variación trimestral del ICTIP, según grupos de costos
+Total, nacional
+Tercer trimestre 2026
+Variación (%)
+0,80
+0,40
+0,00
+-0,40
+-0,80
+-1,20
+0,68
+0,41
+0,46
+-0,06
+-0,13
+-0,77
+Costos fijos Combustibles Peajes y uso de
+terminales
+Insumos Partes, piezas,
+servicios de
+mantenimiento y
+reparación del
+vehículo
+Total
+Fuente: DANE, ICTIP.
+Contenido
+• Introducción
+• Resultados tercer trimestre 2026
+• Resultados año corrido
+• Resultados anuales 2026
+• Medidas de calidad
+• Información adicional
+• Ficha metodológica
+• Glosario
+===== PÁGINA 2 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+Introducción
+El Índice de Costos del Transporte Intermunicipal de Pasajeros – ICTIP, permite medir las
+variaciones promedio de precios de un conjunto representativo de bienes y servicios necesarios,
+para garantizar la movilización de un vehículo prestador del servicio del transporte intermunicipal
+de pasajeros en el país, a lo largo del tiempo. Es un indicador especializado que permite la toma
+de decisiones por parte de entidades del gobierno y empresas privadas del sector.
+Después de continuas mesas de trabajo con el Ministerio de Transporte, el DANE suscribió el
+Convenio Interadministrativo 136 de 2015, que le permite entre otros, sumar esfuerzos con el
+Ministerio para producir información básica relacionada con el sector del transporte intermunicipal
+de pasajeros y aplicar el diseño del ICTIP. A partir de enero de 2017 el DANE publica el Índice de
+Costos de Transporte Intermunicipal de Pasajeros (ICTIP), con resultados del IV trimestre de 2016.
+La metodología de diseño del ICTIP atiende las recomendaciones internacionalmente aceptadas
+para el desarrollo de este tipo de indicadores. La base del índice es el cuarto trimestre de 2015, y
+su periodicidad de difusión es trimestral. Los usuarios pueden acceder a la información mediante
+la página WEB del DANE.
+2
+===== PÁGINA 3 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+1. Resultados trimestrales (tercer trimestre 2026
+/ segundo trimestre 2026)
+1.1 Variación y contribución trimestral por grupos de costos1
+En el tercer trimestre (julio-septiembre) de 2026, el ICTIP obtuvo una variación trimestral de
+-0,13%, en comparación con el segundo trimestre (abril-junio) de 2026. Los grupos Insumos
+(0,68%), Partes, piezas, servicios de mantenimiento y reparación (0,46%), Peajes y uso de
+terminales (0,41%) y Combustibles (-0,06%) registraron variaciones por encima del promedio
+nacional. Por otra parte, el grupo Costos fijos (-0,77%) presentó la única variación por debajo del
+promedio nacional.
+Tabla 1. ICTIP Variación trimestral según grupos de costos
+Tercer trimestre (julio-septiembre) 2025 – 2026
+Grupo de costos Peso %
+Variación %
+2026 2025
+Contribución
+Puntos
+porcentuales
+Variación %
+Contribución
+Puntos
+porcentuales
+Combustibles 31,00 -0,06 -0,02 0,77 0,22
+Insumos 8,78 0,68 0,06 -0,06 0,00
+Costos fijos 32,99 -0,77 -0,28 0,46 0,16
+Peajes y uso de terminales 20,39 0,41 0,09 0,24 0,05
+Partes, piezas, servicios de
+mantenimiento y reparación del
+6,84 0,46 0,03 0,36 0,02
+vehículo
+Total 100,00 -0,13 -0,13 0,45 0,45
+Fuente: DANE, ICTIP.
+El mayor aporte a la variación trimestral del ICTIP (-0,13%), se registró en el grupo de Costos fijos,
+el cual restó 0,28 puntos porcentuales.
+1 NOTA: La diferencia en la suma de las variables, obedece al sistema de aproximación en el nivel de dígitos trabajados en el í ndice
+3
+===== PÁGINA 4 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+1.2 Variación y contribución trimestral por clases de costos2
+Por clases de costos, al comparar el tercer trimestre (julio-septiembre) de 2026 con el trimestre
+inmediatamente anterior, los principales aportes fueron: Costos del vehículo y su apalancamiento
+(-3,19%), Combustibles (-0,06%), Partes y piezas utilizadas en el motor (-2,22%), Llantas ubicadas
+en la tracción (-0,74) y Llantas ubicadas en la dirección (-0,72%).
+Tabla 2. ICTIP Variación y contribución trimestral según las principales clases de costos
+Tercer trimestre (julio-septiembre) 2026
+Clases de Costos Variación
+Trimestral (%)
+Contribución
+Puntos Porcentuales
+Costo del vehículo y su apalancamiento -3,19 -0,28
+Combustibles -0,06 -0,02
+Partes y piezas utilizadas en el motor -2,22 -0,02
+Llantas ubicadas en la tracción -0,74 -0,01
+Llantas ubicadas en la dirección -0,72 -0,01
+Seguros -0,25 -0,01
+Partes y piezas utilizadas en la caja de velocidades -0,71 0,00
+Partes y piezas utilizadas en la dirección -0,49 0,00
+Partes y piezas utilizadas en el diferencial -0,80 0,00
+Partes y piezas utilizadas en los rodamientos y retenedores -0,54 0,00
+Fuente: DANE, ICTIP.
+2 NOTA: La diferencia en la suma de las variables, obedece al sistema de aproximación en el nivel de dígitos trabajados en el índice.
+4
+===== PÁGINA 5 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+2. Resultados año corrido (tercer trimestre 2026 /
+cuarto trimestre 2025)
+2.1 Variación y contribución año corrido por grupos de costos3
+En el tercer trimestre (julio-septiembre) de 2026 en comparación al último trimestre de 2025
+(octubre-diciembre), el ICTIP evidenció una variación año corrido de 7,77%. El grupo Costos fijos
+(14,07%) presentó la única alza por encima del promedio nacional. Por otra parte, en los grupos
+Peajes y uso de terminales (6,81%), Combustibles (3,71%), Partes, piezas, servicios de
+mantenimiento y reparación (3,21%) e Insumos (2,25%), se observaron variaciones por debajo del
+promedio nacional.
+Tabla 3. ICTIP Variación y contribución año corrido según grupos de costos
+Tercer trimestre (julio-septiembre) 2025 – 2026
+Grupo de costos Peso %
+Variación
+%
+2026 2025
+Contribución
+Puntos
+porcentuales
+Variación
+%
+Contribución
+Puntos
+porcentuales
+Combustibles 31,00 3,71 1,08 3,29 0,96
+Insumos 8,78 2,25 0,20 1,37 0,12
+Costos fijos 32,99 14,07 4,83 5,45 1,87
+Peajes y uso de terminales 20,39 6,81 1,46 7,62 1,60
+Partes, piezas, servicios de
+mantenimiento y reparación del
+6,84 3,21 0,21 4,17 0,27
+vehículo
+Total 100,00 7,77 7,77 4,82 4,82
+Fuente: DANE, ICTIP.
+El mayor aporte a la variación año corrido del ICTIP (7,77%) se registró en el grupo de Costos fijos,
+el cual aportó 4,83 puntos porcentuales.
+3 NOTA: La diferencia en la suma de las variables, obedece al sistema de aproximación en el nivel de dígitos trabajados en el í ndice
+5
+===== PÁGINA 6 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+2.2 Variación y contribución año corrido por clases de costos4
+Los principales aportes positivos a la variación año corrido, por clases de costos, se dieron en:
+Mano de obra conductor(es) y ayudante(s) (22,11%), Combustibles (3,71%), Peajes (7,64%), Uso de
+terminales (5,63%) y Seguros (6,02%).
+Tabla 4. ICTIP Variación y contribución año corrido según principales clases de costos
+Tercer trimestre (julio-septiembre) 2026
+Clases de Costos
+Variación
+Año corrido
+(%)
+Contribución
+Puntos
+Porcentuales
+Mano de obra conductor(es) y ayudante(s) 22,11 4,72
+Combustibles 3,71 1,08
+Peajes 7,64 0,97
+Uso de terminales 5,63 0,50
+Seguros 6,02 0,21
+Servicios de mantenimiento y reparación del motor, inyección, caja de velocidades,
+embrague y dirección 9,08 0,13
+Lubricantes 4,70 0,11
+Servicios de estación 7,81 0,10
+Impuestos y revisiones 7,99 0,03
+Filtros 2,57 0,03
+Fuente: DANE, ICTIP.
+4 NOTA: La diferencia en la suma de las variables, obedece al sistema de aproximación en el nivel de dígitos trabajados en el índice
+6
+===== PÁGINA 7 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+3. Resultados anuales (tercer trimestre 2026 /
+tercer trimestre 2025)
+3.1 Variación y contribución anual por grupos de costos5
+En el tercer trimestre (julio-septiembre) de 2026, el ICTIP obtuvo una variación anual de 8,08% en
+comparación con el mismo periodo del año inmediatamente anterior. El grupo Costos fijos
+(13,71%) registró la única variación por encima del promedio nacional. Por otra parte, los grupos
+Peajes y uso de terminales (6,87%), Combustibles (5,07%), Partes, piezas, servicios de
+mantenimiento y reparación (3,31%) e Insumos (2,18%) presentaron variaciones por debajo del
+promedio nacional.
+Tabla 5. ICTIP Variación y contribución anual según grupos de costos
+Tercer trimestre (julio-septiembre) 2025 – 2026
+Grupo de costos Peso %
+Variación
+%
+2026 2025
+Contribución
+Puntos
+porcentuales
+Variación
+%
+Contribución
+Puntos
+porcentuales
+Combustibles 31,00 5,07 1,46 6,35 1,82
+Insumos 8,78 2,18 0,19 1,51 0,14
+Costos fijos 32,99 13,71 4,74 5,71 1,98
+Peajes y uso de terminales 20,39 6,87 1,48 7,80 1,65
+Partes, piezas, servicios de
+mantenimiento y reparación del
+6,84 3,31 0,21 4,24 0,28
+vehículo
+Total 100,00 8,08 8,08 5,86 5,86
+Fuente: DANE, ICTIP.
+El mayor aporte a la variación anual del ICTIP (8,08%) se registró en el grupo de Costos fijos, el
+cual aportó 4,74 puntos porcentuales.
+5 NOTA: La diferencia en la suma de las variables, obedece al sistema de aproximación en el nivel de dígitos trabajados en el í ndice
+7
+===== PÁGINA 8 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+3.2 Variación y contribución anual por clases de costos6
+Por clases de costos, al comparar el tercer trimestre (julio-septiembre) de 2026 frente al mismo
+periodo de 2025, los principales aportes positivos a la variación anual correspondieron a mano de
+obra de conductores y ayudantes (22,11%), Combustibles (5,07%), Peajes (7,75%), Uso de
+terminales (5,63%) y seguros (4,45%).
+Tabla 6. ICTIP Variación y contribución anual según principales clases de costos
+Tercer trimestre (julio-septiembre) 2026
+Clases de Costos Variación
+Anual (%)
+Contribución
+Puntos Porcentuales
+Mano de obra conductor(es) y ayudante(s) 22,11 4,73
+Combustibles 5,07 1,46
+Peajes 7,75 0,98
+Uso de terminales 5,63 0,50
+Seguros 4,45 0,16
+Servicios de mantenimiento y reparación del motor, inyección, caja de
+velocidades, embrague y dirección 8,29 0,12
+Servicios de estación 8,70 0,12
+Lubricantes 4,88 0,11
+Impuestos y revisiones 8,01 0,03
+Filtros 2,88 0,03
+Fuente: DANE, ICTIP.
+6 NOTA: La diferencia en la suma de las variables, obedece al sistema de aproximación en el nivel de dígitos trabajados en el í ndice
+8
+===== PÁGINA 9 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+4. Medidas de calidad
+Las medidas de calidad descritas a continuación fueron aplicadas en el proceso de producción del
+Índice de Costos del Transporte Intermunicipal de Pasajeros. Se presenta a continuación, el
+indicador de cobertura según el número de registros esperados por el índice y la tasa de
+imputación de la variación de precios.
+Para estos efectos y teniendo en cuenta que, para el caso del índice, el porcentaje de cobertura se
+calcula a partir del número de registros específicamente, es decir, para las variaciones de precios
+de variedades comparables, el porcentaje de no respuesta se entiende como: 100% menos el
+porcentaje de cobertura.
+Debido a que los resultados del indicador hacen referencia al número índice mensual encadenado
+durante el trimestre de referencia, los indicadores de calidad totales corresponden al promedio
+simple de los tres meses incluidos dentro del periodo publicado.
+4.1 Indicador de cobertura
+El porcentaje de cobertura es un instrumento que permite hacer seguimiento al desarrollo de la
+recolección de los registros reportados por las fuentes en la operación estadística. Para el Índice
+es denominado indicador de tasa de respuesta o cobertura por registros (ITRR) y mide la relación
+entre el número de registros recolectados con información efectiva y el número de registros que
+se esperan recolectar en el mes de referencia, al comienzo del operativo de campo.
+Por medio del ITRR se puede determinar el grado de respuesta efectiva o cobertura en términos
+de los registros, frente al número esperado en la investigación como criterio disponible para
+efectuar el seguimiento y control operativo. Los registros efectivos son aquellos que permiten
+calcular variaciones de precios para variedades comparables, con las cuales se realiza el cálculo
+del índice.
+ITRR = (Registros efectivos / Registros esperados) * 100
+Donde:
+ITRR = (REF / RES) * 100
+REF = Registros recolectados en el mes que efectivamente entran al cálculo del índice.
+RES = Registros en el mes previamente diligenciados para recolección.
+ITRR Julio = (11.679/11.839) * 100 = 98,65
+ITRR Agosto = (11.739/11.865) * 100 = 98,94
+9
+===== PÁGINA 10 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+ITRR Septiembre = (11.784/11.966) * 100 = 98,48
+ITRR III trimestre de 2026 = ((98,65 + 98,94 + 98,48) /3) = 98,69
+Para este periodo, el ICTIP evidenció un índice de cobertura de 98,69%.
+4.2 Indicador de imputación
+El porcentaje de no imputación INI, es un instrumento que permite hacer seguimiento al desarrollo
+de la recolección de los registros reportados por las fuentes en la operación estadística. Tiene en
+cuenta el número de registros efectivos de precio y el número de registros a imputar.
+Por medio del INI se puede establecer el porcentaje de imputación al que está sometido el ICTIP,
+frente a la cantidad de registros recolectados, que efectivamente entran al cálculo del índice en el
+mes y sirve como criterio disponible para efectuar el seguimiento y control. Los registros efectivos
+son aquellos que fueron recolectados durante el mes y permiten calcular variaciones de precios
+para variedades comparables7
+.
+El porcentaje de no imputación se calcula de la siguiente manera:
+INI =
+(Registros efectivos – Registros a imputar) Registros efectivos
+* 100
+Donde
+Donde:
+REF = Registros recolectados en el mes que efectivamente entran al cálculo del índice.
+INI Julio = (11.679 - 71) / 11.679 * 100 = 99,39
+INI Agosto = (11.739 - 273) /11.739 * 100 = 97,67
+INI Septiembre = (11.784 - 48) /11.784 * 100 = 99,59
+INI III trimestre de 2026 = ((99,39 + 97,67 + 99,59) /3) = 98,89
+El ICTIP, para este trimestre, presentó un índice de no imputación de 98,89%.
+7 El ICTIP cuenta con artículos que tienen diferentes periodicidades de recolección, por lo cual, para el cálculo del índice, a los registros
+recolectados mensualmente, se suman los registros de aquellos artículos que tienen periodicidad diferente a la mensual (caso impuesto
+de rodamiento vehicular, entre otros), pero en el momento del cálculo de los indicadores no se incluyen, con el objetivo de o btener el
+análisis de la recolección en el mes calculado
+10
+===== PÁGINA 11 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+Cuando se presenta una ausencia temporal de información, ésta es subsanada por medio de un
+procedimiento de imputación que busca asignar una variación de precios a un registro sin
+información, a partir de la variación de precios promedio de aquellos registros de los cuales si se
+tiene información; por ejemplo: si existe un precio faltante de una variedad determinada en un
+establecimiento específico de un dominio geográfico, se imputa a este registro la variación
+promedio de precios del artículo en el dominio geográfico, que a su vez depende de contar con
+un número de registros suficiente que permita la adecuada estimación de la variación de precios
+(ante la ausencia de información, se asume que este registro tendrá una variación igual al
+promedio del mercado).
+11
+===== PÁGINA 12 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+5. Información adicional
+La información relacionada puede ser consultada en la página WEB del DANE:
+• Variación trimestral por clases de vehículo, en el archivo de “Índices, variaciones y
+contribuciones”: Variaciones y contribuciones - históricos, hoja Anexo4.
+• Variación año corrido por clases de vehículo, en el archivo de “Índices, variaciones y
+contribuciones”: Variaciones y contribuciones - históricos, hoja Anexo4.
+• Variación anual por clases de vehículo, en el archivo de “Índices, variaciones y
+contribuciones”: Variaciones y contribuciones - históricos, hoja Anexo4.
+12
+===== PÁGINA 13 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+Ficha Metodológica
+1. Qué es el ICTIP: es un indicador que permite medir la variación promedio de los costos de una
+canasta representativa de los bienes y los servicios requeridos para garantizar la movilización de
+un vehículo prestador del servicio del transporte intermunicipal de pasajero en el país.
+2. Unidad de observación: los establecimientos donde el propietario del vehículo adquiere bienes
+y servicios para su consumo.
+3. Universo del estudio: Son todos los establecimientos de comercio y servicios dedicados a la
+venta de partes, piezas, servicios de mantenimiento y reparación, dirigidos a los vehículos de
+transporte intermunicipal de pasajeros, así como: bombas de estación, aseguradoras, secretarías
+de hacienda, alcaldías, casetas de peajes, corredores de seguros y empresas de transporte
+intermunicipal de pasajeros, tanto como los que ofertan llantas, filtros, combustibles, partes,
+piezas, servicios de estación y mantenimiento, parqueadero, y reparación, dirigidos a los vehículos
+de transporte intermunicipal de pasajeros, así como: compañías de financiamiento comercial,
+ubicados dentro del territorio nacional.
+4. Tipo de investigación: encuesta no probabilística.
+5. Periodicidad de publicación: trimestral.
+6. Período de referencia: es el mes cuando se recoge la información. (El ICTIP es calculado
+mensualmente). Se trata de un índice encadenado que permite el cálculo de la variación trimestral.
+7. Período de observación: veinte a veintidós días hábiles por mes.
+8. Período base del índice: IV trimestre de 2015=100.
+9. Cobertura geográfica: veintitrés ciudades: Armenia, Barranquilla, Bogotá, Bucaramanga, Cali,
+Cartagena, Cúcuta, Duitama, Florencia, Ibagué, Manizales, Medellín, Montería, Neiva, Pasto,
+Pereira, Popayán, Riohacha, Santa Marta, Sincelejo, Tunja, Valledupar y Villavicencio.
+10. Desagregación: total nacional, por seis clases de vehículos (automóvil, campero, camioneta,
+microbús, buseta y bus) y modelos de vehículos (bus: más de 19 años, entre 10 y 19 años y menos
+de 10 años, automóvil, camioneta, microbús y buseta: más de 15 años y menos de 16 años y
+campero: todos los modelos), para la estructura fija a nivel de grupos, subgrupos, y clases de
+costos.
+11. Forma de cálculo: variante a los índices tipo Laspeyres, que utiliza medias geométricas en el
+nivel básico y promedios aritméticos ponderados en los niveles agregados.
+12. Componentes de la estructura: nivel fijo y nivel flexible. Nivel fijo: aplica el índice, asociado
+a una ponderación de costos fijo, y se actualiza a partir de encuestas de caracterización y básicas
+de transporte. Se compone por tres categorías: grupo de costos, subgrupo de costos y clase de
+costos. Nivel flexible: se modifica por cambios en los patrones de consumo: se cotiza sobre una
+13
+===== PÁGINA 14 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+gama más amplia de artículos y se actualiza con mayor rapidez el patrón para el seguimiento de
+precios y está compuesto por artículos.
+DEFINICIÓN DE VARIABLES DEL ÍNDICE8
+Índice: la base del índice es IV trimestre de 2015 = 100,00
+Variación trimestral: es la relación del índice en el trimestre de referencia (Ii,t) con el índice del
+trimestre anterior (Ii-1,t), menos 1, por 100:
+Índice trimestre referencia
+VT = (
+- 1) *100
+Índice trimestre anterior
+Variación año corrido: es la relación del índice en el trimestre de referencia (Ii,t) con el
+índice del IV trimestre del año anterior (Id,t-1), menos 1, por 100:
+Índice trimestre referencia
+VAC = (
+-1) * 100
+Índice IV trimestre año anterior
+Variación anual: es la relación del índice en el trimestre de referencia (Ii,t) con el índice del mismo
+trimestre del año anterior (Ii,t-1), menos 1, por 100:
+Índice trimestre referencia
+VAN = (
+-1) * 100
+Índice mismo trimestre año anterior
+Contribución: permite medir el aporte en puntos porcentuales, de cada insumo a la variación
+trimestral, año corrido y anual, del total del índice de costos del transporte intermunicipal de
+pasajeros.
+Contribución trimestral por artículo:
+CT = ( Ia trimestre anterior )* Pa * VTa/100
+Índice TN trimestre anterior
+Contribución año corrido:
+Ia IV trimestre año anterior
+CAC = (
+Índice TN IV trimestre anterior
+Contribución anual:
+CAN = ( Ia mismo trimestre año anterior Índice TN mismo trimestre año anterior
+a: artículo
+Ia: Índice del articulo
+TN: Total Nacional
+Pa: Ponderación del artículo
+VTa: Variación trimestral del artículo
+VACa: Variación año corrido del artículo
+VANa: Variación anual del artículo
+)*Pa *VACa/100
+)*Pa *VANa/100
+8 El índice del periodo de referencia para el Segundo trimestre corresponde al de marzo; para el segundo trimestre el de junio, para
+el tercer trimestre el de septiembre y para el cuarto trimestre el de diciembre.
+El ICTIP es un índice encadenado calculado mensualmente y difundido cada trimestre.
+14
+===== PÁGINA 15 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+Glosario
+Artículo o Variedad: es cada elemento del conjunto de bienes y servicios que fue seleccionado,
+por debajo de la clase, para hacerle el seguimiento de precios. El artículo siempre se identifica por
+sus características básicas (primarias) y por otras menos importantes (secundarias).
+Fuente: Organización Internacional del Trabajo / Fondo Monetario Internacional / Organización de Cooperación y
+Desarrollo Económicos / Oficina Estadística de las Comunidades Europeas /Naciones Unidas / Banco Internacional de
+Reconstrucción y Fomento / Banco Mundial Pág. 447. Manual de Índice de Precios al Consumidor: Teoría y Práctica-
+ISBN 92-2-113699-X Copyright © 2006.
+Canasta de seguimiento de precios: conformada por los artículos representativos del consumo
+de un agente económico. Para el caso del transporte intermunicipal de pasajeros, se considera el
+conjunto de insumos necesarios para la movilidad de un vehículo de transporte intermunicipal de
+pasajeros.
+Fuente: Organización Internacional del trabajo OIT, Glosario de términos principales para la formulación del Índice de
+Precios al Consumidor IPC.
+Cobertura geográfica: corresponde al grupo de ciudades que reportan información y alimentan
+el índice mensualmente.
+Fuente: DANE
+ICTIP: instrumento estadístico que permite conocer el cambio porcentual promedio de los precios
+en dos periodos de tiempo de los principales insumos requeridos para el transporte intermunicipal
+de pasajeros.
+Fuente: DANE
+15
+===== PÁGINA 16 =====
+Boletín técnico
+Índice de Costos del Transporte intermunicipal de pasajeros
+(ICTIP)
+Tercer trimestre 2026
+Si requiere información adicional, contáctenos a través del correo
+contacto@dane.gov.co
+Departamento Administrativo Nacional de Estadística (DANE)
+Bogotá D.C., Colombia
+www.dane.gov.co
+16

@@ -26,6 +26,9 @@
   (`asignar_split`, `popularidad_train`, `historial_conocido`, `candidatos`); `tests/test_fuga_m3.py` (53 pruebas; mutantes
   detectados). Revisado por auditor-fugas (SIN FUGA), revisor-spec (aprobado en la 2.ª vuelta) y revisor-calidad (aprobado en la
   2.ª vuelta, más un ajuste de la sesión principal). Blog 07: subsección «Partición».
+- CA-3 (flota y conductores de M1) ✅ el vie 27 en `dev/camila`, pendiente de PR: `run.py m1-operacion` escribe
+  `results/data/m1/operacion/` (incluida `nomina_semanal.csv`); m_r por ruta (por corredor como sensibilidad,
+  `calibracion.multiplicador`). Revisado por revisor-spec, verificador-matematico y revisor-calidad (2.ª vuelta), más R1/R2/R8/R10.
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -39,6 +42,14 @@
 - M1: mayo de 2021 casi vacío → serie completa con marcas; los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`).
 - M1: reglas contra fuga del arnés (núcleo §5.3): lista blanca de columnas; test sin excluir anómalos; ventanas desde
   2021-06-01; rejilla de orígenes anclada al 2023-12-01 para cubrir el fin de año; composición por clase solo con train.
+- M1 negocio (CA-6) [DECIDIDO, Camila, 27-nov]: se implementa con la mejor red de Andrés (AN-5), no con las referencias;
+  «próximos 30 días» = origen 2023-12-01; temporada alta = días `fin_de_anio` del horizonte frente a una semana normal sin
+  festivos, puentes ni vacaciones escolares. Opciones de flota [DECIDIDO, 27-nov, tras CA-6a y su verificación]: propia =
+  propia o vinculada hasta la capacidad máxima fijada (≤ mínima + 20 %, Dec. 1079 art. 2.2.1.4.7.2); arrendada = contrato con
+  servicio especial en alta demanda (art. 2.2.1.6.3.5 mod. Dec. 1048/2026; Res. 264/2020); convenio = figura estable (≤ 2 años,
+  ruta completa). Sin costos en pesos con fuente oficial: comparación cualitativa.
+- M1 calendario [DECIDIDO, Camila, 27-nov]: `fin_de_anio` = 10-dic a 15-ene (Res. 264/2020 MinTransporte, art. 8); antes
+  supuesto 15-dic. Cambia `calendario.parquet` (aviso a Andrés).
 - Serie sintética: códigos ficticios del departamento `00`. JSON de juguete de la app: en DA-5.
 - M3 [DECIDIDO, Juan José, 25-nov; `docs/spec/partes/juanjose.md` §3.1]: interacción = unión de Reviews y UserHistory
   como implícita (no comparten pares); destino = los 1 000 `DestinationID`, con `lugar` (5 lugares) para el análisis
@@ -60,6 +71,12 @@
 - Usar siempre `.venv\Scripts\python` (el `python` del PATH puede ser 3.13).
 - M1 (Camila, Andrés): `sin_registro` vale 0 pero no es demanda (enmascarar); `anomalo` nunca como entrada; salto del tránsito
   en 11001-15759 desde nov-2022; 2021 muy por debajo de 2022–2023. Ver `docs/investigacion/DA-3_auditoria_fugas.md`.
+- M1 operación (Camila → Daniel, 27-nov): `dimensionar()` de Python (CA-3d) usa ρ_r = min(1, ρ·m_r) con m_r por ruta
+  calibrado en train, tripulación k = max(k_norma, ⌈t/J_ef⌉), conductores por piernas y nómina semanal N\*; los parámetros
+  por ruta llevan `multiplicador_ocupacion`. `app/lib/dimensionar.ts` sigue con la fórmula de juguete de DA-5: los casos de
+  paridad (CA-8) fallarán hasta que DA-6 la actualice.
+- M1 calendario (Camila → Andrés, 27-nov): `fin_de_anio` empieza el 10-dic (Res. 264/2020); nuevo SHA-256 de
+  `calendario.parquet` `c29dc412…ae2fb9` (antes `7478d74a…baecec6`). Reentrenar o reevaluar lo que lo use.
 - M3: para que la CI pase, el PR de JJ-1 debe incluir `configs/m3/datos.yaml`, `docs/investigacion/JJ-1_kaggle_metadata.json`
   y `tests/fixtures/m3/` (las pruebas los leen). El PR debe incluir también `results/data/m3/particion/resumen.json`
   (las pruebas reales de `test_fuga_m3.py` lo leen).
@@ -95,6 +112,17 @@
 - 2026-11-28 · Daniel · PR #6 fusionado (JJ-1..JJ-3). Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
   CPU (fallaba el #8), `results/**` y `*.csv` byte a byte en `.gitattributes` (huellas SHA-256 en Windows) y `test_no_network`
   ya no reescribe las figuras versionadas. En clones de Windows existentes: `git checkout -- results tests/fixtures`.
+- 2026-11-27 · Camila · Verificación de CA-6a (cazador): marco legal confirmado, omisión de la Res. 264/2020 y del art.
+  2.2.1.6.3.5, fe de erratas en el informe; candidato H-?? (CA-6a, Conceptos); CA-1c (`fin_de_anio` desde el 10-dic) despachado.
+- 2026-11-27 · Camila · CA-6: decisiones de horizonte y temporada alta; espera AN-5; CA-6a (costos y marco legal de
+  flota propia/arrendada/convenio) despachado a investigador-fuentes.
+- 2026-11-27 · Camila · CA-1, CA-2 y CA-4 ✅ (revisados, verificaciones y fe de erratas aplicadas; 136 pruebas); CA-5 🟨:
+  referencias listas (`presupuesto.json`, `pred_test_*.parquet`) pero falta evaluarlas con el arnés AN-1 de Andrés y su `summary.json`.
+- 2026-11-27 · Camila · CA-3 ✅: recomendaciones R1, R2, R8 y R10 de calidad aplicadas (encabezado corto, print sin
+  semanas completas, aserciones a mano, 11001-15759 empeora con m_r fuera de ventana); PLAN y spec personal marcados.
+- 2026-11-27 · Camila · CA-3d (tripulación E1, m_r por ruta O1, nómina semanal N\* O3) revisado: spec APROBADO,
+  matemática APROBADO CON OBSERVACIONES, calidad NO APROBADO (print de N\*) → CA-3e (m por corredor como sensibilidad, `calibracion.multiplicador`;
+  sin columnas de diagnóstico) → calidad APROBADO en 2.ª vuelta; aviso de paridad a Daniel; candidato a cacería H-?? (CA-3d).
 - 2026-11-26 · Juan José · JJ-3 ✅: partición sin fuga de M3 (1 066 / 326 / 606, semilla 2026, huella en `resumen.json`),
   `test_fuga_m3.py`, blog 07 «Partición»; D8–D10; 2 candidatos a la cacería.
 - 2026-11-26 · Juan José · JJ-2 ✅: descriptivo de M3 (9 hipótesis, 4 figuras, blog 07 con caso de uso); corrección del rótulo

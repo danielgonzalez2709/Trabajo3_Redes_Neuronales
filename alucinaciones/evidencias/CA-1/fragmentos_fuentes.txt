@@ -1,0 +1,34 @@
+# Fragmentos literales de fuentes primarias (consulta 2026-11-26, descargadas con curl; texto extraído del HTML/PDF)
+
+## Ley 51 de 1983 — Procuraduría https://apps.procuraduria.gov.co/gd_1952/docs/l0051_83.htm
+LEY 51 DE 1983
+(diciembre 22)
+Diario Oficial No. 36.428 del 30 de diciembre de 1983
+ARTICULO 1o. Todos los trabajadores, tanto del sector público como del sector privado, tienen derecho al descanso remunerado en los siguientes días de fiesta de carácter civil o religioso: primero de enero, diecinueve de marzo, primero de mayo, veintinueve de junio, veinte de julio, siete de agosto, quince de agosto, doce de octubre, primero de noviembre, once de noviembre, ocho de diciembre, y veinticinco de diciembre; además de los días jueves y viernes santos, Ascensión de Señor, Corpus Cristi y Sagrado Corazón de Jesús.
+2o. Pero el descanso remunerado del seis de enero, diecinueve de marzo, veintinueve de junio, quince de agosto, doce de octubre, primero de noviembre, once de noviembre, Ascensión del Señor, Corpus Cristi y Sagrado Corazón de Jesús cuando no caigan en día lunes se trasladarán al lunes siguiente a dicho día.
+Cuando las mencionadas festividades caigan en domingo, el descanso remunerado, igualmente se trasladará al lunes,
+3o. Las prestaciones y derechos que para el trabajador origina el trabajo en los días festivos, se reconocerán en relación al día de descanso remunerado establecido en el inciso anterior.
+ARTICULO 2o. La remuneración correspondiente al descanso en los días festivos se liquidará como para el descanso dominical, pero sin que haya lugar a descuento alguno por falta al trabajo.
+ARTICULO 3o. La presente Ley modifica el artículo 177 del Código Sustantivo del Trabajo, la Ley 37 de 1905, la Ley 57 de 1926, la Ley 35 de 1939 y la Ley 6a de 1945.
+ARTICULO 4o. La presente Ley rige desde la fecha de su sanción.
+Dada en Bogotá, D.E., a los seis días del mes de diciembre
+Bogotá D.E., 22 de diciembre de 1983.
+
+## Ley 51 de 1983 — Alcaldía de Bogotá https://www.alcaldiabogota.gov.co/sisjur/normas/Norma1.jsp?i=4954
+Fecha de Expedición:
+06/12/1983
+(Diciembre 06)
+ARTÍCULO 1º. 1. Todos los trabajadores, tanto del sector público como del sector privado, tienen derecho al descanso remunerado en los siguientes días de fiesta de carácter civil o religioso: primero de enero, seis de enero, diecinueve de marzo, primero de mayo, veintinueve de junio, veinte de julio, siete de agosto, quince de agosto, doce de octubre, primero de noviembre, once de noviembre, ocho de diciembre y veinticinco de diciembre, además de los días Jueves y Viernes Santos, Ascensión del Señor, Corpus Christi y Sagrado Corazón de Jesús.
+2. Pero el descanso remunerado del seis de enero, diecinueve de marzo, veintinueve de junio, quince de agosto, doce de octubre, primero de noviembre, once de noviembre, Ascensión del Señor, Corpus Christi y Sagrado Corazón de Jesús cuando no caigan en día lunes se trasladarán al lunes siguiente a dicho día.
+Cuando las mencionadas festividades caigan en domingo el descanso remunerado igualmente se trasladará al lunes.
+
+## C-107/94 https://www.corteconstitucional.gov.co/relatoria/1994/C-107-94.htm
+Magistrado Ponente: Dr. CARLOS GAVIRIA DIAZ.       Santafé de Bogotá, D.C., diez (10) de marzo de mil novecientos noventa y cuatro (
+R E S U E L V E :       ESTAR A LO RESUELTO EN LA SENTENCIA No. C-568 del 9 de diciembre de 1993, en virtud de la cual se declararon exequibles los artículos 1o. y 2o. de la Ley 51 de 1983.     Cópiese, notifíquese
+
+## C-568/93 https://www.corteconstitucional.gov.co/relatoria/1993/C-568-93.htm
+Magistrado Ponente:   Dr. FABIO MORON DIAZ           Santafé de Bogotá, D.C., diciembre nueve (9) de mil novecientos noventa y tres (1993
+Primero.- Declarar EXEQUIBLES el artículo 1o. de la Ley 37 de 1905 ; artículo 1o. de la Ley 57 de 1929; artículo 7o. de la Ley 6a. de 1945; los artículos 172 a 176 del C.S.T. y los artículos 1o. y 2o. de la Ley 51 de 1983.
+
+## Nota
+La copia de Procuraduría (y la de Cancillería, mismo texto de Avance Jurídico) omite «seis de enero» en el num. 1; la de la Alcaldía de Bogotá, C-107/94 y C-568/93 lo incluyen. Las tres copias coinciden en el num. 2.
