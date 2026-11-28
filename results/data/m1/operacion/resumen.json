@@ -74,6 +74,7 @@
     "ocupacion_calibrada": 0.6063213231174749,
     "ocupacion_calibrada_todo_train": 0.539580747341766,
     "ocupacion_usada": 0.61,
+    "variante_multiplicador": "por_ruta",
     "multiplicador_ocupacion": {
       "11001-15759": 0.46092810166796677,
       "11001-76001": 1.0583331307478208,
@@ -82,89 +83,190 @@
       "52356-52001": 1.323507685095346,
       "76001-11001": 1.0381955901231648
     },
-    "ocupacion_por_ruta_usada": {
-      "11001-15759": 0.2811661420174597,
-      "11001-76001": 0.6455832097561707,
-      "15759-11001": 0.39026590103551084,
-      "52001-52356": 0.821226342043923,
-      "52356-52001": 0.807339687908161,
-      "76001-11001": 0.6332993099751305
+    "multiplicador_ocupacion_por_ruta": {
+      "11001-15759": 0.46092810166796677,
+      "11001-76001": 1.0583331307478208,
+      "15759-11001": 0.639780165631985,
+      "52001-52356": 1.3462726918752836,
+      "52356-52001": 1.323507685095346,
+      "76001-11001": 1.0381955901231648
     },
-    "ocupacion_por_ruta_con_tope_1": [],
-    "limitacion_rho_global": "Con un solo ρ global (m_r = 1) el total de despachos ORIGEN de la ventana se reproduce, pero cada ruta queda por encima o por debajo; m_r lo corrige por ruta (reproduccion_dentro_de_ventana y validacion_fuera_de_ventana).",
+    "multiplicador_ocupacion_por_corredor": {
+      "11001-15759": 0.5447968545960561,
+      "11001-76001": 1.0483624664026385,
+      "15759-11001": 0.5447968545960561,
+      "52001-52356": 1.3348670086183518,
+      "52356-52001": 1.3348670086183518,
+      "76001-11001": 1.0483624664026385
+    },
+    "limitacion_rho_global": "Con un solo ρ global (m = 1) el total de despachos ORIGEN de la ventana se reproduce, pero cada ruta queda por encima o por debajo; m por ruta reproduce cada sentido y m por corredor la suma del corredor (reproduccion_dentro_de_ventana; fuera de ventana ninguna variante domina: validacion_fuera_de_ventana).",
     "reproduccion_dentro_de_ventana": {
-      "reproduccion_rho_global": {
-        "11001-15759": {
-          "modelo": 3683,
-          "observado": 7922,
-          "porcentaje": 46.49078515526382
+      "global": {
+        "despachos": {
+          "11001-15759": {
+            "modelo": 3683,
+            "observado": 7922,
+            "porcentaje": 46.49078515526382
+          },
+          "11001-76001": {
+            "modelo": 4195,
+            "observado": 3938,
+            "porcentaje": 106.52615540883697
+          },
+          "15759-11001": {
+            "modelo": 4506,
+            "observado": 6995,
+            "porcentaje": 64.41744102930664
+          },
+          "52001-52356": {
+            "modelo": 12896,
+            "observado": 9556,
+            "porcentaje": 134.9518627040603
+          },
+          "52356-52001": {
+            "modelo": 12730,
+            "observado": 9595,
+            "porcentaje": 132.67326732673268
+          },
+          "76001-11001": {
+            "modelo": 4041,
+            "observado": 3862,
+            "porcentaje": 104.63490419471776
+          },
+          "total": {
+            "modelo": 42051,
+            "observado": 41868,
+            "porcentaje": 100.43708799082832
+          }
         },
-        "11001-76001": {
-          "modelo": 4195,
-          "observado": 3938,
-          "porcentaje": 106.52615540883697
-        },
-        "15759-11001": {
-          "modelo": 4506,
-          "observado": 6995,
-          "porcentaje": 64.41744102930664
-        },
-        "52001-52356": {
-          "modelo": 12896,
-          "observado": 9556,
-          "porcentaje": 134.9518627040603
-        },
-        "52356-52001": {
-          "modelo": 12730,
-          "observado": 9595,
-          "porcentaje": 132.67326732673268
-        },
-        "76001-11001": {
-          "modelo": 4041,
-          "observado": 3862,
-          "porcentaje": 104.63490419471776
-        },
-        "total": {
-          "modelo": 42051,
-          "observado": 41868,
-          "porcentaje": 100.43708799082832
+        "flota_corredor": {
+          "11001-15759 | 15759-11001": {
+            "modelo": 4618,
+            "observado": 7949,
+            "porcentaje": 58.095357906654925
+          },
+          "11001-76001 | 76001-11001": {
+            "modelo": 4310,
+            "observado": 4071,
+            "porcentaje": 105.8707934168509
+          },
+          "52001-52356 | 52356-52001": {
+            "modelo": 13427,
+            "observado": 9813,
+            "porcentaje": 136.82869662692346
+          }
         }
       },
-      "reproduccion_rho_por_ruta": {
-        "11001-15759": {
-          "modelo": 7955,
-          "observado": 7922,
-          "porcentaje": 100.41656147437516
+      "por_ruta": {
+        "despachos": {
+          "11001-15759": {
+            "modelo": 7955,
+            "observado": 7922,
+            "porcentaje": 100.41656147437516
+          },
+          "11001-76001": {
+            "modelo": 3972,
+            "observado": 3938,
+            "porcentaje": 100.86338242762824
+          },
+          "15759-11001": {
+            "modelo": 7024,
+            "observado": 6995,
+            "porcentaje": 100.4145818441744
+          },
+          "52001-52356": {
+            "modelo": 9588,
+            "observado": 9556,
+            "porcentaje": 100.33486814566764
+          },
+          "52356-52001": {
+            "modelo": 9623,
+            "observado": 9595,
+            "porcentaje": 100.29181865554976
+          },
+          "76001-11001": {
+            "modelo": 3890,
+            "observado": 3862,
+            "porcentaje": 100.72501294665976
+          },
+          "total": {
+            "modelo": 42052,
+            "observado": 41868,
+            "porcentaje": 100.4394764497946
+          }
         },
-        "11001-76001": {
-          "modelo": 3972,
-          "observado": 3938,
-          "porcentaje": 100.86338242762824
+        "flota_corredor": {
+          "11001-15759 | 15759-11001": {
+            "modelo": 8342,
+            "observado": 7949,
+            "porcentaje": 104.94401811548623
+          },
+          "11001-76001 | 76001-11001": {
+            "modelo": 4105,
+            "observado": 4071,
+            "porcentaje": 100.83517563252272
+          },
+          "52001-52356 | 52356-52001": {
+            "modelo": 10064,
+            "observado": 9813,
+            "porcentaje": 102.55783144807909
+          }
+        }
+      },
+      "por_corredor": {
+        "despachos": {
+          "11001-15759": {
+            "modelo": 6729,
+            "observado": 7922,
+            "porcentaje": 84.94067154758899
+          },
+          "11001-76001": {
+            "modelo": 4003,
+            "observado": 3938,
+            "porcentaje": 101.65058405281869
+          },
+          "15759-11001": {
+            "modelo": 8246,
+            "observado": 6995,
+            "porcentaje": 117.88420300214439
+          },
+          "52001-52356": {
+            "modelo": 9668,
+            "observado": 9556,
+            "porcentaje": 101.17203850983675
+          },
+          "52356-52001": {
+            "modelo": 9543,
+            "observado": 9595,
+            "porcentaje": 99.45805106826472
+          },
+          "76001-11001": {
+            "modelo": 3856,
+            "observado": 3862,
+            "porcentaje": 99.84464008285862
+          },
+          "total": {
+            "modelo": 42045,
+            "observado": 41868,
+            "porcentaje": 100.42275723703067
+          }
         },
-        "15759-11001": {
-          "modelo": 7024,
-          "observado": 6995,
-          "porcentaje": 100.4145818441744
-        },
-        "52001-52356": {
-          "modelo": 9588,
-          "observado": 9556,
-          "porcentaje": 100.33486814566764
-        },
-        "52356-52001": {
-          "modelo": 9623,
-          "observado": 9595,
-          "porcentaje": 100.29181865554976
-        },
-        "76001-11001": {
-          "modelo": 3890,
-          "observado": 3862,
-          "porcentaje": 100.72501294665976
-        },
-        "total": {
-          "modelo": 42052,
-          "observado": 41868,
-          "porcentaje": 100.4394764497946
+        "flota_corredor": {
+          "11001-15759 | 15759-11001": {
+            "modelo": 8450,
+            "observado": 7949,
+            "porcentaje": 106.3026795823374
+          },
+          "11001-76001 | 76001-11001": {
+            "modelo": 4112,
+            "observado": 4071,
+            "porcentaje": 101.00712355686564
+          },
+          "52001-52356 | 52356-52001": {
+            "modelo": 10064,
+            "observado": 9813,
+            "porcentaje": 102.55783144807909
+          }
         }
       }
     },
@@ -260,78 +362,190 @@
         "52356-52001": 1.3663077253466243,
         "76001-11001": 1.0013028572314742
       },
-      "reproduccion_rho_global": {
-        "11001-15759": {
-          "modelo": 5278,
-          "observado": 7922,
-          "porcentaje": 66.62458975006311
-        },
-        "11001-76001": {
-          "modelo": 4277,
-          "observado": 3938,
-          "porcentaje": 108.60843067546978
-        },
-        "15759-11001": {
-          "modelo": 4840,
-          "observado": 6995,
-          "porcentaje": 69.19228020014296
-        },
-        "52001-52356": {
-          "modelo": 13529,
-          "observado": 9556,
-          "porcentaje": 141.57597321054834
-        },
-        "52356-52001": {
-          "modelo": 13336,
-          "observado": 9595,
-          "porcentaje": 138.98905680041688
-        },
-        "76001-11001": {
-          "modelo": 3959,
-          "observado": 3862,
-          "porcentaje": 102.5116519937856
-        },
-        "total": {
-          "modelo": 45219,
-          "observado": 41868,
-          "porcentaje": 108.0037259959874
-        }
+      "multiplicador_ocupacion_por_ruta": {
+        "11001-15759": 0.38643453613060197,
+        "11001-76001": 1.0063401179359293,
+        "15759-11001": 0.6734356103748604,
+        "52001-52356": 1.3921172589154887,
+        "52356-52001": 1.3663077253466243,
+        "76001-11001": 1.0013028572314742
       },
-      "reproduccion_rho_por_ruta": {
-        "11001-15759": {
-          "modelo": 13615,
-          "observado": 7922,
-          "porcentaje": 171.86316586720525
+      "multiplicador_ocupacion_por_corredor": {
+        "11001-15759": 0.5190479944285158,
+        "11001-76001": 1.0038540191790057,
+        "15759-11001": 0.5190479944285158,
+        "52001-52356": 1.379246103881617,
+        "52356-52001": 1.379246103881617,
+        "76001-11001": 1.0038540191790057
+      },
+      "reproduccion": {
+        "global": {
+          "despachos": {
+            "11001-15759": {
+              "modelo": 5278,
+              "observado": 7922,
+              "porcentaje": 66.62458975006311
+            },
+            "11001-76001": {
+              "modelo": 4277,
+              "observado": 3938,
+              "porcentaje": 108.60843067546978
+            },
+            "15759-11001": {
+              "modelo": 4840,
+              "observado": 6995,
+              "porcentaje": 69.19228020014296
+            },
+            "52001-52356": {
+              "modelo": 13529,
+              "observado": 9556,
+              "porcentaje": 141.57597321054834
+            },
+            "52356-52001": {
+              "modelo": 13336,
+              "observado": 9595,
+              "porcentaje": 138.98905680041688
+            },
+            "76001-11001": {
+              "modelo": 3959,
+              "observado": 3862,
+              "porcentaje": 102.5116519937856
+            },
+            "total": {
+              "modelo": 45219,
+              "observado": 41868,
+              "porcentaje": 108.0037259959874
+            }
+          },
+          "flota_corredor": {
+            "11001-15759 | 15759-11001": {
+              "modelo": 5591,
+              "observado": 7949,
+              "porcentaje": 70.33589130708265
+            },
+            "11001-76001 | 76001-11001": {
+              "modelo": 4342,
+              "observado": 4071,
+              "porcentaje": 106.65684107098993
+            },
+            "52001-52356 | 52356-52001": {
+              "modelo": 14073,
+              "observado": 9813,
+              "porcentaje": 143.4118006725772
+            }
+          }
         },
-        "11001-76001": {
-          "modelo": 4247,
-          "observado": 3938,
-          "porcentaje": 107.84662265109192
+        "por_ruta": {
+          "despachos": {
+            "11001-15759": {
+              "modelo": 13615,
+              "observado": 7922,
+              "porcentaje": 171.86316586720525
+            },
+            "11001-76001": {
+              "modelo": 4247,
+              "observado": 3938,
+              "porcentaje": 107.84662265109192
+            },
+            "15759-11001": {
+              "modelo": 7179,
+              "observado": 6995,
+              "porcentaje": 102.63045032165833
+            },
+            "52001-52356": {
+              "modelo": 9725,
+              "observado": 9556,
+              "porcentaje": 101.76852239430724
+            },
+            "52356-52001": {
+              "modelo": 9769,
+              "observado": 9595,
+              "porcentaje": 101.81344450234496
+            },
+            "76001-11001": {
+              "modelo": 3956,
+              "observado": 3862,
+              "porcentaje": 102.43397203521492
+            },
+            "total": {
+              "modelo": 48491,
+              "observado": 41868,
+              "porcentaje": 115.81876373363906
+            }
+          },
+          "flota_corredor": {
+            "11001-15759 | 15759-11001": {
+              "modelo": 13622,
+              "observado": 7949,
+              "porcentaje": 171.36746760598817
+            },
+            "11001-76001 | 76001-11001": {
+              "modelo": 4321,
+              "observado": 4071,
+              "porcentaje": 106.14099729796119
+            },
+            "52001-52356 | 52356-52001": {
+              "modelo": 10211,
+              "observado": 9813,
+              "porcentaje": 104.05584428818914
+            }
+          }
         },
-        "15759-11001": {
-          "modelo": 7179,
-          "observado": 6995,
-          "porcentaje": 102.63045032165833
-        },
-        "52001-52356": {
-          "modelo": 9725,
-          "observado": 9556,
-          "porcentaje": 101.76852239430724
-        },
-        "52356-52001": {
-          "modelo": 9769,
-          "observado": 9595,
-          "porcentaje": 101.81344450234496
-        },
-        "76001-11001": {
-          "modelo": 3956,
-          "observado": 3862,
-          "porcentaje": 102.43397203521492
-        },
-        "total": {
-          "modelo": 48491,
-          "observado": 41868,
-          "porcentaje": 115.81876373363906
+        "por_corredor": {
+          "despachos": {
+            "11001-15759": {
+              "modelo": 10146,
+              "observado": 7922,
+              "porcentaje": 128.07371875788942
+            },
+            "11001-76001": {
+              "modelo": 4257,
+              "observado": 3938,
+              "porcentaje": 108.10055865921788
+            },
+            "15759-11001": {
+              "modelo": 9299,
+              "observado": 6995,
+              "porcentaje": 132.93781272337384
+            },
+            "52001-52356": {
+              "modelo": 9813,
+              "observado": 9556,
+              "porcentaje": 102.68940979489327
+            },
+            "52356-52001": {
+              "modelo": 9678,
+              "observado": 9595,
+              "porcentaje": 100.86503387180824
+            },
+            "76001-11001": {
+              "modelo": 3944,
+              "observado": 3862,
+              "porcentaje": 102.12325220093216
+            },
+            "total": {
+              "modelo": 47137,
+              "observado": 41868,
+              "porcentaje": 112.58479029330276
+            }
+          },
+          "flota_corredor": {
+            "11001-15759 | 15759-11001": {
+              "modelo": 10750,
+              "observado": 7949,
+              "porcentaje": 135.2371367467606
+            },
+            "11001-76001 | 76001-11001": {
+              "modelo": 4325,
+              "observado": 4071,
+              "porcentaje": 106.23925325472857
+            },
+            "52001-52356 | 52356-52001": {
+              "modelo": 10209,
+              "observado": 9813,
+              "porcentaje": 104.03546316111282
+            }
+          }
         }
       }
     },
@@ -466,35 +680,35 @@
   },
   "nomina_semanal_por_corredor": {
     "11001-15759 | 15759-11001": {
-      "max_nomina_semanal": 539,
       "max_nomina_semanal_semanas_completas": 442,
+      "cota_inferior_semanas_incompletas": 539,
       "max_nomina_diaria": 629,
       "semanas": 5,
       "semanas_completas": 3
     },
     "11001-76001 | 76001-11001": {
-      "max_nomina_semanal": 400,
       "max_nomina_semanal_semanas_completas": 400,
+      "cota_inferior_semanas_incompletas": 383,
       "max_nomina_diaria": 467,
       "semanas": 5,
       "semanas_completas": 3
     },
     "52001-52356 | 52356-52001": {
-      "max_nomina_semanal": 116,
       "max_nomina_semanal_semanas_completas": 116,
+      "cota_inferior_semanas_incompletas": 104,
       "max_nomina_diaria": 135,
       "semanas": 5,
       "semanas_completas": 3
     }
   },
-  "nota_nomina_semanal": "N* = ⌈max(max_d C_serv, Σ_d C_serv / (7 − s)) / (1 − a)⌉ por corredor y semana de lunes a domingo (nomina_semanal.csv). En semanas incompletas (dias_con_datos < 7: borde del mes o días sin registro) es una cota inferior.",
+  "nota_nomina_semanal": "N* = ⌈max(max_d C_serv, Σ_d C_serv / (7 − s)) / (1 − a)⌉ por corredor y semana de lunes a domingo (nomina_semanal.csv). En semanas incompletas (dias_con_datos < 7: borde del mes o días sin registro) es una cota inferior y se reporta aparte.",
   "parametros": {
     "globales": {
       "ocupacion_objetivo": {
         "valor": 0.61,
         "unidad": "fracción de la capacidad",
         "supuesto": true,
-        "nota": "Sin norma hallada (CA-2). [DECIDIDO, Camila, 26-nov, CA-3c] Calibrada con train en la MISMA ventana que f (últimos calibracion.meses_fraccion meses de train, 2022-11-01..2022-12-31, días con registro): ρ* = Σ f·D/cap_ef ÷ Σ despachos ORIGEN observados = 0,6063 → 0,61 (con todo el train sería 0,5396); tests/test_operacion_m1.py la recalcula con los datos. Es UN escalar (control de la app y --set). [DECIDIDO, Camila, 26-nov, CA-3d] Cada ruta usa ρ_r = min(1, ρ · m_r), con m_r = ρ_r observada / ρ* calibrado al ejecutar en la misma ventana (resumen.json, multiplicador_ocupacion): con un solo ρ global el total se reproduce, con desajuste por ruta (en la ventana 11001-15759 46 %, 15759-11001 64 %, 52001-52356 134 %, 52356-52001 132 %); con ρ · m_r cada ruta queda en 100–101 %. Fuera de ventana (calibrar sep–oct 2022, probar nov–dic 2022) ρ · m_r da 102–108 % en 5 de 6 rutas frente a 67–142 % con ρ global; 11001-15759 queda en 172 % por su cambio de régimen (el tránsito sube desde el 8-nov-2022). LIMITACIONES: (i) ρ* y m_r incluyen el pico de diciembre (fin de año) de la ventana, así que describen la ocupación de temporada alta más que la de una semana normal; (ii) la demanda observada está censurada por la oferta (solo se registran los pasajeros que consiguieron silla), así que ρ observada mide la carga media de los despachos que salieron, no la ocupación que habría con más oferta; (iii) m_r supone que la relación entre rutas se mantiene en el periodo que se planea. Se analiza por sensibilidad."
+        "nota": "Sin norma hallada (CA-2). [DECIDIDO, Camila, 26-nov, CA-3c] Calibrada con train en la MISMA ventana que f (últimos calibracion.meses_fraccion meses de train, 2022-11-01..2022-12-31, días con registro): ρ* = Σ f·D/cap_ef ÷ Σ despachos ORIGEN observados = 0,6063 → 0,61 (con todo el train sería 0,5396); tests/test_operacion_m1.py la recalcula con los datos. Es UN escalar (control de la app y --set). [DECIDIDO, Camila, 26-nov, CA-3d] Cada ruta usa ρ_r = min(1, ρ · m) (tope 1 [DECIDIDO, Camila, 27-nov]: no se planea por encima de la capacidad; con ρ = 0,8 se activa en Pasto–Ipiales), con m calibrado al ejecutar en la misma ventana (resumen.json). [DECIDIDO, Camila, 27-nov, CA-3e] Se calculan dos variantes y calibracion.multiplicador elige la usada: m por ruta (defecto; m_r = ρ_r observada / ρ*) y m por corredor (m_c = Σ_{r∈c} cargas llenas / Σ_{r∈c} despachos ORIGEN ÷ ρ*, igual en los dos sentidos), que se reporta como sensibilidad. En la ventana, con ρ global los despachos ORIGEN por ruta quedan en 46,5–135,0 % (total 100,4 %); con m por ruta, cada ruta en 100–101 %; con m por corredor, 85–118 %. Fuera de ventana (calibrar sep–oct 2022, probar nov–dic 2022), (i) despachos ORIGEN, total: ρ global 108,0 %, m por ruta 115,8 %, m por corredor 112,6 %; por ruta, m por ruta da 102–108 % en 5 de 6 rutas y 171,9 % en 11001-15759 (el tránsito sube desde el 8-nov-2022), m por corredor 101–108 % en Bogotá–Cali y Pasto–Ipiales y 128,1 % / 132,9 % en Bogotá–Sogamoso, ρ global 67–142 %. (ii) Σ_d max(desp, desp') / Σ_d max(obs, obs') por corredor, la cantidad que fija vehículos y conductores: Bogotá–Sogamoso 70,3 % (ρ global), 171,4 % (m por ruta), 135,2 % (m por corredor); Bogotá–Cali 106,7 / 106,1 / 106,2 %; Pasto–Ipiales 143,4 / 104,1 / 104,0 %. Ninguna variante domina fuera de ventana: m por ruta reproduce mejor cada sentido de las rutas estables, m por corredor sobredimensiona menos el corredor con cambio de régimen y ρ global da el mejor total. Se mantiene m por ruta por defecto; resumen.json reporta las tres. LIMITACIONES: (i) ρ* y m incluyen el pico de diciembre (fin de año) de la ventana, así que describen la ocupación de temporada alta más que la de una semana normal; (ii) la demanda observada está censurada por la oferta (solo se registran los pasajeros que consiguieron silla), así que ρ observada mide la carga media de los despachos que salieron, no la ocupación que habría con más oferta; (iii) m supone que la relación entre rutas (o corredores) se mantiene en el periodo que se planea. Se analiza por sensibilidad."
       },
       "cuantil": {
         "valor": 0.9,
@@ -512,7 +726,7 @@
         "valor": 7,
         "unidad": "horas de conducción por conductor y día",
         "supuesto": true,
-        "nota": "No hay norma colombiana de horas de conducción ni de pausas (CA-2 verificación §5); la Res. 315/2013 art. 6 solo pide «garantizar los descansos necesarios». Supuesto: 7 h de conducción dentro de la jornada máxima diaria de 8 h; la hora restante cubre pausas y tareas en terminal (el alistamiento no se cuenta como conducción). Con s = 1: 7 · 6 = 42 h ≤ jornada_max_semanal_h. LIMITACIÓN: eso cumple la jornada semanal solo si la hora de pausa NO es tiempo a disposición del empleador; si lo fuera, serían 8 · 6 = 48 h > 42 h. SUPUESTO de la ec. (5a) [DECIDIDO, Camila, 26-nov, CA-3c]: con k conductores a bordo cada uno maneja t / k horas por pierna y el relevo que descansa a bordo no consume jornada. [DECIDIDO, Camila, 26-nov, CA-3d] k = max(k_norma, ⌈t / J_ef⌉), así que t / k ≤ J_ef siempre (con t = 7,5 h y k = 1 un conductor manejaría 7,5 · 6 = 45 h/semana > 42). Las piernas son indivisibles: piernas por conductor y día = ⌊J_ef / (t / k)⌋ ≥ 1."
+        "nota": "No hay norma colombiana de horas de conducción ni de pausas (CA-2 verificación §5); la Res. 315/2013 art. 6 solo pide «garantizar los descansos necesarios». Supuesto: 7 h de conducción dentro de la jornada máxima diaria de 8 h; la hora restante cubre pausas y tareas en terminal (el alistamiento no se cuenta como conducción). Con s = 1: 7 · 6 = 42 h ≤ jornada_max_semanal_h. LIMITACIÓN: eso cumple la jornada semanal solo si la hora de pausa NO es tiempo a disposición del empleador; si lo fuera, serían 8 · 6 = 48 h > 42 h. SUPUESTO de la ec. (5a) [DECIDIDO, Camila, 26-nov, CA-3c]: con k conductores a bordo cada uno maneja t / k horas por pierna y el relevo que descansa a bordo no consume jornada. [DECIDIDO, Camila, 26-nov, CA-3d] k = max(k_norma, ⌈t / J_ef⌉), así que t / k ≤ J_ef siempre (con t = 7,5 h y k = 1 un conductor manejaría 7,5 · 6 = 45 h/semana > 42). Las piernas son indivisibles: piernas por conductor y día = ⌊J_ef / (t / k)⌋ ≥ 1. SUPUESTO [DECIDIDO, Camila, 27-nov]: con t > 2 · J_ef = 14 h la regla da k ≥ 3; extiende el relevo a bordo y no viene de una norma (no se activa con los corredores actuales). [DECIDIDO, Camila, 26-nov, CA-3c] Los conductores se cuentan por piernas del corredor, 2 · max(desp, desp'), incluidas las vacías de reposición del sentido menos cargado."
       },
       "jornada_max_diaria_h": {
         "valor": 8,
@@ -542,7 +756,7 @@
         "valor": 1,
         "unidad": "días por conductor y semana",
         "fuente": "Congreso de la República de Colombia (2025). Ley 2466 de 2025, art. 11 (art. 161 CST): «La jornada máxima semanal podrá ser distribuida … de cinco (5) a seis (6) días a la semana, garantizando siempre el día de descanso…» (igual en la Ley 2101 de 2021, art. 2).",
-        "nota": "Factor 7/(7 − s) de la nómina diaria (5b) y divisor (7 − s) de la nómina semanal N* (5b). Debe ser ≥ 1."
+        "nota": "Factor 7/(7 − s) de la nómina diaria (5b) y divisor (7 − s) de la nómina semanal N* (5b) [DECIDIDO, Camila, 26-nov, CA-3d]. Debe ser ≥ 1."
       },
       "costo_pasajero_sin_atender": {
         "valor": 1.0,
@@ -579,8 +793,8 @@
         "multiplicador_ocupacion": {
           "valor": 1.0583331307478208,
           "unidad": "múltiplo de ocupacion_objetivo",
-          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m_r = ρ_r observada / ρ* entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
-          "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2))."
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m = ρ observada / ρ* por ruta entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
+          "nota": "ρ_r = min(1, ocupacion_objetivo · m) (ec. (2))."
         }
       },
       "76001-11001": {
@@ -604,8 +818,8 @@
         "multiplicador_ocupacion": {
           "valor": 1.0381955901231648,
           "unidad": "múltiplo de ocupacion_objetivo",
-          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m_r = ρ_r observada / ρ* entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
-          "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2))."
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m = ρ observada / ρ* por ruta entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
+          "nota": "ρ_r = min(1, ocupacion_objetivo · m) (ec. (2))."
         }
       },
       "11001-15759": {
@@ -629,8 +843,8 @@
         "multiplicador_ocupacion": {
           "valor": 0.46092810166796677,
           "unidad": "múltiplo de ocupacion_objetivo",
-          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m_r = ρ_r observada / ρ* entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
-          "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2))."
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m = ρ observada / ρ* por ruta entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
+          "nota": "ρ_r = min(1, ocupacion_objetivo · m) (ec. (2))."
         }
       },
       "15759-11001": {
@@ -654,8 +868,8 @@
         "multiplicador_ocupacion": {
           "valor": 0.639780165631985,
           "unidad": "múltiplo de ocupacion_objetivo",
-          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m_r = ρ_r observada / ρ* entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
-          "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2))."
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m = ρ observada / ρ* por ruta entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
+          "nota": "ρ_r = min(1, ocupacion_objetivo · m) (ec. (2))."
         }
       },
       "52001-52356": {
@@ -679,8 +893,8 @@
         "multiplicador_ocupacion": {
           "valor": 1.3462726918752836,
           "unidad": "múltiplo de ocupacion_objetivo",
-          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m_r = ρ_r observada / ρ* entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
-          "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2))."
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m = ρ observada / ρ* por ruta entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
+          "nota": "ρ_r = min(1, ocupacion_objetivo · m) (ec. (2))."
         }
       },
       "52356-52001": {
@@ -704,8 +918,8 @@
         "multiplicador_ocupacion": {
           "valor": 1.323507685095346,
           "unidad": "múltiplo de ocupacion_objetivo",
-          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m_r = ρ_r observada / ρ* entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
-          "nota": "ρ_r = min(1, ocupacion_objetivo · m_r) (ec. (2))."
+          "fuente": "Superintendencia de Transporte (2026), Operación de pasajeros y despacho de vehículos en la modalidad de transporte de pasajeros por carretera, datos.gov.co eh75-8ah6 (data/processed/m1/demanda_detalle.parquet); m = ρ observada / ρ* por ruta entre 2022-11-01 y 2022-12-31 (misma ventana que fraccion_demanda_en_origen)",
+          "nota": "ρ_r = min(1, ocupacion_objetivo · m) (ec. (2))."
         }
       }
     },

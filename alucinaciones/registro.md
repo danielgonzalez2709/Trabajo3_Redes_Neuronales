@@ -7,7 +7,7 @@ evidencia no cuenta.
 ## Cobertura
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
-| M1 | | | | | |
+| M1 | | 1 candidato menor sin número (CA-3d, implementador-experto) | | | |
 | M2 | | | | | |
 | M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) | 1 candidato menor sin número (JJ-2, analista) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) |
 | Común | | H-01 (candidato) | | | |
@@ -248,6 +248,26 @@ evidencia no cuenta.
   siguientes. Las cifras de un prompt se copian del archivo de resultados, no de la memoria.
 - **Estado:** candidato menor. El origen probable es la redacción de MEMORIA (documentador o sesión de JJ-2; no se buscó el
   prompt exacto); el prompt literal del eslabón de JJ-3 sí está guardado.
+
+### H-?? (CA-3d) — «R1: 15,5 / 0,6 · … ≠ 31» en el comentario de una prueba (la carga real es 16,5)
+- **Módulo / categoría / quién lo encontró:** M1 / **Código** (cifra falsa en el comentario de una prueba; menor) / lo señaló
+  el `revisor-calidad` (Sonnet) en la 1.ª vuelta de CA-3d como comentario ilegible (C10); el `implementador-experto` de CA-3e
+  (Opus) al reescribirlo encontró que la cifra estaba mal; lo verificó la sesión orquestadora con un script propio. Dirige: Camila.
+- **1. Prompt literal:** `alucinaciones/prompts/CA-3d.md` (subagente `implementador-experto`, Opus, 27-nov-2026), que pedía
+  calibrar m_r y probar con «el caso a mano en el comentario».
+- **2. Respuesta relevante de la IA:** en el commit `1a27df7`, `tests/test_operacion_m1.py:747`
+  (`test_multiplicadores_reproducen_cada_ruta`): «# con ρ* global solo el total coincide (R1: 15,5 / 0,6 · … ≠ 31).»
+- **3. Cómo se sospechó:** C10 de `alucinaciones/prompts/CA-3e.md` pidió escribir el cálculo completo; al hacerlo, el
+  implementador de CA-3e obtuvo 16,5 y no 15,5.
+- **4. Evidencia:** `alucinaciones/evidencias/CA-3d/verificar_comentario_R1.py` → `salida_comentario_R1.txt` (no importa
+  `src/`; lee el comentario del commit `1a27df7` con `git show`): con los datos de la propia prueba, Σ f·D/cap_ef de R1 =
+  0,5·(400+260)/20 = **16,5**; ρ* = 21,5/36 = 0,5972; 16,5/0,6 = 27,5 y 16,5/ρ* = 27,63, ambos ≠ 31. Con la cifra del comentario
+  saldría 15,5/0,6 = 25,83. La conclusión (≠ 31) era cierta; el número que la sostenía, no.
+- **5. Corrección:** CA-3e reescribió el comentario con el cálculo completo (`tests/test_operacion_m1.py:736-744` y `:770-772`:
+  16,5 / 0,5972 = 27,63 ≠ 31); la 2.ª vuelta de `revisor-calidad` lo verificó.
+- **6. Lección aprendida:** un «caso a mano» en un comentario no lo ejecuta nadie: si la prueba no aserta ese número, puede
+  estar mal sin que nada falle. Escribir el cálculo completo con los datos de la prueba, o convertirlo en aserción.
+- **Estado:** candidato (menor: no afectó ningún resultado; Andrés decide si cuenta en la categoría Código).
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto

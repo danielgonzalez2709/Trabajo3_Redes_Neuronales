@@ -7,7 +7,7 @@
 # `meta` describe cada valor con {unidad, fuente | supuesto: true, nota}: `meta.globales.<clave>`,
 # `meta.por_ruta.<clave>` (común a las seis rutas) y `meta.por_clase.<CLASE>.<clave>`.
 # Lo que se calcula con train al ejecutar (composición por clase, fraccion_demanda_en_origen y multiplicador_ocupacion
-# m_r por ruta) NO se escribe aquí:
+# m, por ruta y por corredor) NO se escribe aquí:
 # lleva `fuente` con la ventana usada en results/data/m1/operacion/resumen.json.
 # Normas: citas verificadas en docs/investigacion/CA-2_verificacion.md (§1–§3, §6 y §7), consultadas el 2026-11-26.
 
@@ -24,6 +24,9 @@ calibracion:
   # [PROPUESTO, Camila, 26-nov] f(r) se calcula con los últimos meses de train para captar el régimen reciente
   # (11001-15759: el tránsito sube desde el 8-nov-2022 y f cae de 0,417 a 0,31).
   meses_fraccion: 2
+  # [DECIDIDO, Camila, 27-nov, CA-3e] Variante del multiplicador de ocupación m (ec. (2)): por_ruta (defecto) o
+  # por_corredor. Las dos se calculan siempre y van en resumen.json; esta clave solo elige la que entra en dimensionar.
+  multiplicador: por_ruta
   # [DECIDIDO, Camila, 26-nov, CA-3d] Validación fuera de ventana de ρ* y m_r: se recalibra todo (composición, capacidad,
   # f, ρ*, m_r) solo con fecha <= calibrar[1] y se mide la reproducción de despachos ORIGEN en `probar` (ambas en train).
   validacion:
@@ -78,15 +81,25 @@ meta:
         (últimos calibracion.meses_fraccion meses de train, 2022-11-01..2022-12-31, días con registro): ρ* = Σ f·D/cap_ef
         ÷ Σ despachos ORIGEN observados = 0,6063 → 0,61 (con todo el train sería 0,5396); tests/test_operacion_m1.py la
         recalcula con los datos. Es UN escalar (control de la app y --set). [DECIDIDO, Camila, 26-nov, CA-3d] Cada ruta
-        usa ρ_r = min(1, ρ · m_r), con m_r = ρ_r observada / ρ* calibrado al ejecutar en la misma ventana (resumen.json,
-        multiplicador_ocupacion): con un solo ρ global el total se reproduce, con desajuste por ruta (en la ventana 11001-15759
-        46 %, 15759-11001 64 %, 52001-52356 134 %, 52356-52001 132 %); con ρ · m_r cada ruta queda en 100–101 %. Fuera de
-        ventana (calibrar sep–oct 2022, probar nov–dic 2022) ρ · m_r da 102–108 % en 5 de 6 rutas frente a 67–142 % con
-        ρ global; 11001-15759 queda en 172 % por su cambio de régimen (el tránsito sube desde el 8-nov-2022).
-        LIMITACIONES: (i) ρ* y m_r incluyen el pico de diciembre (fin de año) de la ventana, así que describen la
+        usa ρ_r = min(1, ρ · m) (tope 1 [DECIDIDO, Camila, 27-nov]: no se planea por encima de la capacidad; con
+        ρ = 0,8 se activa en Pasto–Ipiales), con m calibrado al ejecutar en la misma ventana (resumen.json).
+        [DECIDIDO, Camila, 27-nov, CA-3e] Se calculan dos variantes y calibracion.multiplicador elige la usada: m por
+        ruta (defecto; m_r = ρ_r observada / ρ*) y m por corredor (m_c = Σ_{r∈c} cargas llenas / Σ_{r∈c} despachos
+        ORIGEN ÷ ρ*, igual en los dos sentidos), que se reporta como sensibilidad. En la ventana, con ρ global los
+        despachos ORIGEN por ruta quedan en 46,5–135,0 % (total 100,4 %); con m por ruta, cada ruta en 100–101 %; con m por
+        corredor, 85–118 %. Fuera de ventana (calibrar sep–oct 2022, probar nov–dic 2022), (i) despachos ORIGEN, total:
+        ρ global 108,0 %, m por ruta 115,8 %, m por corredor 112,6 %; por ruta, m por ruta da 102–108 % en 5 de 6
+        rutas y 171,9 % en 11001-15759 (el tránsito sube desde el 8-nov-2022), m por corredor 101–108 % en Bogotá–Cali
+        y Pasto–Ipiales y 128,1 % / 132,9 % en Bogotá–Sogamoso, ρ global 67–142 %. (ii) Σ_d max(desp, desp') /
+        Σ_d max(obs, obs') por corredor, la cantidad que fija vehículos y conductores: Bogotá–Sogamoso 70,3 % (ρ
+        global), 171,4 % (m por ruta), 135,2 % (m por corredor); Bogotá–Cali 106,7 / 106,1 / 106,2 %; Pasto–Ipiales
+        143,4 / 104,1 / 104,0 %. Ninguna variante domina fuera de ventana: m por ruta reproduce mejor cada sentido de
+        las rutas estables, m por corredor sobredimensiona menos el corredor con cambio de régimen y ρ global da el
+        mejor total. Se mantiene m por ruta por defecto; resumen.json reporta las tres.
+        LIMITACIONES: (i) ρ* y m incluyen el pico de diciembre (fin de año) de la ventana, así que describen la
         ocupación de temporada alta más que la de una semana normal; (ii) la demanda observada está censurada por la
         oferta (solo se registran los pasajeros que consiguieron silla), así que ρ observada mide la carga media de los
-        despachos que salieron, no la ocupación que habría con más oferta; (iii) m_r supone que la relación entre rutas
+        despachos que salieron, no la ocupación que habría con más oferta; (iii) m supone que la relación entre rutas (o corredores)
         se mantiene en el periodo que se planea. Se analiza por sensibilidad.
     cuantil:
       unidad: cuantil del pronóstico
@@ -113,6 +126,10 @@ meta:
         horas por pierna y el relevo que descansa a bordo no consume jornada. [DECIDIDO, Camila, 26-nov, CA-3d]
         k = max(k_norma, ⌈t / J_ef⌉), así que t / k ≤ J_ef siempre (con t = 7,5 h y k = 1 un conductor manejaría
         7,5 · 6 = 45 h/semana > 42). Las piernas son indivisibles: piernas por conductor y día = ⌊J_ef / (t / k)⌋ ≥ 1.
+        SUPUESTO [DECIDIDO, Camila, 27-nov]: con t > 2 · J_ef = 14 h la regla da k ≥ 3; extiende el relevo a bordo y
+        no viene de una norma (no se activa con los corredores actuales). [DECIDIDO, Camila, 26-nov, CA-3c] Los
+        conductores se cuentan por piernas del corredor, 2 · max(desp, desp'), incluidas las vacías de reposición del
+        sentido menos cargado.
     jornada_max_diaria_h:
       unidad: horas por día
       fuente: >-
@@ -157,7 +174,8 @@ meta:
         semanal podrá ser distribuida … de cinco (5) a seis (6) días a la semana, garantizando siempre el día de
         descanso…» (igual en la Ley 2101 de 2021, art. 2).
       nota: >-
-        Factor 7/(7 − s) de la nómina diaria (5b) y divisor (7 − s) de la nómina semanal N* (5b). Debe ser ≥ 1.
+        Factor 7/(7 − s) de la nómina diaria (5b) y divisor (7 − s) de la nómina semanal N* (5b) [DECIDIDO, Camila,
+        26-nov, CA-3d]. Debe ser ≥ 1.
     costo_pasajero_sin_atender:
       unidad: unidades relativas por pasajero
       supuesto: true
