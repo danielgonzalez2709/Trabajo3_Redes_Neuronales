@@ -1,0 +1,439 @@
+{
+  "avisos": [],
+  "transito_vs_origen": {
+    "descripcion": "Pasajeros de tránsito sobre el total (origen + tránsito) por ruta y año",
+    "filas": [
+      {
+        "ruta_id": "11001-15759",
+        "anio": 2021,
+        "pasajeros_origen": 240807,
+        "pasajeros_transito": 270672,
+        "pct_transito": 52.9195,
+        "despachos_origen": 40287,
+        "despachos_transito": 67270,
+        "razon_transito_origen": 1.124
+      },
+      {
+        "ruta_id": "11001-15759",
+        "anio": 2022,
+        "pasajeros_origen": 373865,
+        "pasajeros_transito": 579315,
+        "pct_transito": 60.7771,
+        "despachos_origen": 47185,
+        "despachos_transito": 79946,
+        "razon_transito_origen": 1.5495
+      },
+      {
+        "ruta_id": "11001-15759",
+        "anio": 2023,
+        "pasajeros_origen": 400444,
+        "pasajeros_transito": 1065495,
+        "pct_transito": 72.6834,
+        "despachos_origen": 50449,
+        "despachos_transito": 85321,
+        "razon_transito_origen": 2.6608
+      },
+      {
+        "ruta_id": "11001-76001",
+        "anio": 2021,
+        "pasajeros_origen": 359306,
+        "pasajeros_transito": 722948,
+        "pct_transito": 66.8002,
+        "despachos_origen": 18279,
+        "despachos_transito": 82389,
+        "razon_transito_origen": 2.0121
+      },
+      {
+        "ruta_id": "11001-76001",
+        "anio": 2022,
+        "pasajeros_origen": 485172,
+        "pasajeros_transito": 1020703,
+        "pct_transito": 67.7814,
+        "despachos_origen": 21955,
+        "despachos_transito": 89973,
+        "razon_transito_origen": 2.1038
+      },
+      {
+        "ruta_id": "11001-76001",
+        "anio": 2023,
+        "pasajeros_origen": 488996,
+        "pasajeros_transito": 773948,
+        "pct_transito": 61.2813,
+        "despachos_origen": 22785,
+        "despachos_transito": 67401,
+        "razon_transito_origen": 1.5827
+      },
+      {
+        "ruta_id": "15759-11001",
+        "anio": 2021,
+        "pasajeros_origen": 317667,
+        "pasajeros_transito": 533845,
+        "pct_transito": 62.6938,
+        "despachos_origen": 36167,
+        "despachos_transito": 43797,
+        "razon_transito_origen": 1.6805
+      },
+      {
+        "ruta_id": "15759-11001",
+        "anio": 2022,
+        "pasajeros_origen": 542923,
+        "pasajeros_transito": 752062,
+        "pct_transito": 58.075,
+        "despachos_origen": 40805,
+        "despachos_transito": 47910,
+        "razon_transito_origen": 1.3852
+      },
+      {
+        "ruta_id": "15759-11001",
+        "anio": 2023,
+        "pasajeros_origen": 562541,
+        "pasajeros_transito": 823827,
+        "pct_transito": 59.4234,
+        "despachos_origen": 46234,
+        "despachos_transito": 52727,
+        "razon_transito_origen": 1.4645
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2021,
+        "pasajeros_origen": 343263,
+        "pasajeros_transito": 0,
+        "pct_transito": 0.0,
+        "despachos_origen": 34058,
+        "despachos_transito": 0,
+        "razon_transito_origen": 0.0
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2022,
+        "pasajeros_origen": 582565,
+        "pasajeros_transito": 14507,
+        "pct_transito": 2.4297,
+        "despachos_origen": 49522,
+        "despachos_transito": 1067,
+        "razon_transito_origen": 0.0249
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2023,
+        "pasajeros_origen": 624702,
+        "pasajeros_transito": 0,
+        "pct_transito": 0.0,
+        "despachos_origen": 54299,
+        "despachos_transito": 0,
+        "razon_transito_origen": 0.0
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2021,
+        "pasajeros_origen": 294143,
+        "pasajeros_transito": 2459,
+        "pct_transito": 0.8291,
+        "despachos_origen": 33084,
+        "despachos_transito": 415,
+        "razon_transito_origen": 0.0084
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2022,
+        "pasajeros_origen": 543487,
+        "pasajeros_transito": 31902,
+        "pct_transito": 5.5444,
+        "despachos_origen": 48562,
+        "despachos_transito": 2466,
+        "razon_transito_origen": 0.0587
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2023,
+        "pasajeros_origen": 663517,
+        "pasajeros_transito": 6130,
+        "pct_transito": 0.9154,
+        "despachos_origen": 55955,
+        "despachos_transito": 755,
+        "razon_transito_origen": 0.0092
+      },
+      {
+        "ruta_id": "76001-11001",
+        "anio": 2021,
+        "pasajeros_origen": 293328,
+        "pasajeros_transito": 355074,
+        "pct_transito": 54.7614,
+        "despachos_origen": 17530,
+        "despachos_transito": 40382,
+        "razon_transito_origen": 1.2105
+      },
+      {
+        "ruta_id": "76001-11001",
+        "anio": 2022,
+        "pasajeros_origen": 470346,
+        "pasajeros_transito": 605918,
+        "pct_transito": 56.2983,
+        "despachos_origen": 21243,
+        "despachos_transito": 51394,
+        "razon_transito_origen": 1.2882
+      },
+      {
+        "ruta_id": "76001-11001",
+        "anio": 2023,
+        "pasajeros_origen": 446772,
+        "pasajeros_transito": 625756,
+        "pct_transito": 58.344,
+        "despachos_origen": 20703,
+        "despachos_transito": 52726,
+        "razon_transito_origen": 1.4006
+      }
+    ]
+  },
+  "salto_transito": {
+    "disponible": true,
+    "ruta_id": "11001-15759",
+    "mes_referencia": "2022-11",
+    "meses_comparados": 6,
+    "meses_antes": [
+      "2022-05",
+      "2022-10"
+    ],
+    "meses_despues": [
+      "2022-12",
+      "2023-05"
+    ],
+    "transito_dia_antes": 1352.0514,
+    "transito_dia_despues": 2735.4367,
+    "razon_transito": 2.0232,
+    "origen_dia_antes": 1019.978,
+    "origen_dia_despues": 1047.5027,
+    "razon_origen": 1.027,
+    "despachos_transito_dia_antes": 223.5769,
+    "despachos_transito_dia_despues": 228.2712,
+    "microbus_transito_dia_antes": 35.3258,
+    "microbus_transito_dia_despues": 297.8476
+  },
+  "microbus": {
+    "disponible": true,
+    "ruta_id": "11001-76001",
+    "clase": "MICROBUS",
+    "pct_por_anio": {
+      "2021": 11.8569,
+      "2022": 8.6706,
+      "2023": 0.0158
+    }
+  },
+  "asimetria_clases": {
+    "disponible": true,
+    "rutas": [
+      "52001-52356",
+      "52356-52001"
+    ],
+    "pct_por_ruta_anio_clase": [
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2021,
+        "clase_vehiculo": "AUTOMOVIL",
+        "pasajeros": 1564,
+        "pct": 0.4556
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2021,
+        "clase_vehiculo": "BUS",
+        "pasajeros": 6479,
+        "pct": 1.8875
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2021,
+        "clase_vehiculo": "CAMPERO",
+        "pasajeros": 101005,
+        "pct": 29.425
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2021,
+        "clase_vehiculo": "MICROBUS",
+        "pasajeros": 234215,
+        "pct": 68.2319
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2022,
+        "clase_vehiculo": "AUTOMOVIL",
+        "pasajeros": 2476,
+        "pct": 0.4147
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2022,
+        "clase_vehiculo": "BUS",
+        "pasajeros": 19715,
+        "pct": 3.3019
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2022,
+        "clase_vehiculo": "BUSETA",
+        "pasajeros": 540,
+        "pct": 0.0904
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2022,
+        "clase_vehiculo": "CAMPERO",
+        "pasajeros": 182553,
+        "pct": 30.5747
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2022,
+        "clase_vehiculo": "MICROBUS",
+        "pasajeros": 391788,
+        "pct": 65.6182
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2023,
+        "clase_vehiculo": "AUTOMOVIL",
+        "pasajeros": 2797,
+        "pct": 0.4477
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2023,
+        "clase_vehiculo": "BUS",
+        "pasajeros": 15544,
+        "pct": 2.4882
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2023,
+        "clase_vehiculo": "CAMPERO",
+        "pasajeros": 203543,
+        "pct": 32.5824
+      },
+      {
+        "ruta_id": "52001-52356",
+        "anio": 2023,
+        "clase_vehiculo": "MICROBUS",
+        "pasajeros": 402818,
+        "pct": 64.4816
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2021,
+        "clase_vehiculo": "AUTOMOVIL",
+        "pasajeros": 17020,
+        "pct": 5.7383
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2021,
+        "clase_vehiculo": "BUS",
+        "pasajeros": 13281,
+        "pct": 4.4777
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2021,
+        "clase_vehiculo": "CAMIONETA",
+        "pasajeros": 73678,
+        "pct": 24.8407
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2021,
+        "clase_vehiculo": "MICROBUS",
+        "pasajeros": 192623,
+        "pct": 64.9433
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2022,
+        "clase_vehiculo": "AUTOMOVIL",
+        "pasajeros": 11460,
+        "pct": 1.9917
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2022,
+        "clase_vehiculo": "BUS",
+        "pasajeros": 41906,
+        "pct": 7.2831
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2022,
+        "clase_vehiculo": "BUSETA",
+        "pasajeros": 1634,
+        "pct": 0.284
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2022,
+        "clase_vehiculo": "CAMIONETA",
+        "pasajeros": 165104,
+        "pct": 28.6943
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2022,
+        "clase_vehiculo": "MICROBUS",
+        "pasajeros": 355285,
+        "pct": 61.7469
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2023,
+        "clase_vehiculo": "AUTOMOVIL",
+        "pasajeros": 12492,
+        "pct": 1.8655
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2023,
+        "clase_vehiculo": "BUS",
+        "pasajeros": 37878,
+        "pct": 5.6564
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2023,
+        "clase_vehiculo": "CAMIONETA",
+        "pasajeros": 210058,
+        "pct": 31.3685
+      },
+      {
+        "ruta_id": "52356-52001",
+        "anio": 2023,
+        "clase_vehiculo": "MICROBUS",
+        "pasajeros": 409219,
+        "pct": 61.1097
+      }
+    ]
+  },
+  "consistencia_anual": {
+    "anios": [
+      2022,
+      2023
+    ],
+    "corr_por_ruta": {
+      "11001-15759": 0.7688,
+      "11001-76001": 0.6559,
+      "15759-11001": 0.3288,
+      "52001-52356": -0.1527,
+      "52356-52001": 0.2595,
+      "76001-11001": 0.6799
+    }
+  },
+  "escala_entre_rutas": {
+    "anio": 2023,
+    "descripcion": "Media diaria de pasajeros de junio a diciembre",
+    "por_ruta": {
+      "11001-15759": 4296.1963,
+      "11001-76001": 3616.7477,
+      "15759-11001": 4068.6776,
+      "52001-52356": 1702.0374,
+      "52356-52001": 1845.5187,
+      "76001-11001": 2991.1308
+    }
+  }
+}

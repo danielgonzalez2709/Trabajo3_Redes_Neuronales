@@ -7,7 +7,7 @@ evidencia no cuenta.
 ## Cobertura
 | Módulo / categoría | Matemáticas | Código | Datos del mundo real | Bibliografía | Conceptos |
 |---|---|---|---|---|---|
-| M1 | | | | | |
+| M1 | | 1 candidato menor sin número (CA-3d, implementador-experto) | | | 1 candidato sin número (CA-6a, investigador-fuentes) |
 | M2 | | | | | |
 | M3 | 1 candidato sin número (JJ-2, redactor) · 1 candidato sin número (JJ-3, implementador-experto + orquestador) · 1 candidato sin número (JJ-4, orquestador + implementador: MF colapsada) · 1 candidato menor sin número (JJ-4, redactor) · 1 candidato menor sin número (JJ-5, orquestador + implementador-experto: personalización) | 1 candidato menor sin número (JJ-2, analista) · 1 candidato menor sin número (JJ-4, guarda 1e-8) · 1 candidato menor sin número (JJ-5, fracción en [0, 1]) | 2 candidatos sin número (JJ-1b) · 1 candidato menor sin número (JJ-3, orquestador + redactor) | | 1 candidato condicionado a fuente primaria (JJ-2, redactor) · 1 candidato menor sin número (JJ-5, orquestador: destinos fríos) |
 | Común | | H-01 (candidato) | | | |
@@ -347,6 +347,49 @@ evidencia no cuenta.
   `frios_por_lista`.»
 - **6. Lección aprendida:** no convertir un resultado de una corrida (0 fríos en el top-10) en una propiedad del modelo.
 - **Estado:** candidato menor (orquestador Opus; el implementador lo copió).
+
+### H-?? (CA-3d) — «R1: 15,5 / 0,6 · … ≠ 31» en el comentario de una prueba (la carga real es 16,5)
+- **Módulo / categoría / quién lo encontró:** M1 / **Código** (cifra falsa en el comentario de una prueba; menor) / lo señaló
+  el `revisor-calidad` (Sonnet) en la 1.ª vuelta de CA-3d como comentario ilegible (C10); el `implementador-experto` de CA-3e
+  (Opus) al reescribirlo encontró que la cifra estaba mal; lo verificó la sesión orquestadora con un script propio. Dirige: Camila.
+- **1. Prompt literal:** `alucinaciones/prompts/CA-3d.md` (subagente `implementador-experto`, Opus, 27-nov-2026), que pedía
+  calibrar m_r y probar con «el caso a mano en el comentario».
+- **2. Respuesta relevante de la IA:** en el commit `1a27df7`, `tests/test_operacion_m1.py:747`
+  (`test_multiplicadores_reproducen_cada_ruta`): «# con ρ* global solo el total coincide (R1: 15,5 / 0,6 · … ≠ 31).»
+- **3. Cómo se sospechó:** C10 de `alucinaciones/prompts/CA-3e.md` pidió escribir el cálculo completo; al hacerlo, el
+  implementador de CA-3e obtuvo 16,5 y no 15,5.
+- **4. Evidencia:** `alucinaciones/evidencias/CA-3d/verificar_comentario_R1.py` → `salida_comentario_R1.txt` (no importa
+  `src/`; lee el comentario del commit `1a27df7` con `git show`): con los datos de la propia prueba, Σ f·D/cap_ef de R1 =
+  0,5·(400+260)/20 = **16,5**; ρ* = 21,5/36 = 0,5972; 16,5/0,6 = 27,5 y 16,5/ρ* = 27,63, ambos ≠ 31. Con la cifra del comentario
+  saldría 15,5/0,6 = 25,83. La conclusión (≠ 31) era cierta; el número que la sostenía, no.
+- **5. Corrección:** CA-3e reescribió el comentario con el cálculo completo (`tests/test_operacion_m1.py:736-744` y `:770-772`:
+  16,5 / 0,5972 = 27,63 ≠ 31); la 2.ª vuelta de `revisor-calidad` lo verificó.
+- **6. Lección aprendida:** un «caso a mano» en un comentario no lo ejecuta nadie: si la prueba no aserta ese número, puede
+  estar mal sin que nada falle. Escribir el cálculo completo con los datos de la prueba, o convertirlo en aserción.
+- **Estado:** candidato (menor: no afectó ningún resultado; Andrés decide si cuenta en la categoría Código).
+
+### H-?? (CA-6a) — «Arrendar en vez de comprar mueve ~un tercio de la estructura de costos»
+- **Módulo / categoría / quién lo encontró:** M1 / **Conceptos** (interpretación de un índice de costos) / cazador-alucinaciones
+  (Opus) en la verificación CA-6, 27-nov-2026. Dirige: Camila.
+- **1. Prompt literal:** `alucinaciones/prompts/CA-6a.md` (investigador-fuentes, Sonnet, 27-nov-2026), sección «Entrega»: «una
+  sección "Qué se puede concluir con esto" que diga qué comparación de costos es defendible y cuál no».
+- **2. Respuesta relevante de la IA:** `docs/investigacion/CA-6_costos_flota.md` §8, «Defendible (con cita)», punto 3:
+  «Estructura relativa de costos: combustible ~31 %, costos fijos ~33 % (incluye conductores), peajes y terminales ~20 %. Permite
+  argumentar, por ejemplo, que una opción que reduzca costos fijos (arrendar, no comprar) mueve ~un tercio de la estructura».
+- **3. Cómo se sospechó:** la misma frase reconoce que los costos fijos «incluye[n] conductores»; arrendar un vehículo no elimina
+  el salario del conductor, así que el «tercio» no puede atribuirse a la decisión comprar/arrendar.
+- **4. Evidencia:** DANE, metodología DSO-ICTIP-MET-001 v2 (2018): «costos fijos (parqueaderos, seguros, costo del vehículo,
+  impuestos y mano de obra)» (`alucinaciones/evidencias/CA-6/ictip_met_v2.txt`). DANE, boletín ICTIP III-2026 (22-oct-2026),
+  Tabla 3: «Costos fijos 32,99 14,07 4,83» y Tabla 4: «Mano de obra conductor(es) y ayudante(s) 22,11 4,72»
+  (`ictip_bol_IIItrim2026.txt`): de los 4,83 p.p. que aportó el grupo en el año corrido, 4,72 vienen de la mano de obra.
+  `verificar.py` → `salida.txt` (fragmentos CF, C-2c, C-2cf).
+- **5. Corrección:** «Arrendar en vez de comprar sustituye solo el componente de capital ("Costo del vehículo y su
+  apalancamiento"), cuyo peso no está en el boletín (T-9); conductores, combustible, peajes y seguros se mantienen. No se puede
+  cuantificar el ahorro con el 32,99 %».
+- **6. Lección aprendida:** un grupo de un índice de precios no es una palanca de decisión: antes de decir qué «mueve» una
+  opción, bajar al nivel de clase de costo y comprobar qué componentes cambia realmente.
+- **Estado:** candidato. Detalle: `docs/investigacion/CA-6_verificacion.md` (V-20). Es un error de razonamiento, no un dato inventado:
+  Andrés decide si cuenta en la categoría Conceptos.
 
 ## Plantilla (copiar por hallazgo)
 ### H-XX — título corto

@@ -3,15 +3,9 @@
 ## Estado
 - Spec v0.7. `main` protegida (ruleset `proteger-main`: PR + Code Owners + check `pruebas`; Daniel fusiona). Ramas `dev/*`.
 - Blog publicado en GitHub Pages: https://danielgonzalez2709.github.io/Trabajo3_Redes_Neuronales/ (esqueleto).
-- DA-1 (infraestructura) en `main` (PR #1): `src/comun/`, `run.py` con 17 subcomandos, blog, serie sintética, CI.
-- DA-2/DA-3/DA-4 terminados el mar 24 (PR #2): series reales de M1 en `data/processed/m1/` (6 series, 2021-01-01..2023-12-31),
-  detalle por tipo de despacho y clase de vehículo, marcas de anómalos, ficha/calidad/diccionario en `results/data/m1/eda/`.
-  Revisados por revisor-spec (APROBADO), auditor-fugas (sin fuga activa) y revisor-calidad (correcciones aplicadas).
-  `run.py m1-datos` regenera todo desde `data/raw/m1/` (no versionado; se reconstruye con `scripts/descargar_m1.py`).
-- DA-5 (app) en `main` (PR #3) y publicada en https://trabajo3-redes-neuronales.vercel.app/ (Vercel, cuenta
-  danielgonzalez2709, Root Directory = `app`; producción desde `main`, vistas previas por rama): Next.js 16.4.6 estático,
-  4 páginas con datos de juguete, ONNX de juguete con onnxruntime-web servido desde la app, contratos en
-  `app/lib/contratos.ts` (núcleo §5.4, §5.6, §5.8, v0.6).
+- Daniel en `main`: DA-1 infraestructura (PR #1); DA-2/3/4 series reales de M1 en `data/processed/m1/` (6 series,
+  2021–2023, marcas de anómalos; `run.py m1-datos` desde `data/raw/m1/`, PR #2); DA-5 app en https://trabajo3-redes-neuronales.vercel.app/
+  (Vercel, Root Directory `app`, producción desde `main`; contratos en `app/lib/contratos.ts`); DA-5c/DA-7/DA-11 (PR #5).
 - JJ-1 (datos de M3) en `main` (PR #6, 27-nov): `run.py m3-datos` construye `data/processed/m3/*.parquet` y
   `results/data/m3/eda/` desde `data/raw/m3/` (Kaggle `amanmehra23/travel-recommendation-dataset`, no versionado). 999 usuarios,
   1 000 destinos (5 lugares), 1 998 interacciones (999 reseñas + 999 historial), densidad 0,20 %. Rótulo de fecha: «creación de
@@ -22,17 +16,20 @@
 - JJ-3 (partición sin fuga de M3) en `main` (PR #6, 27-nov): `split` ∈ {train, validacion, prueba} en `interacciones.parquet`
   (semilla 2026; huella `b35cd70b…58e8b8` en `results/data/m3/particion/resumen.json`). 1 066 / 326 / 606; 858 usuarios con
   interacciones, 141 no evaluables. `src/m3_recomendacion/particion.py`; `tests/test_fuga_m3.py` (53 pruebas; SIN FUGA).
-- JJ-4 (referencias + @K de M3) en `dev/juanjose`, pendiente de PR (con JJ-5): `run.py m3-hpo` (Optuna TPE, 20 ensayos, NDCG@5 en validación;
+- JJ-4 (referencias + @K de M3) en PR #9 (con JJ-5): `run.py m3-hpo` (Optuna TPE, 20 ensayos, NDCG@5 en validación;
   mejor ensayo 19: f = 4, λ ≈ 0,0021, α ≈ 1,485, 9 barridos; 0 degenerados) y `run.py m3 --config configs/m3/base.yaml`
   (popularidad, MF-ALS y aleatorio; 30 semillas). Demo `configs/m3/demo.yaml` (< 2 min; `results/data/m3_demo/`).
   Recall@10: popularidad 0,0069, MF 0,0105, aleatorio 0,0096, esperado 0,0100 (diferencias menores que el error estándar de 606 usuarios);
   cobertura@10: 0,025 / 0,101 / 0,997. Blog 07: «Métricas de evaluación» y «Modelos de referencia».
-- JJ-5 (red de dos torres de M3) en `dev/juanjose`, pendiente de PR (junto con JJ-4): `m3-hpo` busca MF y red (20 ensayos cada una);
+- JJ-5 (red de dos torres de M3) en PR #9 (con JJ-4): `m3-hpo` busca MF y red (20 ensayos cada una);
   red: mejor ensayo 18, NDCG@5 de validación 0,0067; d = 32, MLP 64 (usuario) y 16 (destino), 2 negativos, BCE, lr ≈ 7,4e-4,
   weight decay ≈ 3,6e-4, dropout ≈ 0,25 (copiados a `base.yaml`). Red en prueba: NDCG@5 0,0026 ± 0,0010, Recall@10 0,0098 ± 0,0034
   (azar 0,0030 y 0,0100), cobertura@10 0,028, 52 192 parámetros; al nivel del azar. Archivos: `src/m3_recomendacion/{red,contenido}.py`,
   `tests/test_red_m3.py`; 4 figuras comunes (`red_arquitectura`, `red_curvas`, `busqueda_m3`, `cajas_m3`); blog 07 «Red neuronal de dos torres».
   Revisado por verificador-matematico (4.ª vuelta), auditor-fugas (SIN FUGA; 20/20 mutantes muertos), revisor-spec y revisor-calidad.
+- CA-1..CA-4 ✅ y CA-5 🟨 de M1 en `main` (PR #7, 28-nov). CA-3 (flota y conductores): `run.py m1-operacion` escribe
+  `results/data/m1/operacion/` (incluida `nomina_semanal.csv`); m_r por ruta (por corredor como sensibilidad,
+  `calibracion.multiplicador`). Revisado por revisor-spec, verificador-matematico y revisor-calidad (2.ª vuelta), más R1/R2/R8/R10.
 - Adelantado: blog 01, 03 (ficha y calidad), 11 (metodología de IA) y 13; guion del video (`video/guion.md`, 2:30).
 - Entrega: mar 1-dic-2026 (hora por confirmar).
 
@@ -46,6 +43,14 @@
 - M1: mayo de 2021 casi vacío → serie completa con marcas; los modelos entrenan desde el 2021-06-01 (`datos.inicio_entrenamiento`).
 - M1: reglas contra fuga del arnés (núcleo §5.3): lista blanca de columnas; test sin excluir anómalos; ventanas desde
   2021-06-01; rejilla de orígenes anclada al 2023-12-01 para cubrir el fin de año; composición por clase solo con train.
+- M1 negocio (CA-6) [DECIDIDO, Camila, 27-nov]: se implementa con la mejor red de Andrés (AN-5), no con las referencias;
+  «próximos 30 días» = origen 2023-12-01; temporada alta = días `fin_de_anio` del horizonte frente a una semana normal sin
+  festivos, puentes ni vacaciones escolares. Opciones de flota [DECIDIDO, 27-nov, tras CA-6a y su verificación]: propia =
+  propia o vinculada hasta la capacidad máxima fijada (≤ mínima + 20 %, Dec. 1079 art. 2.2.1.4.7.2); arrendada = contrato con
+  servicio especial en alta demanda (art. 2.2.1.6.3.5 mod. Dec. 1048/2026; Res. 264/2020); convenio = figura estable (≤ 2 años,
+  ruta completa). Sin costos en pesos con fuente oficial: comparación cualitativa.
+- M1 calendario [DECIDIDO, Camila, 27-nov]: `fin_de_anio` = 10-dic a 15-ene (Res. 264/2020 MinTransporte, art. 8); antes
+  supuesto 15-dic. Cambia `calendario.parquet` (aviso a Andrés).
 - Serie sintética: códigos ficticios del departamento `00`. JSON de juguete de la app: en DA-5.
 - M3 [DECIDIDO, Juan José, 25-nov; `docs/spec/partes/juanjose.md` §3.1]: interacción = unión de Reviews y UserHistory
   como implícita (no comparten pares); destino = los 1 000 `DestinationID`, con `lugar` (5 lugares) para el análisis
@@ -78,9 +83,12 @@
 - Usar siempre `.venv\Scripts\python` (el `python` del PATH puede ser 3.13).
 - M1 (Camila, Andrés): `sin_registro` vale 0 pero no es demanda (enmascarar); `anomalo` nunca como entrada; salto del tránsito
   en 11001-15759 desde nov-2022; 2021 muy por debajo de 2022–2023. Ver `docs/investigacion/DA-3_auditoria_fugas.md`.
-- M3: el PR de JJ-1 debe incluir `configs/m3/datos.yaml`, `docs/investigacion/JJ-1_kaggle_metadata.json` y `tests/fixtures/m3/`
-  (las pruebas los leen), más `results/data/m3/particion/resumen.json` (lo lee `test_fuga_m3.py`) y `results/data/m3/eda/*` con
-  `blog/docs/figures/m3/*` (la CI los necesita).
+- M1 operación (Camila → Daniel, 27-nov): `dimensionar()` de Python (CA-3d) usa ρ_r = min(1, ρ·m_r) con m_r por ruta
+  calibrado en train, tripulación k = max(k_norma, ⌈t/J_ef⌉), conductores por piernas y nómina semanal N\*; los parámetros
+  por ruta llevan `multiplicador_ocupacion`. `app/lib/dimensionar.ts` sigue con la fórmula de juguete de DA-5: los casos de
+  paridad (CA-8) fallarán hasta que DA-6 la actualice.
+- M1 calendario (Camila → Andrés, 27-nov): `fin_de_anio` empieza el 10-dic (Res. 264/2020); nuevo SHA-256 de
+  `calendario.parquet` `c29dc412…ae2fb9` (antes `7478d74a…baecec6`). Reentrenar o reevaluar lo que lo use.
 - M3: la demo en vivo con otra semilla debe redirigir las salidas a `results/data/m3_demo/` (orden en `configs/m3/datos.yaml`);
   sin redirigir se pisan archivos versionados.
 - M3/JJ-5: la red se agrega con una entrada en `referencias.MODELOS`, una en `hpo.BUSQUEDAS` y un bloque `<nombre>:` en la config,
@@ -130,21 +138,12 @@
   afirmado lo contrario con prompt literal guardado.
 
 ## Bitácora (más reciente arriba)
-- 2026-11-27 · Juan José · decisiones de JJ-5: `base.yaml` con `config` (presupuesto de hpo si coincide), [PROPUESTO] → [DECIDIDO], R-1..R-19 sin aplicar.
-- 2026-11-27 · Juan José · JJ-5 ✅: red de dos torres (preferencias + tipo, ids con índice 0 para perfiles nuevos), BCE/BPR, búsqueda de
-  20 ensayos y 30 semillas; al nivel del azar; 4 figuras comunes y blog 07 «Red neuronal de dos torres»; D15–D19; 3 candidatos a la cacería.
-- 2026-11-27 · Juan José · JJ-4 ✅: referencias de M3 con métricas @K (30 semillas, 20 ensayos), blog 07; MF colapsada a X = Y = 0
-  detectada y corregida; D11–D14; 3 candidatos a la cacería.
-- 2026-11-26 · Juan José · JJ-3 ✅: partición sin fuga de M3 (1 066 / 326 / 606, semilla 2026), `test_fuga_m3.py`; D8–D10; 2 candidatos.
-- 2026-11-26 · Juan José · JJ-2 ✅: descriptivo de M3 (9 hipótesis, 4 figuras, blog 07 con caso de uso); corrección del rótulo de fecha de JJ-1; 3 candidatos.
-- 2026-11-26 · Daniel · DA-7 CAM pintado en la app y CAM ≡ Grad-CAM verificado (verificador-matematico: aprobado con
-  observaciones, aplicadas); DA-11 esqueleto del notebook 00; borrador del blog 08; condiciones del ONNX real en la spec de José.
-- 2026-11-26 · Daniel · DA-5c (aviso de Juan José): juguete como fixture (`app/tests/fixtures/juguete/`), pruebas de lo
-  servido válidas para modelos reales, nombres repetidos de M3 como «Nombre (#id)»; Spec v0.7 (§5.7 columnas reales de M3).
-- 2026-11-25 · Juan José · JJ-1 ✅ (fases A y B): inventario y fuente de M3, datos procesados, ficha/calidad/diccionario, D1–D7; 2 candidatos.
-- 2026-11-24 · Daniel · PR #3 fusionado; app publicada en Vercel (DA-5 ✅); URL en README, blog y guion.
-- 2026-11-24 · Daniel · DA-5 app con contratos (Spec v0.6) y PR #3; blog 01/03/11/13 y guion del video adelantados; H-01.
-- 2026-11-24 · Daniel · DA-2/DA-3/DA-4 terminados (series reales de M1) y en PR #2; Spec v0.3–v0.5 (periodo, tránsito,
-  mayo-2021, reglas contra fuga); Pages activo; check `pruebas` obligatorio en `main`.
-- 2026-11-24 · Daniel · DA-1 fusionado en `main` (PR #1); Spec v0.2.
-- 2026-11-23 · Daniel · Spec v0.1, PLAN, agentes y plantillas del Trabajo 3.
+- 2026-11-28 · Daniel · PR #6, #10 y #7 fusionados; conflictos de #9 y #8 resueltos en sus ramas. Revisión de #7 y #8 → arreglos de infraestructura: CI con torchvision de
+  CPU (fallaba el #8), `results/**` y `*.csv` byte a byte en `.gitattributes` (huellas SHA-256 en Windows) y `test_no_network`
+  ya no reescribe las figuras versionadas. En clones de Windows existentes: `git checkout -- results tests/fixtures`.
+- 2026-11-27 · Juan José · JJ-4 ✅ (referencias @K; MF colapsada a X = Y = 0 detectada y corregida; D11–D14) y JJ-5 ✅ (red de
+  dos torres, BCE/BPR, 20 ensayos y 30 semillas, al nivel del azar; D15–D19; [PROPUESTO] → [DECIDIDO]); 6 candidatos.
+- 2026-11-27 · Camila · CA-1, CA-2, CA-3 (CA-3d/e: tripulación, m_r por ruta, nómina N\*) y CA-4 ✅; CA-5 🟨 (falta arnés AN-1);
+  CA-6/CA-6a (horizonte, temporada alta, costos y marco legal) y CA-1c (`fin_de_anio` desde el 10-dic); 2 candidatos.
+- 2026-11-23..26 · Spec v0.1–v0.7; Daniel DA-1..DA-5c, DA-7 (CAM) y DA-11 (PR #1–#5); Juan José JJ-1..JJ-3 (PR #6, 27-nov).
+  Detalle en `git log` y en la sección Estado.

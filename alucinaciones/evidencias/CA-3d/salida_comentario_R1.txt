@@ -1,0 +1,6 @@
+Comentario en 1a27df7: # con ρ* global solo el total coincide (R1: 15,5 / 0,6 · … ≠ 31).
+Carga llena de R1, Σ f·D/cap_ef = 0,5·(400+260)/20 = 16.5  (el comentario dice 15,5)
+ρ* = Σ A / Σ O = 21.5 / 36 = 0.5972
+Con ρ = 0,6: A_R1/0,6 = 27.5 ≠ 31
+Con ρ = ρ*: A_R1/ρ* = 27.63 ≠ 31
+Con 15,5 (cifra del comentario): 15,5/0,6 = 25.83

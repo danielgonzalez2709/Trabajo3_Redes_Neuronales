@@ -16,7 +16,9 @@ from src.comun import cli
 
 RAIZ = Path(__file__).resolve().parents[1]
 MODULOS_DE_RED = {"socket", "urllib", "http", "requests", "httpx", "aiohttp", "ftplib", "smtplib"}
-# Comandos que no necesitan config ni escriben en el repositorio (los de módulo se agregan al conectarse).
+# Comandos que no necesitan config (los de módulo se agregan al conectarse). Las figuras que guarde `figures` se
+# redirigen a una carpeta temporal (fixture `figuras_a_temporal`); `export` aún no tiene exportadores: cuando los
+# tenga, escribirá en `app/public/model/` y habrá que redirigirlo igual.
 COMANDOS = [["export"], ["figures"]]
 
 
@@ -43,11 +45,47 @@ def test_el_bloqueo_si_detecta_un_acceso_a_la_red(sin_red):
         urllib.request.urlopen("https://example.org", timeout=5)
 
 
+@pytest.fixture
+def figuras_a_temporal(monkeypatch, tmp_path):
+    """`figures` escribe en carpetas versionadas (`blog/docs/figures/`, `results/figures/`): toda figura que se guarde
+    durante la prueba va a `tmp_path` (misma ruta relativa a la raíz), así la prueba no pisa archivos del repositorio.
+    Devuelve la lista de rutas pedidas, para comprobar que la redirección sí actuó."""
+    from matplotlib.figure import Figure
+
+    original = Figure.savefig
+    pedidas: list[Path] = []
+
+    def _savefig(self, fname, *args, **kwargs):
+        if isinstance(fname, (str, Path)):
+            ruta = Path(fname).resolve()
+            pedidas.append(ruta)
+            rel = ruta.relative_to(RAIZ) if ruta.is_relative_to(RAIZ) else Path(ruta.name)
+            fname = tmp_path / rel
+            fname.parent.mkdir(parents=True, exist_ok=True)
+        return original(self, fname, *args, **kwargs)
+
+    monkeypatch.setattr(Figure, "savefig", _savefig)
+    return pedidas
+
+
 @pytest.mark.parametrize("argv", COMANDOS, ids=lambda a: a[0])
-def test_comandos_de_run_py_corren_sin_red(sin_red, monkeypatch, argv):
+def test_comandos_de_run_py_corren_sin_red(sin_red, figuras_a_temporal, monkeypatch, tmp_path, argv):
     """`notebooks` no entra: el kernel de Jupyter se comunica con el proceso por sockets locales (no es internet)."""
     monkeypatch.chdir(RAIZ)
     assert cli.main(argv) == 0
+    for ruta in figuras_a_temporal:
+        rel = ruta.relative_to(RAIZ) if ruta.is_relative_to(RAIZ) else Path(ruta.name)
+        assert (tmp_path / rel).is_file(), f"{rel.as_posix()} no quedó en la carpeta temporal"
+
+
+def test_figures_no_escribe_en_el_repositorio(sin_red, figuras_a_temporal, monkeypatch):
+    """Regresión: `run.py figures` dentro de esta prueba regeneraba las PNG versionadas (llegaron a un PR ajeno)."""
+    monkeypatch.chdir(RAIZ)
+    versionadas = [p for c in ("blog/docs/figures", "results/figures") for p in (RAIZ / c).rglob("*.png")]
+    antes = {p: p.stat().st_mtime_ns for p in versionadas}
+    assert cli.main(["figures"]) == 0
+    despues = {p: p.stat().st_mtime_ns for p in antes if p.exists()}
+    assert despues == antes
 
 
 def _modulos_importados(archivo: Path) -> set[str]:
